@@ -1,0 +1,29 @@
+:root {
+  --void: #ffffff00;
+  --primary: #3880ff;
+  --secondary: #3dc2ff;
+  --tertiary: #5260ff;
+  --success: #2dd36f;
+  --warning: #ffc409;
+  --danger: #eb445a;
+  --dark: #222428;
+  --medium: #92949c;
+  --light: #f4f5f8;
+  --black: #000000;
+  --white: #ffffff;
+
+  --zoomRatio: 1;
+  --responsiveUnit: calc(1vmin + 1vmax * var(--zoomRatio));
+  --headerHeight: calc(var(--responsiveUnit) * 5);
+  --footerHeight: calc(var(--responsiveUnit) * 4);
+  --scrollbarWidth: calc(var(--responsiveUnit) * 0.4);
+  --scrollbarColorTrack: var(--dark);
+  --scrollbarColorThumb: var(--light);
+  --scrollbarColorThumbHover: var(--medium);
+  --defaultContentHeight: calc(var(--dynamicHeight) - var(--headerHeight) - var(--footerHeight));
+  --dynamicHeight: 100vh;
+
+  @supports (height: 100dvh) {
+    --dynamicHeight: 100dvh;
+  }
+}

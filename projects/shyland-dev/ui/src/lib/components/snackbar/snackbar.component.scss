@@ -1,0 +1,78 @@
+@use '../../styles' as *;
+
+:host {
+  display: contents;
+}
+
+.snackbar {
+  position: fixed;
+  left: 50%;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--responsiveUnit, 1rem) * 0.75);
+  padding: calc(var(--responsiveUnit, 1rem) * 0.75) calc(var(--responsiveUnit, 1rem) * 1.5);
+  background: var(--shySnackbarBg, #{$dark});
+  color: var(--shySnackbarColor, #{$white});
+  border-radius: 4px;
+  min-width: var(--shySnackbarMinWidth, 200px);
+  max-width: var(--shySnackbarMaxWidth, 600px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 250ms ease-in-out,
+    transform 250ms ease-in-out;
+
+  &--top {
+    top: calc(var(--responsiveUnit, 1rem) * 1);
+    transform: translateX(-50%) translateY(-120%);
+  }
+
+  &--bottom {
+    bottom: calc(var(--responsiveUnit, 1rem) * 1);
+    transform: translateX(-50%) translateY(120%);
+  }
+
+  &--visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  &__text {
+    flex: 1;
+    font-family: sans-serif;
+    font-size: calc(var(--responsiveUnit, 1rem) * 1);
+  }
+
+  &__dismiss {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+    flex-shrink: 0;
+
+    shy-icon {
+      --shyIconSize: calc(var(--responsiveUnit, 1rem) * 1.25);
+    }
+  }
+}
+
+.icon-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--hover-delay, 0ms) ease-in-out;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    color: inherit;
+  }
+}

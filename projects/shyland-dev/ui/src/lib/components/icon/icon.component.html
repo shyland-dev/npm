@@ -1,0 +1,7 @@
+<span #iconName class="icon-name"><ng-content></ng-content></span>
+<div class="icon-wrapper" [style.--hover-delay]="hoverFillDelay + 'ms'" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
+  <span class="icon-layer" [style.opacity]="isHovered && svgHoverContent ? 0 : 1" [innerHTML]="svgContent"></span>
+  @if (svgHoverContent) {
+    <span class="icon-layer" [style.opacity]="isHovered ? 1 : 0" [innerHTML]="svgHoverContent"></span>
+  }
+</div>

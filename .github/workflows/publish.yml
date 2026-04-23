@@ -1,0 +1,53 @@
+name: Publish Libs
+
+on:
+  push:
+    branches: [prod]
+  pull_request:
+    branches: [prod]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build das libs
+        run: npm run build:libs
+
+      - name: Publicar @shyland-dev/ui no npm
+        if: github.event_name == 'push'
+        run: |
+          PKG_NAME=$(node -p "require('./projects/shyland-dev/ui/dist/shyland-dev-ui/package.json').name")
+          PKG_VERSION=$(node -p "require('./projects/shyland-dev/ui/dist/shyland-dev-ui/package.json').version")
+          if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
+            echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
+          else
+            npm publish projects/shyland-dev/ui/dist/shyland-dev-ui --access public
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publicar @shyland-dev/utils no npm
+        if: github.event_name == 'push'
+        run: |
+          PKG_NAME=$(node -p "require('./projects/shyland-dev/utils/dist/shyland-dev-utils/package.json').name")
+          PKG_VERSION=$(node -p "require('./projects/shyland-dev/utils/dist/shyland-dev-utils/package.json').version")
+          if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
+            echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
+          else
+            npm publish projects/shyland-dev/utils/dist/shyland-dev-utils --access public
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

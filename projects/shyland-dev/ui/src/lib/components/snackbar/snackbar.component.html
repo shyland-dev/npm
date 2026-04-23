@@ -1,0 +1,18 @@
+<div
+  class="snackbar"
+  [class.snackbar--top]="position === 'top'"
+  [class.snackbar--bottom]="position === 'bottom'"
+  [class.snackbar--visible]="visible"
+>
+  <span class="snackbar__text">
+    @if (text) {
+      {{ text }}
+    } @else {
+      <ng-content></ng-content>
+    }
+  </span>
+
+  <button class="snackbar__dismiss" (click)="dismiss()">
+    <shy-icon>x</shy-icon>
+  </button>
+</div>

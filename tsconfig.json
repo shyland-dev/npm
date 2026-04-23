@@ -1,0 +1,41 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "paths": {
+      "@shyland-dev/ui": ["./projects/shyland-dev/ui/src/public-api.ts"],
+      "@shyland-dev/ui/*": ["./projects/shyland-dev/ui/src/*"],
+      "@shyland-dev/utils": ["./projects/shyland-dev/utils/src/public-api.ts"],
+      "@shyland-dev/utils/*": ["./projects/shyland-dev/utils/src/*"]
+    },
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve",
+    "rootDir": "."
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/shyland-dev/utils/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/shyland-dev/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/showcase/tsconfig.app.json"
+    }
+  ]
+}

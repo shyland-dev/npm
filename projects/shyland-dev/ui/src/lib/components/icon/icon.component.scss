@@ -1,0 +1,34 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.icon-name {
+  display: none;
+}
+
+.icon-wrapper {
+  position: relative;
+  width: var(--shyIconSize, 1em);
+  height: var(--shyIconSize, 1em);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--hover-delay, 0ms) ease-in-out;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    color: inherit;
+  }
+}
