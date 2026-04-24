@@ -18,7 +18,8 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@shyland-dev'
 
       - name: Instalar dependências
         run: npm ci
@@ -37,7 +38,7 @@ jobs:
             npm publish projects/shyland-dev/ui/dist/shyland-dev-ui --access public
           fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publicar @shyland-dev/utils no npm
         if: github.event_name == 'push'
@@ -50,4 +51,4 @@ jobs:
             npm publish projects/shyland-dev/utils/dist/shyland-dev-utils --access public
           fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
