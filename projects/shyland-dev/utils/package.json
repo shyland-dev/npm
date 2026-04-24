@@ -1,6 +1,13 @@
 {
   "name": "@shyland-dev/utils",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shyland-dev/npm.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "peerDependencies": {
     "@angular/common": "^21.2.0",
     "@angular/core": "^21.2.0"
