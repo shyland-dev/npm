@@ -12,7 +12,10 @@
     "build:ui": "ng build ui",
     "build:utils": "ng build utils",
     "build:app": "ng build showcase",
-    "generate:icons": "node scripts/generate-icons.mjs"
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "publish:ui": "npm publish projects/shyland-dev/ui/dist/shyland-dev-ui",
+    "publish:utils": "npm publish projects/shyland-dev/utils/dist/shyland-dev-utils",
+    "publish:libs": "npm run publish:ui && npm run publish:utils"
   },
   "private": true,
   "workspaces": [
