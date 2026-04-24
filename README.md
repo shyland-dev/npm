@@ -155,9 +155,81 @@ ngOnInit(): void {
 
 ---
 
+## Instalação em uma aplicação Angular 21
+
+### 1. Instalar os pacotes
+
+```bash
+npm install @shyland-dev/ui @shyland-dev/utils
+```
+
+---
+
+### 2. Configurar os estilos globais (`@shyland-dev/ui`)
+
+No arquivo `src/styles.scss` da aplicação, importe os estilos base:
+
+```scss
+/* Sass variables, CSS custom properties (design tokens) e mixins */
+@use '@shyland-dev/ui/styles' as *;
+
+/* Reset global, estilos de scrollbar e height do app-root */
+@use '@shyland-dev/ui/styles/base';
+```
+
+> Nenhuma configuração adicional no `angular.json` é necessária. O Angular CLI (esbuild) resolve automaticamente os caminhos `@shyland-dev/...` via `node_modules`.
+
+---
+
+### 3. Usar variáveis e mixins em componentes
+
+Em qualquer arquivo SCSS de componente que precise das Sass variables ou mixins:
+
+```scss
+@use '@shyland-dev/ui/styles' as *;
+
+.meu-elemento {
+  color: $primary;
+  @include fixedHeight(200px);
+}
+```
+
+---
+
+### 4. Usar os componentes UI
+
+Importe os componentes standalone diretamente nos `imports` do seu componente ou módulo:
+
+```typescript
+import { IconComponent, SnackbarComponent, SnackbarService } from '@shyland-dev/ui';
+
+@Component({
+  imports: [IconComponent, SnackbarComponent],
+  providers: [SnackbarService],
+})
+export class MeuComponent {}
+```
+
+---
+
+### 5. Usar os utilitários
+
+```typescript
+import { DebugService } from '@shyland-dev/utils';
+
+@Component({ providers: [DebugService] })
+export class MeuComponent {
+  constructor(private debug: DebugService) {
+    this.debug.log(this); // [debug] @MeuComponent#constructor
+  }
+}
+```
+
+---
+
 ## Design Tokens
 
-Propriedades CSS definidas em `projects/shyland-dev/ui/src/lib/styles/_tokens.scss` e disponíveis globalmente via `@use 'shyland-dev/ui/src/lib/styles/base'`:
+Propriedades CSS definidas em `src/lib/styles/_tokens.scss`, incluídas automaticamente ao importar `@shyland-dev/ui/styles` ou `@shyland-dev/ui/styles/base`.
 
 **Cores:**
 `--primary`, `--secondary`, `--tertiary`, `--success`, `--warning`, `--danger`, `--dark`, `--medium`, `--light`, `--black`, `--white`
@@ -165,14 +237,8 @@ Propriedades CSS definidas em `projects/shyland-dev/ui/src/lib/styles/_tokens.sc
 **Layout:**
 `--headerHeight`, `--footerHeight`, `--defaultContentHeight`, `--responsiveUnit`, `--scrollbarWidth`
 
-Para usar os estilos base em um componente:
-
-```scss
-@use 'shyland-dev/ui/src/lib/styles' as *; /* variáveis, tokens e mixins */
-@use 'shyland-dev/ui/src/lib/styles/base'; /* estilos globais (scrollbar, reset) */
-```
-
-> O `angular.json` do showcase já configura `stylePreprocessorOptions.includePaths: ["projects", "node_modules"]`, permitindo esses imports sem caminhos absolutos.
+**Sass variables** (disponíveis ao `@use '@shyland-dev/ui/styles' as *`):
+`$primary`, `$secondary`, `$tertiary`, `$success`, `$warning`, `$danger`, `$dark`, `$medium`, `$light`, `$black`, `$white`
 
 ---
 
