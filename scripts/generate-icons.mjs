@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const SVG_DIR = join(__dirname, '../projects/shy/ui/src/assets/svg');
-const OUTPUT = join(__dirname, '../projects/shy/ui/src/lib/components/icon/icons.ts');
+const SVG_DIR = join(__dirname, '../projects/shyland-dev/ui/src/assets/svg');
+const OUTPUT = join(__dirname, '../projects/shyland-dev/ui/src/lib/components/icon/icons.ts');
 
 const files = readdirSync(SVG_DIR)
   .filter((f) => f.endsWith('.svg'))
