@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
+    "baseUrl": ".",
     "paths": {
       "@shyland-dev/ui": ["src/ui/src/public-api.ts"],
       "@shyland-dev/ui/*": ["src/ui/src/*"],
