@@ -25,17 +25,17 @@ jobs:
         run: npm ci
 
       - name: Build das libs
-        run: npm run build:libs
+        run: npm run build
 
       - name: Publicar @shyland-dev/ui no npm
         if: github.event_name == 'push'
         run: |
-          PKG_NAME=$(node -p "require('./projects/shyland-dev/ui/dist/shyland-dev-ui/package.json').name")
-          PKG_VERSION=$(node -p "require('./projects/shyland-dev/ui/dist/shyland-dev-ui/package.json').version")
+          PKG_NAME=$(node -p "require('./shyland-dev/ui/dist/shyland-dev-ui/package.json').name")
+          PKG_VERSION=$(node -p "require('./shyland-dev/ui/dist/shyland-dev-ui/package.json').version")
           if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
             echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
           else
-            npm publish projects/shyland-dev/ui/dist/shyland-dev-ui --access public
+            npm publish shyland-dev/ui/dist/shyland-dev-ui --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -43,12 +43,12 @@ jobs:
       - name: Publicar @shyland-dev/utils no npm
         if: github.event_name == 'push'
         run: |
-          PKG_NAME=$(node -p "require('./projects/shyland-dev/utils/dist/shyland-dev-utils/package.json').name")
-          PKG_VERSION=$(node -p "require('./projects/shyland-dev/utils/dist/shyland-dev-utils/package.json').version")
+          PKG_NAME=$(node -p "require('./shyland-dev/utils/dist/shyland-dev-utils/package.json').name")
+          PKG_VERSION=$(node -p "require('./shyland-dev/utils/dist/shyland-dev-utils/package.json').version")
           if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
             echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
           else
-            npm publish projects/shyland-dev/utils/dist/shyland-dev-utils --access public
+            npm publish shyland-dev/utils/dist/shyland-dev-utils --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

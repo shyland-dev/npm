@@ -4,32 +4,28 @@ Monorepo Angular 21 com biblioteca de componentes UI e utilitários.
 
 ## Pacotes
 
-| Pacote               | Caminho                      | Descrição                                  |
-| -------------------- | ---------------------------- | ------------------------------------------ |
-| `@shyland-dev/ui`    | `projects/shyland-dev/ui`    | Biblioteca de componentes UI reutilizáveis |
-| `@shyland-dev/utils` | `projects/shyland-dev/utils` | Serviços e utilitários Angular             |
-| `showcase`           | `projects/showcase`          | App de demonstração dos componentes        |
+| Pacote               | Caminho           | Descrição                                  |
+| -------------------- | ----------------- | ------------------------------------------ |
+| `@shyland-dev/ui`    | `shyland-dev/ui`  | Biblioteca de componentes UI reutilizáveis |
+| `@shyland-dev/utils` | `shyland-dev/utils` | Serviços e utilitários Angular           |
 
 ## Início rápido
 
 ```bash
-npm ci       # Instala as dependências e cria os symlinks de workspace
-npm start    # Serve o showcase em http://localhost:4200
+npm ci          # Instala as dependências e cria os symlinks de workspace
+npm run build   # Compila as libs para dist/
 ```
 
-> Em desenvolvimento (dentro deste monorepo), as libs são resolvidas via `tsconfig.json` — não é necessário fazer build antes de servir o showcase.
+> Em desenvolvimento, as libs são resolvidas via `tsconfig.json` — não é necessário fazer build antes de usar o showcase externo.
 
 ## Scripts
 
-| Comando                  | Descrição                                                                      |
-| ------------------------ | ------------------------------------------------------------------------------ |
-| `npm start`              | Serve o showcase (modo dev)                                                    |
-| `npm run build`          | Build de todas as libs + showcase (produção)                                   |
-| `npm run build:libs`     | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                              |
-| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                          |
-| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                       |
-| `npm run build:app`      | Build do showcase                                                              |
-| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `projects/shyland-dev/ui/src/assets/svg/` |
+| Comando                  | Descrição                                                                 |
+| ------------------------ | ------------------------------------------------------------------------- |
+| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                         |
+| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                     |
+| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                  |
+| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `shyland-dev/ui/src/assets/svg/` |
 
 ## Componentes (`@shyland-dev/ui`)
 
@@ -74,7 +70,7 @@ shy-icon {
 
 > Ícones com versão `-filled`: `alert`, `bell`, `box`, `grid`, `heart`, `help`, `home`, `info`, `lock`, `mail`, `star`
 
-Para adicionar ícones, coloque o `.svg` em `projects/shyland-dev/ui/src/assets/svg/` e execute:
+Para adicionar ícones, coloque o `.svg` em `shyland-dev/ui/src/assets/svg/` e execute:
 
 ```bash
 npm run generate:icons
@@ -245,29 +241,24 @@ Propriedades CSS definidas em `src/lib/styles/_tokens.scss`, incluídas automati
 ## Estrutura do projeto
 
 ```
-shy/
-├── projects/
-│   ├── shyland-dev/
-│   │   ├── ui/                    # @shyland-dev/ui — componentes
-│   │   │   └── src/
-│   │   │       ├── assets/svg/    # Arquivos SVG fonte dos ícones
-│   │   │       ├── lib/
-│   │   │       │   ├── components/
-│   │   │       │   │   ├── icon/        # IconComponent
-│   │   │       │   │   └── snackbar/    # SnackbarComponent
-│   │   │       │   ├── services/
-│   │   │       │   │   └── snackbar.service.ts
-│   │   │       │   └── styles/          # tokens, variables, mixins, base
-│   │   │       └── public-api.ts
-│   │   └── utils/                 # @shyland-dev/utils — utilitários
-│   │       └── src/
-│   │           ├── lib/services/
-│   │           │   └── debug.service.ts
-│   │           └── public-api.ts
-│   └── showcase/                  # App de demonstração
-│       └── src/app/
-│           └── pages/
-│               └── icons/         # Listagem e cópia de ícones
+npm/
+├── shyland-dev/
+│   ├── ui/                    # @shyland-dev/ui — componentes
+│   │   └── src/
+│   │       ├── assets/svg/    # Arquivos SVG fonte dos ícones
+│   │       ├── lib/
+│   │       │   ├── components/
+│   │       │   │   ├── icon/        # IconComponent
+│   │       │   │   └── snackbar/    # SnackbarComponent
+│   │       │   ├── services/
+│   │       │   │   └── snackbar.service.ts
+│   │       │   └── styles/          # tokens, variables, mixins, base
+│   │       └── public-api.ts
+│   └── utils/                 # @shyland-dev/utils — utilitários
+│       └── src/
+│           ├── lib/services/
+│           │   └── debug.service.ts
+│           └── public-api.ts
 ├── scripts/
 │   └── generate-icons.mjs         # Gera icons.ts a partir dos SVGs
 └── angular.json

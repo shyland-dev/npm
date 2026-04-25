@@ -6,18 +6,15 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve showcase",
-    "build": "npm run build:libs && npm run build:app",
-    "build:libs": "npm run build:ui && npm run build:utils",
+    "build": "npm run build:ui && npm run build:utils",
     "build:ui": "ng build ui",
     "build:utils": "ng build utils",
-    "build:app": "ng build showcase",
     "generate:icons": "node scripts/generate-icons.mjs"
   },
   "private": true,
   "workspaces": [
-    "projects/shyland-dev/ui",
-    "projects/shyland-dev/utils"
+    "shyland-dev/ui",
+    "shyland-dev/utils"
   ],
   "packageManager": "npm@11.11.0",
   "dependencies": {
