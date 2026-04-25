@@ -13,8 +13,8 @@
   },
   "private": true,
   "workspaces": [
-    "shyland-dev/ui",
-    "shyland-dev/utils"
+    "src/ui",
+    "src/utils"
   ],
   "packageManager": "npm@11.11.0",
   "dependencies": {

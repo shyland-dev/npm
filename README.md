@@ -6,8 +6,8 @@ Monorepo Angular 21 com biblioteca de componentes UI e utilitários.
 
 | Pacote               | Caminho           | Descrição                                  |
 | -------------------- | ----------------- | ------------------------------------------ |
-| `@shyland-dev/ui`    | `shyland-dev/ui`  | Biblioteca de componentes UI reutilizáveis |
-| `@shyland-dev/utils` | `shyland-dev/utils` | Serviços e utilitários Angular           |
+| `@shyland-dev/ui`    | `src/ui`    | Biblioteca de componentes UI reutilizáveis |
+| `@shyland-dev/utils` | `src/utils` | Serviços e utilitários Angular             |
 
 ## Início rápido
 
@@ -25,7 +25,7 @@ npm run build   # Compila as libs para dist/
 | `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                         |
 | `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                     |
 | `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                  |
-| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `shyland-dev/ui/src/assets/svg/` |
+| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/ui/src/assets/svg/` |
 
 ## Componentes (`@shyland-dev/ui`)
 
@@ -70,7 +70,7 @@ shy-icon {
 
 > Ícones com versão `-filled`: `alert`, `bell`, `box`, `grid`, `heart`, `help`, `home`, `info`, `lock`, `mail`, `star`
 
-Para adicionar ícones, coloque o `.svg` em `shyland-dev/ui/src/assets/svg/` e execute:
+Para adicionar ícones, coloque o `.svg` em `src/ui/src/assets/svg/` e execute:
 
 ```bash
 npm run generate:icons
@@ -242,7 +242,7 @@ Propriedades CSS definidas em `src/lib/styles/_tokens.scss`, incluídas automati
 
 ```
 npm/
-├── shyland-dev/
+├── src/
 │   ├── ui/                    # @shyland-dev/ui — componentes
 │   │   └── src/
 │   │       ├── assets/svg/    # Arquivos SVG fonte dos ícones

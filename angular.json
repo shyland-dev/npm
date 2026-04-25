@@ -5,22 +5,22 @@
     "packageManager": "npm",
     "analytics": false
   },
-  "newProjectRoot": "shyland-dev",
+  "newProjectRoot": "src",
   "projects": {
     "utils": {
       "projectType": "library",
-      "root": "shyland-dev/utils",
-      "sourceRoot": "shyland-dev/utils/src",
+      "root": "src/utils",
+      "sourceRoot": "src/utils/src",
       "prefix": "shy",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "shyland-dev/utils/tsconfig.lib.prod.json"
+              "tsConfig": "src/utils/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "shyland-dev/utils/tsconfig.lib.json"
+              "tsConfig": "src/utils/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -29,18 +29,18 @@
     },
     "ui": {
       "projectType": "library",
-      "root": "shyland-dev/ui",
-      "sourceRoot": "shyland-dev/ui/src",
+      "root": "src/ui",
+      "sourceRoot": "src/ui/src",
       "prefix": "shy",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "shyland-dev/ui/tsconfig.lib.prod.json"
+              "tsConfig": "src/ui/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "shyland-dev/ui/tsconfig.lib.json"
+              "tsConfig": "src/ui/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
