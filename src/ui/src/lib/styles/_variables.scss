@@ -1,12 +1,50 @@
-$void: #ffffff00;
-$primary: #3880ff;
-$secondary: #3dc2ff;
-$tertiary: #5260ff;
-$success: #2dd36f;
-$warning: #ffc409;
-$danger: #eb445a;
-$dark: #222428;
-$medium: #92949c;
-$light: #f4f5f8;
-$black: #000000;
-$white: #ffffff;
+:root {
+  --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 6));
+  --dynamic-height: 100vh;
+  --dynamic-width: 100vw;
+
+  @supports (height: 100dvh) {
+    --dynamic-height: 100dvh;
+  }
+
+  @supports (width: 100dvw) {
+    --dynamic-width: 100dvw;
+  }
+
+  @media (min-width: 576px) {
+    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 5));
+  }
+
+  @media (min-width: 768px) {
+    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 4));
+  }
+
+  @media (min-width: 992px) {
+    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 3));
+  }
+
+  @media (min-width: 1200px) {
+    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 2));
+  }
+
+  @media (min-width: 1400px) {
+    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 1));
+  }
+}
+
+$color-void: #ffffff00;
+$color-primary: #3880ff;
+$color-secondary: #3dc2ff;
+$color-tertiary: #5260ff;
+$color-success: #2dd36f;
+$color-warning: #ffc409;
+$color-danger: #eb445a;
+$color-dark: #222428;
+$color-medium: #92949c;
+$color-light: #f4f5f8;
+$color-black: #000000;
+$color-white: #ffffff;
+
+$responsive-unit: var(--responsive-unit);
+$dynamic-height: var(--dynamic-height);
+$dynamic-width: var(--dynamic-width);

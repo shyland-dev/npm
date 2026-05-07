@@ -10,11 +10,11 @@
   z-index: 9999;
   display: flex;
   align-items: center;
-  gap: calc(var(--responsiveUnit, 1rem) * 0.75);
-  padding: calc(var(--responsiveUnit, 1rem) * 0.75) calc(var(--responsiveUnit, 1rem) * 1.5);
-  background: var(--shySnackbarBg, #{$dark});
-  color: var(--shySnackbarColor, #{$white});
-  border-radius: 4px;
+  gap: calc(#{$responsive-unit} * 5);
+  padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 7);
+  background: var(--shySnackbarBackground, #{$color-dark});
+  color: var(--shySnackbarColor, #{$color-white});
+  border-radius: calc(#{$responsive-unit} * 2);
   min-width: var(--shySnackbarMinWidth, 200px);
   max-width: var(--shySnackbarMaxWidth, 600px);
   opacity: 0;
@@ -24,12 +24,12 @@
     transform 250ms ease-in-out;
 
   &--top {
-    top: calc(var(--responsiveUnit, 1rem) * 1);
+    top: calc(#{$responsive-unit} * 5);
     transform: translateX(-50%) translateY(-120%);
   }
 
   &--bottom {
-    bottom: calc(var(--responsiveUnit, 1rem) * 1);
+    bottom: calc(#{$responsive-unit} * 5);
     transform: translateX(-50%) translateY(120%);
   }
 
@@ -41,8 +41,8 @@
 
   &__text {
     flex: 1;
-    font-family: sans-serif;
-    font-size: calc(var(--responsiveUnit, 1rem) * 1);
+    font-family: var(--shySnackbarFontFamily, monospace);
+    font-size: var(--shySnackbarFontSize, calc(#{$responsive-unit} * 7));
   }
 
   &__dismiss {
@@ -57,7 +57,7 @@
     flex-shrink: 0;
 
     shy-icon {
-      --shyIconSize: calc(var(--responsiveUnit, 1rem) * 1.25);
+      --shyIconSize: var(--shySnackbarIconSize, calc(#{$responsive-unit} * 5));
     }
   }
 }

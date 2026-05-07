@@ -17,7 +17,7 @@ export class SnackbarComponent implements OnDestroy {
 
   private timer?: ReturnType<typeof setTimeout>;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   show(opts?: { position?: SnackbarPosition; delay?: number; text?: string }): void {
     if (opts?.position !== undefined) this.position = opts.position;

@@ -20,7 +20,7 @@ export class IconComponent implements AfterViewInit {
   constructor(
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngAfterViewInit(): void {
     const name = this.iconNameRef.nativeElement.textContent?.trim() ?? '';

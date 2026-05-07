@@ -1,14 +1,9 @@
-<div
-  class="snackbar"
-  [class.snackbar--top]="position === 'top'"
-  [class.snackbar--bottom]="position === 'bottom'"
-  [class.snackbar--visible]="visible"
->
+<div class="snackbar" [class.snackbar--top]="position === 'top'" [class.snackbar--bottom]="position === 'bottom'" [class.snackbar--visible]="visible">
   <span class="snackbar__text">
     @if (text) {
-      {{ text }}
+    {{ text }}
     } @else {
-      <ng-content></ng-content>
+    <ng-content></ng-content>
     }
   </span>
 
