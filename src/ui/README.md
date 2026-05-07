@@ -136,22 +136,48 @@ The package exports a set of design tokens and SCSS variables. Import them in yo
 @use '@shyland-dev/ui' as shy;
 ```
 
-### Design Tokens (CSS custom properties)
+### Global Design Tokens (CSS custom properties)
 
-| Token             | Default value                          |
-| ----------------- | -------------------------------------- |
-| `--primary`       | `#3880ff`                              |
-| `--secondary`     | `#3dc2ff`                              |
-| `--tertiary`      | `#5260ff`                              |
-| `--success`       | `#2dd36f`                              |
-| `--warning`       | `#ffc409`                              |
-| `--danger`        | `#eb445a`                              |
-| `--dark`          | `#222428`                              |
-| `--medium`        | `#92949c`                              |
-| `--light`         | `#f4f5f8`                              |
-| `--headerHeight`  | `5 * responsiveUnit`                   |
-| `--footerHeight`  | `4 * responsiveUnit`                   |
-| `--dynamicHeight` | `100dvh` (with fallback to `100vh`)    |
+| Token               | Default value                       |
+| ------------------- | ----------------------------------- |
+| `--responsive-unit` | fluid unit based on viewport + rem  |
+| `--dynamic-height`  | `100dvh` (with fallback to `100vh`) |
+| `--dynamic-width`   | `100dvw` (with fallback to `100vw`) |
+
+### SCSS Variables
+
+| Variable           | Value        |
+| ------------------ | ------------ |
+| `$color-void`      | `#ffffff00`  |
+| `$color-primary`   | `#3880ff`    |
+| `$color-secondary` | `#3dc2ff`    |
+| `$color-tertiary`  | `#5260ff`    |
+| `$color-success`   | `#2dd36f`    |
+| `$color-warning`   | `#ffc409`    |
+| `$color-danger`    | `#eb445a`    |
+| `$color-dark`      | `#222428`    |
+| `$color-medium`    | `#92949c`    |
+| `$color-light`     | `#f4f5f8`    |
+| `$color-black`     | `#000000`    |
+| `$color-white`     | `#ffffff`    |
+| `$responsive-unit` | `var(--responsive-unit)` |
+| `$dynamic-height`  | `var(--dynamic-height)`  |
+| `$dynamic-width`   | `var(--dynamic-width)`   |
+
+### Snackbar Tokens
+
+The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
+
+| Token                      | Default                        | Description                          |
+| -------------------------- | ------------------------------ | ------------------------------------ |
+| `--shySnackbarBackground`  | `$color-dark` (`#222428`)      | Background color                     |
+| `--shySnackbarColor`       | `$color-white` (`#ffffff`)     | Text and icon color                  |
+| `--shySnackbarMinWidth`    | `30 * responsive-unit`         | Minimum width                        |
+| `--shySnackbarMaxWidth`    | `40 * responsive-unit`         | Maximum width                        |
+| `--shySnackbarOffset`      | `5 * responsive-unit`          | Distance from top or bottom edge     |
+| `--shySnackbarFontFamily`  | `monospace`                    | Font family of the message text      |
+| `--shySnackbarFontSize`    | `7 * responsive-unit`          | Font size of the message text        |
+| `--shySnackbarIconSize`    | `5 * responsive-unit`          | Size of the dismiss icon             |
 
 ---
 

@@ -15,8 +15,8 @@
   background: var(--shySnackbarBackground, #{$color-dark});
   color: var(--shySnackbarColor, #{$color-white});
   border-radius: calc(#{$responsive-unit} * 2);
-  min-width: var(--shySnackbarMinWidth, 200px);
-  max-width: var(--shySnackbarMaxWidth, 600px);
+  min-width: var(--shySnackbarMinWidth, calc(#{$responsive-unit} * 30));
+  max-width: var(--shySnackbarMaxWidth, calc(#{$responsive-unit} * 40));
   opacity: 0;
   pointer-events: none;
   transition:
@@ -24,12 +24,12 @@
     transform 250ms ease-in-out;
 
   &--top {
-    top: calc(#{$responsive-unit} * 5);
+    top: var(--shySnackbarOffset, calc(#{$responsive-unit} * 5));
     transform: translateX(-50%) translateY(-120%);
   }
 
   &--bottom {
-    bottom: calc(#{$responsive-unit} * 5);
+    bottom: var(--shySnackbarOffset, calc(#{$responsive-unit} * 5));
     transform: translateX(-50%) translateY(120%);
   }
 
