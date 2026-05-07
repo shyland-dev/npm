@@ -172,12 +172,11 @@ The `<shy-snackbar>` component can be customized via CSS custom properties on a 
 | -------------------------- | ------------------------------ | ------------------------------------ |
 | `--shySnackbarBackground`  | `$color-dark` (`#222428`)      | Background color                     |
 | `--shySnackbarColor`       | `$color-white` (`#ffffff`)     | Text and icon color                  |
-| `--shySnackbarMinWidth`    | `30 * responsive-unit`         | Minimum width                        |
-| `--shySnackbarMaxWidth`    | `40 * responsive-unit`         | Maximum width                        |
-| `--shySnackbarOffset`      | `5 * responsive-unit`          | Distance from top or bottom edge     |
+| `--shySnackbarWidth`       | `110 * responsive-unit`        | width                                |
+| `--shySnackbarOffset`      | `15 * responsive-unit`         | Distance from top or bottom edge     |
 | `--shySnackbarFontFamily`  | `monospace`                    | Font family of the message text      |
 | `--shySnackbarFontSize`    | `7 * responsive-unit`          | Font size of the message text        |
-| `--shySnackbarIconSize`    | `5 * responsive-unit`          | Size of the dismiss icon             |
+| `--shySnackbarIconSize`    | `8 * responsive-unit`          | Size of the dismiss icon             |
 
 ---
 
