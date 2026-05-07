@@ -10,5 +10,5 @@
       "output": "./styles"
     }
   ],
-  "dest": "dist/shyland-dev-ui"
+  "dest": "dist/ui"
 }
