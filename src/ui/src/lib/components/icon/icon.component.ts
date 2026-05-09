@@ -28,7 +28,7 @@ export class IconComponent implements AfterViewInit {
     this.svgContent = this.sanitizer.bypassSecurityTrustHtml(svg);
 
     if (this.hoverFill) {
-      const filledSvg = ICONS[`${name}-filled`];
+      const filledSvg = ICONS[`${name}-fill`];
       if (filledSvg) {
         this.svgHoverContent = this.sanitizer.bypassSecurityTrustHtml(filledSvg);
       }

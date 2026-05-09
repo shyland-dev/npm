@@ -2,6 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: var(--shyIconSize, 1em);
   color: inherit;
 }
 
@@ -11,24 +12,21 @@
 
 .icon-wrapper {
   position: relative;
-  width: var(--shyIconSize, 1em);
-  height: var(--shyIconSize, 1em);
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  width: 1em;
+  height: 1em;
 }
 
 .icon-layer {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
   transition: opacity var(--hover-delay, 0ms) ease-in-out;
 
   svg {
-    width: var(--shyIconSize, 1em);
-    height: var(--shyIconSize, 1em);
+    width: 1em;
+    height: 1em;
+    display: block;
     color: inherit;
   }
 }
