@@ -6,7 +6,8 @@
     "url": "https://github.com/shyland-dev/npm.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "peerDependencies": {
     "@angular/common": "^21.2.0",

@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -18,8 +21,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: 'npm'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@shyland-dev'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Instalar dependências
         run: npm ci
@@ -27,42 +29,24 @@ jobs:
       - name: Build das libs
         run: npm run build
 
-      - name: Publicar @shyland-dev/ui no npm
+      - name: Publicar pacotes no npm
         if: github.event_name == 'push'
         run: |
-          PKG_NAME=$(node -p "require('./src/ui/dist/ui/package.json').name")
-          PKG_VERSION=$(node -p "require('./src/ui/dist/ui/package.json').version")
-          if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
-            echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
-          else
-            if [[ "$PKG_VERSION" == *"-"* ]]; then
-              PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
-              echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
-              npm publish src/ui/dist/ui --access public --tag "$PRE_TAG"
+          for PKG_DIR in src/ui/dist/ui src/utils/dist/utils; do
+            PKG_NAME=$(node -p "require('./$PKG_DIR/package.json').name")
+            PKG_VERSION=$(node -p "require('./$PKG_DIR/package.json').version")
+            if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
+              echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
             else
-              echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
-              npm publish src/ui/dist/ui --access public
+              if [[ "$PKG_VERSION" == *"-"* ]]; then
+                PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
+                echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
+                npm publish "$PKG_DIR" --provenance --tag "$PRE_TAG"
+              else
+                echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
+                npm publish "$PKG_DIR" --provenance
+              fi
             fi
-          fi
+          done
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publicar @shyland-dev/utils no npm
-        if: github.event_name == 'push'
-        run: |
-          PKG_NAME=$(node -p "require('./src/utils/dist/utils/package.json').name")
-          PKG_VERSION=$(node -p "require('./src/utils/dist/utils/package.json').version")
-          if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
-            echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
-          else
-            if [[ "$PKG_VERSION" == *"-"* ]]; then
-              PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
-              echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
-              npm publish src/utils/dist/utils --access public --tag "$PRE_TAG"
-            else
-              echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
-              npm publish src/utils/dist/utils --access public
-            fi
-          fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
