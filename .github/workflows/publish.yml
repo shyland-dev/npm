@@ -29,24 +29,17 @@ jobs:
       - name: Build das libs
         run: npm run build
 
-      - name: Publicar pacotes no npm
+      - name: Permitir execução do script
+        run: chmod +x .github/scripts/publish-pkg.sh
+
+      - name: Publicar @shyland-dev/ui
         if: github.event_name == 'push'
-        run: |
-          for PKG_DIR in src/ui/dist/ui src/utils/dist/utils; do
-            PKG_NAME=$(node -p "require('./$PKG_DIR/package.json').name")
-            PKG_VERSION=$(node -p "require('./$PKG_DIR/package.json').version")
-            if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
-              echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
-            else
-              if [[ "$PKG_VERSION" == *"-"* ]]; then
-                PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
-                echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
-                npm publish "$PKG_DIR" --provenance --tag "$PRE_TAG"
-              else
-                echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
-                npm publish "$PKG_DIR" --provenance
-              fi
-            fi
-          done
+        run: .github/scripts/publish-pkg.sh src/ui/dist/ui
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publicar @shyland-dev/utils
+        if: github.event_name == 'push'
+        run: .github/scripts/publish-pkg.sh src/utils/dist/utils
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
