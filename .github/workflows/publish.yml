@@ -35,7 +35,14 @@ jobs:
           if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
             echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
           else
-            npm publish src/ui/dist/ui --access public
+            if [[ "$PKG_VERSION" == *"-"* ]]; then
+              PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
+              echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
+              npm publish src/ui/dist/ui --access public --tag "$PRE_TAG"
+            else
+              echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
+              npm publish src/ui/dist/ui --access public
+            fi
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +55,14 @@ jobs:
           if npm show "$PKG_NAME@$PKG_VERSION" version > /dev/null 2>&1; then
             echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
           else
-            npm publish src/utils/dist/utils --access public
+            if [[ "$PKG_VERSION" == *"-"* ]]; then
+              PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
+              echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
+              npm publish src/utils/dist/utils --access public --tag "$PRE_TAG"
+            else
+              echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
+              npm publish src/utils/dist/utils --access public
+            fi
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
