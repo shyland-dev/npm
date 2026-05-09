@@ -23,7 +23,7 @@
   display: flex;
   transition: opacity var(--hover-delay, 0ms) ease-in-out;
 
-  svg {
+  ::ng-deep svg {
     width: 1em;
     height: 1em;
     display: block;
