@@ -1,15 +1,5 @@
 :root {
   --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 6));
-  --dynamic-height: 100vh;
-  --dynamic-width: 100vw;
-
-  @supports (height: 100dvh) {
-    --dynamic-height: 100dvh;
-  }
-
-  @supports (width: 100dvw) {
-    --dynamic-width: 100dvw;
-  }
 
   @media (min-width: 576px) {
     --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 5));
@@ -30,6 +20,22 @@
   @media (min-width: 1400px) {
     --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 1));
   }
+
+  --dynamic-height: 100vh;
+  --dynamic-height-unit: 1vh;
+
+  @supports (height: 100dvh) {
+    --dynamic-height: 100dvh;
+    --dynamic-height-unit: 1dvh;
+  }
+
+  --dynamic-width: 100vw;
+  --dynamic-width-unit: 1vw;
+
+  @supports (width: 100dvw) {
+    --dynamic-width: 100dvw;
+    --dynamic-width-unit: 1dvw;
+  }
 }
 
 $color-void: #ffffff00;
@@ -46,5 +52,9 @@ $color-black: #000000;
 $color-white: #ffffff;
 
 $responsive-unit: var(--responsive-unit);
+
 $dynamic-height: var(--dynamic-height);
+$dynamic-height-unit: var(--dynamic-height-unit);
+
 $dynamic-width: var(--dynamic-width);
+$dynamic-width-unit: var(--dynamic-width-unit);
