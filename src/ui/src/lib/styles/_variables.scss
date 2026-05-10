@@ -1,25 +1,6 @@
 :root {
-  --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 6));
-
-  @media (min-width: 576px) {
-    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 5));
-  }
-
-  @media (min-width: 768px) {
-    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 4));
-  }
-
-  @media (min-width: 992px) {
-    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 3));
-  }
-
-  @media (min-width: 1200px) {
-    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 2));
-  }
-
-  @media (min-width: 1400px) {
-    --responsive-unit: calc(0.1vmin + 0.1vmax + 0.1rem * calc(1 / 6 * 1));
-  }
+  --screen-ratio: calc(100vmax / 100vmin);
+  --responsive-unit: calc(1rem + (var(--screen-ratio) - 1));
 
   --dynamic-height: 100vh;
   --dynamic-height-unit: 1vh;
@@ -51,6 +32,7 @@ $color-light: #f4f5f8;
 $color-black: #000000;
 $color-white: #ffffff;
 
+$screen-ratio: var(--screen-ratio);
 $responsive-unit: var(--responsive-unit);
 
 $dynamic-height: var(--dynamic-height);
