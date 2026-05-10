@@ -1,6 +1,6 @@
 :root {
   --screen-ratio: calc(100vmax / 100vmin);
-  --responsive-unit: calc(1rem * (var(--screen-ratio) - 1));
+  --responsive-unit: calc(0.1rem * (var(--screen-ratio) - 1));
 
   --dynamic-height: 100vh;
   --dynamic-height-unit: 1vh;
