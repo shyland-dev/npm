@@ -15,8 +15,8 @@ fi
 if [[ "$PKG_VERSION" == *"-"* ]]; then
   PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
   echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
-  npm publish "$PKG_DIR" --provenance --tag "$PRE_TAG"
+  npm publish "$PKG_DIR" --tag "$PRE_TAG"
 else
   echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
-  npm publish "$PKG_DIR" --provenance
+  npm publish "$PKG_DIR"
 fi
