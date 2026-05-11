@@ -3,19 +3,17 @@
   --responsive-unit: calc(0.1rem * var(--screen-ratio));
 
   --dynamic-height: 100vh;
-  --dynamic-height-unit: 1vh;
+  --dynamic-height-unit: calc(var(--dynamic-height) / 100);
 
   @supports (height: 100dvh) {
     --dynamic-height: 100dvh;
-    --dynamic-height-unit: 1dvh;
   }
 
   --dynamic-width: 100vw;
-  --dynamic-width-unit: 1vw;
+  --dynamic-width-unit: calc(var(--dynamic-width) / 100);
 
   @supports (width: 100dvw) {
     --dynamic-width: 100dvw;
-    --dynamic-width-unit: 1dvw;
   }
 }
 
