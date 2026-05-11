@@ -1,6 +1,5 @@
 :root {
-  --screen-ratio: calc(100vmax / 100vmin);
-  --responsive-unit: calc(0.1rem * var(--screen-ratio));
+  --responsive-unit: calc(0.1rem + 0.1vmin);
 
   --dynamic-height: 100vh;
   --dynamic-height-unit: calc(var(--dynamic-height) / 100);
@@ -30,7 +29,6 @@ $color-light: #f4f5f8;
 $color-black: #000000;
 $color-white: #ffffff;
 
-$screen-ratio: var(--screen-ratio);
 $responsive-unit: var(--responsive-unit);
 
 $dynamic-height: var(--dynamic-height);
