@@ -1,0 +1,28 @@
+@use 'styles' as *;
+
+:host {
+  display: block;
+  color: $color-primary;
+  padding: calc(#{$responsive-unit} * 2);
+}
+
+button {
+  padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 6);
+  font-size: calc(#{$responsive-unit} * 10);
+  font-family: sans-serif;
+  color: $color-white;
+  background: $color-primary;
+  border: none;
+  border-radius: calc(#{$responsive-unit} * 2);
+  cursor: pointer;
+
+  &:hover {
+    background: $color-medium;
+  }
+}
+
+shy-icon {
+  margin: calc(#{$responsive-unit} * 5);
+  font-size: calc(#{$responsive-unit} * 15);
+  color: $color-danger;
+}

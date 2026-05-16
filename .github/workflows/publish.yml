@@ -34,12 +34,12 @@ jobs:
 
       - name: Publicar @shyland-dev/ui
         if: github.event_name == 'push'
-        run: .github/scripts/publish-pkg.sh src/ui/dist/ui
+        run: .github/scripts/publish-pkg.sh src/libs/ui/dist/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publicar @shyland-dev/utils
         if: github.event_name == 'push'
-        run: .github/scripts/publish-pkg.sh src/utils/dist/utils
+        run: .github/scripts/publish-pkg.sh src/libs/utils/dist/utils
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

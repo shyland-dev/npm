@@ -1,0 +1,19 @@
+<main>
+  <header>
+    <span>showcase</span>
+
+    <nav>
+      @for (route of navRoutes; track $index) {
+        <a [routerLink]="route.path" routerLinkActive="active">{{ route.path }}</a>
+      }
+    </nav>
+  </header>
+
+  <div id="main-content">
+    <router-outlet />
+  </div>
+
+  <footer>
+    <h2>Local Showcase</h2>
+  </footer>
+</main>

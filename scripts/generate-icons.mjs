@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
-const SVG_DIR = join(__dirname, '../src/ui/src/assets/svg');
-const OUTPUT = join(__dirname, '../src/ui/src/lib/components/icon/icons.ts');
+const SVG_DIR = join(__dirname, '../src/libs/ui/src/assets/svg');
+const OUTPUT = join(__dirname, '../src/libs/ui/src/lib/components/icon/icons.ts');
 
 const files = readdirSync(SVG_DIR)
   .filter((f) => f.endsWith('.svg'))
@@ -18,7 +18,7 @@ const entries = files.map((file) => {
 });
 
 const output = `// Arquivo gerado automaticamente por scripts/generate-icons.mjs
-// Para adicionar/editar ícones, modifique os arquivos em src/ui/src/assets/svg/
+// Para adicionar/editar ícones, modifique os arquivos em src/libs/ui/src/assets/svg/
 // e execute: npm run generate:icons
 export const ICONS: Record<string, string> = {
 ${entries.join(',\n')},

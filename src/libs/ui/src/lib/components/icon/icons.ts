@@ -1,5 +1,5 @@
 // Arquivo gerado automaticamente por scripts/generate-icons.mjs
-// Para adicionar/editar ícones, modifique os arquivos em src/ui/src/assets/svg/
+// Para adicionar/editar ícones, modifique os arquivos em src/libs/ui/src/assets/svg/
 // e execute: npm run generate:icons
 export const ICONS: Record<string, string> = {
   '0-circle-fill': `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-0-circle-fill" viewBox="0 0 16 16">

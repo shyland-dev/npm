@@ -9,18 +9,18 @@
   "projects": {
     "utils": {
       "projectType": "library",
-      "root": "src/utils",
-      "sourceRoot": "src/utils/src",
+      "root": "src/libs/utils",
+      "sourceRoot": "src/libs/utils/src",
       "prefix": "shy",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "src/utils/tsconfig.lib.prod.json"
+              "tsConfig": "src/libs/utils/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "src/utils/tsconfig.lib.json"
+              "tsConfig": "src/libs/utils/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -29,21 +29,63 @@
     },
     "ui": {
       "projectType": "library",
-      "root": "src/ui",
-      "sourceRoot": "src/ui/src",
+      "root": "src/libs/ui",
+      "sourceRoot": "src/libs/ui/src",
       "prefix": "shy",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",
           "configurations": {
             "production": {
-              "tsConfig": "src/ui/tsconfig.lib.prod.json"
+              "tsConfig": "src/libs/ui/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "src/ui/tsconfig.lib.json"
+              "tsConfig": "src/libs/ui/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
+        }
+      }
+    },
+    "showcase": {
+      "projectType": "application",
+      "root": "src/apps",
+      "sourceRoot": "src/apps",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/showcase",
+            "index": "src/apps/index.html",
+            "browser": "src/apps/main.ts",
+            "tsConfig": "src/apps/tsconfig.app.json",
+            "styles": ["src/apps/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/libs/ui/src/lib"]
+            }
+          },
+          "configurations": {
+            "production": {
+              "optimization": true
+            },
+            "development": {
+              "optimization": false
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "showcase:build:production"
+            },
+            "development": {
+              "buildTarget": "showcase:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }

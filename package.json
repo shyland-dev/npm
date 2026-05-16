@@ -9,12 +9,14 @@
     "build": "npm run build:ui && npm run build:utils",
     "build:ui": "ng build ui",
     "build:utils": "ng build utils",
-    "generate:icons": "node scripts/generate-icons.mjs"
+    "generate:icons": "node scripts/generate-icons.mjs",
+    "serve:showcase": "ng serve showcase",
+    "build:showcase": "ng build showcase"
   },
   "private": true,
   "workspaces": [
-    "src/ui",
-    "src/utils"
+    "src/libs/ui",
+    "src/libs/utils"
   ],
   "packageManager": "npm@11.11.0",
   "dependencies": {

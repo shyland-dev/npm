@@ -11,10 +11,10 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "@shyland-dev/ui": ["src/ui/src/public-api.ts"],
-      "@shyland-dev/ui/*": ["src/ui/src/*"],
-      "@shyland-dev/utils": ["src/utils/src/public-api.ts"],
-      "@shyland-dev/utils/*": ["src/utils/src/*"]
+      "@shyland-dev/ui": ["src/libs/ui/src/public-api.ts"],
+      "@shyland-dev/ui/*": ["src/libs/ui/src/*"],
+      "@shyland-dev/utils": ["src/libs/utils/src/public-api.ts"],
+      "@shyland-dev/utils/*": ["src/libs/utils/src/*"]
     },
     "importHelpers": true,
     "target": "ES2022",
@@ -29,10 +29,10 @@
   "files": [],
   "references": [
     {
-      "path": "./src/utils/tsconfig.lib.json"
+      "path": "./src/libs/utils/tsconfig.lib.json"
     },
     {
-      "path": "./src/ui/tsconfig.lib.json"
+      "path": "./src/libs/ui/tsconfig.lib.json"
     }
   ]
 }
