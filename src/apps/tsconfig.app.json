@@ -2,12 +2,19 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/app",
-    "types": []
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "@shyland-dev/ui": ["../libs/ui/src/public-api.ts"],
+      "@shyland-dev/ui/*": ["../libs/ui/src/*"],
+      "@shyland-dev/utils": ["../libs/utils/src/public-api.ts"],
+      "@shyland-dev/utils/*": ["../libs/utils/src/*"]
+    }
   },
   "files": [
     "main.ts"
   ],
   "include": [
-    "**/*.d.ts"
+    "**/*.ts"
   ]
 }

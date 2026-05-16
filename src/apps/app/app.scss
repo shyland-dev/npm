@@ -12,6 +12,7 @@ main {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  scroll-behavior: smooth;
 }
 
 router-outlet {
@@ -28,14 +29,21 @@ header {
   @include fixedWidth(100%);
   @include fixedHeight($header-height);
 
-  > span {
+  > a {
     flex: 1;
     display: flex;
     align-items: center;
+    margin: 0;
     font-size: calc(#{$responsive-unit} * 12);
     font-family: sans-serif;
     font-weight: bolder;
     color: $color-dark;
+    text-decoration: none;
+    @include allVendors(transition, all 250ms ease-in-out);
+
+    &:hover {
+      color: $color-white;
+    }
   }
 
   nav {
@@ -52,9 +60,18 @@ header {
       font-family: sans-serif;
       color: $color-white;
       text-decoration: none;
+      @include allVendors(transition, all 250ms ease-in-out);
+
+      &:hover {
+        color: $color-success;
+      }
 
       &.active {
         color: $color-warning;
+      }
+
+      &.active:hover {
+        color: $color-danger;
       }
     }
   }
@@ -81,7 +98,21 @@ footer {
 
   h2 {
     font-size: calc(#{$responsive-unit} * 7);
-    color: $color-dark;
+    text-align: center;
     font-family: sans-serif;
+
+    #heart {
+      color: $color-danger;
+    }
+
+    a {
+      color: $color-danger;
+      font-family: monospace;
+      @include allVendors(transition, all 250ms ease-in-out);
+
+      &:hover {
+        color: $color-tertiary;
+      }
+    }
   }
 }

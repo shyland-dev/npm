@@ -15,6 +15,7 @@ button {
   border: none;
   border-radius: calc(#{$responsive-unit} * 2);
   cursor: pointer;
+  @include allVendors(transition, background 250ms ease-in-out);
 
   &:hover {
     background: $color-medium;
@@ -25,4 +26,15 @@ shy-icon {
   margin: calc(#{$responsive-unit} * 5);
   font-size: calc(#{$responsive-unit} * 15);
   color: $color-danger;
+}
+
+shy-select {
+  --shySelectHeight: calc(#{$responsive-unit} * 20);
+  --shySelectWidth: calc(#{$responsive-unit} * 90);
+  --shySelectBorderRadius: calc(#{$responsive-unit} * 2);
+  --shySelectBackground: #{$color-black};
+  --shySelectColor: #{$color-white};
+  --shySelectFontFamily: monospace;
+  --shySelectFontSize: calc(#{$responsive-unit} * 6);
+  --shySelectIconSize: calc(#{$responsive-unit} * 8);
 }
