@@ -1,0 +1,21 @@
+<button class="select__trigger" type="button" (click)="toggleDropdown()">
+  <span class="select__label">{{ selectedOption?.label ?? '&nbsp;' }}</span>
+
+  <shy-icon class="select__dropdown-icon" [class.select__dropdown-icon--open]="isOpen">{{ dropdownIcon }}</shy-icon>
+</button>
+
+@if (isOpen) {
+<ul class="select__dropdown">
+  @for (option of selectOptions; track option.id) {
+  <li class="select__option" [class.select__option--selected]="selectedOption?.id === option.id" (click)="selectOption(option)">
+    <span class="select__option-icon">
+      @if (selectedOption?.id === option.id) {
+      <shy-icon>{{ selectIcon }}</shy-icon>
+      }
+    </span>
+
+    <span class="select__option-label">{{ option.label }}</span>
+  </li>
+  }
+</ul>
+}

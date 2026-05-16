@@ -1,0 +1,100 @@
+@use 'sass:color';
+@use '../../styles' as *;
+
+:host {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  min-height: var(--shySelectHeight, calc(#{$responsive-unit} * 50));
+  min-width: var(--shySelectWidth, calc(#{$responsive-unit} * 90));
+  border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
+  background: var(--shySelectBackground, #{$color-dark});
+  color: var(--shySelectColor, #{$color-white});
+  font-family: var(--shySelectFontFamily, monospace);
+  font-size: var(--shySelectFontSize, calc(#{$responsive-unit} * 7));
+
+  shy-icon {
+    --shyIconSize: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+  }
+}
+
+.select {
+  &__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(#{$responsive-unit} * 3);
+    padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 7);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    width: 100%;
+    border-radius: inherit;
+    min-height: inherit;
+  }
+
+  &__label {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__dropdown-icon {
+    flex-shrink: 0;
+    transition: transform 250ms ease-in-out;
+
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    list-style: none;
+    margin: calc(#{$responsive-unit} * 1) 0 0 0;
+    padding: calc(#{$responsive-unit} * 2) 0;
+    background: var(--shySelectDropdownBackground, #{$color-dark});
+    border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
+    overflow: hidden;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: calc(#{$responsive-unit} * 3);
+    padding: calc(#{$responsive-unit} * 4) calc(#{$responsive-unit} * 7);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--shySelectOptionHoverBackground, #{color.adjust($color-dark, $lightness: 20%)});
+    }
+
+    &--selected {
+      color: var(--shySelectSelectedColor, #{$color-primary});
+    }
+  }
+
+  &__option-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+  }
+
+  &__option-label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

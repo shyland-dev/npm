@@ -1,6 +1,6 @@
 # @shyland-dev/ui
 
-Angular component library by Shyland Dev — inline SVG icons and a notification snackbar, ready to use.
+Angular component library by Shyland Dev — inline SVG icons, a notification snackbar, and a customizable select, ready to use.
 
 ## Requirements
 
@@ -39,32 +39,6 @@ Renders an inline SVG icon from the built-in catalog. Supports a _filled_ varian
 ```html
 <shy-icon [hoverFill]="true" [hoverFillDelay]="200">heart</shy-icon>
 ```
-
-#### Available icons
-
-Each icon has a `name` (outline) variant and a `name-filled` (filled) variant, except where noted.
-
-| Name            | Filled variant |
-| --------------- | -------------- |
-| `alert`         | ✓              |
-| `bell`          | ✓              |
-| `box`           | ✓              |
-| `check`         | —              |
-| `chevron-down`  | —              |
-| `chevron-right` | —              |
-| `download`      | —              |
-| `edit`          | —              |
-| `eye`           | —              |
-| `grid`          | ✓              |
-| `heart`         | ✓              |
-| `help`          | ✓              |
-| `home`          | ✓              |
-| `info`          | ✓              |
-| `layers`        | —              |
-| `lock`          | ✓              |
-| `mail`          | ✓              |
-
-> If an icon name is not found, the `help` icon is used as a fallback.
 
 To add new icons, place `.svg` files in `projects/shyland-dev/ui/src/assets/svg/` and run:
 
@@ -128,6 +102,51 @@ export class AppComponent {
 
 ---
 
+### `<shy-select>`
+
+A fully customizable dropdown select component with icon support.
+
+**Selector:** `shy-select`
+
+| Input             | Type             | Default        | Description                                 |
+| ----------------- | ---------------- | -------------- | ------------------------------------------- |
+| `selectOptions`   | `SelectOption[]` | `[]`           | Array of options to display in the dropdown |
+| `selectIcon`      | `string`         | `'check'`      | Icon shown next to the selected option      |
+| `dropdownIcon`    | `string`         | `'chevron-down'` | Icon shown in the trigger button          |
+
+| Output              | Payload                  | Description                          |
+| ------------------- | ------------------------ | ------------------------------------ |
+| `onSelectionChange` | `SelectionChangeEvent`   | Emitted when the user picks an option |
+
+**Basic usage:**
+
+```html
+<shy-select
+  [selectOptions]="array"
+  (onSelectionChange)="updateSelection($event)"
+  [selectIcon]="'check'"
+  [dropdownIcon]="'chevron-down'"
+></shy-select>
+```
+
+```typescript
+import { SelectOption, SelectionChangeEvent } from '@shyland-dev/ui';
+
+selectedOption = null;
+
+array: SelectOption[] = [
+  { id: 0, value: 'test1', label: 'Test' },
+  { id: 1, value: 'test2', label: 'This is awesome' },
+  { id: 2, value: 'test3', label: 'Testing the select' },
+];
+
+updateSelection(event: SelectionChangeEvent) {
+  this.selectedOption = event.selectedOption.value;
+}
+```
+
+---
+
 ## Styles
 
 The package exports a set of design tokens and SCSS variables. Import them in your `styles.scss`:
@@ -168,15 +187,34 @@ The package exports a set of design tokens and SCSS variables. Import them in yo
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
 
-| Token                      | Default                        | Description                          |
-| -------------------------- | ------------------------------ | ------------------------------------ |
-| `--shySnackbarBackground`  | `$color-dark` (`#222428`)      | Background color                     |
-| `--shySnackbarColor`       | `$color-white` (`#ffffff`)     | Text and icon color                  |
-| `--shySnackbarWidth`       | `110 * responsive-unit`        | width                                |
-| `--shySnackbarOffset`      | `15 * responsive-unit`         | Distance from top or bottom edge     |
-| `--shySnackbarFontFamily`  | `monospace`                    | Font family of the message text      |
-| `--shySnackbarFontSize`    | `7 * responsive-unit`          | Font size of the message text        |
-| `--shySnackbarIconSize`    | `8 * responsive-unit`          | Size of the dismiss icon             |
+| Token                          | Default                        | Description                          |
+| ------------------------------ | ------------------------------ | ------------------------------------ |
+| `--shySnackbarBackground`      | `$color-dark` (`#222428`)      | Background color                     |
+| `--shySnackbarColor`           | `$color-white` (`#ffffff`)     | Text and icon color                  |
+| `--shySnackbarWidth`           | `110 * responsive-unit`        | Width                                |
+| `--shySnackbarBorderRadius`    | `2 * responsive-unit`          | Border radius                        |
+| `--shySnackbarOffset`          | `15 * responsive-unit`         | Distance from top or bottom edge     |
+| `--shySnackbarFontFamily`      | `monospace`                    | Font family of the message text      |
+| `--shySnackbarFontSize`        | `7 * responsive-unit`          | Font size of the message text        |
+| `--shySnackbarIconSize`        | `8 * responsive-unit`          | Size of the dismiss icon             |
+
+### Select Tokens
+
+The `<shy-select>` component can be customized via CSS custom properties:
+
+| Token                              | Default                                 | Description                              |
+| ---------------------------------- | --------------------------------------- | ---------------------------------------- |
+| `--shySelectHeight`                | `50 * responsive-unit`                  | Minimum height of the trigger            |
+| `--shySelectWidth`                 | `90 * responsive-unit`                  | Minimum width of the component           |
+| `--shySelectBorderRadius`          | `2 * responsive-unit`                   | Border radius of trigger and dropdown    |
+| `--shySelectBackground`            | `$color-dark` (`#222428`)               | Background color of the trigger          |
+| `--shySelectColor`                 | `$color-white` (`#ffffff`)              | Text and icon color                      |
+| `--shySelectFontFamily`            | `monospace`                             | Font family                              |
+| `--shySelectFontSize`              | `7 * responsive-unit`                   | Font size                                |
+| `--shySelectIconSize`              | `8 * responsive-unit`                   | Size of all icons inside the component   |
+| `--shySelectDropdownBackground`    | `$color-dark` (`#222428`)               | Background color of the dropdown panel   |
+| `--shySelectSelectedColor`         | `$color-primary` (`#3880ff`)            | Color of the selected option             |
+| `--shySelectOptionHoverBackground` | `$color-dark` lightened 20% (`#51565f`) | Hover background of an option row        |
 
 ---
 
@@ -185,12 +223,14 @@ The `<shy-snackbar>` component can be customized via CSS custom properties on a 
 ```typescript
 // Components
 export { IconComponent } from './lib/components/icon/icon.component';
+export { SelectComponent } from './lib/components/select/select.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 
 // Services
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
 
 // Interfaces
+export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types

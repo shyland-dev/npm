@@ -14,7 +14,7 @@
   padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 7);
   background: var(--shySnackbarBackground, #{$color-dark});
   color: var(--shySnackbarColor, #{$color-white});
-  border-radius: calc(#{$responsive-unit} * 2);
+  border-radius: var(--shySnackbarBorderRadius, calc(#{$responsive-unit} * 2));
   min-width: var(--shySnackbarWidth, calc(#{$responsive-unit} * 110));
   opacity: 0;
   pointer-events: none;
