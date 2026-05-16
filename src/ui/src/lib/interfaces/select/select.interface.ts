@@ -1,6 +1,6 @@
 export interface SelectOption {
-  id: number | string;
-  value: unknown;
+  id: number;
+  value: string;
   label: string;
 }
 
