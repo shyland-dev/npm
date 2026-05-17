@@ -60,6 +60,13 @@
             "index": "src/apps/index.html",
             "browser": "src/apps/main.ts",
             "tsConfig": "src/apps/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/apps/assets",
+                "output": "assets"
+              }
+            ],
             "styles": ["src/apps/styles.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/libs/ui/src/lib"]

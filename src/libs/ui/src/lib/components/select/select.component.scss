@@ -92,6 +92,22 @@
     height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
   }
 
+  &__option-img {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: var(--shySelectOptionImgBorderRadius, 50%);
+    }
+  }
+
   &__option-label {
     flex: 1;
     white-space: nowrap;

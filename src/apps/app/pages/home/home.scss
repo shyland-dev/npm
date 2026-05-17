@@ -37,6 +37,7 @@ shy-select {
   --shySelectColor: #{$color-white};
   --shySelectOptionHoverBackground: #{$color-danger};
   --shySelectOptionHoverColor: #{$color-black};
+  --shySelectOptionImgBorderRadius: 50%;
   --shySelectSelectedColor: #{$color-warning};
   --shySelectFontFamily: monospace;
   --shySelectFontSize: calc(#{$responsive-unit} * 6);

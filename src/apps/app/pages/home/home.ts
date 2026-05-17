@@ -1,13 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DebugService } from '@shyland-dev/utils';
-import {
-  IconComponent,
-  SelectComponent,
-  SelectionChangeEvent,
-  SelectOption,
-  SnackbarComponent,
-  SnackbarService,
-} from '@shyland-dev/ui';
+import { IconComponent, SelectComponent, SelectionChangeEvent, SelectOption, SnackbarComponent, SnackbarService } from '@shyland-dev/ui';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +14,7 @@ export class Home implements OnInit, OnDestroy {
   selectedOption: string | null = null;
 
   array: SelectOption[] = [
-    { id: 0, value: 'test1', label: 'Test' },
+    { id: 0, value: 'test1', label: 'Test', img: 'assets/imgs/flag-br.svg' },
     { id: 1, value: 'test2', label: 'This is awesome' },
     { id: 2, value: 'test3', label: 'Testing the select' },
   ];

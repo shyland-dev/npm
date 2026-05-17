@@ -20,6 +20,12 @@
           }
         </span>
 
+        @if (option.img) {
+          <span class="select__option-img">
+            <img src="{{ option.img }}" alt="{{ option.label }}" />
+          </span>
+        }
+
         <span class="select__option-label">{{ option.label }}</span>
       </li>
     }
