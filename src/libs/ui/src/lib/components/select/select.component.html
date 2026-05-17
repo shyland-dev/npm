@@ -1,7 +1,7 @@
 <button class="select__trigger" type="button" (click)="toggleDropdown()">
   <span class="select__label">
-    @if (selectedOption) {
-      {{ selectedOption.label }}
+    @if (currentOption) {
+      {{ currentOption.label }}
     } @else {
       <ng-content></ng-content>
     }
@@ -13,9 +13,9 @@
 @if (isOpen) {
   <ul class="select__dropdown">
     @for (option of selectOptions; track option.id) {
-      <li class="select__option" [class.select__option--selected]="selectedOption?.id === option.id" (click)="selectOption(option)">
+      <li class="select__option" [class.select__option--selected]="currentOption?.id === option.id" (click)="selectOption(option)">
         <span class="select__option-icon">
-          @if (selectedOption?.id === option.id) {
+          @if (currentOption?.id === option.id) {
             <shy-icon>{{ selectIcon }}</shy-icon>
           }
         </span>

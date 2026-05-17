@@ -40,6 +40,8 @@ export class Home implements OnInit, OnDestroy {
       text: 'Olá, eu sou um Snackbar!',
       delay: 3000,
     });
+
+    this.selectedOption = 'test2';
   }
 
   updateSelection(event: SelectionChangeEvent) {

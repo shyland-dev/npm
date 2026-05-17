@@ -1,6 +1,6 @@
 <shy-snackbar #snackbar position="bottom"></shy-snackbar>
 
-<button (click)="showSnackbar()">Mostrar Snackbar</button>
+<button (click)="showSnackbar()">Mostrar Snackbar e mudar valor do select</button>
 
 <shy-icon>heart</shy-icon>
 
@@ -10,6 +10,6 @@
 
 <shy-icon [hoverFill]="true" [hoverFillDelay]="300">heart</shy-icon>
 
-<shy-select [selectOptions]="array" (onSelectionChange)="updateSelection($event)" [selectIcon]="'check'" [dropdownIcon]="'chevron-down'">Select an option</shy-select>
+<shy-select [selectOptions]="array" (onSelectionChange)="updateSelection($event)" [selectIcon]="'check'" [dropdownIcon]="'chevron-down'" [selectedOption]="selectedOption">Select an option</shy-select>
 
 <img src="assets/imgs/flag-br.svg" alt="test" />

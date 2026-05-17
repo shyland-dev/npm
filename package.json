@@ -11,7 +11,7 @@
     "build:ui": "ng build ui",
     "build:utils": "ng build utils",
     "generate:icons": "node scripts/generate-icons.mjs",
-    "serve:showcase": "ng serve showcase",
+    "serve:showcase": "ng serve showcase --port 4201",
     "build:showcase": "ng build showcase"
   },
   "private": true,
