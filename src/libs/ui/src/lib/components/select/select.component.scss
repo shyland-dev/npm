@@ -63,6 +63,7 @@
     padding: calc(#{$responsive-unit} * 2) 0;
     background: var(--shySelectDropdownBackground, #{$color-dark});
     border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
+    box-shadow: var(--shySelectDropdownBoxShadow, 0 0 calc(#{$responsive-unit} * 1.5) calc(#{$responsive-unit} * 0.1) #{$color-white});
     overflow: hidden;
   }
 

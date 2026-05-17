@@ -42,4 +42,5 @@ shy-select {
   --shySelectFontFamily: monospace;
   --shySelectFontSize: calc(#{$responsive-unit} * 6);
   --shySelectIconSize: calc(#{$responsive-unit} * 8);
+  --shySelectDropdownBoxShadow: 0 0 calc(#{$responsive-unit} * 1.5) calc(#{$responsive-unit} * 0.1) #{$color-white};
 }
