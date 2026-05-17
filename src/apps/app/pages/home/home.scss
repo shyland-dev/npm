@@ -33,7 +33,11 @@ shy-select {
   --shySelectWidth: calc(#{$responsive-unit} * 90);
   --shySelectBorderRadius: calc(#{$responsive-unit} * 2);
   --shySelectBackground: #{$color-black};
+  --shySelectDropdownBackground: #{$color-black};
   --shySelectColor: #{$color-white};
+  --shySelectOptionHoverBackground: #{$color-danger};
+  --shySelectOptionHoverColor: #{$color-black};
+  --shySelectSelectedColor: #{$color-warning};
   --shySelectFontFamily: monospace;
   --shySelectFontSize: calc(#{$responsive-unit} * 6);
   --shySelectIconSize: calc(#{$responsive-unit} * 8);

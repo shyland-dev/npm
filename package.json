@@ -6,6 +6,7 @@
   },
   "scripts": {
     "ng": "ng",
+    "start": "npm run serve:showcase",
     "build": "npm run build:ui && npm run build:utils",
     "build:ui": "ng build ui",
     "build:utils": "ng build utils",

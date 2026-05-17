@@ -5,13 +5,13 @@
   position: relative;
   display: inline-flex;
   flex-direction: column;
-  min-height: var(--shySelectHeight, calc(#{$responsive-unit} * 50));
+  min-height: var(--shySelectHeight, calc(#{$responsive-unit} * 20));
   min-width: var(--shySelectWidth, calc(#{$responsive-unit} * 90));
   border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
-  background: var(--shySelectBackground, #{$color-dark});
+  background: var(--shySelectBackground, #{$color-black});
   color: var(--shySelectColor, #{$color-white});
   font-family: var(--shySelectFontFamily, monospace);
-  font-size: var(--shySelectFontSize, calc(#{$responsive-unit} * 7));
+  font-size: var(--shySelectFontSize, calc(#{$responsive-unit} * 6));
 
   shy-icon {
     --shyIconSize: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
@@ -75,6 +75,7 @@
 
     &:hover {
       background: var(--shySelectOptionHoverBackground, #{color.adjust($color-dark, $lightness: 20%)});
+      color: var(--shySelectOptionHoverColor, #{$color-black});
     }
 
     &--selected {
