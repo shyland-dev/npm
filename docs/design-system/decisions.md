@@ -88,3 +88,10 @@ Fora das exceções, a F0 confirmou que `calc(var(--shy-responsive-unit) * N)` f
 - **Fato:** elementos do top layer (`dialog.showModal()`, `[popover]`) ignoram `z-index` entre si; vale a ordem de abertura. Só uma função SCSS não resolve "tooltip atrás de dialog".
 - **Decisão:** escala nomeada + `z()` para o que está fora do top layer, e promoção por ordem de abertura no `OverlayService` para o top layer. Detalhes na seção 7.5 do plano. Implementação: tokens/função na F1, promoção na F4.
 - **Risco aceito:** promoção reinicia o popover (sem animação nessa troca).
+
+### ADR-F0-8. Showcase de design e catálogo ampliado (2026-10-20)
+
+- **Decisão do dono:** camadas de z-index de 100 em 100 e custo da promoção dos overlays aceitos; quer mais refinamento e o máximo de componentes úteis.
+- **Showcase no Claude** (referência visual, px livre; não é código da lib): fundações, ação/formulário, feedback/overlays, loading/progresso, navegação/dados, nos dois temas.
+- **Catálogo:** Onda 1 ganha `Spinner` com 8 variantes, `Skeleton` e `ProgressCircular`; `Button` ganha `loadingPosition` (`start|end|replace`) e `loadingText`. Onda 3 detalha Tabs (underline/pill), Avatar, Table (seleção e ordenação).
+- **Achado do showcase:** o ícone de loading do botão sumia em uma variação porque dependia de `sc-if` aninhado no runtime do artifact; passou a existir sempre, escondido por classe. Problema do showcase, não do desenho do botão.

@@ -707,21 +707,23 @@ Tokens: `--shy-state-hover: 0.08`, `--shy-state-pressed: 0.12`.
 
 ### Onda 1: Ação, formulário e feedback básico
 
-| Componente       | Selector                                | API principal                                                                      | Estados / A11y                                    |
-| ---------------- | --------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------- |
-| Button           | `button[shyButton]`, `a[shyButton]`     | `variant: solid\|soft\|outline\|ghost\|link`, `intent`, `size`, `loading`, `block` | todos; `aria-busy`; ícone à esquerda/direita      |
-| IconButton       | `button[shyIconButton]`                 | `label` (obrigatório), `variant`, `size`                                           | alvo ≥ 24 px, 44 px em toque                      |
-| FormField        | `shy-form-field`                        | `label`, `hint`, `error`, `required`, prefix/suffix por projeção                   | liga label/hint/erro via ids e `aria-describedby` |
-| Input / Textarea | `input[shyInput]`, `textarea[shyInput]` | `size`, `invalid`; textarea com autosize opcional                                  | invalid, readonly, disabled, focus                |
-| Checkbox         | `shy-checkbox`                          | CVA, `indeterminate`                                                               | `<input>` nativo oculto visualmente               |
-| Radio            | `shy-radio-group` + `shy-radio`         | CVA, `orientation`                                                                 | roving tabindex, setas                            |
-| Switch           | `shy-switch`                            | CVA                                                                                | `role="switch"`                                   |
-| Spinner          | `shy-spinner`                           | `size`, `label`                                                                    | `role="status"`                                   |
-| Badge / Tag      | `shy-badge`                             | `intent`, `variant`                                                                | n/a                                               |
-| Divider          | `shy-divider`                           | `orientation`                                                                      | `role="separator"`                                |
-| Card             | `shy-card`                              | `variant`, `interactive`                                                           | slots header/body/footer                          |
-| Alert            | `shy-alert`                             | `intent`, `dismissible`, título/ação                                               | `role="alert"` ou `status`                        |
-| Progress         | `shy-progress`                          | `value`, indeterminado                                                             | `role="progressbar"`                              |
+| Componente       | Selector                                | API principal                                                                                                                   | Estados / A11y                                                   |
+| ---------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------- | -------------------------------------------- |
+| Button           | `button[shyButton]`, `a[shyButton]`     | `variant: solid\|soft\|outline\|ghost\|link`, `intent`, `size`, `loading`, `loadingPosition: start                              | end                                                              | replace`, `loadingText`, `block` | todos; `aria-busy`; ícone à esquerda/direita |
+| IconButton       | `button[shyIconButton]`                 | `label` (obrigatório), `variant`, `size`                                                                                        | alvo ≥ 24 px, 44 px em toque                                     |
+| FormField        | `shy-form-field`                        | `label`, `hint`, `error`, `required`, prefix/suffix por projeção                                                                | liga label/hint/erro via ids e `aria-describedby`                |
+| Input / Textarea | `input[shyInput]`, `textarea[shyInput]` | `size`, `invalid`; textarea com autosize opcional                                                                               | invalid, readonly, disabled, focus                               |
+| Checkbox         | `shy-checkbox`                          | CVA, `indeterminate`                                                                                                            | `<input>` nativo oculto visualmente                              |
+| Radio            | `shy-radio-group` + `shy-radio`         | CVA, `orientation`                                                                                                              | roving tabindex, setas                                           |
+| Switch           | `shy-switch`                            | CVA                                                                                                                             | `role="switch"`                                                  |
+| Spinner          | `shy-spinner`                           | `variant: ring\|ring-track\|dash\|dots\|bars\|pulse\|orbit\|breathe`, `size: xs\|sm\|md\|lg`, `label`; cor herda `currentColor` | `role="status"`; com reduced-motion todas viram fade (`breathe`) |
+| Skeleton         | `shy-skeleton`                          | `shape: text\|circle\|rect`, `animation: shimmer\|still`                                                                        | decorativo (`aria-hidden`); a região leva `aria-busy`            |
+| ProgressCircular | `shy-progress-circular`                 | `value`, indeterminado, `size`                                                                                                  | `role="progressbar"`                                             |
+| Badge / Tag      | `shy-badge`                             | `intent`, `variant`                                                                                                             | n/a                                                              |
+| Divider          | `shy-divider`                           | `orientation`                                                                                                                   | `role="separator"`                                               |
+| Card             | `shy-card`                              | `variant`, `interactive`                                                                                                        | slots header/body/footer                                         |
+| Alert            | `shy-alert`                             | `intent`, `dismissible`, título/ação                                                                                            | `role="alert"` ou `status`                                       |
+| Progress         | `shy-progress`                          | `value`, indeterminado                                                                                                          | `role="progressbar"`                                             |
 
 ### Onda 2: Overlays (núcleo "do zero")
 
@@ -738,7 +740,7 @@ Tokens: `--shy-state-hover: 0.08`, `--shy-state-pressed: 0.12`.
 
 ### Onda 3: Navegação e dados
 
-Tabs, Accordion, Breadcrumb, Pagination, Stepper, Avatar, Skeleton, Table (estilizada + ordenação básica), List, EmptyState, AppShell (header/sidebar/footer responsivo), Combobox/Autocomplete, Slider, FileDropzone.
+Tabs (underline e pill; o pill é a base do `shy-theme-toggle`), Accordion, Breadcrumb, Pagination, Stepper, Avatar (tamanhos, status, grupo), Table (estilizada + ordenação básica + seleção), List, EmptyState, AppShell (header/sidebar/footer responsivo), Combobox/Autocomplete, Slider, FileDropzone.
 
 ### Onda 4: Opcional / endurecimento
 
