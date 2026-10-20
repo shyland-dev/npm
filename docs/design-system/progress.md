@@ -26,7 +26,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
-| F3-S3  | FormField, Input, Textarea                                                         | gate      |         |
+| F3-S3  | FormField, Input, Textarea                                                         | gate      | e119878 |
 | F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
