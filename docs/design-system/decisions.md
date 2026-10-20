@@ -109,3 +109,5 @@ Dono revisou os boards e pediu 5 correções, aplicadas no showcase e registrada
 | Linha do stepper pouco visível                                  | Usava `border` (decorativa)                                                   | Token `--shy-color-line` (mais claro no escuro, mais escuro no claro)                                             |
 
 Os novos pares entram em `scripts/contrast-pairs.json` na F1 (texto ≥ 4,5:1; `line` sobre `surface` ≥ 3:1).
+
+**Complemento (mesmo dia):** no tema escuro o painel `scrim-panel` (preto 82%) sumia sobre o scrim preto. Passou a ser neutral-800 com borda neutral-500 e sombra no escuro; no claro continua `rgb(7 8 17 / 82%)`.

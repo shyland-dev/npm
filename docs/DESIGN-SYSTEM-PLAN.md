@@ -443,23 +443,23 @@ Nota: as escalas `primary` 400/500 foram geradas com clamp de gamut e ficam um p
 
 #### Semânticos (o que os componentes realmente usam)
 
-| Token                                                                                                    | Escuro (padrão)                 | Claro                     |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------- | ------------------------- |
-| `--shy-color-bg`                                                                                         | neutral-950                     | neutral-50                |
-| `--shy-color-surface`                                                                                    | neutral-900                     | `#FFFFFF`                 |
-| `--shy-color-surface-raised` (dialog, popover, menu)                                                     | neutral-850                     | `#FFFFFF` (+ sombra)      |
-| `--shy-color-surface-sunken` (fundo de input)                                                            | neutral-950                     | neutral-100               |
-| `--shy-color-text`                                                                                       | neutral-50                      | neutral-950               |
-| `--shy-color-text-muted`                                                                                 | neutral-300                     | neutral-700               |
-| `--shy-color-text-subtle`                                                                                | neutral-400                     | neutral-600               |
-| `--shy-color-text-disabled`                                                                              | neutral-600                     | neutral-400               |
-| `--shy-color-border` (decorativa)                                                                        | neutral-800                     | neutral-200               |
-| `--shy-color-border-strong` (controles; ≥3:1)                                                            | neutral-500                     | neutral-500               |
-| `--shy-color-scrim`                                                                                      | `rgb(0 0 0 / 60%)`              | `rgb(7 8 17 / 40%)`       |
-| `--shy-color-line` (conectores: stepper, divisores de lista)                                             | neutral-700                     | neutral-400               |
-| `--shy-color-neutral-soft` / `--shy-color-on-neutral-soft` (chip "+N", badge neutro, avatar de contagem) | neutral-700 / neutral-50        | neutral-300 / neutral-900 |
-| `--shy-color-scrim-panel` / `--shy-color-on-scrim` (mensagem sobre scrim: overlay de loading)            | `rgb(7 8 17 / 82%)` / `#FFFFFF` | idem                      |
-| `--shy-color-focus` (anel de foco)                                                                       | primary-400                     | primary-600               |
+| Token                                                                                                    | Escuro (padrão)                          | Claro                           |
+| -------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ------------------------------- |
+| `--shy-color-bg`                                                                                         | neutral-950                              | neutral-50                      |
+| `--shy-color-surface`                                                                                    | neutral-900                              | `#FFFFFF`                       |
+| `--shy-color-surface-raised` (dialog, popover, menu)                                                     | neutral-850                              | `#FFFFFF` (+ sombra)            |
+| `--shy-color-surface-sunken` (fundo de input)                                                            | neutral-950                              | neutral-100                     |
+| `--shy-color-text`                                                                                       | neutral-50                               | neutral-950                     |
+| `--shy-color-text-muted`                                                                                 | neutral-300                              | neutral-700                     |
+| `--shy-color-text-subtle`                                                                                | neutral-400                              | neutral-600                     |
+| `--shy-color-text-disabled`                                                                              | neutral-600                              | neutral-400                     |
+| `--shy-color-border` (decorativa)                                                                        | neutral-800                              | neutral-200                     |
+| `--shy-color-border-strong` (controles; ≥3:1)                                                            | neutral-500                              | neutral-500                     |
+| `--shy-color-scrim`                                                                                      | `rgb(0 0 0 / 60%)`                       | `rgb(7 8 17 / 40%)`             |
+| `--shy-color-line` (conectores: stepper, divisores de lista)                                             | neutral-700                              | neutral-400                     |
+| `--shy-color-neutral-soft` / `--shy-color-on-neutral-soft` (chip "+N", badge neutro, avatar de contagem) | neutral-700 / neutral-50                 | neutral-300 / neutral-900       |
+| `--shy-color-scrim-panel` / `--shy-color-on-scrim` (mensagem sobre scrim: overlay de loading)            | neutral-800 + borda neutral-500 + sombra | `rgb(7 8 17 / 82%)` + sem borda |
+| `--shy-color-focus` (anel de foco)                                                                       | primary-400                              | primary-600                     |
 
 Por intenção `X` ∈ `primary | success | warning | danger | info`, 5 tokens cada:
 
@@ -676,7 +676,7 @@ Tokens: `--shy-state-hover: 0.08`, `--shy-state-pressed: 0.12`.
 4. Funciona nos dois temas e com `reduced-motion`; **sem literal de cor, unidade ou tempo** (`check-ds` verde).
 5. Tokens de override documentados (`--shy-<comp>-*`).
 6. Testes unitários passando; página no showcase; README atualizado.
-7. Lições da revisão visual (2026-10-20): botão tem `background: transparent` na base (sem fundo do navegador); conteúdo em loading mantém respiro lateral mínimo (≥ `--shy-space-6`) e a largura do botão; texto sobre scrim usa `--shy-color-scrim-panel` + `--shy-color-on-scrim`, nunca o scrim puro; chips neutros e conectores usam `neutral-soft` e `line`, nunca `surface-raised`/`border` (somem no tema oposto).
+7. Lições da revisão visual (2026-10-20): botão tem `background: transparent` na base (sem fundo do navegador); conteúdo em loading mantém respiro lateral mínimo (≥ `--shy-space-6`) e a largura do botão; texto sobre scrim usa `--shy-color-scrim-panel` + `--shy-color-on-scrim`, nunca o scrim puro; no escuro o painel precisa se destacar do scrim preto (fundo neutral-800 + borda + sombra), no claro basta o painel escuro; chips neutros e conectores usam `neutral-soft` e `line`, nunca `surface-raised`/`border` (somem no tema oposto).
 
 ### 11.4 Padrão de tokens de componente
 
