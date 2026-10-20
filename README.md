@@ -29,6 +29,16 @@ npm run build   # Compila as libs para dist/
 | `npm run build:showcase` | Build do showcase                                                  |
 | `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/libs/ui/src/assets/svg/` |
 
+## Design System (em desenvolvimento)
+
+A lib `@shyland-dev/ui` está sendo reescrita como Design System na branch `feat/design-system`.
+
+- Plano mestre: [`docs/DESIGN-SYSTEM-PLAN.md`](docs/DESIGN-SYSTEM-PLAN.md) (fases F0 a F5, tokens, temas, unidades, componentes).
+- Regras do repo para o Claude: [`CLAUDE.md`](CLAUDE.md).
+- Estado das fases: [`docs/design-system/progress.md`](docs/design-system/progress.md).
+
+Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele lê o estado em `progress.md` e executa o próximo passo (plano da fase, implementação ou gate com commit). `/build status` mostra onde está sem executar nada. Não confundir com `npm run build`.
+
 ## Componentes (`@shyland-dev/ui`)
 
 | Componente   | Selector         | Descrição                                                         |
@@ -412,7 +422,11 @@ npm/
 │       └── utils/                  # @shyland-dev/utils — utilitários
 │           └── src/lib/services/
 │               └── debug.service.ts
+├── docs/
+│   ├── DESIGN-SYSTEM-PLAN.md       # Plano mestre do Design System
+│   └── design-system/              # Decisões e progresso das fases
 ├── scripts/
 │   └── generate-icons.mjs          # Gera icons.ts a partir dos SVGs
+├── CLAUDE.md                       # Regras do repo e comando /build
 └── angular.json
 ```
