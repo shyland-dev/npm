@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F3 Onda 1**, sessão **F3-S2** (Spinner, Skeleton, ProgressCircular, Progress)
-- Estado: `aguardando-gate`
+- Fase: **F3 Onda 1**, sessão **F3-S3** (FormField, Input, Textarea)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- A F3-S2 foi executada, verificada, commitada e enviada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S2: relatório do gate". O próximo `/build` aprova o gate (ou um ajuste vira commit novo) e avança para a F3-S3 em `aguardando-plano`.
+- Gate da F3-S2 aprovado pelo `/build` de 2026-10-20 (commit `53e2902`). O plano da F3-S3 está em `sessions/F3-onda-1.md`; o próximo `/build` o aprova e executa a sessão.
 
 ## Fases
 
@@ -25,8 +25,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | Sessão | Escopo                                                                             | Status    | Commit  |
 | ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
-| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | gate      | 53e2902 |
-| F3-S3  | FormField, Input, Textarea                                                         | pendente  |         |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
+| F3-S3  | FormField, Input, Textarea                                                         | plano     |         |
 | F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
@@ -47,6 +47,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: F3 a F5 divididas em sessões curtas (`docs/design-system/sessions/`), para o dono rodar uma por sessão do Claude.
 - 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou. Gate em `aguardando-gate`; relatório abaixo.
 - 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou (Spinner, Skeleton, Progress, ProgressCircular, Button com o Spinner). Verificações verdes, commit e push em `feat/design-system`; gate em `aguardando-gate`.
+- 2026-10-20: `/build` aprovou o gate da F3-S2 (`53e2902`, já enviado). F3-S3 em `aguardando-plano`.
 
 ## F3-S2: relatório do gate (2026-10-20)
 
