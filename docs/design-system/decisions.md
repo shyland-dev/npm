@@ -88,6 +88,7 @@ Fora das exceções, a F0 confirmou que `calc(var(--shy-responsive-unit) * N)` f
 - **Fato:** elementos do top layer (`dialog.showModal()`, `[popover]`) ignoram `z-index` entre si; vale a ordem de abertura. Só uma função SCSS não resolve "tooltip atrás de dialog".
 - **Decisão:** escala nomeada + `z()` para o que está fora do top layer, e promoção por ordem de abertura no `OverlayService` para o top layer. Detalhes na seção 7.5 do plano. Implementação: tokens/função na F1, promoção na F4.
 - **Risco aceito:** promoção reinicia o popover (sem animação nessa troca).
+- **Emenda (ADR-F4-1, 2026-10-20, decisão do dono: híbrido):** o `OverlayService` cria um container `.shy-overlay-container` (modelo do `.cdk-overlay-container` do Angular Material/CDK: elemento fixo no `body`, tela cheia, `pointer-events: none`, criado sob demanda e removido quando não há overlay) que hospeda os painéis e o backdrop de cada overlay modal. Com Popover API/`<dialog>` disponíveis, o painel e o backdrop vão para o top layer (promoção por ordem de abertura, como acima); sem eles, o container usa `position: fixed` com `z()`. Corrige a premissa do pedido: no CDK o container existe sempre e só painéis/backdrop entram ao abrir; aqui ele também nasce e some sob demanda. API pública do `OverlayService` ainda a detalhar na F4-S1.
 
 ### ADR-F0-8. Showcase de design e catálogo ampliado (2026-10-20)
 

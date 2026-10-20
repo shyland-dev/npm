@@ -49,6 +49,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou (Spinner, Skeleton, Progress, ProgressCircular, Button com o Spinner). Verificações verdes, commit e push em `feat/design-system`; gate em `aguardando-gate`.
 - 2026-10-20: `/build` aprovou o gate da F3-S2 (`53e2902`, já enviado). F3-S3 em `aguardando-plano`.
 - 2026-10-20: feedback do dono (não é aprovação): o sistema de z-index/overlay pode se basear no Angular Material/CDK (container fixo em tela cheia + backdrop, só renderizado quando há overlay). Impacta ADR-F0-7 / seção 7.5 do plano e a F4-S1. Decisão de alto impacto: alternativas comparadas na thread, aguardando resposta do dono; nada alterado no plano ainda. Estado segue `aguardando-plano` da F3-S3.
+- 2026-10-20: dono escolheu o **híbrido** para o overlay (ADR-F4-1): container sob demanda com backdrop estilo CDK + top layer + `z()` fallback. Aplicado em ADR-F0-7 (emenda), plano 7.5 (item 3) e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F3-S3.
 
 ## F3-S2: relatório do gate (2026-10-20)
 

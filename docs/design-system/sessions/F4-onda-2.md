@@ -13,7 +13,7 @@ Fonte: plano mestre seção 12 (Onda 2), seção sobre camadas/overlay e ADR-F0-
 - `OverlayService`: abre/fecha camadas via top layer (`<dialog>`/Popover API quando disponível, fallback com `position: fixed` + `z()`); ordem por abertura (promoção: a última aberta fica por cima); Esc fecha só a camada do topo; fecha ao clicar fora (configurável); `animateOut` na saída.
 - Teste de integração no showcase `foundations/layers` (abrir três camadas, conferir ordem).
 
-**Decisão de alto impacto a registrar (ADR-F4-1)**: API pública do `OverlayService` e estratégia de top layer vs `z-index`. Comparar e esperar resposta do dono antes de executar.
+**ADR-F4-1 (estratégia decidida pelo dono em 2026-10-20: híbrido)**: container `.shy-overlay-container` sob demanda com backdrop (modelo CDK) + top layer quando disponível + `z()` como fallback (plano 7.5, item 3). Falta só detalhar a API pública do `OverlayService` no plano da sessão; se a API tiver alternativas de alto impacto, comparar e esperar resposta antes de executar.
 
 **Gate**: Esc/foco/scroll lock testados; sem dependências; Popover API stubada nos testes (ver `test-setup.ts`).
 

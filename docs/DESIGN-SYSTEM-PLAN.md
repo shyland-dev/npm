@@ -530,6 +530,7 @@ Alvo de toque: controles ≥ 24 px em qualquer viewport (WCAG 2.5.8 AA; o script
     - O app consumidor pode inserir uma camada própria (ex.: `--shy-z-chat: 850`) entre duas existentes sem tocar a lib.
 2. **Ordem de abertura para o top layer, com promoção.** O `OverlayService` mantém a pilha dos overlays abertos com o **rank** da camada. Ao abrir um overlay de rank `r`, qualquer popover/toast/tooltip aberto de rank maior é promovido (`hidePopover()` + `showPopover()` sem animação, `data-promoting`) para continuar acima. Resultado: tooltip e toast nunca ficam atrás de um dialog; dialog sobre dialog empilha pela ordem natural. `<dialog>` é usado só para `modal`/`drawer` (não dá para promover sem fechar); o resto usa `[popover="manual"]`.
     - Custo conhecido: a promoção reinicia o estado do popover (foco e transição); por isso o tooltip fecha ao abrir um modal e o toast é reapresentado sem animação.
+3. **Container de overlay sob demanda (decisão do dono, 2026-10-20, ADR-F4-1; inspirado no CDK).** O `OverlayService` cria `.shy-overlay-container` no `body` (fixo, tela cheia, `pointer-events: none`) quando o primeiro overlay abre e o remove quando o último fecha. Ele hospeda painéis e o backdrop dos modais (`pointer-events: auto` só neles). Com top layer disponível, os painéis são promovidos a ele (mecanismo 2); sem, o container fica em `z(modal)` e os painéis empilham pela ordem no DOM e por `z()`.
 
 Regras:
 
