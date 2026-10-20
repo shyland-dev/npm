@@ -111,3 +111,20 @@ Dono revisou os boards e pediu 5 correções, aplicadas no showcase e registrada
 Os novos pares entram em `scripts/contrast-pairs.json` na F1 (texto ≥ 4,5:1; `line` sobre `surface` ≥ 3:1).
 
 **Complemento (mesmo dia):** no tema escuro o painel `scrim-panel` (preto 82%) sumia sobre o scrim preto. Passou a ser neutral-800 com borda neutral-500 e sombra no escuro; no claro continua `rgb(7 8 17 / 82%)`.
+
+## ADRs da F1 (decisões do dono em 2026-10-20)
+
+### ADR-F1-1. Baseline de unidades para o ícone (D-F1-1: opção a)
+
+`scripts/units-baseline.json` lista só `icon.component.scss` (5 linhas com `1em`) até o refactor do ícone na F2. O `check-units` falha em qualquer violação fora da baseline e em baseline que não encolhe; o gate da F2 exige a baseline **vazia**.
+
+### ADR-F1-2. Fontes copiadas dos pacotes oficiais (D-F1-2: opção a)
+
+Os `woff2` variáveis latin de JetBrains Mono e Inter são copiados **uma vez** de `@fontsource-variable/*` para `src/libs/ui/src/assets/fonts/`, com o `OFL.txt`. Nenhum pacote entra em `package.json`. Antes do commit: conferir o texto da OFL e o copyright com a página oficial de cada fonte e o orçamento (≲ 150 KB, `check-fonts`).
+
+### ADR-F1-3. `_variables.scss` removido no `0.1.0` (D-F1-3: opção b)
+
+- **Decisão:** `$color-*` (paleta Ionic), `$responsive-unit` e `$dynamic-*` saem no `0.1.0`, sem shim publicado. Permitido em `0.x` (D6); é exceção explícita à política de depreciação (seção 6.5), que continua valendo para o alias **CSS** `--responsive-unit` (D9, até a `1.0.0`).
+- **Efeito no plano:** a F1 mantém o arquivo só como shim interno (select, snackbar e showcase ainda o importam); a F2 migra os usos restantes e o apaga, e o `check-units` passa a falhar em qualquer uso. `migration-0.0-to-0.1.md` traz a tabela `$color-*` → token e o passo de `$responsive-unit` → `ru()`.
+- **Premissa a confirmar:** as variáveis CSS sem prefixo `--dynamic-height`, `--dynamic-width` e `*-unit` (também em `_variables.scss`) saem junto; viram `--shy-dynamic-*`. Só `--responsive-unit` mantém alias (D9). Se você quiser alias para elas, diga.
+- **Risco:** consumidores que ainda usam `$color-*` ou `$responsive-unit` quebram ao subir para `0.1.0`; por isso a migração fica documentada e o bump só acontece a pedido.

@@ -7,7 +7,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - Fase: **F1 Unidades, tokens, temas, fontes**
 - Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Próximo `/build`: aprova o plano da F1 abaixo (tarefas T1–T11) e o executa, **somente depois** que o dono responder às decisões D-F1-1 a D-F1-3. Um `/build` sem resposta a elas NÃO as aprova.
+- Próximo `/build`: aprova o plano da F1 abaixo (tarefas T1–T11) e o executa. As decisões D-F1-1 a D-F1-3 já foram respondidas (1a, 2a, 3b).
 
 ## Fases
 
@@ -44,13 +44,15 @@ Escopo do plano mestre (seção 16): `styles/` (6.2), `units.css` + `ru()` + hel
 
 `npm run check:ds` verde (incluindo `check-units` e `check-calibration`); `npm test`, `npm run build` e `npm run build:showcase` verdes; temas sem flash; contraste ok nos dois temas; zero unidade proibida (exceto a baseline da D-F1-1); relatório com arquivos principais, efeito prático e decisões; mensagem de commit proposta (pt-BR); parar.
 
-### Decisões em aberto (alto impacto: o `/build` NÃO as aprova)
+### Decisões (respondidas pelo dono em 2026-10-20; detalhes em `decisions.md`, ADR-F1-1 a 3)
 
-| #      | Decisão                                                                                                                                                                                                                                                                                                                                                                                                                                               | Recomendação                                                                                                                                                                                      |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D-F1-1 | O `icon.component.scss` usa `1em` (5 linhas), unidade proibida, mas é o jeito de o ícone acompanhar o `font-size` de quem o usa; trocar por tamanho em ru é breaking e pertence ao refactor do ícone (F2). Como o gate da F1 exige zero unidade proibida: (a) fixar uma **baseline** `scripts/units-baseline.json` só com esse arquivo, que a F2 esvazia (o gate da F2 exige baseline vazia); (b) refatorar o ícone já na F1, adiantando parte da F2. | (a): F1 fica só em fundação e o breaking do ícone entra junto do refactor, com a troca documentada.                                                                                               |
-| D-F1-2 | Origem dos arquivos de fonte (D4: self-hosted, OFL incluída): (a) eu baixo **uma vez** os `woff2` variáveis latin dos pacotes oficiais `@fontsource-variable/jetbrains-mono` e `@fontsource-variable/inter` (OFL, não viram dependência: só os arquivos e o texto da licença são copiados para o repo); (b) você baixa de fonts.google.com ou gwfh.mranftl.com como na seção 18 do plano e coloca no repo.                                            | (a): já validei que o pacote entrega `woff2` latin (JetBrains Mono: 40 KB) com o texto da OFL; confiro o orçamento (≲ 150 KB) e o `OFL.txt` com a página oficial de cada fonte antes de commitar. |
-| D-F1-3 | O que fazer com `_variables.scss` (paleta Ionic `$color-*`, `$responsive-unit`, `$dynamic-*`), que é API publicada em `@shyland-dev/ui/styles`: (a) manter como shim `@deprecated` no `_index.scss` até a `1.0.0` (política de depreciação da seção 6.5), sem uso interno depois da F2; (b) remover já no `0.1.0`, permitido em `0.x` (D6), com nota de migração.                                                                                     | (a): custo zero para consumidores atuais e alinhado à política do plano; a remoção fica registrada para a `1.0.0`.                                                                                |
+| #      | Decisão                                                          | Escolha                                                                                                                   |
+| ------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| D-F1-1 | `1em` do `icon.component.scss`                                   | **a**: baseline `scripts/units-baseline.json` só com esse arquivo; a F2 a esvazia                                         |
+| D-F1-2 | Origem das fontes                                                | **a**: copiar uma vez os `woff2` de `@fontsource-variable/*` (sem dependência) com `OFL.txt` conferida na página oficial  |
+| D-F1-3 | `_variables.scss` (`$color-*`, `$responsive-unit`, `$dynamic-*`) | **b**: removido no `0.1.0`, sem shim publicado; shim interno só na F1/F2 (T3/T9 mantêm o arquivo até a F2 migrar os usos) |
+
+Ajustes no plano por causa dessas respostas: T3 e T9 não criam alias SCSS publicado; a F2 passa a incluir a migração dos `$color-*` e a exclusão de `_variables.scss`; `migration-0.0-to-0.1.md` (T11) traz a tabela `$color-*` → token. A seção 6.5 do plano foi atualizada.
 
 ### Premissas desta fase
 
@@ -110,4 +112,5 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: refino do plano antes da F1: seção 7.5 (camadas de z-index, `z()`, promoção de overlays no top layer) e ADR-F0-7; showcase de design publicado no Claude (artifact "Shyland UI Showcase"), só para avaliação visual.
 - 2026-10-20: dono aprovou camadas de 100 em 100 e o custo da promoção; pediu mais refinamento e componentes. Showcase ampliado (loading/progresso e navegação/dados), plano com Spinner (8 variantes), Skeleton, ProgressCircular e `loadingPosition` (ADR-F0-8).
 - 2026-10-20: dono revisou os boards e pediu 5 ajustes visuais; aplicados no showcase e anotados na ADR-F0-9 e no plano (novos tokens `line`, `neutral-soft`, `scrim-panel`). Após esse ajuste, o dono considera o plano pronto para seguir.
-- 2026-10-20: `/build` no estado `aguardando-gate`: gate da F0 aprovado (commits só de documentação, já enviados). F1 passou para `planejar` → plano escrito acima, estado `aguardando-plano`, com 3 decisões de alto impacto em aberto (D-F1-1 a D-F1-3).
+- 2026-10-20: `/build` no estado `aguardando-gate`: gate da F0 aprovado (commits só de documentação, já enviados). F1 passou para `planejar` → plano escrito acima, estado `aguardando-plano`,
+- 2026-10-20: dono respondeu D-F1-1 a D-F1-3 (a, a, b); registrado em ADR-F1-1 a 3 e na seção 6.5 do plano. Estado segue `aguardando-plano`: falta o `/build` que aprova o plano da F1.

@@ -201,7 +201,7 @@ styles/
 
 - Tokens em **CSS puro** (sem Sass nem build step). SCSS só para função/mixins.
 - Consumo no app Angular: `angular.json > styles` apontando para `node_modules/@shyland-dev/ui/styles/index.css`, ou `@import` no `styles.scss`. O CLI valida **os dois** no showcase e documenta o que funcionou.
-- Remover `_variables.scss` (`$color-*`, `$responsive-unit`). Os utilitários dvh/dvw viram `--shy-dynamic-height`, `--shy-dynamic-width` (mantêm `@supports` de `dvh/dvw`) e as `*-unit` derivadas.
+- Remover `_variables.scss` (`$color-*`, `$responsive-unit`, `$dynamic-*`) no `0.1.0`, sem shim publicado (decisão 2026-10-20; ver 6.5). O alias **CSS** `--responsive-unit` continua até a `1.0.0` (D9). Os utilitários dvh/dvw viram `--shy-dynamic-height`, `--shy-dynamic-width` (mantêm `@supports` de `dvh/dvw`) e as `*-unit` derivadas.
 
 ### 6.3 Mecanismo de tema
 
@@ -281,14 +281,14 @@ Consequências que a regra traz (aceitas; mitigadas no plano, sem quebrar a regr
 
 ### 6.5 Depreciação do `--responsive-unit` (e do `$responsive-unit`)
 
-Status: **depreciado** (não "legado"). O nome oficial é `--shy-responsive-unit`. A fórmula é a mesma (`calc(0.1rem + 0.1vmin)`), então o alias antigo continua funcionando e **nada quebra ao atualizar a lib**.
+Status: o alias **CSS** `--responsive-unit` está **depreciado** (não "legado") e o alias **SCSS** `$responsive-unit` será **removido no `0.1.0`** (ver a tabela). O nome oficial é `--shy-responsive-unit`. A fórmula é a mesma (`calc(0.1rem + 0.1vmin)`), então o alias antigo continua funcionando e **nada quebra ao atualizar a lib**.
 
-| Item                         | Antes                                               | Agora                   | Prazo                                                             |
-| ---------------------------- | --------------------------------------------------- | ----------------------- | ----------------------------------------------------------------- |
-| Variável CSS                 | `--responsive-unit`                                 | `--shy-responsive-unit` | Alias em `tokens/units.css` (marcado `@deprecated`) até a `1.0.0` |
-| Variável SCSS                | `$responsive-unit` (valia `var(--responsive-unit)`) | função `ru(N)`          | Alias em `_index.scss` (comentário `@deprecated`) até a `1.0.0`   |
-| Uso interno (lib + showcase) | misto                                               | só o novo               | `check-units` falha em qualquer uso do antigo (a partir da F1)    |
-| Remoção                      | n/a                                                 | n/a                     | `1.0.0`, registrada no changelog                                  |
+| Item                         | Antes                                                                                         | Agora                             | Prazo                                                                                                                                                                                                  |
+| ---------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Variável CSS                 | `--responsive-unit`                                                                           | `--shy-responsive-unit`           | Alias em `tokens/units.css` (marcado `@deprecated`) até a `1.0.0`                                                                                                                                      |
+| Variável SCSS                | `$responsive-unit` (valia `var(--responsive-unit)`), `$dynamic-*` e `$color-*` (paleta Ionic) | função `ru(N)` e tokens `--shy-*` | **Removidos no `0.1.0`** (decisão do dono em 2026-10-20, permitida em `0.x`, D6). Ficam como shim interno só durante a F1 e a F2 e saem junto do re-skin dos componentes; sem alias SCSS até a `1.0.0` |
+| Uso interno (lib + showcase) | misto                                                                                         | só o novo                         | `check-units` falha em qualquer uso do antigo (a partir da F1)                                                                                                                                         |
+| Remoção                      | n/a                                                                                           | n/a                               | `1.0.0`, registrada no changelog                                                                                                                                                                       |
 
 O CLI copia esta seção para `docs/design-system/migration-0.0-to-0.1.md`.
 
