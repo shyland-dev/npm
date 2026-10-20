@@ -27,12 +27,12 @@ Hover e pressed não têm cor própria: usam a camada de estado (`--shy-state-ho
 
 `npm run check:ds` roda:
 
-| Script              | Garante                                                                                                                            |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `check-tokens`      | mesmos tokens semânticos nos dois temas; `var(--shy-x)` sem fallback sempre definido; `$layers` = `layers.css`                     |
-| `check-contrast`    | 100 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas                     |
-| `check-calibration` | tamanhos em px nos viewports de referência                                                                                         |
-| `check-hardcoded`   | sem cor, tempo, easing, `z-index` nem `font-family` literais em SCSS de componente (baseline em `scripts/hardcoded-baseline.json`) |
+| Script              | Garante                                                                                                        |
+| ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `check-tokens`      | mesmos tokens semânticos nos dois temas; `var(--shy-x)` sem fallback sempre definido; `$layers` = `layers.css` |
+| `check-contrast`    | 100 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas |
+| `check-calibration` | tamanhos em px nos viewports de referência                                                                     |
+| `check-hardcoded`   | sem cor, tempo, easing, `z-index` nem `font-family` literais em SCSS de componente                             |
 
 Para ajustar uma cor, mude o primitivo/semântico e rode `npm run check:ds`; a página `/foundations/colors` mostra o resultado nos dois temas.
 

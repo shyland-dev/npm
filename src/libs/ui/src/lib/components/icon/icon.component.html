@@ -1,7 +1,7 @@
-<span #iconName class="icon-name"><ng-content></ng-content></span>
-<div class="icon-wrapper" [style.--hover-delay]="hoverFillDelay + 'ms'" (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()">
-  <span class="icon-layer" [style.opacity]="isHovered && svgHoverContent ? 0 : 1" [innerHTML]="svgContent"></span>
-  @if (svgHoverContent) {
-  <span class="icon-layer" [style.opacity]="isHovered ? 1 : 0" [innerHTML]="svgHoverContent"></span>
+<span #projected class="icon-name"><ng-content /></span>
+<span class="icon-wrapper" [style.--shy-icon-hover-delay]="hoverFillDelay() + 'ms'">
+  <span class="icon-layer" [style.opacity]="hovered() && svgFill() ? 0 : 1" [innerHTML]="svg()"></span>
+  @if (svgFill(); as fill) {
+    <span class="icon-layer" [style.opacity]="hovered() ? 1 : 0" [innerHTML]="fill"></span>
   }
-</div>
+</span>

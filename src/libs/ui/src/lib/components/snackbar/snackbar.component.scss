@@ -1,77 +1,73 @@
 @use '../../styles' as *;
 
+// Tokens do componente (sobrescreva no elemento: shy-snackbar { --shy-snackbar-bg: ... }):
+//   --shy-snackbar-bg, -fg, -border, -width, -radius, -offset, -font-family, -font-size, -icon-size
 :host {
   display: contents;
 }
 
 .snackbar {
+  @include shy-layer(toast);
   position: fixed;
-  left: 50%;
-  z-index: 9999;
+  inset-inline: 0;
+  inline-size: fit-content;
+  margin-inline: auto;
   display: flex;
   align-items: center;
-  gap: ru(5);
-  padding: ru(5) ru(7);
-  background: var(--shySnackbarBackground, #{$color-dark});
-  color: var(--shySnackbarColor, #{$color-white});
-  border-radius: var(--shySnackbarBorderRadius, ru(2));
-  min-width: var(--shySnackbarWidth, ru(110));
+  gap: var(--shy-space-4);
+  min-inline-size: var(--shy-snackbar-width, #{ru(110)});
+  max-inline-size: calc(var(--shy-dynamic-width) - var(--shy-space-8));
+  padding: var(--shy-space-4) var(--shy-space-5);
+  border: var(--shy-border-width) solid var(--shy-snackbar-border, var(--shy-color-border-strong));
+  border-radius: var(--shy-snackbar-radius, var(--shy-radius-md));
+  background: var(--shy-snackbar-bg, var(--shy-color-surface-raised));
+  color: var(--shy-snackbar-fg, var(--shy-color-text));
+  box-shadow: var(--shy-shadow-4);
+  font-family: var(--shy-snackbar-font-family, var(--shy-font-family-base));
+  font-size: var(--shy-snackbar-font-size, var(--shy-text-md));
   opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 250ms ease-in-out,
-    transform 250ms ease-in-out;
+  @include transition(opacity transform, base, enter);
 
   &--top {
-    top: var(--shySnackbarOffset, ru(15));
-    transform: translateX(-50%) translateY(-120%);
+    inset-block-start: var(--shy-snackbar-offset, #{ru(15)});
+    transform: translateY(-120%);
   }
 
   &--bottom {
-    bottom: var(--shySnackbarOffset, ru(15));
-    transform: translateX(-50%) translateY(120%);
+    inset-block-end: var(--shy-snackbar-offset, #{ru(15)});
+    transform: translateY(120%);
   }
 
   &--visible {
     opacity: 1;
     pointer-events: auto;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 
   &__text {
     flex: 1;
-    font-family: var(--shySnackbarFontFamily, monospace);
-    font-size: var(--shySnackbarFontSize, ru(7));
   }
 
   &__dismiss {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: inherit;
-    padding: 0;
     flex-shrink: 0;
+    padding: var(--shy-space-1);
+    border: 0;
+    border-radius: var(--shy-radius-sm);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    @include state-layer;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
 
     shy-icon {
-      --shyIconSize: var(--shySnackbarIconSize, ru(8));
+      --shy-icon-size: var(--shy-snackbar-icon-size, var(--shy-size-icon-md));
     }
-  }
-}
-
-.icon-layer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity var(--hover-delay, 0ms) ease-in-out;
-
-  svg {
-    width: 100%;
-    height: 100%;
-    color: inherit;
   }
 }

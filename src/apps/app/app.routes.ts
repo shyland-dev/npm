@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'components/icon', pathMatch: 'full' },
 
-  { path: 'home', loadComponent: () => import('./pages/home/home').then((m) => m.Home) },
-  { path: 'icons', loadComponent: () => import('./pages/icons/icons').then((m) => m.Icons) },
+  { path: 'components/icon', loadComponent: () => import('./components/icon/icon').then((m) => m.IconPage) },
+  { path: 'components/select', loadComponent: () => import('./components/select/select').then((m) => m.SelectPage) },
+  { path: 'components/snackbar', loadComponent: () => import('./components/snackbar/snackbar').then((m) => m.SnackbarPage) },
 
   { path: 'foundations', redirectTo: 'foundations/colors', pathMatch: 'full' },
   { path: 'foundations/colors', loadComponent: () => import('./foundations/colors/colors').then((m) => m.Colors) },
@@ -14,5 +15,5 @@ export const routes: Routes = [
   { path: 'foundations/motion', loadComponent: () => import('./foundations/motion/motion').then((m) => m.Motion) },
   { path: 'foundations/layers', loadComponent: () => import('./foundations/layers/layers').then((m) => m.Layers) },
 
-  { path: '**', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'components/icon', pathMatch: 'full' },
 ];

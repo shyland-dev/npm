@@ -1,0 +1,32 @@
+<div class="page">
+  <h1 class="page-title">Select</h1>
+  <p class="page-lead">Phase A of the refactor: tokens, states and basic keyboard support (arrows, Home/End, Enter/Space, Esc) with listbox ARIA. The full rewrite (combobox, typeahead, overlay) is phase F4.</p>
+
+  <section class="section">
+    <h2>Default</h2>
+    <div class="card">
+      <shy-select [selectOptions]="options" [selectedOption]="selected()" (onSelectionChange)="change($event)">Select an option</shy-select>
+      <p class="token-name">last change: {{ last() }}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Preselected</h2>
+    <div class="card">
+      <shy-select [selectOptions]="options" selectedOption="test2">Select an option</shy-select>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Token override</h2>
+    <p>Component tokens are set on the element: <code>--shy-select-bg</code>, <code>--shy-select-radius</code>, <code>--shy-select-option-hover-bg</code>.</p>
+    <div class="card">
+      <shy-select class="custom" [selectOptions]="options">Custom tokens</shy-select>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>States</h2>
+    <p>Hover (fine pointer only), focus-visible (Tab) and open are live: interact with the selects above. Both themes use the toggle in the header.</p>
+  </section>
+</div>

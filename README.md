@@ -71,16 +71,18 @@ O nome do ícone é passado como conteúdo da tag (content projection):
 <shy-icon [hoverFill]="true" [hoverFillDelay]="200">star</shy-icon>
 ```
 
-| Input            | Tipo      | Padrão  | Descrição                                                   |
-| ---------------- | --------- | ------- | ----------------------------------------------------------- |
-| `hoverFill`      | `boolean` | `false` | Troca para a variante `-fill` do ícone ao passar o mouse    |
-| `hoverFillDelay` | `number`  | `0`     | Duração da transição entre o estado normal e o fill (em ms) |
+| Input            | Tipo      | Padrão  | Descrição                                                                                      |
+| ---------------- | --------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `hoverFill`      | `boolean` | `false` | Troca para a variante `-fill` do ícone ao passar o mouse                                       |
+| `hoverFillDelay` | `number`  | `0`     | Duração da transição entre o estado normal e o fill (em ms)                                    |
+| `name`           | `string`  | —       | Nome do ícone; tem prioridade sobre o conteúdo projetado                                       |
+| `label`          | `string`  | —       | Nome acessível: vira `role="img"` + `aria-label`. Sem ele o ícone é decorativo (`aria-hidden`) |
 
 **Customização via CSS:**
 
 ```scss
 shy-icon {
-    --shyIconSize: 2rem; /* tamanho (padrão: 1em) */
+    --shy-icon-size: var(--shy-size-icon-lg); /* tamanho (padrão: --shy-size-icon-md) */
     color: red; /* cor via currentColor */
 }
 ```
@@ -144,29 +146,29 @@ interface SelectOption {
 
 ```scss
 shy-select {
-    --shySelectHeight: 50px;
-    --shySelectWidth: 200px;
-    --shySelectBackground: #1a1a2e;
-    --shySelectColor: #ffffff;
+    --shy-select-height: var(--shy-size-control-lg);
+    --shy-select-bg: var(--shy-color-primary-soft);
+    --shy-select-radius: var(--shy-radius-full);
 }
 ```
 
-| Token                              | Padrão                         | Descrição                           |
-| ---------------------------------- | ------------------------------ | ----------------------------------- |
-| `--shySelectHeight`                | `ru(20)`                       | Altura mínima do trigger            |
-| `--shySelectWidth`                 | `ru(90)`                       | Largura mínima do componente        |
-| `--shySelectBorderRadius`          | `ru(2)`                        | Border radius do trigger e dropdown |
-| `--shySelectBackground`            | `$color-black` (`#000000`)     | Cor de fundo do trigger             |
-| `--shySelectColor`                 | `$color-white` (`#ffffff`)     | Cor do texto e ícones               |
-| `--shySelectFontFamily`            | `monospace`                    | Fonte do componente                 |
-| `--shySelectFontSize`              | `ru(6)`                        | Tamanho da fonte                    |
-| `--shySelectIconSize`              | `ru(8)`                        | Tamanho dos ícones internos         |
-| `--shySelectDropdownBackground`    | `$color-dark` (`#222428`)      | Cor de fundo do painel dropdown     |
-| `--shySelectDropdownBoxShadow`     | `0 0 1.5ru 0.1ru $color-white` | Box shadow do dropdown              |
-| `--shySelectSelectedColor`         | `$color-primary` (`#3880ff`)   | Cor da opção selecionada            |
-| `--shySelectOptionHoverBackground` | `$color-dark` clareado 20%     | Fundo do item ao hover              |
-| `--shySelectOptionHoverColor`      | `$color-black` (`#000000`)     | Cor do texto do item ao hover       |
-| `--shySelectOptionImgBorderRadius` | `50%`                          | Border radius da imagem da opção    |
+| Token                            | Padrão                        | Descrição                    |
+| -------------------------------- | ----------------------------- | ---------------------------- |
+| `--shy-select-height`            | `--shy-size-control-lg`       | Altura mínima do trigger     |
+| `--shy-select-width`             | `ru(90)`                      | Largura mínima               |
+| `--shy-select-radius`            | `--shy-radius-md`             | Raio do trigger e do painel  |
+| `--shy-select-bg`                | `--shy-color-surface-sunken`  | Fundo do trigger             |
+| `--shy-select-fg`                | `--shy-color-text`            | Texto e ícones               |
+| `--shy-select-border`            | `--shy-color-border-strong`   | Borda do trigger             |
+| `--shy-select-font-family`       | `--shy-font-family-base`      | Fonte                        |
+| `--shy-select-font-size`         | `--shy-text-md`               | Tamanho da fonte             |
+| `--shy-select-icon-size`         | `--shy-size-icon-md`          | Tamanho dos ícones internos  |
+| `--shy-select-panel-bg`          | `--shy-color-surface-raised`  | Fundo do painel              |
+| `--shy-select-panel-shadow`      | `--shy-shadow-3`              | Sombra do painel             |
+| `--shy-select-selected-fg`       | `--shy-color-primary-text`    | Cor da opção selecionada     |
+| `--shy-select-option-hover-bg`   | `--shy-color-primary-soft`    | Fundo da opção em hover/foco |
+| `--shy-select-option-hover-fg`   | `--shy-color-on-primary-soft` | Texto da opção em hover/foco |
+| `--shy-select-option-img-radius` | `--shy-radius-full`           | Raio da imagem da opção      |
 
 ---
 
@@ -219,22 +221,23 @@ this.snackbarService.show({
 
 ```scss
 shy-snackbar {
-    --shySnackbarBackground: #1a1a2e;
-    --shySnackbarColor: #ffffff;
-    --shySnackbarWidth: 300px;
+    --shy-snackbar-bg: var(--shy-color-primary-soft);
+    --shy-snackbar-fg: var(--shy-color-on-primary-soft);
+    --shy-snackbar-width: calc(var(--shy-responsive-unit) * 150);
 }
 ```
 
-| Token                       | Padrão                     | Descrição                            |
-| --------------------------- | -------------------------- | ------------------------------------ |
-| `--shySnackbarBackground`   | `$color-dark` (`#222428`)  | Cor de fundo                         |
-| `--shySnackbarColor`        | `$color-white` (`#ffffff`) | Cor do texto e ícone                 |
-| `--shySnackbarWidth`        | `ru(110)`                  | Largura mínima                       |
-| `--shySnackbarBorderRadius` | `ru(2)`                    | Border radius                        |
-| `--shySnackbarOffset`       | `ru(15)`                   | Distância da borda superior/inferior |
-| `--shySnackbarFontFamily`   | `monospace`                | Fonte da mensagem                    |
-| `--shySnackbarFontSize`     | `ru(7)`                    | Tamanho da fonte                     |
-| `--shySnackbarIconSize`     | `ru(8)`                    | Tamanho do ícone de fechar           |
+| Token                        | Padrão                       | Descrição                            |
+| ---------------------------- | ---------------------------- | ------------------------------------ |
+| `--shy-snackbar-bg`          | `--shy-color-surface-raised` | Fundo                                |
+| `--shy-snackbar-fg`          | `--shy-color-text`           | Texto e ícone                        |
+| `--shy-snackbar-border`      | `--shy-color-border-strong`  | Borda                                |
+| `--shy-snackbar-width`       | `ru(110)`                    | Largura mínima                       |
+| `--shy-snackbar-radius`      | `--shy-radius-md`            | Raio                                 |
+| `--shy-snackbar-offset`      | `ru(15)`                     | Distância da borda superior/inferior |
+| `--shy-snackbar-font-family` | `--shy-font-family-base`     | Fonte                                |
+| `--shy-snackbar-font-size`   | `--shy-text-md`              | Tamanho da fonte                     |
+| `--shy-snackbar-icon-size`   | `--shy-size-icon-md`         | Tamanho do ícone de fechar           |
 
 ---
 
@@ -426,7 +429,9 @@ CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--s
 | Motion            | `--shy-duration-*`, `--shy-ease-*`, `--shy-motion-distance`, `--shy-transition-*`                                                                                                                          | `tokens/motion.css`                |
 | Camadas           | `--shy-z-{base,raised,dropdown,sticky,fixed,drawer,modal,popover,tooltip,toast}` (passo de 100)                                                                                                            | `tokens/layers.css`                |
 
-> Mudança da `0.0.x` para a `0.1.0` (breaking): `--responsive-unit`, `--dynamic-*`, `$responsive-unit`, `$dynamic-*` **deixaram de existir**, sem alias. Troque por `--shy-responsive-unit` / `ru(N)` e `--shy-dynamic-*`. As Sass variables `$color-*` (paleta antiga) continuam só para os componentes ainda não migrados e saem na F2. Guia: [`docs/design-system/migration-0.0-to-0.1.md`](docs/design-system/migration-0.0-to-0.1.md).
+> Mudança da `0.0.x` para a `0.1.0` (breaking), nos componentes: `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*` e `--shySnackbar*` → `--shy-snackbar-*` (kebab-case, padrões vindos dos tokens semânticos, tabelas acima); o ícone de fallback para nome inexistente passa a ser `question-circle` (o `help` antigo nunca existiu); `Icon`, `Select` e `Snackbar` agora usam `input()`/`output()`/`model()` e `OnPush` (os nomes usados no template não mudam).
+>
+> Mudança da `0.0.x` para a `0.1.0` (breaking), nos nomes globais: `--responsive-unit`, `--dynamic-*`, `$responsive-unit`, `$dynamic-*` **deixaram de existir**, sem alias. Troque por `--shy-responsive-unit` / `ru(N)` e `--shy-dynamic-*`. As Sass variables `$color-*` (paleta antiga) também foram removidas (`_variables.scss` não existe mais); use os tokens `--shy-color-*`. Guia: [`docs/design-system/migration-0.0-to-0.1.md`](docs/design-system/migration-0.0-to-0.1.md).
 
 ---
 
@@ -466,7 +471,7 @@ export { ICONS } from './lib/components/icon/icons';
 npm/
 ├── src/
 │   ├── apps/                       # Aplicação showcase
-│   │   └── app/pages/              # Páginas de demonstração
+│   │   └── app/components|foundations/  # Páginas de demonstração
 │   └── libs/
 │       ├── ui/                     # @shyland-dev/ui — componentes
 │       │   └── src/

@@ -5,20 +5,70 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F2 Refactor dos existentes (fase A)**
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- F1 concluída e enviada (commit 0123029). Plano da F2 abaixo; o próximo `/build` o aprova e o executa. Há uma decisão pequena (D-F2-1) com recomendação; sem resposta, vale a recomendação.
+- F2 executada (T1–T7); relatório do gate abaixo. O próximo `/build` aprova o gate **e** a mensagem de commit proposta, commita, faz push em `feat/design-system` e avança para a F3 em `aguardando-plano`.
 
 ## Fases
 
-| Fase                               | Status                     | Commit                                                        |
-| ---------------------------------- | -------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)  | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)  | 0123029                                                       |
-| F2 Refactor dos existentes         | plano aguardando aprovação |                                                               |
-| F3 Onda 1                          | pendente                   |                                                               |
-| F4 Onda 2                          | pendente                   |                                                               |
-| F5 Onda 3 + hardening              | pendente                   |                                                               |
+| Fase                               | Status                    | Commit                                                        |
+| ---------------------------------- | ------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
+| F2 Refactor dos existentes         | aguardando gate           |                                                               |
+| F3 Onda 1                          | pendente                  |                                                               |
+| F4 Onda 2                          | pendente                  |                                                               |
+| F5 Onda 3 + hardening              | pendente                  |                                                               |
+
+## F2: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                                  | Resultado                                                                                                                                                            |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                           | verde com **baselines removidas**: nenhum literal de cor, unidade, tempo, easing, z-index ou font-family em SCSS (lib e showcase); 1 aviso (tokens ainda não usados) |
+| `npm test`                                   | verde: 6 arquivos, 34 testes (`icon` 6, `select` 8, `snackbar` 5 + service 1, mais os 14 da F1)                                                                      |
+| `npm run build`                              | verde (`ui` e `utils`)                                                                                                                                               |
+| `npm run build:showcase`                     | verde                                                                                                                                                                |
+| Chromium (showcase buildado, claro e escuro) | sem erro de console; select abre por teclado, foca a opção, Enter seleciona e o foco volta ao trigger; snackbar aparece e é legível nos dois temas                   |
+
+### Arquivos principais
+
+- `icon`: `icon.component.{ts,html,scss}` (`input()`, `name`, `label`, `aria-hidden` por padrão, `--shy-icon-size`, OnPush).
+- `select`: `select.component.{ts,html,scss}` (tokens `--shy-select-*`, ARIA de listbox, teclado básico, `z(dropdown)`, hover só com ponteiro fino, foco visível, forced-colors).
+- `snackbar`: `snackbar.component.{ts,html,scss}` (tokens `--shy-snackbar-*`, `role="status"`, `z(toast)`, motion por token).
+- `styles/_variables.scss` apagado; `scripts/units-baseline.json` e `hardcoded-baseline.json` apagados.
+- Showcase: `components/{icon,select,snackbar}` no lugar de `pages/{home,icons}`.
+- Testes novos: `icon.component.spec.ts`, `select.component.spec.ts`, `snackbar.component.spec.ts`.
+- Docs: `README.md` (raiz e `ui`), `docs/design-system/{migration-0.0-to-0.1,units,tokens,decisions}.md`.
+
+### Efeito prático
+
+- Os três componentes seguem os dois temas e o contrato de tokens; nenhum valor fixo no SCSS.
+- Breaking (já previsto no `0.1.0`): `--shyIconSize`, `--shySelect*`, `--shySnackbar*` viram kebab-case (tabela de-para em `migration-0.0-to-0.1.md`); `$color-*` não existem mais.
+- Correções de passagem: ícone com nome inexistente agora mostra `question-circle`; ícone reage à mudança do nome projetado.
+- Sem dependências novas; sem bump de versão, tag ou publish.
+
+### Decisões e premissas (ADR-F2-1 em `decisions.md`)
+
+- ARIA e teclado básico do select entraram já na fase A (a API não mudou); a reescrita é F4.
+- Matriz de estados do select/snackbar limitada aos estados reais da API.
+- Catálogo de ícones do showcase limitado a 240 resultados.
+
+### Mensagem de commit proposta
+
+```
+refactor(ui): icon, select e snackbar com tokens e remoção de $color-*
+
+- icon: input(), name/label, decorativo por padrão, --shy-icon-size
+- select: tokens --shy-select-*, ARIA de listbox e teclado básico
+- snackbar: tokens --shy-snackbar-*, role="status", sem transform horizontal
+- remove _variables.scss e as baselines do check:ds
+- showcase com páginas components/icon, select e snackbar
+- testes de icon, select, snackbar e SnackbarService
+
+BREAKING CHANGE: --shyIconSize, --shySelect* e --shySnackbar* renomeados; $color-* removidos
+```
 
 ## F2: plano (2026-10-20)
 
@@ -193,3 +243,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: `/build` aprovou o plano da F1 e a executou (T1–T11). Gate em `aguardando-gate`; relatório acima.
 - 2026-10-20: dono aprovou o gate da F1 e pediu risco zero de licença: Inter removida (ADR-F1-6). Revalidado, commit e push em `feat/design-system`.
 - 2026-10-20: F1 commitada (0123029) e enviada para `feat/design-system`. F2 em `planejar` → plano escrito; estado `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F2 e a executou (T1–T7). Gate em `aguardando-gate`; relatório acima.

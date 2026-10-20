@@ -23,10 +23,12 @@ Renders an inline SVG icon from the built-in catalog. Supports a _-fill_ variant
 
 **Selector:** `shy-icon`
 
-| Input            | Type      | Default | Description                                                 |
-| ---------------- | --------- | ------- | ----------------------------------------------------------- |
-| `hoverFill`      | `boolean` | `false` | Switches to the `*-fill` variant of the icon on mouse hover |
-| `hoverFillDelay` | `number`  | `0`     | Transition duration (ms) between the normal and fill states |
+| Input            | Type      | Default | Description                                                                                             |
+| ---------------- | --------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| `hoverFill`      | `boolean` | `false` | Switches to the `*-fill` variant of the icon on mouse hover                                             |
+| `hoverFillDelay` | `number`  | `0`     | Transition duration (ms) between the normal and fill states                                             |
+| `name`           | `string`  | —       | Icon name; takes priority over the projected content                                                    |
+| `label`          | `string`  | —       | Accessible name: becomes `role="img"` + `aria-label`. Without it the icon is decorative (`aria-hidden`) |
 
 **Basic usage:**
 
@@ -199,45 +201,49 @@ Every length is `calc(var(--shy-responsive-unit) * N)`: `ru(N)` in SCSS, `ru(n)`
 
 ### SCSS API
 
-`ru($n)`, `z($layer, $offset)`, `shy-layer`, `up($bp)`/`down($bp)`, `focus-ring`, `shy-state`, `state-layer`, `disabled-state`, `transition`, `visually-hidden`, plus the legacy `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode`. The old `$color-*` palette still exists for components not yet migrated and goes away in the next phase.
+`ru($n)`, `z($layer, $offset)`, `shy-layer`, `up($bp)`/`down($bp)`, `focus-ring`, `shy-state`, `state-layer`, `disabled-state`, `transition`, `visually-hidden`, plus the legacy `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode`. The old `$color-*` palette is gone (`_variables.scss` was removed); use the `--shy-color-*` tokens.
 
-> Breaking in `0.1.0`: `--responsive-unit`, `--dynamic-*`, `$responsive-unit` and `$dynamic-*` no longer exist (no alias). Use `--shy-responsive-unit` / `ru(N)` and `--shy-dynamic-*`.
+> Breaking in `0.1.0` (components): `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*`; `--shySnackbar*` → `--shy-snackbar-*`; the fallback icon for an unknown name is `question-circle`.
+>
+> Breaking in `0.1.0` (globals): `--responsive-unit`, `--dynamic-*`, `$responsive-unit` and `$dynamic-*` no longer exist (no alias). Use `--shy-responsive-unit` / `ru(N)` and `--shy-dynamic-*`.
 
 ### Snackbar Tokens
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
 
-| Token                       | Default                    | Description                      |
-| --------------------------- | -------------------------- | -------------------------------- |
-| `--shySnackbarBackground`   | `$color-dark` (`#222428`)  | Background color                 |
-| `--shySnackbarColor`        | `$color-white` (`#ffffff`) | Text and icon color              |
-| `--shySnackbarWidth`        | `ru(110)`                  | Width                            |
-| `--shySnackbarBorderRadius` | `ru(2)`                    | Border radius                    |
-| `--shySnackbarOffset`       | `ru(15)`                   | Distance from top or bottom edge |
-| `--shySnackbarFontFamily`   | `monospace`                | Font family of the message text  |
-| `--shySnackbarFontSize`     | `ru(7)`                    | Font size of the message text    |
-| `--shySnackbarIconSize`     | `ru(8)`                    | Size of the dismiss icon         |
+| Token                        | Default                      | Description                      |
+| ---------------------------- | ---------------------------- | -------------------------------- |
+| `--shy-snackbar-bg`          | `--shy-color-surface-raised` | Background                       |
+| `--shy-snackbar-fg`          | `--shy-color-text`           | Text and icon color              |
+| `--shy-snackbar-border`      | `--shy-color-border-strong`  | Border color                     |
+| `--shy-snackbar-width`       | `ru(110)`                    | Minimum width                    |
+| `--shy-snackbar-radius`      | `--shy-radius-md`            | Border radius                    |
+| `--shy-snackbar-offset`      | `ru(15)`                     | Distance from top or bottom edge |
+| `--shy-snackbar-font-family` | `--shy-font-family-base`     | Font family                      |
+| `--shy-snackbar-font-size`   | `--shy-text-md`              | Font size                        |
+| `--shy-snackbar-icon-size`   | `--shy-size-icon-md`         | Size of the dismiss icon         |
 
 ### Select Tokens
 
 The `<shy-select>` component can be customized via CSS custom properties:
 
-| Token                              | Default                                 | Description                            |
-| ---------------------------------- | --------------------------------------- | -------------------------------------- |
-| `--shySelectHeight`                | `ru(20)`                                | Minimum height of the trigger          |
-| `--shySelectWidth`                 | `ru(90)`                                | Minimum width of the component         |
-| `--shySelectBorderRadius`          | `ru(2)`                                 | Border radius of trigger and dropdown  |
-| `--shySelectBackground`            | `$color-black` (`#000000`)              | Background color of the trigger        |
-| `--shySelectColor`                 | `$color-white` (`#ffffff`)              | Text and icon color                    |
-| `--shySelectFontFamily`            | `monospace`                             | Font family                            |
-| `--shySelectFontSize`              | `ru(6)`                                 | Font size                              |
-| `--shySelectIconSize`              | `ru(8)`                                 | Size of all icons inside the component |
-| `--shySelectDropdownBackground`    | `$color-dark` (`#222428`)               | Background color of the dropdown panel |
-| `--shySelectDropdownBoxShadow`     | `0 0 1.5ru 0.1ru $color-white`          | Box shadow of the dropdown panel       |
-| `--shySelectSelectedColor`         | `$color-primary` (`#3880ff`)            | Color of the selected option           |
-| `--shySelectOptionHoverBackground` | `$color-dark` lightened 20% (`#51565f`) | Hover background of an option row      |
-| `--shySelectOptionHoverColor`      | `$color-black` (`#000000`)              | Text color of an option row on hover   |
-| `--shySelectOptionImgBorderRadius` | `50%`                                   | Border radius of the option image      |
+| Token                            | Default                       | Description                        |
+| -------------------------------- | ----------------------------- | ---------------------------------- |
+| `--shy-select-height`            | `--shy-size-control-lg`       | Minimum height of the trigger      |
+| `--shy-select-width`             | `ru(90)`                      | Minimum width                      |
+| `--shy-select-radius`            | `--shy-radius-md`             | Border radius of trigger and panel |
+| `--shy-select-bg`                | `--shy-color-surface-sunken`  | Trigger background                 |
+| `--shy-select-fg`                | `--shy-color-text`            | Text and icon color                |
+| `--shy-select-border`            | `--shy-color-border-strong`   | Trigger border color               |
+| `--shy-select-font-family`       | `--shy-font-family-base`      | Font family                        |
+| `--shy-select-font-size`         | `--shy-text-md`               | Font size                          |
+| `--shy-select-icon-size`         | `--shy-size-icon-md`          | Size of the internal icons         |
+| `--shy-select-panel-bg`          | `--shy-color-surface-raised`  | Panel background                   |
+| `--shy-select-panel-shadow`      | `--shy-shadow-3`              | Panel shadow                       |
+| `--shy-select-selected-fg`       | `--shy-color-primary-text`    | Selected option color              |
+| `--shy-select-option-hover-bg`   | `--shy-color-primary-soft`    | Option background on hover/focus   |
+| `--shy-select-option-hover-fg`   | `--shy-color-on-primary-soft` | Option text on hover/focus         |
+| `--shy-select-option-img-radius` | `--shy-radius-full`           | Option image radius                |
 
 ---
 

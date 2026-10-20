@@ -1,7 +1,0 @@
-{
-  "src/libs/ui/src/lib/components/icon/icon.component.scss": 2,
-  "src/libs/ui/src/lib/components/select/select.component.scss": 11,
-  "src/libs/ui/src/lib/components/snackbar/snackbar.component.scss": 10,
-  "src/apps/app/pages/home/home.scss": 15,
-  "src/apps/app/pages/icons/icons.scss": 13
-}

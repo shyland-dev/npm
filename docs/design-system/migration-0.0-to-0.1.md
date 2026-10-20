@@ -1,6 +1,6 @@
 # Migração 0.0.x → 0.1.0
 
-A `0.1.0` é breaking e **não mantém alias** (decisão de 2026-10-20). O que muda na F1 está abaixo; a F2 (componentes existentes) acrescenta a troca dos `$color-*` e dos tokens camelCase de `select` e `snackbar`.
+A `0.1.0` é breaking e **não mantém alias** (decisão de 2026-10-20). Estão aqui as mudanças da F1 (globais) e da F2 (componentes existentes).
 
 ## 1. Carregar os estilos
 
@@ -63,9 +63,9 @@ Select-String -Path src\**\*.scss -Pattern '\$responsive-unit|\$dynamic-'
 
 Troque `px`, `rem`, `em`, `vw`, `vh` etc. por `ru(N)` (SCSS), `calc(var(--shy-responsive-unit) * N)` (CSS) ou `ru(n)` de `@shyland-dev/ui` (TypeScript). A régua: com `rem` = 16 px, 1 ru ≈ 2 px no celular e ≈ 2,7 px em FHD (tabela em [units.md](units.md)). Exceções em `units.md`.
 
-## 4. `$color-*` (sai na F2)
+## 4. `$color-*` (removidos)
 
-Continuam existindo nesta fase só para `select`, `snackbar` e as páginas antigas do showcase. Troca prevista (a tabela final sai na F2):
+`_variables.scss` foi apagado na F2: nenhuma Sass variable de cor existe mais. Troca sugerida:
 
 | `$color-*`                            | Token                                                                   |
 | ------------------------------------- | ----------------------------------------------------------------------- |
@@ -84,6 +84,26 @@ Continuam existindo nesta fase só para `select`, `snackbar` e as páginas antig
 ## 5. Mixins antigos
 
 `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode` seguem funcionando. Em código novo, `dark-mode`/`light-mode` não servem: o tema vem de `data-theme` ([theming.md](theming.md)).
+
+## 5.1 Tokens de componente
+
+| Antes                                                   | Depois                                                     |
+| ------------------------------------------------------- | ---------------------------------------------------------- |
+| `--shyIconSize`                                         | `--shy-icon-size` (padrão `--shy-size-icon-md`)            |
+| `--shySelectHeight` / `Width` / `BorderRadius`          | `--shy-select-height` / `-width` / `-radius`               |
+| `--shySelectBackground` / `Color`                       | `--shy-select-bg` / `--shy-select-fg`                      |
+| `--shySelectFontFamily` / `FontSize` / `IconSize`       | `--shy-select-font-family` / `-font-size` / `-icon-size`   |
+| `--shySelectDropdownBackground` / `DropdownBoxShadow`   | `--shy-select-panel-bg` / `--shy-select-panel-shadow`      |
+| `--shySelectSelectedColor`                              | `--shy-select-selected-fg`                                 |
+| `--shySelectOptionHoverBackground` / `OptionHoverColor` | `--shy-select-option-hover-bg` / `-hover-fg`               |
+| `--shySelectOptionImgBorderRadius`                      | `--shy-select-option-img-radius`                           |
+| `--shySnackbarBackground` / `Color`                     | `--shy-snackbar-bg` / `--shy-snackbar-fg`                  |
+| `--shySnackbarWidth` / `BorderRadius` / `Offset`        | `--shy-snackbar-width` / `-radius` / `-offset`             |
+| `--shySnackbarFontFamily` / `FontSize` / `IconSize`     | `--shy-snackbar-font-family` / `-font-size` / `-icon-size` |
+
+Busca no seu projeto (bash): `grep -rnE -- '--shy(Icon|Select|Snackbar)[A-Z]' src`. Os padrões agora vêm dos tokens semânticos (tema claro/escuro), então um override com cor fixa deve virar `var(--shy-color-*)`.
+
+Outras mudanças dos componentes: `Icon`, `Select` e `Snackbar` usam `input()`/`output()`/`model()` e `OnPush` (nomes no template iguais); o ícone para nome inexistente é `question-circle` (o `help` antigo nunca existiu); `shy-select` ganhou ARIA de listbox e teclado básico; `shy-snackbar` ganhou `role="status"`; `shy-icon` ganhou `name` e `label` e é decorativo por padrão.
 
 ## 6. Novidades úteis
 

@@ -31,7 +31,7 @@ Com `rem` = 16 px, **1 ru = 1,6 px + (menor lado da janela) / 1000**. Também vi
 | E3  | Valores que não são comprimento: `0`, `%`, `fr`, números puros, `ms`/`s`, `deg`, `auto`/`none` |
 | E4  | Atributos SVG/HTML fora do CSS (`viewBox`)                                                     |
 
-`check-units` ainda ignora `icons.ts` (strings de SVG geradas) e `src/libs/ui/src/assets/` (fontes dos ícones, não vão para o pacote). A baseline `scripts/units-baseline.json` guarda o que ainda não foi migrado (hoje: `icon.component.scss`, 5 usos de `1em`); a F2 zera.
+`check-units` ainda ignora `icons.ts` (strings de SVG geradas) e `src/libs/ui/src/assets/` (fontes dos ícones, não vão para o pacote). Não há baseline: a F2 zerou os usos de `1em` do ícone e o `check-units` falha em qualquer violação.
 
 ## Quanto vale cada ru
 

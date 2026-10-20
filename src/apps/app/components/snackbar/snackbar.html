@@ -1,0 +1,15 @@
+<div class="page">
+  <h1 class="page-title">Snackbar</h1>
+  <p class="page-lead">Phase A of the refactor: tokens, <code>role="status"</code> live region, dismiss button with focus ring. The outlet/queue rewrite is phase F4.</p>
+
+  <section class="section">
+    <h2>Positions</h2>
+    <div class="actions">
+      <button type="button" class="btn" (click)="show('bottom')">Show at bottom</button>
+      <button type="button" class="btn" (click)="show('top')">Show at top</button>
+      <button type="button" class="btn" (click)="show('bottom', 0)">Show until dismissed</button>
+    </div>
+  </section>
+
+  <shy-snackbar></shy-snackbar>
+</div>

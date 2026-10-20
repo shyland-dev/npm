@@ -1,0 +1,23 @@
+@use 'styles' as *;
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--shy-space-3);
+}
+
+.btn {
+  min-block-size: var(--shy-size-control-md);
+  padding-inline: var(--shy-space-6);
+  border: 0;
+  border-radius: var(--shy-radius-md);
+  background: var(--shy-color-primary);
+  color: var(--shy-color-on-primary);
+  font: inherit;
+  cursor: pointer;
+  @include state-layer;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}

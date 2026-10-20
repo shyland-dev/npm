@@ -1,28 +1,28 @@
-<button class="select__trigger" type="button" (click)="toggleDropdown()">
+<button #trigger class="select__trigger" type="button" [id]="uid + '-trigger'" aria-haspopup="listbox" [attr.aria-expanded]="isOpen()" [attr.aria-controls]="isOpen() ? uid + '-list' : null" (click)="toggleDropdown()" (keydown)="onTriggerKeydown($event)">
   <span class="select__label">
-    @if (currentOption) {
-      {{ currentOption.label }}
+    @if (currentOption(); as option) {
+      {{ option.label }}
     } @else {
-      <ng-content></ng-content>
+      <ng-content />
     }
   </span>
 
-  <shy-icon class="select__dropdown-icon" [class.select__dropdown-icon--open]="isOpen">{{ dropdownIcon }}</shy-icon>
+  <shy-icon class="select__dropdown-icon" [class.select__dropdown-icon--open]="isOpen()">{{ dropdownIcon() }}</shy-icon>
 </button>
 
-@if (isOpen) {
-  <ul class="select__dropdown">
-    @for (option of selectOptions; track option.id) {
-      <li class="select__option" [class.select__option--selected]="currentOption?.id === option.id" (click)="selectOption(option)">
+@if (isOpen()) {
+  <ul class="select__dropdown" role="listbox" [id]="uid + '-list'" [attr.aria-labelledby]="uid + '-trigger'" (keydown)="onListKeydown($event)">
+    @for (option of selectOptions(); track option.id) {
+      <li #optionEl class="select__option" role="option" tabindex="-1" [class.select__option--selected]="currentOption()?.id === option.id" [attr.aria-selected]="currentOption()?.id === option.id" (click)="selectOption(option)">
         <span class="select__option-icon">
-          @if (currentOption?.id === option.id) {
-            <shy-icon>{{ selectIcon }}</shy-icon>
+          @if (currentOption()?.id === option.id) {
+            <shy-icon>{{ selectIcon() }}</shy-icon>
           }
         </span>
 
         @if (option.img) {
           <span class="select__option-img">
-            <img src="{{ option.img }}" alt="{{ option.label }}" />
+            <img [src]="option.img" alt="" />
           </span>
         }
 
