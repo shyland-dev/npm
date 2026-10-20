@@ -83,7 +83,10 @@ describe('ButtonComponent', () => {
     set(() => host.loading.set(true));
 
     expect(button.dataset['loading']).toBe('replace');
-    expect(button.querySelector('.overlay .spinner')).not.toBeNull();
+    const spinner = button.querySelector('.overlay .spinner');
+    expect(spinner?.tagName.toLowerCase()).toBe('shy-spinner');
+    expect(spinner?.getAttribute('aria-hidden')).toBe('true');
+    expect(spinner?.hasAttribute('role')).toBe(false);
     expect(button.querySelector('.text')?.textContent?.trim()).toBe('Salvar');
     expect(button.querySelector('.text')?.classList.contains('is-hidden')).toBe(false);
   });

@@ -144,6 +144,7 @@
   --shy-focus-ring-width: calc(var(--shy-responsive-unit) * 1);
   --shy-focus-ring-offset: calc(var(--shy-responsive-unit) * 1);
   --shy-opacity-disabled: 0.45;
+  --shy-opacity-track: 0.25;
   --shy-state-hover: 0.08;
   --shy-state-pressed: 0.12;
 }

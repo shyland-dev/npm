@@ -1,0 +1,82 @@
+@use '../../styles' as *;
+
+:host {
+  --_size: var(--shy-size-icon-lg);
+
+  display: inline-grid;
+  flex-shrink: 0;
+  inline-size: var(--shy-progress-circular-size, var(--_size));
+  block-size: var(--shy-progress-circular-size, var(--_size));
+  vertical-align: middle;
+}
+
+:host([data-size='xs']) {
+  --_size: var(--shy-size-icon-sm);
+}
+
+:host([data-size='sm']) {
+  --_size: var(--shy-size-icon-md);
+}
+
+:host([data-size='lg']) {
+  --_size: #{ru(16)};
+}
+
+// Começa no topo (rotate -90deg) e enche no sentido horário. O círculo usa pathLength="100".
+.ring {
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+  transform: rotate(-90deg);
+}
+
+.track {
+  stroke: var(--shy-progress-circular-track, var(--shy-color-track));
+}
+
+.bar {
+  stroke: var(--shy-progress-circular-bar, var(--shy-color-primary-text));
+  stroke-linecap: round;
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: calc((1 - var(--_value)) * 100);
+  transition: stroke-dashoffset var(--shy-duration-slow) var(--shy-ease-standard);
+}
+
+// Valor 0 com linecap round ainda desenharia um ponto.
+:host([aria-valuenow='0']) .bar {
+  visibility: hidden;
+}
+
+.ring.is-indeterminate {
+  animation: shy-spin calc(var(--shy-duration-loop) * 2) var(--shy-ease-linear) infinite;
+
+  .bar {
+    stroke-dasharray: 70 100;
+    stroke-dashoffset: -15;
+    transition: none;
+    animation: shy-spinner-dash var(--shy-duration-loop-slow) var(--shy-ease-standard) infinite;
+  }
+}
+
+// Reduced motion: arco parado que pulsa.
+.ring.is-indeterminate {
+  @include reduced-motion {
+    animation: shy-pulse var(--shy-duration-breathe) var(--shy-ease-standard) infinite;
+  }
+}
+
+.ring.is-indeterminate .bar {
+  @include reduced-motion {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .track {
+    stroke: GrayText;
+  }
+
+  .bar {
+    stroke: Highlight;
+  }
+}

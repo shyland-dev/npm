@@ -140,3 +140,15 @@
   white-space: nowrap;
   border: 0;
 }
+
+/// Regras para reduced motion: preferência do sistema ou `data-motion="reduced"` no `:root` (plano 9.2).
+/// Use em seletores internos do componente (não no :host): `.bar { @include reduced-motion { … } }`.
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+
+  :host-context([data-motion='reduced']) & {
+    @content;
+  }
+}

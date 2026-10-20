@@ -13,7 +13,7 @@ Arquivos em `src/libs/ui/src/lib/styles/tokens/`. CSS puro, sem build step. Nome
 
 ## Cores semânticas
 
-Superfícies: `bg`, `surface`, `surface-raised`, `surface-sunken`. Texto: `text`, `text-muted`, `text-subtle`, `text-disabled`. Borda: `border` (decorativa), `border-strong` (controles, ≥ 3:1), `line` (conectores). Outros: `focus`, `scrim`, `scrim-panel` (+ `scrim-panel-border`, `on-scrim`), `neutral-soft` / `on-neutral-soft`.
+Superfícies: `bg`, `surface`, `surface-raised`, `surface-sunken`. Texto: `text`, `text-muted`, `text-subtle`, `text-disabled`. Borda: `border` (decorativa), `border-strong` (controles, ≥ 3:1), `line` (conectores), `track` (trilho de progress e base do skeleton). Outros: `focus`, `scrim`, `scrim-panel` (+ `scrim-panel-border`, `on-scrim`), `neutral-soft` / `on-neutral-soft`.
 
 Por intenção `X` ∈ `primary | success | warning | danger | info`: `--shy-color-X` (fundo sólido), `--shy-color-on-X` (texto sobre o sólido), `--shy-color-X-text` (texto/ícone/borda sobre superfície), `--shy-color-X-soft` (fundo suave), `--shy-color-on-X-soft`.
 
@@ -30,7 +30,7 @@ Hover e pressed não têm cor própria: usam a camada de estado (`--shy-state-ho
 | Script              | Garante                                                                                                        |
 | ------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `check-tokens`      | mesmos tokens semânticos nos dois temas; `var(--shy-x)` sem fallback sempre definido; `$layers` = `layers.css` |
-| `check-contrast`    | 100 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas |
+| `check-contrast`    | 52 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas  |
 | `check-calibration` | tamanhos em px nos viewports de referência                                                                     |
 | `check-hardcoded`   | sem cor, tempo, easing, `z-index` nem `font-family` literais em SCSS de componente                             |
 

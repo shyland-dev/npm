@@ -14,6 +14,7 @@
   --shy-color-border-strong: var(--shy-neutral-500);
   --shy-color-scrim: rgb(7 8 17 / 40%);
   --shy-color-line: var(--shy-neutral-400);
+  --shy-color-track: var(--shy-neutral-200);
   --shy-color-neutral-soft: var(--shy-neutral-300);
   --shy-color-on-neutral-soft: var(--shy-neutral-900);
   --shy-color-scrim-panel: rgb(7 8 17 / 82%);

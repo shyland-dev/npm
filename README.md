@@ -43,14 +43,17 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 
 ## Componentes (`@shyland-dev/ui`)
 
-| Componente      | Selector                            | Descrição                                                                                  |
-| --------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ |
-| **Button**      | `button[shyButton]`, `a[shyButton]` | Botão de ação: `variant`, `intent`, `size`, `loading` (`aria-busy`, foco mantido), `block` |
-| **IconButton**  | `button[shyIconButton]`             | Botão só com ícone; `label` obrigatório vira `aria-label`                                  |
-| **Icon**        | `<shy-icon>`                        | Ícones SVG inline com suporte a hover fill e tamanho customizável                          |
-| **Select**      | `<shy-select>`                      | Dropdown customizável com suporte a ícones e imagens nas opções                            |
-| **Snackbar**    | `<shy-snackbar>`                    | Notificação temporária no topo ou rodapé da página                                         |
-| **ThemeToggle** | `<shy-theme-toggle>`                | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                        |
+| Componente      | Selector                                | Descrição                                                                                  |
+| --------------- | --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Button**      | `button[shyButton]`, `a[shyButton]`     | Botão de ação: `variant`, `intent`, `size`, `loading` (`aria-busy`, foco mantido), `block` |
+| **IconButton**  | `button[shyIconButton]`                 | Botão só com ícone; `label` obrigatório vira `aria-label`                                  |
+| **Spinner**     | `shy-spinner`                           | 8 variantes, `size` xs a lg, `label` opcional (`role="status"`), cor por `currentColor`    |
+| **Skeleton**    | `shy-skeleton`                          | Placeholder `text`/`circle`/`rect`, `lines`, `shimmer`/`still`; decorativo (`aria-hidden`) |
+| **Progress**    | `shy-progress`, `shy-progress-circular` | `role="progressbar"`, `value`/`max`, indeterminado sem `value`                             |
+| **Icon**        | `<shy-icon>`                            | Ícones SVG inline com suporte a hover fill e tamanho customizável                          |
+| **Select**      | `<shy-select>`                          | Dropdown customizável com suporte a ícones e imagens nas opções                            |
+| **Snackbar**    | `<shy-snackbar>`                        | Notificação temporária no topo ou rodapé da página                                         |
+| **ThemeToggle** | `<shy-theme-toggle>`                    | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                        |
 
 ---
 
@@ -390,10 +393,10 @@ ru(4); // 'calc(var(--shy-responsive-unit) * 4)'
 Importe os componentes standalone diretamente nos `imports` do seu componente ou módulo:
 
 ```typescript
-import { ButtonComponent, IconButtonComponent, IconComponent, SelectComponent, SnackbarComponent, SnackbarService } from '@shyland-dev/ui';
+import { ButtonComponent, IconButtonComponent, IconComponent, ProgressComponent, SelectComponent, SnackbarComponent, SnackbarService, SpinnerComponent } from '@shyland-dev/ui';
 
 @Component({
-    imports: [ButtonComponent, IconButtonComponent, IconComponent, SelectComponent, SnackbarComponent],
+    imports: [ButtonComponent, IconButtonComponent, IconComponent, ProgressComponent, SelectComponent, SnackbarComponent, SpinnerComponent],
     providers: [SnackbarService],
 })
 export class MeuComponent {}
@@ -450,8 +453,12 @@ CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--s
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
 export { IconComponent } from './lib/components/icon/icon.component';
+export { ProgressComponent } from './lib/components/progress/progress.component';
+export { ProgressCircularComponent } from './lib/components/progress-circular/progress-circular.component';
 export { SelectComponent } from './lib/components/select/select.component';
+export { SkeletonComponent } from './lib/components/skeleton/skeleton.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
+export { SpinnerComponent } from './lib/components/spinner/spinner.component';
 
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
@@ -470,6 +477,9 @@ export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interfac
 // Types
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
+export { ShyProgressSize } from './lib/types/progress/progress.type';
+export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';
+export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
 export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';
 
 // Ícones

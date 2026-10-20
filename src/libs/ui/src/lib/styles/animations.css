@@ -74,6 +74,62 @@
   }
 }
 
+/* Spinner e ProgressCircular indeterminado; o círculo usa pathLength="100". */
+@keyframes shy-spinner-dash {
+  from {
+    stroke-dasharray: 1 100;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 70 100;
+    stroke-dashoffset: -15;
+  }
+
+  to {
+    stroke-dasharray: 70 100;
+    stroke-dashoffset: -99;
+  }
+}
+
+@keyframes shy-spinner-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.5);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shy-spinner-bar {
+  0%,
+  80%,
+  100% {
+    transform: scaleY(0.4);
+  }
+
+  40% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes shy-spinner-ping {
+  from {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
 @keyframes shy-shimmer {
   from {
     background-position: 200% 0;

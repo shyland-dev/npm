@@ -1,0 +1,197 @@
+@use '../../styles' as *;
+
+// Medidas internas em % do tamanho do spinner: o desenho escala junto com --shy-spinner-size.
+:host {
+  --_size: var(--shy-size-icon-lg);
+  --_loop: var(--shy-duration-loop);
+
+  display: inline-grid;
+  flex-shrink: 0;
+  inline-size: var(--shy-spinner-size, var(--_size));
+  block-size: var(--shy-spinner-size, var(--_size));
+  color: var(--shy-spinner-color, currentColor);
+  vertical-align: middle;
+}
+
+:host([data-size='xs']) {
+  --_size: var(--shy-size-icon-sm);
+}
+
+:host([data-size='sm']) {
+  --_size: var(--shy-size-icon-md);
+}
+
+:host([data-size='lg']) {
+  --_size: #{ru(16)};
+}
+
+.graphic {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12%;
+}
+
+// ring, ring-track, dash
+.ring {
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  animation: shy-spin var(--_loop) var(--shy-ease-linear) infinite;
+}
+
+.arc {
+  stroke-dasharray: 30 100;
+}
+
+.track {
+  opacity: var(--shy-opacity-track);
+}
+
+:host([data-variant='ring-track']) .arc {
+  stroke-dasharray: 25 100;
+}
+
+.ring.dash {
+  animation-duration: calc(var(--_loop) * 2);
+
+  .arc {
+    stroke-dasharray: 70 100;
+    stroke-dashoffset: -15;
+    animation: shy-spinner-dash var(--shy-duration-loop-slow) var(--shy-ease-standard) infinite;
+
+    @include reduced-motion {
+      animation: none;
+    }
+  }
+}
+
+// dots e bars: atraso negativo começa cada item numa fase diferente do ciclo.
+.dot,
+.bar {
+  flex-shrink: 0;
+  background: currentColor;
+  animation: shy-spinner-dot var(--_loop) var(--shy-ease-standard) infinite;
+
+  &:nth-child(1) {
+    animation-delay: calc(var(--_loop) * -0.32);
+  }
+
+  &:nth-child(2) {
+    animation-delay: calc(var(--_loop) * -0.16);
+  }
+}
+
+.dot {
+  inline-size: 25%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.bar {
+  inline-size: 14%;
+  block-size: 80%;
+  border-radius: var(--shy-radius-full);
+  animation-name: shy-spinner-bar;
+
+  &:nth-child(1) {
+    animation-delay: calc(var(--_loop) * -0.48);
+  }
+
+  &:nth-child(2) {
+    animation-delay: calc(var(--_loop) * -0.32);
+  }
+
+  &:nth-child(3) {
+    animation-delay: calc(var(--_loop) * -0.16);
+  }
+}
+
+:host([data-variant='bars']) .graphic {
+  gap: 9%;
+}
+
+// pulse: dois anéis que crescem e somem, meio ciclo de distância.
+.ping {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: shy-spinner-ping var(--shy-duration-loop-slow) var(--shy-ease-standard) infinite;
+
+  &:nth-child(2) {
+    animation-delay: calc(var(--shy-duration-loop-slow) * -0.5);
+  }
+}
+
+// orbit: satélite girando sobre um trilho fraco.
+.orbit {
+  position: absolute;
+  inset: 0;
+  animation: shy-spin var(--_loop) var(--shy-ease-linear) infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 12%;
+    border: var(--shy-border-width-strong) solid currentColor;
+    border-radius: 50%;
+    opacity: var(--shy-opacity-track);
+  }
+}
+
+.satellite {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 38%;
+  inline-size: 24%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.core {
+  inline-size: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: currentColor;
+  animation: shy-pulse var(--shy-duration-breathe) var(--shy-ease-standard) infinite;
+}
+
+.label {
+  @include visually-hidden;
+}
+
+// Reduced motion: nada gira nem cresce; o desenho fica parado e o conjunto pulsa (plano 9.2).
+.graphic {
+  @include reduced-motion {
+    animation: shy-pulse var(--shy-duration-breathe) var(--shy-ease-standard) infinite;
+  }
+}
+
+.graphic * {
+  @include reduced-motion {
+    animation: none;
+  }
+}
+
+.ping:nth-child(2) {
+  @include reduced-motion {
+    display: none;
+  }
+}
+
+// Cores forçadas pintariam os fundos com Canvas; o spinner mantém o desenho com a cor do texto.
+@media (forced-colors: active) {
+  :host {
+    color: CanvasText;
+  }
+
+  .graphic {
+    forced-color-adjust: none;
+  }
+}

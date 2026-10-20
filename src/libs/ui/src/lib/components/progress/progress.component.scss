@@ -1,0 +1,67 @@
+@use '../../styles' as *;
+
+// Trilho e barra: a barra (primary-text) tem ≥ 3:1 sobre o trilho nos dois temas (par track/primary-text no check-contrast).
+:host {
+  --_thickness: var(--shy-space-2);
+
+  position: relative;
+  display: block;
+  overflow: hidden;
+  inline-size: 100%;
+  block-size: var(--shy-progress-height, var(--_thickness));
+  border-radius: var(--shy-progress-radius, var(--shy-radius-full));
+  background: var(--shy-progress-track, var(--shy-color-track));
+}
+
+:host([data-size='sm']) {
+  --_thickness: var(--shy-space-1);
+}
+
+:host([data-size='lg']) {
+  --_thickness: var(--shy-space-3);
+}
+
+// Determinado: a barra inteira desliza (translate em %, sem animar width); a ponta arredondada não deforma.
+.bar {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--shy-progress-bar, var(--shy-color-primary-text));
+  transform: translateX(calc((var(--_value) - 1) * 100%));
+  transition: transform var(--shy-duration-slow) var(--shy-ease-standard);
+}
+
+:host(:dir(rtl)) .bar {
+  transform: translateX(calc((1 - var(--_value)) * 100%));
+}
+
+.bar.is-indeterminate {
+  inset-inline-end: auto;
+  inline-size: 40%;
+  transform: none;
+  transition: none;
+  animation: shy-progress-indeterminate var(--shy-duration-loop-slow) var(--shy-ease-standard) infinite;
+}
+
+:host(:dir(rtl)) .bar.is-indeterminate {
+  animation-direction: reverse;
+}
+
+// Reduced motion: barra cheia que só pulsa.
+.bar.is-indeterminate {
+  @include reduced-motion {
+    inline-size: 100%;
+    animation: shy-pulse var(--shy-duration-breathe) var(--shy-ease-standard) infinite;
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    border: var(--shy-border-width) solid CanvasText;
+  }
+
+  .bar {
+    forced-color-adjust: none;
+    background: Highlight;
+  }
+}

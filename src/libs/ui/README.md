@@ -36,7 +36,7 @@ Action button on the native element. Icons go in `slot="start"` / `slot="end"`.
 | `block`           | `boolean`                                                                | `false`     | Full width                                                                                                    |
 | `disabled`        | `boolean`                                                                | `false`     | `<button>`: native `disabled`. `<a>`: `aria-disabled="true"` and the click/navigation is blocked              |
 
-With `start`/`end` and no icon on that side the spinner is added and the button grows; use `replace` when the width must not change. The spinner is provisional (a CSS ring, static with reduced motion) until `shy-spinner` ships.
+With `start`/`end` and no icon on that side the spinner is added and the button grows; use `replace` when the width must not change. The spinner is a decorative `<shy-spinner>` (`ring`) at the icon size; with reduced motion it stops turning and only fades.
 
 ### `button[shyIconButton]`
 
@@ -52,6 +52,57 @@ Icon-only button. `label` is required and becomes the `aria-label`.
 | `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'ghost'`   | Visual style                                           |
 | `intent`  | same as Button                              | `'neutral'` | Color intent                                           |
 | `size`    | `'sm' \| 'md' \| 'lg'`                      | `'md'`      | Square side `--shy-size-control-*` (≥ 44 px on phones) |
+
+### `<shy-spinner>`
+
+Activity without known duration. Color comes from `currentColor` (or `--shy-spinner-color`).
+
+```html
+<shy-spinner label="Loading orders" /> <shy-spinner variant="dots" size="sm" />
+```
+
+| Input     | Type                                                                                      | Default  | Description                                                                                |
+| --------- | ----------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `variant` | `'ring' \| 'ring-track' \| 'dash' \| 'dots' \| 'bars' \| 'pulse' \| 'orbit' \| 'breathe'` | `'ring'` | Drawing                                                                                    |
+| `size`    | `'xs' \| 'sm' \| 'md' \| 'lg'`                                                            | `'md'`   | `--shy-size-icon-{sm,md,lg}` and `ru(16)`                                                  |
+| `label`   | `string`                                                                                  | —        | With it: `role="status"` + text for screen readers. Without it: `aria-hidden` (decorative) |
+
+With `prefers-reduced-motion` or `data-motion="reduced"` every variant stops moving and only fades (opacity pulse, 2 s cycle).
+
+### `<shy-skeleton>`
+
+Content placeholder. Decorative (`aria-hidden`): put `aria-busy="true"` on the region being loaded and announce it once (e.g. a `<shy-spinner label>`).
+
+```html
+<section [attr.aria-busy]="loading()">
+    @if (loading()) {
+    <shy-skeleton shape="circle" /> <shy-skeleton lines="3" />
+    } @else { … }
+</section>
+```
+
+| Input       | Type                           | Default     | Description                                          |
+| ----------- | ------------------------------ | ----------- | ---------------------------------------------------- |
+| `shape`     | `'text' \| 'circle' \| 'rect'` | `'text'`    | Line(s), circle or block                             |
+| `lines`     | `number`                       | `1`         | Lines of `text` (the last one is shorter when > 1)   |
+| `animation` | `'shimmer' \| 'still'`         | `'shimmer'` | Shimmer becomes an opacity pulse with reduced motion |
+
+### `<shy-progress>`, `<shy-progress-circular>`
+
+Progress bar, linear or circular, with `role="progressbar"`, `aria-valuemin="0"`, `aria-valuemax` and `aria-valuenow`. Without `value` it is indeterminate (no `aria-valuenow`). Give it a name with `label` or `aria-labelledby`.
+
+```html
+<shy-progress [value]="uploaded()" label="Upload" /> <shy-progress-circular label="Loading" size="sm" />
+```
+
+| Input   | Type                                                                   | Default | Description                                                         |
+| ------- | ---------------------------------------------------------------------- | ------- | ------------------------------------------------------------------- |
+| `value` | `number \| null`                                                       | `null`  | Current value, clamped to `[0, max]`; `null` = indeterminate        |
+| `max`   | `number`                                                               | `100`   | Invalid or ≤ 0 falls back to 100                                    |
+| `label` | `string`                                                               | —       | `aria-label`                                                        |
+| `size`  | linear `'sm' \| 'md' \| 'lg'`; circular `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'`  | Linear: thickness `--shy-space-{1,2,3}`. Circular: as `shy-spinner` |
+
+The value change animates `transform`/`stroke-dashoffset` (never `width`). Indeterminate with reduced motion: the linear bar fills the track and the circular arc stops; both only fade.
 
 ### `<shy-icon>`
 
@@ -239,12 +290,12 @@ Every length is `calc(var(--shy-responsive-unit) * N)`: `ru(N)` in SCSS, `ru(n)`
 | Semantic   | `--shy-color-{bg,surface,text,text-muted,border,focus,…}`, `--shy-color-{primary,success,…}[-text\|-soft]` |
 | Type       | `--shy-font-family-*`, `--shy-text-{xs…5xl}`, `--shy-weight-*`, `--shy-leading-*`                          |
 | Shape      | `--shy-space-*`, `--shy-radius-*`, `--shy-size-control-*`, `--shy-border-width*`, `--shy-shadow-1…5`       |
-| Motion     | `--shy-duration-*`, `--shy-ease-*`, `--shy-motion-distance`                                                |
+| Motion     | `--shy-duration-*` (incl. `-loop`, `-loop-slow`, `-breathe`), `--shy-ease-*`, `--shy-motion-distance`      |
 | Layers     | `--shy-z-{base,raised,dropdown,sticky,fixed,drawer,modal,popover,tooltip,toast}`                           |
 
 ### SCSS API
 
-`ru($n)`, `z($layer, $offset)`, `shy-layer`, `up($bp)`/`down($bp)`, `focus-ring`, `shy-state`, `state-layer`, `disabled-state`, `transition`, `visually-hidden`, plus the legacy `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode`. The old `$color-*` palette is gone (`_variables.scss` was removed); use the `--shy-color-*` tokens.
+`ru($n)`, `z($layer, $offset)`, `shy-layer`, `up($bp)`/`down($bp)`, `focus-ring`, `shy-state`, `state-layer`, `disabled-state`, `transition`, `visually-hidden`, `reduced-motion` (rules for `prefers-reduced-motion` or `data-motion="reduced"`), plus the legacy `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode`. The old `$color-*` palette is gone (`_variables.scss` was removed); use the `--shy-color-*` tokens.
 
 > Breaking in `0.1.0` (components): `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*`; `--shySnackbar*` → `--shy-snackbar-*`; the fallback icon for an unknown name is `question-circle`.
 >
@@ -265,6 +316,22 @@ Set on the element (or a parent). `IconButton` uses the same names with the `--s
 | `--shy-button-gap`          | `--shy-space-2`                 | Gap between icon/label |
 | `--shy-button-font-size`    | `--shy-text-{sm,md,lg}`         | Font size              |
 | `--shy-button-font-weight`  | `--shy-weight-semibold`         | Font weight            |
+
+### Spinner, Skeleton and Progress Tokens
+
+| Token                                              | Default                                          | Description                              |
+| -------------------------------------------------- | ------------------------------------------------ | ---------------------------------------- |
+| `--shy-spinner-size`                               | by `size`                                        | Side of the spinner                      |
+| `--shy-spinner-color`                              | `currentColor`                                   | Color                                    |
+| `--shy-skeleton-bg` / `--shy-skeleton-highlight`   | `--shy-color-track` / `--shy-color-neutral-soft` | Base and shimmer colors                  |
+| `--shy-skeleton-radius`                            | `--shy-radius-md` (`sm` on text lines)           | Radius                                   |
+| `--shy-skeleton-width`, `-height`, `-size`         | `100%`, `ru(40)`, `--shy-size-control-md`        | Width; rect height; circle side          |
+| `--shy-skeleton-line-height`, `-gap`               | `--shy-text-md`, `--shy-space-3`                 | Text lines                               |
+| `--shy-progress-track` / `--shy-progress-bar`      | `--shy-color-track` / `--shy-color-primary-text` | Linear colors (bar ≥ 3:1 over the track) |
+| `--shy-progress-height`, `--shy-progress-radius`   | by `size`, `--shy-radius-full`                   | Linear thickness and radius              |
+| `--shy-progress-circular-track` / `-bar` / `-size` | same colors, by `size`                           | Circular                                 |
+
+New foundation tokens: `--shy-color-track` (both themes), `--shy-opacity-track`, `--shy-duration-loop` (1000ms), `--shy-duration-loop-slow` (1600ms), `--shy-duration-breathe` (2000ms). Loop durations do not drop to 0.01ms with reduced motion: the components swap movement for an opacity pulse instead.
 
 ### Snackbar Tokens
 
@@ -313,8 +380,12 @@ The `<shy-select>` component can be customized via CSS custom properties:
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
 export { IconComponent } from './lib/components/icon/icon.component';
+export { ProgressComponent } from './lib/components/progress/progress.component';
+export { ProgressCircularComponent } from './lib/components/progress-circular/progress-circular.component';
 export { SelectComponent } from './lib/components/select/select.component';
+export { SkeletonComponent } from './lib/components/skeleton/skeleton.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
+export { SpinnerComponent } from './lib/components/spinner/spinner.component';
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Services
@@ -332,6 +403,9 @@ export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interfac
 // Types
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
+export { ShyProgressSize } from './lib/types/progress/progress.type';
+export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';
+export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
 export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';
 
 // Icons

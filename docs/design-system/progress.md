@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F3 Onda 1**, sessão **F3-S2** (Spinner, Skeleton, ProgressCircular, Progress)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- O plano da F3-S2 está em `docs/design-system/sessions/F3-onda-1.md`. O próximo `/build` aprova o plano, executa, roda as verificações e para em `aguardando-gate`.
+- A F3-S2 foi executada, verificada, commitada e enviada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S2: relatório do gate". O próximo `/build` aprova o gate (ou um ajuste vira commit novo) e avança para a F3-S3 em `aguardando-plano`.
 
 ## Fases
 
@@ -25,7 +25,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | Sessão | Escopo                                                                             | Status    | Commit  |
 | ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
-| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | próxima   |         |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | gate      |         |
 | F3-S3  | FormField, Input, Textarea                                                         | pendente  |         |
 | F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
@@ -46,6 +46,63 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: F2 aprovada e commitada (`eb359ac`), push em `feat/design-system`. Resíduos da Onda 0 (D-F2-1) ficam na F3-S1.
 - 2026-10-20: F3 a F5 divididas em sessões curtas (`docs/design-system/sessions/`), para o dono rodar uma por sessão do Claude.
 - 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou. Gate em `aguardando-gate`; relatório abaixo.
+- 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou (Spinner, Skeleton, Progress, ProgressCircular, Button com o Spinner). Verificações verdes, commit e push em `feat/design-system`; gate em `aguardando-gate`.
+
+## F3-S2: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                     | Resultado                                                                                                                                                                                                                               |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`              | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados (todos os tokens novos estão em uso)                                                                                                                                  |
+| `npm test`                      | verde: 12 arquivos, 71 testes (novos: `spinner` 11, `skeleton` 3, `progress` + `progress-circular` 4; `button` confere o `shy-spinner` decorativo)                                                                                      |
+| `npm run build`                 | verde (`ui` e `utils`)                                                                                                                                                                                                                  |
+| `npm run build:showcase`        | verde                                                                                                                                                                                                                                   |
+| Contraste                       | par novo `primary-text` sobre `track` (≥ 3:1): **4,59:1** no escuro e **5,82:1** no claro                                                                                                                                               |
+| Reduced motion (Chromium)       | `prefers-reduced-motion` e `data-motion="reduced"`: as 8 variantes do Spinner, o indeterminado linear (barra cheia) e o circular e o shimmer do Skeleton param de se mover e só rodam `shy-pulse` (2 s); nada interno anima             |
+| ARIA                            | `role="progressbar"`, `aria-valuemin/max/now`, indeterminado sem `aria-valuenow`, valor limitado a `[0, max]` (testado); Spinner com `label` = `role="status"`, sem `label` = `aria-hidden`                                             |
+| Button loading (Chromium)       | usa o `shy-spinner` (`ring`) do tamanho do ícone (20,3 px = `shy-icon` md a 1366×768); largura igual antes/durante (186,4 px); `aria-busy="true"`                                                                                       |
+| Progress determinado (Chromium) | barra de 60% ocupa 0,60 do trilho (translate, sem animar `width`)                                                                                                                                                                       |
+| Temas e viewports               | spinner, skeleton, progress e button em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                                         |
+| forced-colors (emulação)        | pontos/barras do Spinner em `CanvasText`; Progress com borda `CanvasText` e barra `Highlight`; ProgressCircular com trilho `GrayText` e barra `Highlight` (a paleta da emulação do Chromium deixa os dois escuros; conferir no Windows) |
+| Ambiente                        | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                                             |
+
+Não verificado: leitor de tela real (NVDA/VoiceOver) anunciando o `role="status"`; Windows em alto contraste real.
+
+### Arquivos principais
+
+- Tokens: `--shy-duration-loop`, `-loop-slow`, `-breathe` (`motion.css`), `--shy-opacity-track` (`primitives.css`), `--shy-color-track` (`semantic-dark.css`/`semantic-light.css`); keyframes `shy-spinner-dash`, `-dot`, `-bar`, `-ping` (`animations.css`); mixin `reduced-motion` (`_mixins.scss`).
+- `lib/components/spinner/`, `skeleton/`, `progress/` (inclui `progress-value.ts`, base interna), `progress-circular/` (`.ts`, `.html`, `.scss`, spec); tipos em `types/{spinner,skeleton,progress}/`; exports em `components/index.ts` e `types/index.ts`.
+- Button: `<shy-spinner class="spinner">` no lugar do anel provisório; mixin `spinner` removido de `_button-theme.scss`.
+- `scripts/contrast-pairs.json` (+ `primary-text`/`track`).
+- Showcase: `components/spinner`, `components/skeleton`, `components/progress`, rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens, exports), `decisions.md` (ADR-F3-2), `motion.md`, `tokens.md`, `accessibility.md` (contagem de pares corrigida), `sessions/F3-onda-1.md` (regra de reduced motion alinhada ao plano 12).
+
+### Efeito prático
+
+- `<shy-spinner>` com 8 variantes e 4 tamanhos, cor herdada; `<shy-skeleton>` text/circle/rect; `<shy-progress>` e `<shy-progress-circular>` determinados e indeterminados.
+- Button em loading usa o Spinner (`ring`); com reduced motion ele pulsa em vez de ficar parado.
+- Sem dependência nova; sem bump, tag ou publish. Nenhuma API existente mudou (só o visual do spinner do botão).
+
+### Decisões e premissas (ADR-F3-2 em `decisions.md`)
+
+- Reduced motion = pulso de opacidade (plano 12), não indicador estático (texto da sessão): o arquivo da sessão foi alinhado.
+- Durações de laço próprias que não zeram com reduced motion; token `track` para trilho/skeleton; barra padrão `primary-text`.
+- Tamanhos do Spinner/ProgressCircular pela escala de ícones (lg = `ru(16)`); Progress sem `intent` (cor por token, `--shy-progress-bar`).
+
+### Mensagem de commit
+
+```
+feat(ui): spinner, skeleton e progress
+
+- shy-spinner: 8 variantes, tamanhos xs a lg, label opcional (role="status")
+- shy-skeleton: text/circle/rect, lines, shimmer/still
+- shy-progress e shy-progress-circular: role="progressbar", value/max, indeterminado
+- reduced motion troca o movimento por pulso de opacidade
+- button em loading passa a usar o shy-spinner
+- tokens --shy-color-track, --shy-opacity-track e --shy-duration-loop*
+- showcase: components/spinner, skeleton e progress; README e ADR-F3-2
+```
 
 ## F3-S1: relatório do gate (2026-10-20)
 
@@ -330,3 +387,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: `/build` aprovou o plano da F2 e a executou (T1–T7). Gate em `aguardando-gate`; relatório acima.
 - 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou (utilitários, `animateOut`, Button, IconButton, showcase, README). Gate em `aguardando-gate`; relatório na seção "F3-S1: relatório do gate".
 - 2026-10-20: dono liberou commit após os testes e o push; F3-S1 commitada (`39c815b`) e enviada para `feat/design-system`. F3-S2 em `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou; verificações verdes; commit e push em `feat/design-system`. Estado `aguardando-gate`.

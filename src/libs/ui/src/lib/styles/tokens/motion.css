@@ -5,6 +5,11 @@
   --shy-duration-slow: 320ms;
   --shy-duration-slower: 500ms;
 
+  /* Laços contínuos (spinner, progress, skeleton). Não zeram com reduced motion: os componentes trocam o movimento por shy-pulse. */
+  --shy-duration-loop: 1000ms;
+  --shy-duration-loop-slow: 1600ms;
+  --shy-duration-breathe: 2000ms;
+
   --shy-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --shy-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
   --shy-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);

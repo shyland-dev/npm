@@ -4,7 +4,6 @@
 @include theme.intents;
 @include theme.variants;
 @include theme.control(button);
-@include theme.spinner;
 
 :host {
   --_height: var(--shy-size-control-md);
@@ -97,6 +96,11 @@
   .end {
     opacity: 0;
   }
+}
+
+// Spinner do tamanho do ícone do botão.
+.spinner {
+  --shy-spinner-size: var(--_icon);
 }
 
 .overlay {

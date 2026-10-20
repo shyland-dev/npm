@@ -1,6 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, input } from '@angular/core';
 import { ShyButtonLoadingPosition, ShyButtonSize, ShyButtonVariant } from '../../types/button/button.type';
 import { ShyIntent } from '../../types/intent/intent.type';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 /**
  * Botão de ação sobre o elemento nativo: `<button shyButton>` ou `<a shyButton href>`.
@@ -13,6 +14,7 @@ import { ShyIntent } from '../../types/intent/intent.type';
 @Component({
   selector: 'button[shyButton], a[shyButton]',
   exportAs: 'shyButton',
+  imports: [SpinnerComponent],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

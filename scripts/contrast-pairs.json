@@ -255,6 +255,11 @@
       "fg": "bg",
       "bg": "text",
       "min": 4.5
+    },
+    {
+      "fg": "primary-text",
+      "bg": "track",
+      "min": 3
     }
   ]
 }

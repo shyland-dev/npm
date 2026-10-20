@@ -29,7 +29,7 @@ Inclui os resíduos da Onda 0 (decisão D-F2-1): classes de tipografia, `.shy-sr
 
 **Escopo**
 
-- `Spinner` (`shy-spinner`): variantes ring, ring-track, dash, dots, bars, pulse, orbit, breathe; tamanhos xs a lg; `label` opcional (`role="status"`); cor por `currentColor`/token; motion só por `animations.css`/tokens, sem animar com `reduced-motion` (troca por indicador estático).
+- `Spinner` (`shy-spinner`): variantes ring, ring-track, dash, dots, bars, pulse, orbit, breathe; tamanhos xs a lg; `label` opcional (`role="status"`); cor por `currentColor`/token; motion só por `animations.css`/tokens; com `reduced-motion` o desenho para e só pulsa a opacidade (plano 12; ADR-F3-2).
 - `Skeleton` (`shy-skeleton`): shape text|circle|rect, `lines`, shimmer por token, `aria-hidden` + região `aria-busy` documentada.
 - `ProgressCircular` e `Progress` (linear): `value`, `max`, indeterminado, `label`; `role="progressbar"` com `aria-valuenow/min/max`.
 - Trocar o spinner provisório do Button pelo `Spinner`.

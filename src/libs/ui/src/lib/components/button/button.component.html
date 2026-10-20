@@ -1,7 +1,7 @@
 <span class="start"
   ><ng-content select="[slot=start]" />
   @if (spinnerAt() === 'start') {
-    <span class="spinner" aria-hidden="true"></span>
+    <shy-spinner class="spinner" />
   }</span
 ><span class="label"
   ><span class="text" [class.is-hidden]="swapText()"><ng-content /></span>
@@ -11,9 +11,9 @@
 ><span class="end"
   ><ng-content select="[slot=end]" />
   @if (spinnerAt() === 'end') {
-    <span class="spinner" aria-hidden="true"></span>
+    <shy-spinner class="spinner" />
   }
 </span>
 @if (spinnerAt() === 'replace') {
-  <span class="overlay" aria-hidden="true"><span class="spinner"></span></span>
+  <span class="overlay" aria-hidden="true"><shy-spinner class="spinner" /></span>
 }

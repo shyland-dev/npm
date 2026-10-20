@@ -117,26 +117,3 @@ $status-intents: (primary, success, warning, danger, info);
     }
   }
 }
-
-/// Anel provisório de loading (o Spinner completo entra na F3-S2). Parado com reduced motion.
-@mixin spinner {
-  .spinner {
-    display: block;
-    inline-size: var(--_icon);
-    block-size: var(--_icon);
-    border: var(--shy-border-width-strong) solid currentColor;
-    border-inline-end-color: transparent;
-    border-radius: var(--shy-radius-full);
-    animation: shy-spin calc(var(--shy-duration-slower) * 1.6) var(--shy-ease-linear) infinite;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .spinner {
-      animation: none;
-    }
-  }
-
-  :host-context([data-motion='reduced']) .spinner {
-    animation: none;
-  }
-}
