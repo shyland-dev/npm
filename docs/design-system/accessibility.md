@@ -2,7 +2,7 @@
 
 ## O que a F1 já garante
 
-- **Contraste:** `check-contrast` valida os 55 pares de `contrast-pairs.json` (texto ≥ 4,5:1; foco, borda de controle ≥ 3:1) nos dois temas e falha em regressão. O texto `text-disabled` é isento (WCAG 1.4.3).
+- **Contraste:** `check-contrast` valida os 56 pares de `contrast-pairs.json` (texto ≥ 4,5:1; foco, borda de controle ≥ 3:1) nos dois temas e falha em regressão. O texto `text-disabled` é isento (WCAG 1.4.3).
 - **Tamanho mínimo:** `check-calibration` mantém texto ≥ 12 px, corpo ≥ 14 px e controle ≥ 24 px (WCAG 2.5.8) em 360×800; com `pointer: coarse` o controle `md` chega a 44 px.
 - **Foco:** `:focus-visible` com anel em `--shy-color-focus` (largura/offset em ru) no `base.css` e em `@include focus-ring`; em `forced-colors: active` o anel usa `Highlight`.
 - **Movimento:** `prefers-reduced-motion` e `[data-motion='reduced']` tratados nos tokens ([motion.md](motion.md)).
@@ -21,6 +21,16 @@ O `ru` = `0.1rem + 0.1vmin`. Ao dar zoom de 200%, a janela em px CSS diminui pel
 | `shy-form-field`           | `<label for>` ligado ao `id` do controle; asterisco `aria-hidden` (o `required` nativo informa); erro com ícone + texto em `aria-live="polite"`; contador fora do `aria-describedby`                   |
 
 Contraste dos pares sobre `surface-sunken` conferido em `check-contrast`. `forced-colors`: borda `FieldText`, inválido tracejado.
+
+## Controles de escolha (F3-S4)
+
+| Componente                  | Teclado / ARIA                                                                                                                                                                     |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shy-checkbox`              | Checkbox nativo: Espaço alterna; `indeterminate` anunciado como misto; `aria-invalid`, `aria-describedby` e `aria-errormessage` pelo `shy-form-field`                              |
+| `shy-switch`                | Checkbox nativo com `role="switch"`: Espaço alterna; estado nativo (sem `aria-checked`); a posição do botão mostra o estado                                                        |
+| `shy-radio-group` / `radio` | `role="radiogroup"` (nome por `label` ou `aria-labelledby` do campo), radios nativos com o mesmo `name`: Tab entra no marcado, setas movem e selecionam, desabilitados são pulados |
+
+Estado marcado visível sem cor (glifo e posição) e em `forced-colors`; alvo ≥ `--shy-size-control-sm`; inválido tracejado em `forced-colors`.
 
 ## Por componente (F2 em diante)
 

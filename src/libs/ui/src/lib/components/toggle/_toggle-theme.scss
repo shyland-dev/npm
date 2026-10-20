@@ -1,0 +1,91 @@
+// Caixa visual (.mark), foco, hover, inválido e desabilitado compartilhados por Checkbox, Radio e Switch.
+// O input nativo (.native) fica oculto só visualmente: continua focável, com teclado e leitor de tela do navegador.
+@use '../../styles' as *;
+
+@mixin base($prefix) {
+  :host {
+    display: inline-flex;
+    max-inline-size: 100%;
+    color: var(--shy-#{$prefix}-fg, var(--shy-color-text));
+    font-size: var(--shy-text-md);
+    line-height: var(--shy-leading-snug);
+  }
+
+  // Alvo de toque: no mínimo a altura do controle sm (≥ 24 px, WCAG 2.5.8), mesmo com a marca menor.
+  .box {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--shy-#{$prefix}-gap, var(--shy-space-4));
+    min-block-size: var(--shy-size-control-sm);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .native {
+    @include visually-hidden;
+  }
+
+  .mark {
+    position: relative;
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    box-sizing: border-box;
+    border: var(--shy-border-width) solid var(--shy-#{$prefix}-border-color, var(--shy-color-border-strong));
+    background: var(--shy-#{$prefix}-bg, var(--shy-color-surface-sunken));
+    color: var(--shy-#{$prefix}-mark-color, var(--shy-color-on-primary));
+    @include transition;
+  }
+
+  .label:empty {
+    display: none;
+  }
+
+  .native:focus-visible + .mark {
+    @include focus-ring;
+  }
+
+  @media (hover: hover) {
+    .box:hover .native:not(:disabled) + .mark {
+      border-color: var(--shy-#{$prefix}-border-color-hover, var(--shy-color-text-muted));
+    }
+  }
+
+  // Matriz de estados do showcase (data-shy-state força o estado sem ponteiro/teclado).
+  :host([data-shy-state='hover']) .mark {
+    border-color: var(--shy-#{$prefix}-border-color-hover, var(--shy-color-text-muted));
+  }
+
+  :host([data-shy-state='focus']) .mark {
+    @include focus-ring;
+  }
+
+  :host([data-invalid]) .mark {
+    border-color: var(--shy-color-danger-text);
+  }
+
+  :host([data-disabled]) {
+    opacity: var(--shy-opacity-disabled);
+  }
+
+  :host([data-disabled]) .box {
+    cursor: not-allowed;
+  }
+
+  @media (forced-colors: active) {
+    .mark {
+      border-color: ButtonText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    :host([data-invalid]) .mark {
+      border-style: dashed;
+    }
+
+    :host([data-disabled]) .mark {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}

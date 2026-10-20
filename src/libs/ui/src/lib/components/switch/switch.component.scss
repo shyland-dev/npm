@@ -1,0 +1,64 @@
+@use '../../styles' as *;
+@use '../toggle/toggle-theme' as toggle;
+
+@include toggle.base(switch);
+
+.mark {
+  --_w: var(--shy-switch-width, #{ru(18)});
+  --_h: var(--shy-switch-height, #{ru(10)});
+  --_thumb: var(--shy-switch-thumb-size, #{ru(6)});
+  --_pad: calc((var(--_h) - var(--_thumb)) / 2);
+
+  inline-size: var(--_w);
+  block-size: var(--_h);
+  border-radius: var(--shy-radius-full);
+  background: var(--shy-switch-bg, var(--shy-color-track));
+}
+
+.thumb {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: var(--_pad);
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  margin-block: auto;
+  border-radius: 50%;
+  background: var(--shy-switch-thumb, var(--shy-color-text-muted));
+  transition:
+    translate var(--shy-duration-fast) var(--shy-ease-standard),
+    background-color var(--shy-duration-fast) var(--shy-ease-standard);
+}
+
+:host([data-checked]) .mark {
+  border-color: var(--shy-switch-checked-bg, var(--shy-color-primary));
+  background: var(--shy-switch-checked-bg, var(--shy-color-primary));
+}
+
+:host([data-checked][data-invalid]) .mark {
+  border-color: var(--shy-color-danger-text);
+}
+
+:host([data-checked]) .thumb {
+  translate: calc(var(--_w) - var(--_thumb) - var(--_pad) * 2 - var(--shy-border-width) * 2);
+  background: var(--shy-switch-thumb-checked, var(--shy-color-on-primary));
+}
+
+:host([data-checked]) .thumb:dir(rtl) {
+  translate: calc(-1 * (var(--_w) - var(--_thumb) - var(--_pad) * 2 - var(--shy-border-width) * 2));
+}
+
+@media (forced-colors: active) {
+  .thumb {
+    background: CanvasText;
+    forced-color-adjust: none;
+  }
+
+  :host([data-checked]) .mark {
+    border-color: ButtonText;
+    background: Highlight;
+  }
+
+  :host([data-checked]) .thumb {
+    background: HighlightText;
+  }
+}

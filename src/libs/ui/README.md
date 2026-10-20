@@ -134,6 +134,51 @@ Text field on the native element, so `ngModel`, `formControl` and `formControlNa
 
 Slots: `slot="prefix"` / `slot="suffix"` take a square of the field height inside the box and make room in the text (prefix ignores the pointer; suffix accepts a `shyIconButton`). Without `shy-form-field` the input works alone (no label/error/slots).
 
+### `<shy-checkbox>`, `<shy-switch>`
+
+Boolean controls over a native `<input type="checkbox">` (the switch adds `role="switch"`), visually hidden but focusable: Space, focus and screen-reader state come from the browser. The text is the projected content, or `label` (`aria-label`) when there is none. Use `[(checked)]`, `ngModel` or `formControl` (boolean value). The checked glyph (check, dash) and the thumb position show the state, so it never depends on color alone.
+
+```html
+<shy-checkbox [(checked)]="accepted">I accept the terms</shy-checkbox>
+<shy-checkbox [checked]="all()" [indeterminate]="some()" (checkedChange)="toggleAll($event)">All</shy-checkbox>
+<shy-switch formControlName="notifications">Notifications</shy-switch>
+```
+
+| Input                               | Type      | Default | Description                                                                              |
+| ----------------------------------- | --------- | ------- | ---------------------------------------------------------------------------------------- |
+| `checked` (`model`)                 | `boolean` | `false` | Two-way                                                                                  |
+| `indeterminate` (`model`, checkbox) | `boolean` | `false` | Mixed state; the native input reports `mixed` and it clears on the first click           |
+| `disabled`, `required`              | `boolean` | `false` | Native; `disabled` also follows the form control                                         |
+| `invalid`                           | `boolean` | —       | Forces the state; otherwise it comes from the `NgControl` (invalid and touched or dirty) |
+| `label`, `name`, `value`, `id`      | `string`  | —       | `aria-label`, and the native attributes                                                  |
+
+### `<shy-radio-group>`, `<shy-radio>`
+
+`role="radiogroup"` with one native `<input type="radio">` per option, all sharing the same `name`, so the browser does the roving tabindex (Tab enters the checked option, or the first) and the arrows, which move and select (disabled options are skipped). The value is whatever `value` the `shy-radio` has (compared with `Object.is`). Name the group with `label`, or put it inside `shy-form-field` with a `label` (`aria-labelledby`).
+
+```html
+<shy-radio-group label="Plan" [(value)]="plan">
+    <shy-radio value="free">Free</shy-radio>
+    <shy-radio value="pro">Pro</shy-radio>
+</shy-radio-group>
+<shy-form-field label="Size" error="Choose a size">
+    <shy-radio-group formControlName="size">
+        <shy-radio value="s">Small</shy-radio>
+        <shy-radio value="l">Large</shy-radio>
+    </shy-radio-group>
+</shy-form-field>
+```
+
+| Input                                      | Type                         | Default      | Description                                          |
+| ------------------------------------------ | ---------------------------- | ------------ | ---------------------------------------------------- |
+| `value` (`model`, group) / `value` (radio) | `unknown`                    | —            | Selected value / the option's value                  |
+| `orientation` (group)                      | `'vertical' \| 'horizontal'` | `'vertical'` | Layout                                               |
+| `disabled`, `required`, `invalid` (group)  | `boolean`                    | —            | `aria-disabled`, `aria-required`, `aria-invalid`     |
+| `label`, `name` (group)                    | `string`                     | —            | `aria-label`; native `name` (generated when omitted) |
+| `disabled`, `label` (radio)                | `boolean`, `string`          | —            | One disabled option; `aria-label`                    |
+
+The error of a `shy-form-field` shows after the focus leaves the group or the form is submitted.
+
 ### `<shy-icon>`
 
 Renders an inline SVG icon from the built-in catalog. Supports a _-fill_ variant with a hover transition.
@@ -374,6 +419,21 @@ New foundation tokens: `--shy-color-track` (both themes), `--shy-opacity-track`,
 | `--shy-input-placeholder`, `--shy-input-radius`                       | `--shy-color-text-subtle`, `--shy-radius-md`         | Placeholder and radius          |
 | `--shy-form-field-gap`, `-label-color`, `-hint-color`, `-error-color` | `--shy-space-2`, `text`, `text-muted`, `danger-text` | Field layout and message colors |
 
+### Checkbox, Switch and Radio Tokens
+
+| Token                                                                      | Default                                         | Description                        |
+| -------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------- |
+| `--shy-checkbox-size`, `--shy-radio-size`                                  | `--shy-size-icon-md`                            | Side of the mark                   |
+| `--shy-checkbox-radius`                                                    | `--shy-radius-sm`                               | Checkbox radius                    |
+| `--shy-{checkbox,radio,switch}-checked-bg`                                 | `--shy-color-primary`                           | Fill when checked                  |
+| `--shy-{checkbox,radio,switch}-bg`, `-border-color`, `-border-color-hover` | `surface-sunken`, `border-strong`, `text-muted` | Unchecked box (border ≥ 3:1)       |
+| `--shy-{checkbox,radio,switch}-gap`, `-fg`                                 | `--shy-space-4`, `--shy-color-text`             | Gap to the text; text color        |
+| `--shy-switch-width`, `-height`, `-thumb-size`                             | `ru(18)`, `ru(10)`, `ru(6)`                     | Track and thumb                    |
+| `--shy-switch-bg`, `-thumb`, `-thumb-checked`                              | `track`, `text-muted`, `on-primary`             | Track and thumb colors             |
+| `--shy-radio-group-gap`, `--shy-radio-group-gap-inline`                    | `--shy-space-1`, `--shy-space-8`                | Gap (vertical / horizontal layout) |
+
+The touch target is at least `--shy-size-control-sm` tall (it grows with a coarse pointer), even with a smaller mark.
+
 ### Snackbar Tokens
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
@@ -420,16 +480,21 @@ The `<shy-select>` component can be customized via CSS custom properties:
 // Components
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
+export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';
 export { InputComponent } from './lib/components/input/input.component';
 export { ProgressComponent } from './lib/components/progress/progress.component';
 export { ProgressCircularComponent } from './lib/components/progress-circular/progress-circular.component';
+export { RadioGroupComponent } from './lib/components/radio/radio-group.component';
+export { RadioComponent } from './lib/components/radio/radio.component';
+export { SHY_RADIO_GROUP, ShyRadioGroupContext } from './lib/components/radio/radio.token';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SkeletonComponent } from './lib/components/skeleton/skeleton.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 export { SpinnerComponent } from './lib/components/spinner/spinner.component';
+export { SwitchComponent } from './lib/components/switch/switch.component';
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Services
@@ -449,6 +514,7 @@ export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButto
 export { ShyInputSize } from './lib/types/input/input.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
 export { ShyProgressSize } from './lib/types/progress/progress.type';
+export { ShyRadioOrientation } from './lib/types/radio/radio.type';
 export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';
 export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
 export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';

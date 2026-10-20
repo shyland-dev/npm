@@ -50,6 +50,9 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 | **Spinner**     | `shy-spinner`                           | 8 variantes, `size` xs a lg, `label` opcional (`role="status"`), cor por `currentColor`           |
 | **Skeleton**    | `shy-skeleton`                          | Placeholder `text`/`circle`/`rect`, `lines`, `shimmer`/`still`; decorativo (`aria-hidden`)        |
 | **Progress**    | `shy-progress`, `shy-progress-circular` | `role="progressbar"`, `value`/`max`, indeterminado sem `value`                                    |
+| **Checkbox**    | `shy-checkbox`                          | Sobre o checkbox nativo: `[(checked)]`, `indeterminate`, CVA, `invalid` do `NgControl`            |
+| **Radio**       | `shy-radio-group`, `shy-radio`          | `role="radiogroup"` com radios nativos (setas e roving tabindex do navegador), CVA                |
+| **Switch**      | `shy-switch`                            | Checkbox nativo com `role="switch"`; mesma API do Checkbox                                        |
 | **Input**       | `input[shyInput]`, `textarea[shyInput]` | Campo sobre o nativo (`ngModel`/`formControl`), tamanhos, `invalid` do `NgControl`                |
 | **FormField**   | `shy-form-field`                        | Label, dica, erro (ícone + texto) e contador; liga `for`/`id` e `aria-*`; slots `prefix`/`suffix` |
 | **Icon**        | `<shy-icon>`                            | Ícones SVG inline com suporte a hover fill e tamanho customizável                                 |
@@ -454,17 +457,22 @@ CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--s
 // Componentes
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
+export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';
 export { InputComponent } from './lib/components/input/input.component';
 export { ProgressComponent } from './lib/components/progress/progress.component';
 export { ProgressCircularComponent } from './lib/components/progress-circular/progress-circular.component';
+export { RadioGroupComponent } from './lib/components/radio/radio-group.component';
+export { RadioComponent } from './lib/components/radio/radio.component';
+export { SHY_RADIO_GROUP, ShyRadioGroupContext } from './lib/components/radio/radio.token';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SkeletonComponent } from './lib/components/skeleton/skeleton.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 export { SpinnerComponent } from './lib/components/spinner/spinner.component';
 
+export { SwitchComponent } from './lib/components/switch/switch.component';
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Serviços
@@ -484,6 +492,7 @@ export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButto
 export { ShyInputSize } from './lib/types/input/input.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
 export { ShyProgressSize } from './lib/types/progress/progress.type';
+export { ShyRadioOrientation } from './lib/types/radio/radio.type';
 export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';
 export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
 export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';

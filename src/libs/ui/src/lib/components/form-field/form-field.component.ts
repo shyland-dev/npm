@@ -39,6 +39,7 @@ export class FormFieldComponent implements ShyFormFieldContext {
 
   private readonly uid = `shy-field-${nextId++}`;
   protected readonly hintId = `${this.uid}-hint`;
+  protected readonly labelBoxId = `${this.uid}-label`;
   protected readonly errorBoxId = `${this.uid}-error`;
   protected readonly control = signal<ShyFieldControl | null>(null);
 
@@ -46,6 +47,7 @@ export class FormFieldComponent implements ShyFormFieldContext {
   readonly invalid = computed(() => this.invalidInput() ?? this.control()?.invalid() ?? false);
   protected readonly showError = computed(() => this.invalid() && !!this.error());
   protected readonly isRequired = computed(() => this.required() || !!this.control()?.required());
+  readonly labelId = computed(() => (this.label() ? this.labelBoxId : null));
   readonly errorId = computed(() => (this.showError() ? this.errorBoxId : null));
   readonly describedBy = computed(() => [this.hint() ? this.hintId : null, this.errorId()].filter(Boolean).join(' ') || null);
   protected readonly forId = computed(() => this.control()?.id() ?? null);

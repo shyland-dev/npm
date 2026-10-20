@@ -1,0 +1,7 @@
+<label class="box"
+  ><input #native class="native" type="checkbox" [id]="id()" [attr.name]="name() ?? null" [attr.value]="value() ?? null" [checked]="checked()" [disabled]="isDisabled()" [required]="required()" [attr.aria-label]="label() ?? null" [attr.aria-invalid]="showInvalid() ? 'true' : null" [attr.aria-describedby]="field?.describedBy() ?? null" [attr.aria-errormessage]="showInvalid() ? (field?.errorId() ?? null) : null" (change)="change(native)" (blur)="touched()" /><span class="mark" aria-hidden="true"
+    ><svg class="glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path class="check" d="M3.5 8.5l3 3 6-7" />
+      <path class="dash" d="M4 8h8" /></svg></span
+  ><span class="label"><ng-content /></span
+></label>

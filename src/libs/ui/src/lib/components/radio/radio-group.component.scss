@@ -1,0 +1,11 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--shy-radio-group-gap, var(--shy-space-1));
+}
+
+:host([data-orientation='horizontal']) {
+  flex-flow: row wrap;
+  gap: var(--shy-radio-group-gap-inline, var(--shy-space-8));
+}

@@ -1,6 +1,6 @@
 <div class="field">
   @if (label()) {
-    <label class="label" [attr.for]="forId()"
+    <label class="label" [id]="labelBoxId" [attr.for]="forId()"
       >{{ label() }}
       @if (isRequired()) {
         <span class="required" aria-hidden="true">*</span>

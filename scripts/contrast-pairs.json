@@ -275,6 +275,11 @@
       "fg": "danger-text",
       "bg": "surface-sunken",
       "min": 4.5
+    },
+    {
+      "fg": "text-muted",
+      "bg": "track",
+      "min": 3
     }
   ]
 }

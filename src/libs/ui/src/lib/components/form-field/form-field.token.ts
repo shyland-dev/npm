@@ -20,6 +20,8 @@ export interface ShyFormFieldContext {
   readonly describedBy: Signal<string | null>;
   /** Id da mensagem de erro, só enquanto ela está visível. */
   readonly errorId: Signal<string | null>;
+  /** Id do `<label>` do campo, para `aria-labelledby` em controles que não são labelable (radiogroup). */
+  readonly labelId: Signal<string | null>;
   attach(control: ShyFieldControl): void;
   detach(control: ShyFieldControl): void;
 }

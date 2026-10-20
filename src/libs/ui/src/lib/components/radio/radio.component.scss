@@ -1,0 +1,39 @@
+@use '../../styles' as *;
+@use '../toggle/toggle-theme' as toggle;
+
+@include toggle.base(radio);
+
+.mark {
+  inline-size: var(--shy-radio-size, var(--shy-size-icon-md));
+  block-size: var(--shy-radio-size, var(--shy-size-icon-md));
+  border-radius: 50%;
+}
+
+.dot {
+  inline-size: 50%;
+  block-size: 50%;
+  border-radius: 50%;
+  background: currentColor;
+  scale: 0;
+  transition: scale var(--shy-duration-fast) var(--shy-ease-standard);
+}
+
+:host([data-checked]) .mark {
+  border-color: var(--shy-radio-checked-bg, var(--shy-color-primary));
+  background: var(--shy-radio-checked-bg, var(--shy-color-primary));
+}
+
+:host([data-checked]) .dot {
+  scale: 1;
+}
+
+:host([data-checked][data-invalid]) .mark {
+  border-color: var(--shy-color-danger-text);
+}
+
+@media (forced-colors: active) {
+  :host([data-checked]) .mark {
+    border-color: ButtonText;
+    background: Canvas;
+  }
+}

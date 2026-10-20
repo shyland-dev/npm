@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F3 Onda 1**, sessão **F3-S4** (Checkbox, Radio, Switch)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Gate da F3-S3 aprovado pelo `/build` de 2026-10-20 (commit `e119878`). O plano da F3-S4 está em `sessions/F3-onda-1.md`; o próximo `/build` o aprova e executa a sessão.
+- A F3-S4 foi executada e verificada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S4: relatório do gate". O próximo `/build` aprova o gate (ou um ajuste vira commit novo) e avança para a F3-S5 em `aguardando-plano`.
 
 ## Fases
 
@@ -27,7 +27,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
 | F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
-| F3-S4  | Checkbox, Radio, Switch                                                            | plano     |         |
+| F3-S4  | Checkbox, Radio, Switch                                                            | gate      |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
 | F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
@@ -52,6 +52,57 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: dono escolheu o **híbrido** para o overlay (ADR-F4-1): container sob demanda com backdrop estilo CDK + top layer + `z()` fallback. Aplicado em ADR-F0-7 (emenda), plano 7.5 (item 3) e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F3-S3.
 - 2026-10-20: `/build` aprovou o plano da F3-S3 e a executou (Input/Textarea, FormField, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
 - 2026-10-20: `/build` aprovou o gate da F3-S3 (`e119878`, já enviado). F3-S4 em `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F3-S4 e a executou (Checkbox, Switch, Radio, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+
+## F3-S4: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados; 57 pares de contraste (2 novos)                                                                                                                                            |
+| `npm test`               | verde: 17 arquivos, 101 testes (novos: `checkbox` 7, `switch` 2, `radio-group` 7)                                                                                                                                                             |
+| `npm run build`          | verde (`ui` e `utils`)                                                                                                                                                                                                                        |
+| `npm run build:showcase` | verde                                                                                                                                                                                                                                         |
+| Teclado (Chromium)       | Espaço marca o checkbox e o switch; no radio, setas movem **e selecionam** (↓ de Free vai a Pro; o próximo ↓ pula o desabilitado e volta a Free); anel de foco `solid` 2 px na marca                                                          |
+| ARIA (Chromium)          | switch: `role=switch`, nome "Label", `checked` na árvore de acessibilidade (sem `aria-checked`); radiogroup com `role` e `aria-label`; jsdom: `aria-describedby`/`aria-invalid`/`aria-errormessage` no form-field, `aria-labelledby` no grupo |
+| Erro nos formulários     | checkbox: erro após blur ou `markAllAsTouched`, some ao marcar; radio: erro só quando o foco **sai do grupo** (mover entre radios não conta) ou no submit                                                                                     |
+| Alvo de toque            | `.box` do switch com 35,6 px de altura a 1366×768 (≥ `--shy-size-control-sm`; ≥ 24 px)                                                                                                                                                        |
+| Temas e viewports        | checkbox, switch e radio em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                                                           |
+| forced-colors (emulação) | glifo do checkbox continua visível (opacidade 1) quando marcado, borda `ButtonText`, inválido tracejado, marcado do switch em `Highlight`; conferir no Windows                                                                                |
+| Ambiente                 | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                                                   |
+
+Não verificado: leitor de tela real (NVDA/VoiceOver); Windows em alto contraste real; RTL (a regra `:dir(rtl)` do botão do switch foi escrita, não medida); ponteiro grosso com dispositivo real.
+
+### Arquivos principais
+
+- `lib/components/checkbox/`, `switch/`, `radio/` (`radio-group.component.ts`, `radio.component.ts`, `radio.token.ts`, `.html`, `.scss`, specs) e `toggle/` interno (`control-base.ts`, `toggle-base.ts`, `_toggle-theme.scss`, não exportados); `types/radio/radio.type.ts`; exports em `components/index.ts` e `types/index.ts`.
+- `form-field`: `labelId` no contexto e `id` no `<label>` (aditivo).
+- `scripts/contrast-pairs.json` (+ `text-muted`/`track` 3:1, `on-primary`/`primary` 4,5:1).
+- Showcase: `components/{checkbox,switch,radio}` (matriz de estados, select-all com indeterminate, dentro do form-field), rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens, exports), `decisions.md` (ADR-F3-4), `accessibility.md`.
+
+### Efeito prático
+
+- `<shy-checkbox>`, `<shy-switch>` e `<shy-radio-group>`/`<shy-radio>` com `[(checked)]`/`[(value)]`, `ngModel`, `formControl` e `formControlName`, estados do contrato e integração com o `shy-form-field` (invalid, hint, erro).
+- Nenhuma API existente mudou (só o `labelId` aditivo no contexto do form-field). Sem dependência nova, bump, tag ou publish.
+
+### Decisões e premissas (ADR-F3-4 em `decisions.md`)
+
+- Controles sobre inputs nativos ocultos só visualmente (teclado e leitor de tela do navegador); radio com `name` compartilhado em vez de roving tabindex manual; switch sem `aria-checked`; CVA registrado pelo `NgControl` com base interna `ControlBase<T>`; erro do grupo de radio ao sair do grupo.
+- O arquivo da sessão dizia "roving tabindex, setas movem e selecionam" no Radio: o resultado é o mesmo, entregue pelo navegador.
+
+### Mensagem de commit
+
+```
+feat(ui): checkbox, radio e switch
+
+- shy-checkbox e shy-switch sobre checkbox nativo: [(checked)], indeterminate, CVA, invalid pelo NgControl
+- shy-radio-group e shy-radio sobre radios nativos: setas e roving tabindex do navegador, CVA, aria-labelledby do form-field
+- glifo e posição do botão mostram o estado sem depender de cor; forced-colors e alvo de toque ≥ control-sm
+- tokens --shy-checkbox-*, --shy-radio-* e --shy-switch-*; labelId no form-field
+- showcase: components/checkbox, radio e switch; README e ADR-F3-4
+```
 
 ## F3-S3: relatório do gate (2026-10-20)
 
