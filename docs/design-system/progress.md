@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F3 Onda 1**, sessão **F3-S1** (utilitários da Onda 0 + Button + IconButton)
-- Estado: `aguardando-gate`
+- Fase: **F3 Onda 1**, sessão **F3-S2** (Spinner, Skeleton, ProgressCircular, Progress)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- F3-S1 executada; relatório do gate abaixo ("F3-S1: relatório do gate"). O próximo `/build` aprova o gate e a mensagem de commit proposta, commita, faz push em `feat/design-system` e avança para a F3-S2 em `aguardando-plano`.
+- O plano da F3-S2 está em `docs/design-system/sessions/F3-onda-1.md`. O próximo `/build` aprova o plano, executa, roda as verificações e para em `aguardando-gate`.
 
 ## Fases
 
@@ -22,24 +22,24 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Sessões
 
-| Sessão | Escopo                                                                             | Status   | Commit |
-| ------ | ---------------------------------------------------------------------------------- | -------- | ------ |
-| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | gate     |        |
-| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | pendente |        |
-| F3-S3  | FormField, Input, Textarea                                                         | pendente |        |
-| F3-S4  | Checkbox, Radio, Switch                                                            | pendente |        |
-| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente |        |
-| F3-S6  | Fechamento da Onda 1                                                               | pendente |        |
-| F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente |        |
-| F4-S2  | Dialog, Drawer                                                                     | pendente |        |
-| F4-S3  | Popover, Tooltip, Menu                                                             | pendente |        |
-| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente |        |
-| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente |        |
-| F4-S6  | Fechamento da Onda 2                                                               | pendente |        |
-| F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente |        |
-| F5-S2  | Lote 2                                                                             | pendente |        |
-| F5-S3  | Lote 3 (sob demanda)                                                               | pendente |        |
-| F5-S4  | Hardening e fechamento                                                             | pendente |        |
+| Sessão | Escopo                                                                             | Status    | Commit  |
+| ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
+| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | próxima   |         |
+| F3-S3  | FormField, Input, Textarea                                                         | pendente  |         |
+| F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
+| F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
+| F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
+| F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
+| F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
+| F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
+| F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
+| F5-S2  | Lote 2                                                                             | pendente  |         |
+| F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |         |
+| F5-S4  | Hardening e fechamento                                                             | pendente  |         |
 
 ## Registro
 
@@ -329,3 +329,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: F1 commitada (0123029) e enviada para `feat/design-system`. F2 em `planejar` → plano escrito; estado `aguardando-plano`.
 - 2026-10-20: `/build` aprovou o plano da F2 e a executou (T1–T7). Gate em `aguardando-gate`; relatório acima.
 - 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou (utilitários, `animateOut`, Button, IconButton, showcase, README). Gate em `aguardando-gate`; relatório na seção "F3-S1: relatório do gate".
+- 2026-10-20: dono liberou commit após os testes e o push; F3-S1 commitada (`39c815b`) e enviada para `feat/design-system`. F3-S2 em `aguardando-plano`.
