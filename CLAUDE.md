@@ -52,9 +52,9 @@ Regras do /build:
 
 - Commits em português do Brasil, Conventional Commits (feat, fix, chore, docs, refactor, test, build, ci, perf, style).
 - Título curto e objetivo; corpo opcional explicando o impacto. Nunca commits em inglês.
-- Pedir confirmação antes de criar commit (no fluxo /build, o /build no estado `aguardando-gate` é essa confirmação).
+- Commit liberado pelo dono (2026-10-20): pode commitar o trabalho assim que `npm run check:ds` e os testes passarem, sem pedir confirmação. Fora do fluxo do gate, a mensagem segue as regras acima.
 - Trabalhar só na branch feat/design-system; nunca commitar direto na prod.
-- Push: permitido SOMENTE em `feat/design-system`, logo após o commit de um gate aprovado (decisão do dono em 2026-10-20, porque as sessões em nuvem são temporárias). Nunca push na prod nem force push.
+- Push: permitido SOMENTE em `feat/design-system`, logo após o commit (decisão do dono em 2026-10-20, porque as sessões em nuvem são temporárias; em 2026-10-20 ele também liberou o push junto do commit pós-testes). Nunca push na prod nem force push.
 - NUNCA publish no npm, tag ou bump de versão sem pedido explícito.
 - Atualizar README.md no mesmo trabalho quando mudar uso, API, scripts ou build; se não precisar, dizer isso no resumo.
 - Ao final de cada tarefa: resumo curto com arquivos principais e efeito prático.
