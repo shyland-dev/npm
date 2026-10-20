@@ -43,12 +43,14 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 
 ## Componentes (`@shyland-dev/ui`)
 
-| Componente      | Selector             | Descrição                                                           |
-| --------------- | -------------------- | ------------------------------------------------------------------- |
-| **Icon**        | `<shy-icon>`         | Ícones SVG inline com suporte a hover fill e tamanho customizável   |
-| **Select**      | `<shy-select>`       | Dropdown customizável com suporte a ícones e imagens nas opções     |
-| **Snackbar**    | `<shy-snackbar>`     | Notificação temporária no topo ou rodapé da página                  |
-| **ThemeToggle** | `<shy-theme-toggle>` | Controle segmentado claro / sistema / escuro (usa o `ThemeService`) |
+| Componente      | Selector                            | Descrição                                                                                  |
+| --------------- | ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Button**      | `button[shyButton]`, `a[shyButton]` | Botão de ação: `variant`, `intent`, `size`, `loading` (`aria-busy`, foco mantido), `block` |
+| **IconButton**  | `button[shyIconButton]`             | Botão só com ícone; `label` obrigatório vira `aria-label`                                  |
+| **Icon**        | `<shy-icon>`                        | Ícones SVG inline com suporte a hover fill e tamanho customizável                          |
+| **Select**      | `<shy-select>`                      | Dropdown customizável com suporte a ícones e imagens nas opções                            |
+| **Snackbar**    | `<shy-snackbar>`                    | Notificação temporária no topo ou rodapé da página                                         |
+| **ThemeToggle** | `<shy-theme-toggle>`                | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                        |
 
 ---
 
@@ -388,14 +390,20 @@ ru(4); // 'calc(var(--shy-responsive-unit) * 4)'
 Importe os componentes standalone diretamente nos `imports` do seu componente ou módulo:
 
 ```typescript
-import { IconComponent, SelectComponent, SnackbarComponent, SnackbarService } from '@shyland-dev/ui';
+import { ButtonComponent, IconButtonComponent, IconComponent, SelectComponent, SnackbarComponent, SnackbarService } from '@shyland-dev/ui';
 
 @Component({
-    imports: [IconComponent, SelectComponent, SnackbarComponent],
+    imports: [ButtonComponent, IconButtonComponent, IconComponent, SelectComponent, SnackbarComponent],
     providers: [SnackbarService],
 })
 export class MeuComponent {}
 ```
+
+```html
+<button shyButton type="submit" [loading]="salvando()" loadingPosition="start" loadingText="Salvando…"><shy-icon slot="start">check-lg</shy-icon>Salvar</button> <button shyIconButton type="button" label="Fechar"><shy-icon>x-lg</shy-icon></button>
+```
+
+Classes utilitárias (já carregadas pelo `index.css`): tipografia (`.shy-h1`…`.shy-h6`, `.shy-body`, `.shy-caption`, `.shy-code`, `.shy-sr-only` etc.) e layout (`.shy-stack`, `.shy-cluster`, `.shy-grid`, `.shy-container`, ajustáveis por `--shy-stack-gap`, `--shy-grid-min` etc.). API completa e tokens `--shy-button-*`: [`src/libs/ui/README.md`](src/libs/ui/README.md).
 
 ---
 
@@ -439,6 +447,8 @@ CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--s
 
 ```typescript
 // Componentes
+export { ButtonComponent } from './lib/components/button/button.component';
+export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
 export { IconComponent } from './lib/components/icon/icon.component';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
@@ -451,12 +461,15 @@ export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResol
 
 // Utilitários
 export { ru } from './lib/utils/ru';
+export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 
 // Interfaces
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
+export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
+export { ShyIntent } from './lib/types/intent/intent.type';
 export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';
 
 // Ícones

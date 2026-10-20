@@ -17,6 +17,42 @@ npm install @shyland-dev/ui
 
 ## Components
 
+### `button[shyButton]`, `a[shyButton]`
+
+Action button on the native element. Icons go in `slot="start"` / `slot="end"`.
+
+```html
+<button shyButton type="submit" [loading]="saving()" loadingPosition="start" loadingText="Saving…"><shy-icon slot="start">check-lg</shy-icon>Save</button> <a shyButton variant="link" routerLink="/docs">Docs</a>
+```
+
+| Input             | Type                                                                     | Default     | Description                                                                                                   |
+| ----------------- | ------------------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------------------------------------------- |
+| `variant`         | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'link'`                    | `'solid'`   | Visual style                                                                                                  |
+| `intent`          | `'primary' \| 'neutral' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'primary'` | Color intent                                                                                                  |
+| `size`            | `'sm' \| 'md' \| 'lg'`                                                   | `'md'`      | Height from `--shy-size-control-*` (larger on coarse pointers)                                                |
+| `loading`         | `boolean`                                                                | `false`     | `aria-busy` + `aria-disabled`, clicks (and form submit) ignored, focus kept (no native `disabled`)            |
+| `loadingPosition` | `'start' \| 'end' \| 'replace'`                                          | `'replace'` | `replace`: content transparent under the spinner, same width. `start`/`end`: spinner in place of that icon    |
+| `loadingText`     | `string`                                                                 | —           | Replaces the label while loading (`start`/`end` only); the button reserves the width of the longer of the two |
+| `block`           | `boolean`                                                                | `false`     | Full width                                                                                                    |
+| `disabled`        | `boolean`                                                                | `false`     | `<button>`: native `disabled`. `<a>`: `aria-disabled="true"` and the click/navigation is blocked              |
+
+With `start`/`end` and no icon on that side the spinner is added and the button grows; use `replace` when the width must not change. The spinner is provisional (a CSS ring, static with reduced motion) until `shy-spinner` ships.
+
+### `button[shyIconButton]`
+
+Icon-only button. `label` is required and becomes the `aria-label`.
+
+```html
+<button shyIconButton type="button" label="Close" (click)="close()"><shy-icon>x-lg</shy-icon></button>
+```
+
+| Input     | Type                                        | Default     | Description                                            |
+| --------- | ------------------------------------------- | ----------- | ------------------------------------------------------ |
+| `label`   | `string` (required)                         | —           | Accessible name                                        |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `'ghost'`   | Visual style                                           |
+| `intent`  | same as Button                              | `'neutral'` | Color intent                                           |
+| `size`    | `'sm' \| 'md' \| 'lg'`                      | `'md'`      | Square side `--shy-size-control-*` (≥ 44 px on phones) |
+
 ### `<shy-icon>`
 
 Renders an inline SVG icon from the built-in catalog. Supports a _-fill_ variant with a hover transition.
@@ -181,6 +217,13 @@ theme.toggle();
 
 `provideShyTheme({ defaultMode, storageKey })` configures the default mode and the `localStorage` key. `<shy-theme-toggle />` is a ready-made segmented control (`labels` input for translations). To avoid a flash of the wrong theme, put the inline script from the [root README](../../../README.md#tema-escuro-por-padrão) in your `index.html` `<head>`.
 
+### Typography and layout classes
+
+`index.css` (and `_global.scss`) also load two utility sheets:
+
+- `typography.css`: `.shy-display`, `.shy-h1`…`.shy-h6`, `.shy-body-lg`, `.shy-body`, `.shy-small`, `.shy-caption`, `.shy-overline`, `.shy-code`, and `.shy-sr-only` (visually hidden, still read by screen readers).
+- `layout.css`: `.shy-stack` (column), `.shy-cluster` (wrapping row), `.shy-grid` (auto-fill columns), `.shy-container` (centered max width). Tune with custom properties on the element: `--shy-stack-gap`, `--shy-cluster-gap`, `--shy-cluster-align`, `--shy-cluster-justify`, `--shy-grid-min`, `--shy-grid-gap`, `--shy-container-max`, `--shy-container-pad`.
+
 ### Units
 
 Every length is `calc(var(--shy-responsive-unit) * N)`: `ru(N)` in SCSS, `ru(n)` in TypeScript (`import { ru } from '@shyland-dev/ui'`). Do not use `px`, `rem`, `em`, `vw`, `vh` and similar.
@@ -206,6 +249,22 @@ Every length is `calc(var(--shy-responsive-unit) * N)`: `ru(N)` in SCSS, `ru(n)`
 > Breaking in `0.1.0` (components): `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*`; `--shySnackbar*` → `--shy-snackbar-*`; the fallback icon for an unknown name is `question-circle`.
 >
 > Breaking in `0.1.0` (globals): `--responsive-unit`, `--dynamic-*`, `$responsive-unit` and `$dynamic-*` no longer exist (no alias). Use `--shy-responsive-unit` / `ru(N)` and `--shy-dynamic-*`.
+
+### Button Tokens
+
+Set on the element (or a parent). `IconButton` uses the same names with the `--shy-icon-button-` prefix (`-bg`, `-fg`, `-border-color`, `-radius`, `-font-weight`, `-size`).
+
+| Token                       | Default                         | Description            |
+| --------------------------- | ------------------------------- | ---------------------- |
+| `--shy-button-bg`           | by variant/intent               | Background             |
+| `--shy-button-fg`           | by variant/intent               | Text and icon color    |
+| `--shy-button-border-color` | by variant/intent               | Border color           |
+| `--shy-button-radius`       | `--shy-radius-md`               | Border radius          |
+| `--shy-button-height`       | `--shy-size-control-{sm,md,lg}` | Minimum height         |
+| `--shy-button-pad-x`        | `--shy-space-{6,7,8}`           | Inline padding         |
+| `--shy-button-gap`          | `--shy-space-2`                 | Gap between icon/label |
+| `--shy-button-font-size`    | `--shy-text-{sm,md,lg}`         | Font size              |
+| `--shy-button-font-weight`  | `--shy-weight-semibold`         | Font weight            |
 
 ### Snackbar Tokens
 
@@ -251,6 +310,8 @@ The `<shy-select>` component can be customized via CSS custom properties:
 
 ```typescript
 // Components
+export { ButtonComponent } from './lib/components/button/button.component';
+export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
 export { IconComponent } from './lib/components/icon/icon.component';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
@@ -262,12 +323,15 @@ export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResol
 
 // Utilities
 export { ru } from './lib/utils/ru';
+export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 
 // Interfaces
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
+export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
+export { ShyIntent } from './lib/types/intent/intent.type';
 export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';
 
 // Icons

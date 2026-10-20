@@ -3,6 +3,20 @@
   <p class="page-lead">Default font is JetBrains Mono; a system sans stack is available for body text. Use "Font" in the header to compare. Sizes are in ru, so they grow with the viewport (see Units).</p>
 
   <section class="section">
+    <h2>Text styles</h2>
+    <p>Classes from <code>typography.css</code> (loaded by <code>index.css</code>). <code>.shy-sr-only</code> hides text on screen and keeps it for screen readers.</p>
+    <div class="card shy-stack">
+      @for (style of textStyles; track style) {
+        <div>
+          <div class="token-name">.shy-{{ style }}</div>
+          <div [class]="'shy-' + style">Pack my box with five dozen jugs</div>
+        </div>
+      }
+      <p class="shy-body">Inline <code class="shy-code">npm run check:ds</code> uses <code>.shy-code</code>.<span class="shy-sr-only"> This sentence is only for screen readers.</span></p>
+    </div>
+  </section>
+
+  <section class="section">
     <h2>Scale</h2>
     <div class="card" style="display: flex; flex-direction: column; gap: var(--shy-space-3)">
       @for (size of sizes; track size) {

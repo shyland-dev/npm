@@ -1,0 +1,25 @@
+@use '../../styles' as *;
+@use '../button/button-theme' as theme;
+
+@include theme.intents;
+@include theme.variants;
+@include theme.control(icon-button);
+
+:host {
+  --_side: var(--shy-size-control-md);
+  --_icon: var(--shy-size-icon-md);
+
+  inline-size: var(--shy-icon-button-size, var(--_side));
+  block-size: var(--shy-icon-button-size, var(--_side));
+  padding: 0;
+}
+
+:host([data-size='sm']) {
+  --_side: var(--shy-size-control-sm);
+  --_icon: var(--shy-size-icon-sm);
+}
+
+:host([data-size='lg']) {
+  --_side: var(--shy-size-control-lg);
+  --_icon: var(--shy-size-icon-lg);
+}

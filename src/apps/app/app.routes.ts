@@ -3,7 +3,9 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   { path: '', redirectTo: 'components/icon', pathMatch: 'full' },
 
+  { path: 'components/button', loadComponent: () => import('./components/button/button').then((m) => m.ButtonPage) },
   { path: 'components/icon', loadComponent: () => import('./components/icon/icon').then((m) => m.IconPage) },
+  { path: 'components/icon-button', loadComponent: () => import('./components/icon-button/icon-button').then((m) => m.IconButtonPage) },
   { path: 'components/select', loadComponent: () => import('./components/select/select').then((m) => m.SelectPage) },
   { path: 'components/snackbar', loadComponent: () => import('./components/snackbar/snackbar').then((m) => m.SnackbarPage) },
 

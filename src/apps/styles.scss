@@ -108,3 +108,13 @@ table.data {
     border-block-end: 0;
   }
 }
+
+// Caixa de exemplo das páginas de layout (chip neutro: neutral-soft, plano 11.3).
+.demo-box {
+  padding: ru(2) ru(4);
+  border-radius: var(--shy-radius-sm);
+  background: var(--shy-color-neutral-soft);
+  color: var(--shy-color-on-neutral-soft);
+  font-size: var(--shy-text-sm);
+  text-align: center;
+}

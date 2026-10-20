@@ -250,6 +250,11 @@
       "fg": "on-scrim",
       "bg": "scrim-panel",
       "min": 4.5
+    },
+    {
+      "fg": "bg",
+      "bg": "text",
+      "min": 4.5
     }
   ]
 }

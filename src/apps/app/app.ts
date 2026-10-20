@@ -21,7 +21,7 @@ export class App implements OnInit {
   readonly nav: NavGroup[] = [
     {
       label: 'Components',
-      items: ['icon', 'select', 'snackbar'].map((name) => ({ path: `components/${name}`, label: name })),
+      items: ['button', 'icon', 'icon-button', 'select', 'snackbar'].map((name) => ({ path: `components/${name}`, label: name })),
     },
     {
       label: 'Foundations',

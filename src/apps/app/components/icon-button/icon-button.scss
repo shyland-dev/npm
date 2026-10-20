@@ -1,0 +1,16 @@
+.matrix {
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--shy-space-3);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  thead th {
+    color: var(--shy-color-text-muted);
+    font-size: var(--shy-text-sm);
+    font-weight: var(--shy-weight-medium);
+  }
+}

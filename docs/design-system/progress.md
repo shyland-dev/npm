@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F3 Onda 1**, sessão **F3-S1** (utilitários da Onda 0 + Button + IconButton)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- O plano de cada sessão está em `docs/design-system/sessions/` (índice em `sessions/README.md`). O próximo `/build` aprova o plano da sessão atual, executa, roda as verificações e para em `aguardando-gate`; o `/build` seguinte commita, faz push em `feat/design-system` e avança para a próxima sessão em `aguardando-plano`.
+- F3-S1 executada; relatório do gate abaixo ("F3-S1: relatório do gate"). O próximo `/build` aprova o gate e a mensagem de commit proposta, commita, faz push em `feat/design-system` e avança para a F3-S2 em `aguardando-plano`.
 
 ## Fases
 
@@ -24,7 +24,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 | Sessão | Escopo                                                                             | Status   | Commit |
 | ------ | ---------------------------------------------------------------------------------- | -------- | ------ |
-| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | próxima  |        |
+| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | gate     |        |
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | pendente |        |
 | F3-S3  | FormField, Input, Textarea                                                         | pendente |        |
 | F3-S4  | Checkbox, Radio, Switch                                                            | pendente |        |
@@ -45,6 +45,64 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 - 2026-10-20: F2 aprovada e commitada (`eb359ac`), push em `feat/design-system`. Resíduos da Onda 0 (D-F2-1) ficam na F3-S1.
 - 2026-10-20: F3 a F5 divididas em sessões curtas (`docs/design-system/sessions/`), para o dono rodar uma por sessão do Claude.
+- 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou. Gate em `aguardando-gate`; relatório abaixo.
+
+## F3-S1: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                                     | Resultado                                                                                                                                                                                |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                              | verde (6 verificações); 1 aviso de tokens ainda não usados (27; revisão na F5)                                                                                                           |
+| `npm test`                                      | verde: 9 arquivos, 53 testes (novos: `animate-out` 6, `button` 10, `icon-button` 3)                                                                                                      |
+| `npm run build`                                 | verde (`ui` e `utils`); `typography.css` e `layout.css` saem em `dist/ui/styles/`                                                                                                        |
+| `npm run build:showcase`                        | verde                                                                                                                                                                                    |
+| Contraste da matriz (Chromium, cor renderizada) | variant × intent de Button e IconButton: mínimo **4,76:1** no escuro (danger sólido) e **6,02:1** no claro (success sólido); par novo `bg`/`text` no `check-contrast` (19,15:1)          |
+| Loading (Chromium)                              | largura igual antes/durante (`start` + `loadingText`: 193,4 px; `replace`: 203,1 px); `aria-busy="true"`; foco continua no botão; Enter e Espaço durante o loading não disparam o clique |
+| Teclado (Chromium)                              | Espaço no `button` ativa; Espaço no `a[shyButton]` não navega; Enter no `a` navega (com `routerLink`); clique no `a` com `disabled` não navega                                           |
+| Estados                                         | `data-shy-state`: state layer 0,08 (hover) e 0,12 (active); anel de foco sólido; disabled com `--shy-opacity-disabled`                                                                   |
+| Temas e viewports                               | dark e light em 1366 e 360 px: sem erro de console, sem scroll horizontal; IconButton md = 33 px em 360 (≥ 24 px)                                                                        |
+| forced-colors                                   | bordas visíveis (`ButtonText`), state layer desligado, variante `link` sem caixa                                                                                                         |
+| Ambiente                                        | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou sem o `npx npm@11`                                                                                           |
+
+Não verificado: ponteiro grosso (`pointer: coarse`) com dispositivo real; o token já cresce por CSS (F1) e a página mostra os tamanhos.
+
+### Arquivos principais
+
+- Estilos: `styles/typography.css` (`.shy-display`, `.shy-h1`…`.shy-h6`, `.shy-body-lg`, `.shy-body`, `.shy-small`, `.shy-caption`, `.shy-overline`, `.shy-code`, `.shy-sr-only`), `styles/layout.css` (`.shy-stack`, `.shy-cluster`, `.shy-grid`, `.shy-container`), ambos em `index.css` e `_global.scss`.
+- `lib/utils/animate-out.ts` + spec, exportado.
+- `lib/components/button/` (`button.component.{ts,html,scss,spec.ts}`, `_button-theme.scss` compartilhado) e `lib/components/icon-button/` (`.ts`, `.scss`, spec).
+- Tipos: `types/button/button.type.ts` (`ShyButtonVariant`, `ShyButtonSize`, `ShyButtonLoadingPosition`, `ShyIconButtonVariant`), `types/intent/intent.type.ts` (`ShyIntent`).
+- `scripts/contrast-pairs.json` (+ `bg` sobre `text`).
+- Showcase: `components/button`, `components/icon-button` (matriz variant × intent, tamanhos, estados, loading ao vivo, link/block, override de token), "Text styles" em `foundations/typography`, "Layout utilities" em `foundations/spacing`, `.demo-box` em `styles.scss`, rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens `--shy-button-*`/`--shy-icon-button-*`, classes, exports), `decisions.md` (ADR-F3-1).
+
+### Efeito prático
+
+- `<button shyButton>` / `<a shyButton>` com 5 variantes × 6 intenções × 3 tamanhos, `loading` sem perder o foco nem mudar a largura (`replace`), `loadingText`, `block`, `disabled` também em link.
+- `<button shyIconButton label="…">` com nome acessível obrigatório e alvo pelo token de controle.
+- Classes utilitárias de texto e layout disponíveis só com o `index.css`.
+- `animateOut` pronto para os overlays da F4.
+- Sem dependência nova; sem bump, tag ou publish. Nenhuma API existente mudou.
+
+### Decisões e premissas (ADR-F3-1 em `decisions.md`)
+
+- `loadingPosition` padrão `replace`; em `start`/`end` sem ícone na ponta o botão cresce (documentado).
+- Ícones nas pontas por `slot="start"`/`slot="end"`; intenção `neutral` = sólido invertido; padding lateral mínimo `space-6`.
+- IconButton sem `link` e sem `loading` nesta sessão; spinner provisório parado com reduced motion até a S2.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): button, icon-button, tipografia e layout utilitários
+
+- button[shyButton] e a[shyButton]: variant, intent, size, loading (aria-busy, foco mantido), loadingPosition, loadingText, block, disabled
+- button[shyIconButton] com label obrigatório (aria-label)
+- typography.css e layout.css no index.css e no _global.scss
+- animateOut para a saída de dialog/popover
+- showcase: components/button, components/icon-button, estilos de texto e layout
+- par de contraste bg/text; README e ADR-F3-1
+```
 
 ## F2: relatório do gate (2026-10-20)
 
@@ -270,3 +328,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: dono aprovou o gate da F1 e pediu risco zero de licença: Inter removida (ADR-F1-6). Revalidado, commit e push em `feat/design-system`.
 - 2026-10-20: F1 commitada (0123029) e enviada para `feat/design-system`. F2 em `planejar` → plano escrito; estado `aguardando-plano`.
 - 2026-10-20: `/build` aprovou o plano da F2 e a executou (T1–T7). Gate em `aguardando-gate`; relatório acima.
+- 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou (utilitários, `animateOut`, Button, IconButton, showcase, README). Gate em `aguardando-gate`; relatório na seção "F3-S1: relatório do gate".
