@@ -25,7 +25,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | Sessão | Escopo                                                                             | Status    | Commit  |
 | ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
-| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | gate      |         |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | gate      | 53e2902 |
 | F3-S3  | FormField, Input, Textarea                                                         | pendente  |         |
 | F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
@@ -387,4 +387,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: `/build` aprovou o plano da F2 e a executou (T1–T7). Gate em `aguardando-gate`; relatório acima.
 - 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou (utilitários, `animateOut`, Button, IconButton, showcase, README). Gate em `aguardando-gate`; relatório na seção "F3-S1: relatório do gate".
 - 2026-10-20: dono liberou commit após os testes e o push; F3-S1 commitada (`39c815b`) e enviada para `feat/design-system`. F3-S2 em `aguardando-plano`.
-- 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou; verificações verdes; commit e push em `feat/design-system`. Estado `aguardando-gate`.
+- 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou; verificações verdes; commit `53e2902` e push em `feat/design-system`. Estado `aguardando-gate`.
