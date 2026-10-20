@@ -40,7 +40,7 @@ Fora das exceções, a F0 confirmou que `calc(var(--shy-responsive-unit) * N)` f
     - CSS puro `@import '@shyland-dev/ui/styles/index.css'` **falha** com o `package.json` gerado hoje, porque o ng-packagr cria `exports` só com `.` e `./package.json`. Com `"./styles/*"` em `exports` passa a funcionar; o ng-packagr mescla esse campo vindo de `src/libs/ui/package.json` (testado).
     - Sass `@use '@shyland-dev/ui/styles/...'` funciona mesmo sem a entrada em `exports`.
 - **Recomendação (F1):** caminho oficial = `angular.json > styles` com `@shyland-dev/ui/styles/index.css`; adicionar `"./styles/*"` em `exports` (aditivo) para habilitar `@import` em CSS; para quem consome via Sass, um `styles/_global.scss` que faz `@use` de cada `.css` (sem `@import` aninhado). `_index.scss` continua só com funções/mixins, para não duplicar tokens em cada componente.
-- **Pendente:** aprovação do dono (muda a superfície pública do pacote).
+- **Decisão (2026-10-20, dono): aprovada.** Entra na F1.
 
 ### ADR-F0-2. Test runner e DOM de teste
 
@@ -58,7 +58,7 @@ Fora das exceções, a F0 confirmou que `calc(var(--shy-responsive-unit) * N)` f
 
 - **Inferência:** com happy-dom, só a Popover API precisa de stub; com jsdom, dialog, popover e `matchMedia` precisam. O evento `close` é síncrono no happy-dom e assíncrono no navegador, então teste nenhum deve depender dessa ordem.
 - **Recomendação:** devDependencies `vitest` (^4) e `happy-dom`; target `test` com `@angular/build:unit-test` em `ui` (e `utils` quando tiver testes); stub de `showPopover`/`hidePopover`/`togglePopover` num `setupFiles`.
-- **Pendente:** aprovação do dono (adição de devDependencies).
+- **Decisão (2026-10-20, dono): aprovada** (`vitest` ^4 + `happy-dom`, stub da Popover API). Instalar na F1.
 
 ### ADR-F0-3. Enter/leave com `animate.enter` / `animate.leave`
 
@@ -81,3 +81,10 @@ Fora das exceções, a F0 confirmou que `calc(var(--shy-responsive-unit) * N)` f
 
 - **Fato (Chromium):** com `html { font-family: monospace }` (como no `styles.scss` atual do showcase), o `font-size` raiz cai para 13 px; com `monospace, monospace` ou uma pilha nomeada (`'JetBrains Mono', ui-monospace, monospace`) volta a 16 px. Como `ru = 0.1rem + 0.1vmin`, hoje o showcase calcula o ru com `rem` = 13 px (≈ 0,3 px a menos por ru).
 - **Consequência:** a tabela da seção 6.4 (rem = 16) só vale com a pilha da seção 5.4. Regra para F1/F2: nenhum `font-family` termina só em `monospace` sem fonte nomeada antes; `check-calibration` assume 16 px.
+
+### ADR-F0-7. Camadas de z-index (2026-10-20, pedido do dono)
+
+- **Pedido:** funções SCSS para z-index por componente, sem valores "mágicos" como `9999`.
+- **Fato:** elementos do top layer (`dialog.showModal()`, `[popover]`) ignoram `z-index` entre si; vale a ordem de abertura. Só uma função SCSS não resolve "tooltip atrás de dialog".
+- **Decisão:** escala nomeada + `z()` para o que está fora do top layer, e promoção por ordem de abertura no `OverlayService` para o top layer. Detalhes na seção 7.5 do plano. Implementação: tokens/função na F1, promoção na F4.
+- **Risco aceito:** promoção reinicia o popover (sem animação nessa troca).

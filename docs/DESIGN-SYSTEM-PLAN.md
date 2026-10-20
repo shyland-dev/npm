@@ -189,11 +189,13 @@ styles/
     semantic-dark.css       # :root { ... }          (padrão)
     semantic-light.css      # :root[data-theme='light'] { ... }
     motion.css              # durações, easings, transitions, reduced-motion
+    layers.css              # --shy-z-* (escala nomeada, ver 7.5)
   base.css                  # reset moderno, html/body, foco, seleção, scrollbar, forced-colors
   animations.css            # @keyframes shy-*
   _index.scss               # @forward 'functions', 'breakpoints', 'mixins'
   _functions.scss           # ru($n) => calc(var(--shy-responsive-unit) * $n)
   _breakpoints.scss         # ÚNICO lugar com px literal (condições de @media/@container)
+  _layers.scss              # $layers, z($layer, $offset), shy-layer()
   _mixins.scss              # focus-ring, state, motion, visually-hidden...
 ```
 
@@ -513,7 +515,27 @@ Alvo de toque: controles ≥ 24 px em qualquer viewport (WCAG 2.5.8 AA; o script
 
 - `--shy-shadow-1…5`, **todas as medidas em ru**: ex. `--shy-shadow-2: 0 calc(ru * 0.5) calc(ru * 2) 0 color-mix(in srgb, #000 18%, transparent)` (a cor sai de token/semântico, não literal; o CLI define o tratamento final).
 - No **escuro** sombra quase não aparece: elevação = degrau de surface (`surface` → `surface-raised`) + `border` + sombra sutil. Os tokens de sombra são redefinidos no bloco do tema escuro.
-- `--shy-z-base:0`, `-sticky:1100`, `-fixed:1200`, `-overlay:1300`, `-popover:1400`, `-toast:1500`, `-tooltip:1600` (números puros). Dialog, popover e toast vão para o **top layer nativo**; z-index só vale para header/sidebar fixos.
+- Camadas (z-index): ver 7.5. Nenhum número solto (`1000`, `9999`) em componente.
+
+### 7.5 Camadas (z-index) e ordem dos overlays
+
+**Fato (MDN, top layer):** elementos no top layer (`<dialog>.showModal()`, `[popover]`) ignoram `z-index` entre si; vale a **ordem de abertura** (o último aberto fica por cima). `z-index` só ordena o que está fora do top layer (header sticky, sidebar fixa, dropdown inline, conteúdo local). Por isso são dois mecanismos:
+
+1. **Escala nomeada para o que NÃO está no top layer.** Ordem única, da mais baixa para a mais alta:
+   `base` → `raised` → `dropdown` → `sticky` → `fixed` → `drawer` → `modal` → `popover` → `tooltip` → `toast`.
+    - Fonte da verdade: `tokens/layers.css`, passo de 100 por camada (`--shy-z-base: 0; --shy-z-raised: 100; …`), números puros (exceção E3). Espaço entre camadas permite `z(modal, 1)`.
+    - SCSS (`_layers.scss`): `$layers: (base, raised, dropdown, sticky, fixed, drawer, modal, popover, tooltip, toast)` e `@function z($layer, $offset: 0)` → `calc(var(--shy-z-#{$layer}) + #{$offset})`. `$offset` limitado a -50…50 (`@error` fora disso) e `@error` em camada inexistente. Mixin `@include shy-layer(tooltip)`.
+    - TS: `shyLayer('tooltip')` lê a variável (para overlays criados em runtime).
+    - O app consumidor pode inserir uma camada própria (ex.: `--shy-z-chat: 850`) entre duas existentes sem tocar a lib.
+2. **Ordem de abertura para o top layer, com promoção.** O `OverlayService` mantém a pilha dos overlays abertos com o **rank** da camada. Ao abrir um overlay de rank `r`, qualquer popover/toast/tooltip aberto de rank maior é promovido (`hidePopover()` + `showPopover()` sem animação, `data-promoting`) para continuar acima. Resultado: tooltip e toast nunca ficam atrás de um dialog; dialog sobre dialog empilha pela ordem natural. `<dialog>` é usado só para `modal`/`drawer` (não dá para promover sem fechar); o resto usa `[popover="manual"]`.
+    - Custo conhecido: a promoção reinicia o estado do popover (foco e transição); por isso o tooltip fecha ao abrir um modal e o toast é reapresentado sem animação.
+
+Regras:
+
+- `z-index` literal só `0`, `1`, `-1` **dentro de componente com `isolation: isolate`** (empilhamento local, não vaza). Qualquer outro valor vem de `z()`; `check-hardcoded` falha em número solto ≥ 2.
+- `isolation: isolate` no host de todo componente que usa z-index interno e no `app-root`, para a escala global não competir com contextos de empilhamento acidentais (`transform`, `opacity < 1`, `filter` criam contexto novo).
+- `check-tokens` confere que `$layers` (SCSS) e `tokens/layers.css` têm os mesmos nomes e a mesma ordem.
+- Matriz de empilhamento (tooltip × dialog × toast × drawer, com abertura em ordens diferentes) vira página `/foundations/layers` no showcase e teste de componente na F4.
 
 ---
 

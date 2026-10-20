@@ -5,7 +5,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F0 Preparação**
-- Estado: `aguardando-gate`
+- Estado: `aguardando-gate` (F0 commitada em 3e647b9 e enviada; falta o próximo `/build` para fechar o gate)
 - Branch: `feat/design-system`
 - Próximo `/build`: aprova o gate F0 e a mensagem de commit abaixo, commita, faz push em `feat/design-system` e mostra o plano da F1.
 - Decisões pendentes que o `/build` **não** aprova: ADR-F0-1 (exports `./styles/*` e `_global.scss`) e ADR-F0-2 (devDependencies `vitest` + `happy-dom`). Ver `decisions.md`.
@@ -68,3 +68,5 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 
 - 2026-10-20: plano copiado para `docs/`, `CLAUDE.md` e comando `/build` criados.
 - 2026-10-20: `/build` aprovou o plano da F0; verificações 1–8 executadas, `decisions.md` criado, estado `aguardando-gate`.
+- 2026-10-20: dono aprovou ADR-F0-1 (exports `./styles/*` + `_global.scss`) e ADR-F0-2 (`vitest` + `happy-dom`); push em `feat/design-system` autorizado; F0 commitada (3e647b9) e enviada.
+- 2026-10-20: refino do plano antes da F1: seção 7.5 (camadas de z-index, `z()`, promoção de overlays no top layer) e ADR-F0-7; showcase de design publicado no Claude (artifact "Shyland UI Showcase"), só para avaliação visual.
