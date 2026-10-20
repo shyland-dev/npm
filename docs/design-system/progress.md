@@ -5,20 +5,21 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F0 Preparação**
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Próximo `/build`: aprova o plano de verificações abaixo e executa a F0.
+- Próximo `/build`: aprova o gate F0 e a mensagem de commit abaixo, commita, faz push em `feat/design-system` e mostra o plano da F1.
+- Decisões pendentes que o `/build` **não** aprova: ADR-F0-1 (exports `./styles/*` e `_global.scss`) e ADR-F0-2 (devDependencies `vitest` + `happy-dom`). Ver `decisions.md`.
 
 ## Fases
 
-| Fase                               | Status                     | Commit |
-| ---------------------------------- | -------------------------- | ------ |
-| F0 Preparação                      | plano aguardando aprovação |        |
-| F1 Unidades, tokens, temas, fontes | pendente                   |        |
-| F2 Refactor dos existentes         | pendente                   |        |
-| F3 Onda 1                          | pendente                   |        |
-| F4 Onda 2                          | pendente                   |        |
-| F5 Onda 3 + hardening              | pendente                   |        |
+| Fase                               | Status          | Commit |
+| ---------------------------------- | --------------- | ------ |
+| F0 Preparação                      | aguardando gate |        |
+| F1 Unidades, tokens, temas, fontes | pendente        |        |
+| F2 Refactor dos existentes         | pendente        |        |
+| F3 Onda 1                          | pendente        |        |
+| F4 Onda 2                          | pendente        |        |
+| F5 Onda 3 + hardening              | pendente        |        |
 
 ## F0: plano de verificações
 
@@ -35,6 +36,35 @@ Nenhum código de feature nesta fase. Cada item vira uma linha do relatório com
 
 Arquivos de teste temporários (fonte, página de verificação) são removidos ao fim da fase; só `decisions.md` e este arquivo entram no commit da F0.
 
+## F0: relatório do gate (2026-10-20)
+
+Nenhum código de feature. Arquivos de teste (fonte temporária, página `/f0-probe`, mudanças em `angular.json`, `ng-package.json`, `styles.scss`) foram criados, medidos e removidos; o working tree só tem `decisions.md` e este arquivo. Detalhes e evidências em `decisions.md` (ADR-F0-1 a 6).
+
+| #   | Verificação    | Resultado                                                                                                                                                                                             |
+| --- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Consumo de CSS | `angular.json > styles` com `index.css` funciona (showcase e consumidor). Sass `@use` de `.css` com `@import` aninhado falha; CSS `@import` do pacote falha sem `"./styles/*"` em `exports`. ADR-F0-1 |
+| 2   | Fontes         | `@font-face` com `url()` relativo resolve: `woff2` emitido em `media/` e URL reescrita, nos dois caminhos que funcionam. Fonte carregada (`document.fonts` = `loaded`)                                |
+| 3   | Motion         | `animate.enter`/`animate.leave` estáveis (`@publicApi 20.2` no core 21.2.10) e funcionando num `@if` com OnPush. ADR-F0-3                                                                             |
+| 4   | Testes         | `@angular/build:unit-test` disponível (runner padrão vitest), mas sem target `test` e sem `vitest`/DOM instalados. Proposta: `vitest` + `happy-dom`. ADR-F0-2                                         |
+| 5   | DOM de teste   | happy-dom tem `<dialog>`, `matchMedia`, `getAnimations`, `inert`; falta Popover API (stub). jsdom não tem nenhum dos quatro                                                                           |
+| 6   | Unidades       | `calc(var(--shy-responsive-unit) * N)` correto em todas as propriedades testadas; `border-width`/`outline-width` arredondam para pixel de dispositivo. ADR-F0-4                                       |
+| 7   | Ambiente       | Node 22.22.0 (≠ `.nvmrc` 24.14.1, mas suportado pelo Angular 21). `npm run build` e `npm run build:showcase` verdes                                                                                   |
+| 8   | Registro       | P1–P6, E1–E4 e ADRs em `decisions.md`                                                                                                                                                                 |
+
+Achado extra (ADR-F0-6): `html { font-family: monospace }` no showcase atual derruba o `rem` para 13 px no Chromium; a pilha da seção 5.4 resolve. Entra como regra na F1/F2.
+
+Não rodou: `npm run check:ds` (script ainda não existe; nasce na F1) e testes (sem target `test`; depende da ADR-F0-2). README não precisou mudar (nenhuma mudança de uso, API, script ou build).
+
+Mensagem de commit proposta:
+
+```
+docs: registrar verificações da F0 e decisões do design system
+
+Adiciona docs/design-system/decisions.md (premissas P1–P6, exceções E1–E4 e ADRs da F0)
+e o relatório do gate F0 em progress.md. Sem mudança de código.
+```
+
 ## Log
 
 - 2026-10-20: plano copiado para `docs/`, `CLAUDE.md` e comando `/build` criados.
+- 2026-10-20: `/build` aprovou o plano da F0; verificações 1–8 executadas, `decisions.md` criado, estado `aguardando-gate`.
