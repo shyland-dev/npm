@@ -3,20 +3,20 @@
 Registro de premissas, exceções e decisões curtas (ADR). Fonte: `docs/DESIGN-SYSTEM-PLAN.md` (rev. 4).
 Alterar uma linha daqui exige decisão do dono e atualização do plano no mesmo commit.
 
-## Decisões fechadas (D1–D9)
+## Decisões fechadas (D1–D9; a D9 foi revogada em 2026-10-20, ver ADR-F1-4)
 
 Ver seção 2.1 do plano. Resumo: zero dependências de runtime (D1), tokens `--shy-*` em kebab-case (D2), gradiente `#4C00FF → #5F00D9` e tema escuro padrão (D3), fontes self-hosted (D4), showcase sem Storybook (D5), API pode quebrar em `0.x` (D6), logos fora da lib (D7), regra absoluta de unidades (D8), `--responsive-unit` depreciado até a `1.0.0` (D9).
 
 ## Premissas (P1–P6)
 
-| #   | Premissa                                                                                                                                                                             | Status                                                            |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| P1  | Fórmula do ru inalterada: `calc(0.1rem + 0.1vmin)`. Nome canônico `--shy-responsive-unit`; `--responsive-unit` e `$responsive-unit` são alias depreciados até a `1.0.0` (seção 6.5). | Decidida (D9)                                                     |
-| P2  | Fonte padrão da UI = mono (JetBrains Mono); Inter disponível por token para texto corrido.                                                                                           | Assumida; ver achado F0-6 (a pilha nunca pode ser só `monospace`) |
-| P3  | Primeira release do refactor = `0.1.0` (breaking); bump minor por onda; `1.0.0` só com o checklist da F5 verde. Bump só a pedido.                                                    | Assumida                                                          |
-| P4  | Só devDependencies de teste; nada em `dependencies`/`peerDependencies` além do Angular. Sem axe, Playwright, Storybook.                                                              | Assumida; runner proposto em ADR-F0-2 (aguarda aprovação)         |
-| P5  | Angular 21: standalone, `OnPush`, `input()`/`output()`/`model()`, `inject()`, compatível com zoneless.                                                                               | Assumida                                                          |
-| P6  | Propriedades lógicas de CSS (`margin-inline`, `padding-block`, `inset-inline`) por padrão.                                                                                           | Assumida                                                          |
+| #   | Premissa                                                                                                                                                                                                                 | Status                                                                  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| P1  | Fórmula do ru inalterada: `calc(0.1rem + 0.1vmin)`. Nome canônico `--shy-responsive-unit`; `--responsive-unit`, `$responsive-unit` e `--dynamic-*`/`$dynamic-*` **deixam de existir** no `0.1.0`, sem alias (seção 6.5). | Revisada em 2026-10-20 (ADR-F1-4): antes mantinha alias depreciado (D9) |
+| P2  | Fonte padrão da UI = mono (JetBrains Mono); Inter disponível por token para texto corrido.                                                                                                                               | Assumida; ver achado F0-6 (a pilha nunca pode ser só `monospace`)       |
+| P3  | Primeira release do refactor = `0.1.0` (breaking); bump minor por onda; `1.0.0` só com o checklist da F5 verde. Bump só a pedido.                                                                                        | Assumida                                                                |
+| P4  | Só devDependencies de teste; nada em `dependencies`/`peerDependencies` além do Angular. Sem axe, Playwright, Storybook.                                                                                                  | Assumida; runner proposto em ADR-F0-2 (aguarda aprovação)               |
+| P5  | Angular 21: standalone, `OnPush`, `input()`/`output()`/`model()`, `inject()`, compatível com zoneless.                                                                                                                   | Assumida                                                                |
+| P6  | Propriedades lógicas de CSS (`margin-inline`, `padding-block`, `inset-inline`) por padrão.                                                                                                                               | Assumida                                                                |
 
 ## Exceções da regra de unidades (E1–E4)
 
@@ -126,5 +126,13 @@ Os `woff2` variáveis latin de JetBrains Mono e Inter são copiados **uma vez** 
 
 - **Decisão:** `$color-*` (paleta Ionic), `$responsive-unit` e `$dynamic-*` saem no `0.1.0`, sem shim publicado. Permitido em `0.x` (D6); é exceção explícita à política de depreciação (seção 6.5), que continua valendo para o alias **CSS** `--responsive-unit` (D9, até a `1.0.0`).
 - **Efeito no plano:** a F1 mantém o arquivo só como shim interno (select, snackbar e showcase ainda o importam); a F2 migra os usos restantes e o apaga, e o `check-units` passa a falhar em qualquer uso. `migration-0.0-to-0.1.md` traz a tabela `$color-*` → token e o passo de `$responsive-unit` → `ru()`.
-- **Premissa a confirmar:** as variáveis CSS sem prefixo `--dynamic-height`, `--dynamic-width` e `*-unit` (também em `_variables.scss`) saem junto; viram `--shy-dynamic-*`. Só `--responsive-unit` mantém alias (D9). Se você quiser alias para elas, diga.
+- **Confirmado pelo dono (ver ADR-F1-4):** as variáveis CSS sem prefixo `--dynamic-height`, `--dynamic-width` e `*-unit` (também em `_variables.scss`) saem junto; viram `--shy-dynamic-*`. Só `--responsive-unit` mantém alias (D9). Se você quiser alias para elas, diga.
 - **Risco:** consumidores que ainda usam `$color-*` ou `$responsive-unit` quebram ao subir para `0.1.0`; por isso a migração fica documentada e o bump só acontece a pedido.
+
+### ADR-F1-4. Nenhum alias: tudo com o prefixo `shy` (2026-10-20)
+
+- **Decisão do dono:** "tudo tem que ficar com o prefixo shy, pode tirar os alias". O dono corrige os projetos consumidores depois.
+- **Efeito:** `--responsive-unit`, `$responsive-unit`, `--dynamic-height/width/*-unit` e `$dynamic-*` (e `$color-*`) saem no `0.1.0`, sem alias. A **D9 está revogada** e a **P1** perdeu a cláusula do alias. Isso também substitui a parte "alias CSS até a `1.0.0`" da ADR-F1-3.
+- **Conflito apontado e resolvido a favor da instrução:** o `CLAUDE.md` e a regra 2 das instruções do projeto davam o `--responsive-unit` como depreciado (alias até a `1.0.0`). O `CLAUDE.md` e a seção 17 do plano foram atualizados; a regra 2 das instruções do projeto no app deve ser ajustada pelo dono.
+- **Consequências no plano:** `units.css` sem linha de alias (T1); `_index.scss` sem alias SCSS (T3); T9 migra também `$dynamic-*` e `--dynamic-*` dos arquivos internos; `check-units` falha em qualquer nome sem prefixo (inclusive nas strings de CSS dos consumidores simulados do showcase); `migration-0.0-to-0.1.md` traz a tabela de nomes antigos → novos e os comandos de busca (seção 6.5).
+- **Risco:** todo projeto que usa a lib quebra ao subir para `0.1.0` (esperado, aceito). Mitigação: guia de migração e bump só a pedido.

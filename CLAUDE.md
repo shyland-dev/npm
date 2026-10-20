@@ -41,7 +41,7 @@ Regras do /build:
   (E3) valores que não são comprimento: 0, %, fr, números puros, ms/s, deg, auto/none; (E4) atributos SVG/HTML fora de CSS.
 - SCSS: use ru(N). TypeScript: use o helper ru(n); nunca style.width = '12px'.
 - npm run check:ds (check-units + check-calibration) deve passar.
-- --responsive-unit e $responsive-unit estão DEPRECIADOS (alias até a 1.0.0). Nunca usar em código novo; ao tocar num arquivo que os use, trocar por --shy-responsive-unit / ru(N). Passo a passo na seção 6.5 do plano.
+- --responsive-unit, $responsive-unit, --dynamic-_ e $dynamic-_ NÃO EXISTEM mais (sem alias; decisão de 2026-10-20: tudo com o prefixo shy). Use --shy-responsive-unit / ru(N) e --shy-dynamic-\*. Guia de migração na seção 6.5 do plano.
 
 ## Logos
 
