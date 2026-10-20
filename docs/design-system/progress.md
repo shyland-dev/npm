@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F3 Onda 1**, sessão **F3-S3** (FormField, Input, Textarea)
-- Estado: `aguardando-gate`
+- Fase: **F3 Onda 1**, sessão **F3-S4** (Checkbox, Radio, Switch)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- A F3-S3 foi executada e verificada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S3: relatório do gate". O próximo `/build` aprova o gate (ou um ajuste vira commit novo) e avança para a F3-S4 em `aguardando-plano`.
+- Gate da F3-S3 aprovado pelo `/build` de 2026-10-20 (commit `e119878`). O plano da F3-S4 está em `sessions/F3-onda-1.md`; o próximo `/build` o aprova e executa a sessão.
 
 ## Fases
 
@@ -26,8 +26,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
-| F3-S3  | FormField, Input, Textarea                                                         | gate      | e119878 |
-| F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
+| F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
+| F3-S4  | Checkbox, Radio, Switch                                                            | plano     |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
 | F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
@@ -51,6 +51,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: feedback do dono (não é aprovação): o sistema de z-index/overlay pode se basear no Angular Material/CDK (container fixo em tela cheia + backdrop, só renderizado quando há overlay). Impacta ADR-F0-7 / seção 7.5 do plano e a F4-S1. Decisão de alto impacto: alternativas comparadas na thread, aguardando resposta do dono; nada alterado no plano ainda. Estado segue `aguardando-plano` da F3-S3.
 - 2026-10-20: dono escolheu o **híbrido** para o overlay (ADR-F4-1): container sob demanda com backdrop estilo CDK + top layer + `z()` fallback. Aplicado em ADR-F0-7 (emenda), plano 7.5 (item 3) e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F3-S3.
 - 2026-10-20: `/build` aprovou o plano da F3-S3 e a executou (Input/Textarea, FormField, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+- 2026-10-20: `/build` aprovou o gate da F3-S3 (`e119878`, já enviado). F3-S4 em `aguardando-plano`.
 
 ## F3-S3: relatório do gate (2026-10-20)
 
