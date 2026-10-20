@@ -4,21 +4,43 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F1 Unidades, tokens, temas, fontes**
-- Estado: `aguardando-gate`
+- Fase: **F2 Refactor dos existentes (fase A)**
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- F1 executada (T1–T11); relatório do gate abaixo. O próximo `/build` aprova o gate **e** a mensagem de commit proposta, commita, faz push em `feat/design-system` e avança para a F2 em `aguardando-plano`.
+- F1 concluída e enviada (commit 0123029). Plano da F2 abaixo; o próximo `/build` o aprova e o executa. Há uma decisão pequena (D-F2-1) com recomendação; sem resposta, vale a recomendação.
 
 ## Fases
 
-| Fase                               | Status                    | Commit                                                        |
-| ---------------------------------- | ------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | executando                |                                                               |
-| F2 Refactor dos existentes         | pendente                  |                                                               |
-| F3 Onda 1                          | pendente                  |                                                               |
-| F4 Onda 2                          | pendente                  |                                                               |
-| F5 Onda 3 + hardening              | pendente                  |                                                               |
+| Fase                               | Status                     | Commit                                                        |
+| ---------------------------------- | -------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado)  | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)  | 0123029                                                       |
+| F2 Refactor dos existentes         | plano aguardando aprovação |                                                               |
+| F3 Onda 1                          | pendente                   |                                                               |
+| F4 Onda 2                          | pendente                   |                                                               |
+| F5 Onda 3 + hardening              | pendente                   |                                                               |
+
+## F2: plano (2026-10-20)
+
+Escopo do plano mestre (seções 13 e 16, fase A): `icon` refatorado; `select` e `snackbar` re-skin com tokens (API intacta, nada hardcoded); showcase migrado; README. Entram os resíduos da F1: esvaziar as duas baselines, apagar `_variables.scss` (`$color-*`), tokens camelCase → kebab-case e o `ThemeService`/toggle já feitos.
+
+| #   | Tarefa                                                                                                                                                                                                                                                                                         | Arquivos principais                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| T1  | `shy-icon`: `input()` para `hoverFill`/`hoverFillDelay`, `name` e `label` opcionais, `aria-hidden` por padrão (com `label`: `role="img"` + `aria-label`), OnPush; `1em` vira `--shy-icon-size` (padrão `--shy-size-icon-md`); `--shyIconSize` → `--shy-icon-size`; zera a baseline de unidades | `icon.component.*`                 |
+| T2  | `shy-select` (fase A): tokens `--shy-select-*` (mapa da seção 13), cores/estados/motion/z-index por token (`z(dropdown)`), contrato de estados e foco, contraste do hover corrigido, fonte por token                                                                                           | `select.component.*`               |
+| T3  | `shy-snackbar` (fase A): `--shy-snackbar-*`, intenção por token, `z(toast)`, motion por token e `reduced-motion`, `role="status"`; remove o `.icon-layer` duplicado                                                                                                                            | `snackbar.component.*`             |
+| T4  | Apagar `_variables.scss` e o `forward`; trocar os últimos `$color-*`; `check-units` e `check-hardcoded` com baseline vazia (e arquivos de baseline removidos)                                                                                                                                  | `styles/`, `scripts/`              |
+| T5  | Showcase: páginas `home`/`icons` viram `components/icon`, `components/select`, `components/snackbar` com matriz de estados nos dois temas, só tokens                                                                                                                                           | `src/apps/app/**`                  |
+| T6  | Testes: `icon`, `select` (teclado, ARIA, estados), `snackbar` e `SnackbarService`                                                                                                                                                                                                              | `*.spec.ts`                        |
+| T7  | README (raiz e `ui`): novos tokens de componente, tabela `$color-*` → token final; `migration-0.0-to-0.1.md`                                                                                                                                                                                   | `README.md`, `docs/design-system/` |
+
+Gate da F2: `check:ds` verde com baselines vazias (nenhum literal de cor/unidade/tempo); testes dos três passam; `npm run build` e `npm run build:showcase` verdes; relatório; mensagem de commit; parar. Sem bump (o `0.1.0` só a pedido).
+
+### Decisão pequena (alto impacto não; recomendação vale se não houver resposta)
+
+| #      | Decisão                                                                                                                                                                  | Recomendação                                                                  |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| D-F2-1 | Resíduos da Onda 0 não feitos na F1: classes de tipografia (`.shy-h1`…), `.shy-sr-only`, layout (`shy-stack`, `shy-cluster`, `shy-grid`, `shy-container`) e `animateOut` | **F3** (junto com os componentes que os usam), para a F2 ficar só no refactor |
 
 ## F1: plano (2026-10-20)
 
@@ -170,3 +192,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: dono decidiu **sem nenhum alias** (tudo com prefixo `shy`): D9 revogada, P1 revisada, plano rev. 5, `CLAUDE.md` atualizado, ADR-F1-4. Estado segue `aguardando-plano`.
 - 2026-10-20: `/build` aprovou o plano da F1 e a executou (T1–T11). Gate em `aguardando-gate`; relatório acima.
 - 2026-10-20: dono aprovou o gate da F1 e pediu risco zero de licença: Inter removida (ADR-F1-6). Revalidado, commit e push em `feat/design-system`.
+- 2026-10-20: F1 commitada (0123029) e enviada para `feat/design-system`. F2 em `planejar` → plano escrito; estado `aguardando-plano`.
