@@ -3,17 +3,17 @@
 :host {
   display: block;
   color: $color-primary;
-  padding: calc(#{$responsive-unit} * 2);
+  padding: ru(2);
 }
 
 button {
-  padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 6);
-  font-size: calc(#{$responsive-unit} * 10);
+  padding: ru(5) ru(6);
+  font-size: ru(10);
   font-family: sans-serif;
   color: $color-white;
   background: $color-primary;
   border: none;
-  border-radius: calc(#{$responsive-unit} * 2);
+  border-radius: ru(2);
   cursor: pointer;
   @include allVendors(transition, background 250ms ease-in-out);
 
@@ -23,15 +23,15 @@ button {
 }
 
 shy-icon {
-  margin: calc(#{$responsive-unit} * 5);
-  font-size: calc(#{$responsive-unit} * 15);
+  margin: ru(5);
+  font-size: ru(15);
   color: $color-danger;
 }
 
 shy-select {
-  --shySelectHeight: calc(#{$responsive-unit} * 20);
-  --shySelectWidth: calc(#{$responsive-unit} * 90);
-  --shySelectBorderRadius: calc(#{$responsive-unit} * 2);
+  --shySelectHeight: ru(20);
+  --shySelectWidth: ru(90);
+  --shySelectBorderRadius: ru(2);
   --shySelectBackground: #{$color-black};
   --shySelectDropdownBackground: #{$color-black};
   --shySelectColor: #{$color-white};
@@ -40,7 +40,7 @@ shy-select {
   --shySelectOptionImgBorderRadius: 50%;
   --shySelectSelectedColor: #{$color-warning};
   --shySelectFontFamily: monospace;
-  --shySelectFontSize: calc(#{$responsive-unit} * 6);
-  --shySelectIconSize: calc(#{$responsive-unit} * 8);
-  --shySelectDropdownBoxShadow: 0 0 calc(#{$responsive-unit} * 1.5) calc(#{$responsive-unit} * 0.1) #{$color-white};
+  --shySelectFontSize: ru(6);
+  --shySelectIconSize: ru(8);
+  --shySelectDropdownBoxShadow: 0 0 ru(1.5) ru(0.1) #{$color-white};
 }

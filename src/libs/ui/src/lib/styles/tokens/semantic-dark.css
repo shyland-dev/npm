@@ -1,0 +1,58 @@
+/* Tema escuro: padrão, vale também sem JavaScript. */
+:root {
+  color-scheme: dark;
+
+  --shy-color-bg: var(--shy-neutral-950);
+  --shy-color-surface: var(--shy-neutral-900);
+  --shy-color-surface-raised: var(--shy-neutral-850);
+  --shy-color-surface-sunken: var(--shy-neutral-950);
+  --shy-color-text: var(--shy-neutral-50);
+  --shy-color-text-muted: var(--shy-neutral-300);
+  --shy-color-text-subtle: var(--shy-neutral-400);
+  --shy-color-text-disabled: var(--shy-neutral-600);
+  --shy-color-border: var(--shy-neutral-800);
+  --shy-color-border-strong: var(--shy-neutral-500);
+  --shy-color-scrim: rgb(0 0 0 / 60%);
+  --shy-color-line: var(--shy-neutral-700);
+  --shy-color-neutral-soft: var(--shy-neutral-700);
+  --shy-color-on-neutral-soft: var(--shy-neutral-50);
+  --shy-color-scrim-panel: var(--shy-neutral-800);
+  --shy-color-on-scrim: #fff;
+  --shy-color-focus: var(--shy-primary-400);
+  --shy-color-scrim-panel-border: var(--shy-neutral-500);
+
+  --shy-color-primary: var(--shy-primary-600);
+  --shy-color-on-primary: #fff;
+  --shy-color-primary-text: var(--shy-primary-400);
+  --shy-color-primary-soft: var(--shy-primary-950);
+  --shy-color-on-primary-soft: var(--shy-primary-200);
+
+  --shy-color-success: var(--shy-success-600);
+  --shy-color-on-success: #fff;
+  --shy-color-success-text: var(--shy-success-400);
+  --shy-color-success-soft: var(--shy-success-950);
+  --shy-color-on-success-soft: var(--shy-success-200);
+
+  --shy-color-warning: var(--shy-warning-500);
+  --shy-color-on-warning: var(--shy-neutral-950);
+  --shy-color-warning-text: var(--shy-warning-400);
+  --shy-color-warning-soft: var(--shy-warning-950);
+  --shy-color-on-warning-soft: var(--shy-warning-200);
+
+  --shy-color-danger: var(--shy-danger-500);
+  --shy-color-on-danger: #fff;
+  --shy-color-danger-text: var(--shy-danger-400);
+  --shy-color-danger-soft: var(--shy-danger-950);
+  --shy-color-on-danger-soft: var(--shy-danger-200);
+
+  --shy-color-info: var(--shy-info-600);
+  --shy-color-on-info: #fff;
+  --shy-color-info-text: var(--shy-info-400);
+  --shy-color-info-soft: var(--shy-info-950);
+  --shy-color-on-info-soft: var(--shy-info-200);
+  --shy-shadow-1: 0 calc(var(--shy-responsive-unit) * 0.5) calc(var(--shy-responsive-unit) * 1) 0 rgb(0 0 0 / 40%);
+  --shy-shadow-2: 0 calc(var(--shy-responsive-unit) * 1) calc(var(--shy-responsive-unit) * 3) 0 rgb(0 0 0 / 45%);
+  --shy-shadow-3: 0 calc(var(--shy-responsive-unit) * 2) calc(var(--shy-responsive-unit) * 6) 0 rgb(0 0 0 / 50%);
+  --shy-shadow-4: 0 calc(var(--shy-responsive-unit) * 4) calc(var(--shy-responsive-unit) * 10) 0 rgb(0 0 0 / 55%);
+  --shy-shadow-5: 0 calc(var(--shy-responsive-unit) * 8) calc(var(--shy-responsive-unit) * 20) 0 rgb(0 0 0 / 60%);
+}

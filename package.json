@@ -12,7 +12,9 @@
     "build:utils": "ng build utils",
     "generate:icons": "node scripts/generate-icons.mjs",
     "serve:showcase": "ng serve showcase --port 4201",
-    "build:showcase": "ng build showcase"
+    "build:showcase": "ng build showcase",
+    "check:ds": "node scripts/check-ds.mjs",
+    "test": "ng test ui --watch=false"
   },
   "private": true,
   "workspaces": [
@@ -34,8 +36,10 @@
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
+    "happy-dom": "^21.0.3",
     "ng-packagr": "^21.2.0",
     "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^4.1.12"
   }
 }

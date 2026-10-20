@@ -1,16 +1,39 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { DebugService } from '@shyland-dev/utils';
-import { routes } from './app.routes';
+import { ThemeToggleComponent } from '@shyland-dev/ui';
+
+interface NavGroup {
+  label: string;
+  items: { path: string; label: string }[];
+}
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ThemeToggleComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
-  readonly navRoutes = routes.filter((r) => r.path && r.path !== '**');
+  private readonly document = inject(DOCUMENT);
+
+  readonly nav: NavGroup[] = [
+    {
+      label: 'Components',
+      items: [
+        { path: 'home', label: 'home' },
+        { path: 'icons', label: 'icons' },
+      ],
+    },
+    {
+      label: 'Foundations',
+      items: ['colors', 'typography', 'units', 'spacing', 'motion', 'layers'].map((name) => ({ path: `foundations/${name}`, label: name })),
+    },
+  ];
+
+  readonly reducedMotion = signal(false);
+  readonly sansFont = signal(false);
 
   constructor(private debugService: DebugService) {
     this.debugService.log(this);
@@ -18,5 +41,17 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     this.debugService.log(this);
+  }
+
+  toggleMotion(): void {
+    this.reducedMotion.update((v) => !v);
+    const root = this.document.documentElement;
+    if (this.reducedMotion()) root.setAttribute('data-motion', 'reduced');
+    else root.removeAttribute('data-motion');
+  }
+
+  toggleFont(): void {
+    this.sansFont.update((v) => !v);
+    this.document.documentElement.style.setProperty('--shy-font-family-base', this.sansFont() ? 'var(--shy-font-family-sans)' : 'var(--shy-font-family-mono)');
   }
 }

@@ -1,0 +1,38 @@
+:root {
+  --shy-duration-instant: 80ms;
+  --shy-duration-fast: 120ms;
+  --shy-duration-base: 200ms;
+  --shy-duration-slow: 320ms;
+  --shy-duration-slower: 500ms;
+
+  --shy-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --shy-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --shy-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --shy-ease-linear: linear;
+
+  --shy-motion-distance: calc(var(--shy-responsive-unit) * 3);
+
+  --shy-transition-colors: color var(--shy-duration-fast) var(--shy-ease-standard), background-color var(--shy-duration-fast) var(--shy-ease-standard), border-color var(--shy-duration-fast) var(--shy-ease-standard), box-shadow var(--shy-duration-fast) var(--shy-ease-standard);
+  --shy-transition-opacity: opacity var(--shy-duration-fast) var(--shy-ease-standard);
+  --shy-transition-transform: transform var(--shy-duration-fast) var(--shy-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --shy-duration-instant: 0.01ms;
+    --shy-duration-fast: 0.01ms;
+    --shy-duration-base: 0.01ms;
+    --shy-duration-slow: 0.01ms;
+    --shy-duration-slower: 0.01ms;
+    --shy-motion-distance: 0;
+  }
+}
+
+:root[data-motion='reduced'] {
+  --shy-duration-instant: 0.01ms;
+  --shy-duration-fast: 0.01ms;
+  --shy-duration-base: 0.01ms;
+  --shy-duration-slow: 0.01ms;
+  --shy-duration-slower: 0.01ms;
+  --shy-motion-distance: 0;
+}

@@ -1,0 +1,13 @@
+/* Escala de z-index para o que NÃO está no top layer (plano 7.5). Passo de 100. */
+:root {
+  --shy-z-base: 0;
+  --shy-z-raised: 100;
+  --shy-z-dropdown: 200;
+  --shy-z-sticky: 300;
+  --shy-z-fixed: 400;
+  --shy-z-drawer: 500;
+  --shy-z-modal: 600;
+  --shy-z-popover: 700;
+  --shy-z-tooltip: 800;
+  --shy-z-toast: 900;
+}

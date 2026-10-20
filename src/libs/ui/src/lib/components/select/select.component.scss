@@ -5,16 +5,16 @@
   position: relative;
   display: inline-flex;
   flex-direction: column;
-  min-height: var(--shySelectHeight, calc(#{$responsive-unit} * 20));
-  min-width: var(--shySelectWidth, calc(#{$responsive-unit} * 90));
-  border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
+  min-height: var(--shySelectHeight, ru(20));
+  min-width: var(--shySelectWidth, ru(90));
+  border-radius: var(--shySelectBorderRadius, ru(2));
   background: var(--shySelectBackground, #{$color-black});
   color: var(--shySelectColor, #{$color-white});
   font-family: var(--shySelectFontFamily, monospace);
-  font-size: var(--shySelectFontSize, calc(#{$responsive-unit} * 6));
+  font-size: var(--shySelectFontSize, ru(6));
 
   shy-icon {
-    --shyIconSize: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    --shyIconSize: var(--shySelectIconSize, ru(8));
   }
 }
 
@@ -23,8 +23,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: calc(#{$responsive-unit} * 3);
-    padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 7);
+    gap: ru(3);
+    padding: ru(5) ru(7);
     background: transparent;
     border: none;
     cursor: pointer;
@@ -59,19 +59,19 @@
     right: 0;
     z-index: 1000;
     list-style: none;
-    margin: calc(#{$responsive-unit} * 1) 0 0 0;
-    padding: calc(#{$responsive-unit} * 2) 0;
+    margin: ru(1) 0 0 0;
+    padding: ru(2) 0;
     background: var(--shySelectDropdownBackground, #{$color-dark});
-    border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
-    box-shadow: var(--shySelectDropdownBoxShadow, 0 0 calc(#{$responsive-unit} * 1.5) calc(#{$responsive-unit} * 0.1) #{$color-white});
+    border-radius: var(--shySelectBorderRadius, ru(2));
+    box-shadow: var(--shySelectDropdownBoxShadow, 0 0 ru(1.5) ru(0.1) #{$color-white});
     overflow: hidden;
   }
 
   &__option {
     display: flex;
     align-items: center;
-    gap: calc(#{$responsive-unit} * 3);
-    padding: calc(#{$responsive-unit} * 4) calc(#{$responsive-unit} * 7);
+    gap: ru(3);
+    padding: ru(4) ru(7);
     cursor: pointer;
 
     &:hover {
@@ -89,8 +89,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
-    height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    width: var(--shySelectIconSize, ru(8));
+    height: var(--shySelectIconSize, ru(8));
   }
 
   &__option-img {
@@ -98,8 +98,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
-    height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    width: var(--shySelectIconSize, ru(8));
+    height: var(--shySelectIconSize, ru(8));
 
     img {
       width: 100%;

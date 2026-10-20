@@ -5,20 +5,20 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F1 Unidades, tokens, temas, fontes**
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Próximo `/build`: aprova o plano da F1 abaixo (tarefas T1–T11) e o executa. As decisões D-F1-1 a D-F1-3 já foram respondidas (1a, 2a, 3b).
+- F1 executada (T1–T11); relatório do gate abaixo. O próximo `/build` aprova o gate **e** a mensagem de commit proposta, commita, faz push em `feat/design-system` e avança para a F2 em `aguardando-plano`.
 
 ## Fases
 
-| Fase                               | Status                     | Commit                                                        |
-| ---------------------------------- | -------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)  | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | plano aguardando aprovação |                                                               |
-| F2 Refactor dos existentes         | pendente                   |                                                               |
-| F3 Onda 1                          | pendente                   |                                                               |
-| F4 Onda 2                          | pendente                   |                                                               |
-| F5 Onda 3 + hardening              | pendente                   |                                                               |
+| Fase                               | Status                    | Commit                                                        |
+| ---------------------------------- | ------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | executando                |                                                               |
+| F2 Refactor dos existentes         | pendente                  |                                                               |
+| F3 Onda 1                          | pendente                  |                                                               |
+| F4 Onda 2                          | pendente                  |                                                               |
+| F5 Onda 3 + hardening              | pendente                  |                                                               |
 
 ## F1: plano (2026-10-20)
 
@@ -60,6 +60,59 @@ Ajustes no plano por causa dessas respostas (e da ADR-F1-4: nenhum alias, tudo c
 - `check-calibration` assume `rem` = 16 px (ADR-F0-6) e roda nos 7 viewports de referência; os valores iniciais da escala vêm da seção 7.2 do plano.
 - `check-contrast` lê os hex dos CSS e os pares de `scripts/contrast-pairs.json`, incluindo os pares novos da ADR-F0-9.
 - Node do ambiente de nuvem é 22.22.0; os scripts não dependem de recursos exclusivos do Node 24.
+
+## F1: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                               | Resultado                                                                                                                                                                                                      |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                        | verde: check-units, check-calibration, check-tokens (2 avisos), check-contrast (100 pares, 2 temas), check-hardcoded, check-fonts (40 KB de 150)                                                               |
+| `npm test`                                | verde: 3 arquivos, 14 testes (`ru()`, `ThemeService`, `shy-theme-toggle`)                                                                                                                                      |
+| `npm run build`                           | verde (`ui` e `utils`)                                                                                                                                                                                         |
+| `npm run build:showcase`                  | verde; emite `JetBrainsMono-Variable.woff2` em `media/`                                                                                                                                                        |
+| Chromium (showcase buildado)              | sem erro de console; `data-theme` e `<meta theme-color>` corretos nos dois temas; fonte carregada; 360×800 sem scroll horizontal; com `light` salvo e o `main.js` bloqueado, o DOM já nasce claro (anti-flash) |
+| Consumidor simulado com o pacote buildado | 3 formas de consumo funcionam: `index.css` no `angular.json`, `@import` em CSS, `@use '.../styles/global'`; `ru()`/`z()`/`up()` compilam; fontes emitidas nos 3                                                |
+| Ambiente                                  | Node 22.22.0 (repo pede 24.14.1) e npm 10.9.4 (pede 11.11.0); `npm i` só funcionou com `npx npm@11.11.0` (ADR-F1-5, item 8)                                                                                    |
+
+### Arquivos principais
+
+- `src/libs/ui/src/lib/styles/`: `tokens/{units,primitives,semantic-dark,semantic-light,motion,layers}.css`, `fonts.css` + `fonts/**` (woff2 e OFL), `animations.css`, `base.css`, `index.css`, `_global.scss`, `_functions.scss`, `_breakpoints.scss`, `_layers.scss`, `_mixins.scss`, `_index.scss`, `_variables.scss` (só `$color-*`, interno).
+- `src/libs/ui/src/lib/`: `utils/ru.ts`, `services/theme/theme.service.ts`, `components/theme-toggle/*` e specs.
+- Empacotamento: `ng-package.json` (assets `.css`, `.woff2`, `OFL.txt`), `src/libs/ui/package.json` (`exports` `./styles/*`).
+- Testes: `angular.json` (target `test`), `tsconfig.spec.json`, `src/test-setup.ts` (stub da Popover API), devDependencies `vitest` e `happy-dom`.
+- Qualidade: `scripts/check-*.mjs`, `_shared.mjs`, `contrast-pairs.json`, `units-baseline.json`, `hardcoded-baseline.json`.
+- Showcase: novo shell (tema, reduce motion, fonte), páginas `/foundations/{colors,typography,units,spacing,motion,layers}`, anti-flash no `index.html`; `select`, `snackbar` e as páginas antigas migradas só nos nomes (`ru()`, `--shy-dynamic-*`).
+- Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-0.1}.md`, `README.md` raiz e `src/libs/ui/README.md`.
+
+### Efeito prático
+
+- Um CSS (`index.css`) entrega tokens, temas, fontes e base; tema escuro por padrão, claro/sistema por `ThemeService` ou `<shy-theme-toggle>`.
+- Toda medida nova é `ru(N)`; o `check:ds` bloqueia unidade, cor, tempo, easing, z-index e fonte literais fora das baselines.
+- `--responsive-unit`, `$responsive-unit`, `--dynamic-*` e `$dynamic-*` não existem mais (sem alias). Consumidores quebram até migrar (guia com comandos bash e PowerShell).
+- Breaking visível: `$color-*` segue só para `select`/`snackbar`/páginas antigas até a F2.
+
+### Decisões e premissas (detalhes em `decisions.md`, ADR-F1-5)
+
+- Fontes em `styles/fonts/` (não `src/assets/fonts/`); baseline também para `check-hardcoded` (extensão da D-F1-1); breakpoints sm 600 / md 840 / lg 1200 / xl 1600 (ponto de partida); nenhum token de cor precisou mudar após `check-contrast`.
+- Licença: Inter removida por decisão do dono (ADR-F1-6); só JetBrains Mono (OFL 1.1).
+- Sem bump de versão, tag ou publish.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): fundação de tokens, temas, unidades e fontes
+
+- tokens --shy-* (primitivo e semântico dark/light), motion, camadas z()
+- ru() em SCSS e TS, _breakpoints, mixins de estado e foco
+- ThemeService, provideShyTheme e <shy-theme-toggle>
+- fonte JetBrains Mono self-hosted (OFL)
+- scripts check:ds, testes com vitest e happy-dom
+- showcase com páginas /foundations e docs em docs/design-system
+- remove --responsive-unit, $responsive-unit e --dynamic-* sem alias
+
+BREAKING CHANGE: nomes sem prefixo shy removidos; ver migration-0.0-to-0.1.md
+```
 
 ## F0: plano de verificações
 
@@ -115,3 +168,5 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: `/build` no estado `aguardando-gate`: gate da F0 aprovado (commits só de documentação, já enviados). F1 passou para `planejar` → plano escrito acima, estado `aguardando-plano`,
 - 2026-10-20: dono respondeu D-F1-1 a D-F1-3 (a, a, b); registrado em ADR-F1-1 a 3 e na seção 6.5 do plano. Estado segue `aguardando-plano`: falta o `/build` que aprova o plano da F1.
 - 2026-10-20: dono decidiu **sem nenhum alias** (tudo com prefixo `shy`): D9 revogada, P1 revisada, plano rev. 5, `CLAUDE.md` atualizado, ADR-F1-4. Estado segue `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F1 e a executou (T1–T11). Gate em `aguardando-gate`; relatório acima.
+- 2026-10-20: dono aprovou o gate da F1 e pediu risco zero de licença: Inter removida (ADR-F1-6). Revalidado, commit e push em `feat/design-system`.

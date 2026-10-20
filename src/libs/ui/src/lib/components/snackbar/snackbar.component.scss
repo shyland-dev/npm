@@ -10,12 +10,12 @@
   z-index: 9999;
   display: flex;
   align-items: center;
-  gap: calc(#{$responsive-unit} * 5);
-  padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 7);
+  gap: ru(5);
+  padding: ru(5) ru(7);
   background: var(--shySnackbarBackground, #{$color-dark});
   color: var(--shySnackbarColor, #{$color-white});
-  border-radius: var(--shySnackbarBorderRadius, calc(#{$responsive-unit} * 2));
-  min-width: var(--shySnackbarWidth, calc(#{$responsive-unit} * 110));
+  border-radius: var(--shySnackbarBorderRadius, ru(2));
+  min-width: var(--shySnackbarWidth, ru(110));
   opacity: 0;
   pointer-events: none;
   transition:
@@ -23,12 +23,12 @@
     transform 250ms ease-in-out;
 
   &--top {
-    top: var(--shySnackbarOffset, calc(#{$responsive-unit} * 15));
+    top: var(--shySnackbarOffset, ru(15));
     transform: translateX(-50%) translateY(-120%);
   }
 
   &--bottom {
-    bottom: var(--shySnackbarOffset, calc(#{$responsive-unit} * 15));
+    bottom: var(--shySnackbarOffset, ru(15));
     transform: translateX(-50%) translateY(120%);
   }
 
@@ -41,7 +41,7 @@
   &__text {
     flex: 1;
     font-family: var(--shySnackbarFontFamily, monospace);
-    font-size: var(--shySnackbarFontSize, calc(#{$responsive-unit} * 7));
+    font-size: var(--shySnackbarFontSize, ru(7));
   }
 
   &__dismiss {
@@ -56,7 +56,7 @@
     flex-shrink: 0;
 
     shy-icon {
-      --shyIconSize: var(--shySnackbarIconSize, calc(#{$responsive-unit} * 8));
+      --shyIconSize: var(--shySnackbarIconSize, ru(8));
     }
   }
 }

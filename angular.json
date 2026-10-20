@@ -44,6 +44,15 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "src/libs/ui/tsconfig.spec.json",
+            "buildTarget": "::development",
+            "runner": "vitest",
+            "setupFiles": ["src/libs/ui/src/test-setup.ts"]
+          }
         }
       }
     },
@@ -67,7 +76,7 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/apps/styles.scss"],
+            "styles": ["src/libs/ui/src/lib/styles/index.css", "src/apps/styles.scss"],
             "stylePreprocessorOptions": {
               "includePaths": ["src/libs/ui/src/lib"]
             }

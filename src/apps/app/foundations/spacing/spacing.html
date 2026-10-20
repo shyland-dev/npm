@@ -1,0 +1,58 @@
+<div class="page">
+  <h1 class="page-title">Spacing, shape and size</h1>
+
+  <section class="section">
+    <h2>Space</h2>
+    <div class="card" style="display: flex; flex-direction: column; gap: var(--shy-space-2)">
+      @for (space of spaces; track space) {
+        <div style="display: flex; align-items: center; gap: var(--shy-space-4)">
+          <span class="token-name" style="inline-size: var(--shy-space-32)">--shy-space-{{ space }}</span>
+          <span [style.inline-size]="'var(--shy-space-' + space + ')'" style="block-size: var(--shy-space-3); background: var(--shy-color-primary); border-radius: var(--shy-radius-xs)"></span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Radius</h2>
+    <div class="grid">
+      @for (radius of radii; track radius) {
+        <div>
+          <div [style.border-radius]="'var(--shy-radius-' + radius + ')'" style="block-size: var(--shy-space-16); border: var(--shy-border-width-strong) solid var(--shy-color-border-strong); background: var(--shy-color-surface)"></div>
+          <div class="token-name">--shy-radius-{{ radius }}</div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Control height</h2>
+    <p>On touch devices (<code>pointer: coarse</code>) the heights grow so the target reaches 44 px on a phone.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: var(--shy-space-4); align-items: flex-end">
+      @for (size of controls; track size) {
+        <div>
+          <div [style.block-size]="'var(--shy-size-control-' + size + ')'" style="display: flex; align-items: center; padding-inline: var(--shy-space-5); border: var(--shy-border-width) solid var(--shy-color-border-strong); border-radius: var(--shy-radius-md); background: var(--shy-color-surface-sunken)">control {{ size }}</div>
+          <div class="token-name">--shy-size-control-{{ size }}</div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Elevation</h2>
+    <p>In the dark theme shadows are subtle: elevation also comes from the surface step and the border.</p>
+    <div class="grid">
+      @for (level of shadows; track level) {
+        <div>
+          <div [style.box-shadow]="'var(--shy-shadow-' + level + ')'" style="block-size: var(--shy-space-16); border-radius: var(--shy-radius-md); background: var(--shy-color-surface-raised); border: var(--shy-border-width) solid var(--shy-color-border)"></div>
+          <div class="token-name">--shy-shadow-{{ level }}</div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Focus ring</h2>
+    <button type="button" class="card" style="cursor: pointer">Focus me with Tab</button>
+  </section>
+</div>

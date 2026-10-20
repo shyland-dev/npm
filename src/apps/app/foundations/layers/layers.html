@@ -1,0 +1,40 @@
+<div class="page">
+  <h1 class="page-title">Layers</h1>
+  <p class="page-lead">Named z-index scale for elements outside the top layer, in steps of 100 so <code>z(modal, 1)</code> fits between two layers. Elements in the top layer (<code>&lt;dialog&gt;.showModal()</code>, <code>[popover]</code>) ignore z-index among themselves and follow the opening order; the overlay service (phase F4) promotes tooltips and toasts above newer dialogs.</p>
+
+  <section class="section">
+    <h2>Scale</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th scope="col">Layer</th>
+            <th scope="col">Token</th>
+            <th scope="col">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (layer of stack; track layer.name) {
+            <tr>
+              <th scope="row">{{ layer.name }}</th>
+              <td>--shy-z-{{ layer.name }}</td>
+              <td>{{ layer.value }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Stacking demo</h2>
+    <p>Each card is positioned with its layer's token. The last layers sit on top.</p>
+    <div class="stage">
+      @for (layer of stack; track layer.name) {
+        <div class="layer" [style.z-index]="'var(--shy-z-' + layer.name + ')'" [style.inset-block-start]="'calc(var(--shy-space-4) * ' + layer.order + ')'" [style.inset-inline-start]="'calc(var(--shy-space-16) * ' + layer.order + ')'">
+          {{ layer.name }}
+        </div>
+      }
+    </div>
+  </section>
+</div>

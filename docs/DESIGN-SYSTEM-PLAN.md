@@ -62,7 +62,7 @@ Reescrever `@shyland-dev/ui` como um Design System completo, reutilizável em to
 | #   | Premissa                                                                                                                                                                                                                   | Motivo                                                                                   |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | P1  | A fórmula do ru fica **exatamente** como hoje: `calc(0.1rem + 0.1vmin)`. O nome canônico passa a ser `--shy-responsive-unit` (prefixo `shy-`); `--responsive-unit` **deixa de existir** no `0.1.0` (sem alias; seção 6.5). | Prefixo evita colisão em apps consumidores; o dono prefere quebrar uma vez e migrar.     |
-| P2  | Fonte padrão da UI = **mono** (identidade). Sans (Inter) disponível por token para texto corrido.                                                                                                                          | Você gosta de mono; mono em parágrafos longos cansa.                                     |
+| P2  | Fonte padrão da UI = **mono** (identidade). Texto corrido: stack sans do sistema, por token (sem Inter: decisão de 2026-10-20, risco zero de licença).                                                                                                                          | Você gosta de mono; mono em parágrafos longos cansa.                                     |
 | P3  | Primeira release do refactor = **`0.1.0`** (breaking). Cada onda concluída = bump minor. `1.0.0` só quando o checklist da Fase 5 estiver verde.                                                                            | Semver para `0.x`.                                                                       |
 | P4  | Permitidas **apenas devDependencies de teste**. Nada em `dependencies`/`peerDependencies`. Sem axe, Playwright, Storybook.                                                                                                 | "Zero dependências" = runtime. O CLI confirma qual test runner o Angular 21 usa no repo. |
 | P5  | Componentes no padrão Angular 21: standalone, `OnPush`, signals (`input()`, `output()`, `model()`), `inject()`, compatível com zoneless.                                                                                   | O código atual usa `@Input`/`EventEmitter`/construtor.                                   |
@@ -120,7 +120,7 @@ Os 4 SVGs recebidos (ícone, ícone em quadrado arredondado, horizontal, empilha
 | Papel                        | Fonte                                         | Licença     | Observação                                       |
 | ---------------------------- | --------------------------------------------- | ----------- | ------------------------------------------------ |
 | UI, títulos, código (padrão) | **JetBrains Mono** (variável, `wght` 100–800) | SIL OFL 1.1 | Mono desenhada para leitura; ligaduras de código |
-| Texto corrido (opcional)     | **Inter** (variável, `wght` 100–900)          | SIL OFL 1.1 | Sans neutra para parágrafos                      |
+| Texto corrido (opcional)     | Stack sans do sistema (`system-ui`...)        | n/a         | Sem arquivo de fonte; Inter foi descartada por ser Reserved Font Name (2026-10-20) |
 | Alternativas mono            | Geist Mono, IBM Plex Mono, Space Mono         | OFL         | Outra personalidade                              |
 
 > O CLI confirma a licença na página oficial de cada fonte antes de incluir no pacote.
@@ -143,21 +143,18 @@ src/libs/ui/src/assets/fonts/
   jetbrains-mono/
     JetBrainsMono-Variable.woff2      # subset latin (cobre á ã ç õ etc.)
     OFL.txt
-  inter/
-    Inter-Variable.woff2              # subset latin
-    OFL.txt
 ```
 
 - Só `woff2`. Subset `latin` basta para PT-BR (acentos em U+00C0–00FF). `latin-ext` só se algum app precisar.
 - `font-display: swap`; `unicode-range` do subset; documentar `<link rel="preload" as="font" type="font/woff2" crossorigin>` para a fonte principal.
 - `styles/fonts.css` com os `@font-face`. O CLI valida no showcase que `ng build showcase` emite as fontes e que a URL resolve.
-- Orçamento: JetBrains Mono + Inter variáveis (latin) ≲ 150 KB. Se estourar, medir e decidir.
+- Orçamento: JetBrains Mono variável (latin) ≲ 150 KB. Se estourar, medir e decidir.
 
 ### 5.4 Stacks e regras
 
 ```css
 --shy-font-family-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
---shy-font-family-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+--shy-font-family-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 --shy-font-family-base: var(--shy-font-family-mono); /* troque para sans em um app */
 --shy-font-family-code: var(--shy-font-family-mono);
 ```

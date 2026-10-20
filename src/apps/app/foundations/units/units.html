@@ -1,0 +1,47 @@
+<div class="page">
+  <h1 class="page-title">Units</h1>
+  <p class="page-lead">Every length is <code>calc(var(--shy-responsive-unit) * N)</code>, where <code>--shy-responsive-unit</code> is one tenth of the root font size plus one tenth of the smaller viewport side. The table shows what N becomes in pixels on reference viewports, assuming the browser's default <code>rem</code> of 16 px.</p>
+
+  <section class="section">
+    <h2>This window</h2>
+    <div class="card" style="display: flex; align-items: center; gap: var(--shy-space-5); flex-wrap: wrap">
+      <span #probe [style.inline-size]="'var(--shy-responsive-unit)'" style="display: inline-block; flex: none; block-size: var(--shy-space-1)"></span>
+      <span>1 ru = {{ measured().toFixed(2) }} px at {{ viewport() }}</span>
+      <span [style.inline-size]="ru(20)" style="display: inline-block; block-size: var(--shy-space-2); background: var(--shy-color-primary); border-radius: var(--shy-radius-full)"></span>
+      <span class="token-name">ru(20) = {{ (measured() * 20).toFixed(1) }} px</span>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Pixels per viewport</h2>
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th scope="col">Viewport</th>
+            <th scope="col">1 ru</th>
+            @for (m of multipliers; track m) {
+              <th scope="col">{{ m }} ru</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows; track row.label) {
+            <tr>
+              <th scope="row">{{ row.label }}</th>
+              <td>{{ row.unit.toFixed(2) }}</td>
+              @for (cell of row.cells; track $index) {
+                <td>{{ cell.toFixed(1) }}</td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Known limit (WCAG 1.4.4)</h2>
+    <p>At 200% browser zoom the viewport in CSS px halves, so the vmin part of ru shrinks too: text grows about 1.6× (FHD) to 1.8× (phone), not 2×. The rem part follows the user's font setting. Documented in accessibility.md.</p>
+  </section>
+</div>

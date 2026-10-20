@@ -1,21 +1,5 @@
-:root {
-  --responsive-unit: calc(0.1rem + 0.1vmin);
-
-  --dynamic-height: 100vh;
-  --dynamic-height-unit: calc(var(--dynamic-height) / 100);
-
-  @supports (height: 100dvh) {
-    --dynamic-height: 100dvh;
-  }
-
-  --dynamic-width: 100vw;
-  --dynamic-width-unit: calc(var(--dynamic-width) / 100);
-
-  @supports (width: 100dvw) {
-    --dynamic-width: 100dvw;
-  }
-}
-
+// @deprecated Paleta antiga (Ionic), só para os componentes ainda não migrados.
+// Cada $color-* vira um token semântico --shy-color-* na F2; este arquivo é removido no 0.1.0.
 $color-void: #ffffff00;
 $color-primary: #3880ff;
 $color-secondary: #3dc2ff;
@@ -28,11 +12,3 @@ $color-medium: #92949c;
 $color-light: #f4f5f8;
 $color-black: #000000;
 $color-white: #ffffff;
-
-$responsive-unit: var(--responsive-unit);
-
-$dynamic-height: var(--dynamic-height);
-$dynamic-height-unit: var(--dynamic-height-unit);
-
-$dynamic-width: var(--dynamic-width);
-$dynamic-width-unit: var(--dynamic-width-unit);

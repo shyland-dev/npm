@@ -146,41 +146,62 @@ updateSelection(event: SelectionChangeEvent) {
 
 ## Styles
 
-The package exports a set of design tokens and SCSS variables. Import them in your `styles.scss`:
+Tokens (colors, typography, spacing, motion, layers), self-hosted fonts (JetBrains Mono, SIL OFL), animations and a base reset ship as one CSS. Pick **one** way to load it:
 
-```scss
-@use '@shyland-dev/ui/styles' as *;
+```json
+// angular.json > projects.<app>.architect.build.options.styles (recommended)
+"styles": ["node_modules/@shyland-dev/ui/styles/index.css", "src/styles.scss"]
 ```
 
-### Global Design Tokens (CSS custom properties)
+```css
+/* or in a .css file */
+@import '@shyland-dev/ui/styles/index.css';
+```
 
-| Token               | Default value                       |
-| ------------------- | ----------------------------------- |
-| `--responsive-unit` | fluid unit based on viewport + rem  |
-| `--dynamic-height`  | `100dvh` (with fallback to `100vh`) |
-| `--dynamic-width`   | `100dvw` (with fallback to `100vw`) |
+```scss
+// or in a .scss file (same content as index.css; do not combine with the above)
+@use '@shyland-dev/ui/styles/global';
+```
 
-### SCSS Variables
+SCSS helpers (no CSS output) are separate: `@use '@shyland-dev/ui/styles' as *;`.
 
-| Variable               | Value                        |
-| ---------------------- | ---------------------------- |
-| `$color-void`          | `#ffffff00`                  |
-| `$color-primary`       | `#3880ff`                    |
-| `$color-secondary`     | `#3dc2ff`                    |
-| `$color-tertiary`      | `#5260ff`                    |
-| `$color-success`       | `#2dd36f`                    |
-| `$color-warning`       | `#ffc409`                    |
-| `$color-danger`        | `#eb445a`                    |
-| `$color-dark`          | `#222428`                    |
-| `$color-medium`        | `#92949c`                    |
-| `$color-light`         | `#f4f5f8`                    |
-| `$color-black`         | `#000000`                    |
-| `$color-white`         | `#ffffff`                    |
-| `$responsive-unit`     | `var(--responsive-unit)`     |
-| `$dynamic-height`      | `var(--dynamic-height)`      |
-| `$dynamic-height-unit` | `var(--dynamic-height-unit)` |
-| `$dynamic-width`       | `var(--dynamic-width)`       |
-| `$dynamic-width-unit`  | `var(--dynamic-width-unit)`  |
+### Theme
+
+Dark is the default and works without JavaScript. Light is applied with `data-theme="light"` on `<html>`, written by `ThemeService`:
+
+```typescript
+const theme = inject(ThemeService);
+theme.setMode('light'); // 'dark' | 'light' | 'system'
+theme.mode(); // chosen mode (signal)
+theme.resolved(); // effective 'dark' | 'light' (signal)
+theme.toggle();
+```
+
+`provideShyTheme({ defaultMode, storageKey })` configures the default mode and the `localStorage` key. `<shy-theme-toggle />` is a ready-made segmented control (`labels` input for translations). To avoid a flash of the wrong theme, put the inline script from the [root README](../../../README.md#tema-escuro-por-padrão) in your `index.html` `<head>`.
+
+### Units
+
+Every length is `calc(var(--shy-responsive-unit) * N)`: `ru(N)` in SCSS, `ru(n)` in TypeScript (`import { ru } from '@shyland-dev/ui'`). Do not use `px`, `rem`, `em`, `vw`, `vh` and similar.
+
+### Design tokens (CSS custom properties)
+
+`--shy-*`, kebab-case. Components use the semantic layer.
+
+| Group      | Examples                                                                                                   |
+| ---------- | ---------------------------------------------------------------------------------------------------------- |
+| Units      | `--shy-responsive-unit`, `--shy-dynamic-height`, `--shy-dynamic-width` (+ `-unit`)                         |
+| Primitives | `--shy-{primary,neutral,success,warning,danger,info}-{50…950}`                                             |
+| Semantic   | `--shy-color-{bg,surface,text,text-muted,border,focus,…}`, `--shy-color-{primary,success,…}[-text\|-soft]` |
+| Type       | `--shy-font-family-*`, `--shy-text-{xs…5xl}`, `--shy-weight-*`, `--shy-leading-*`                          |
+| Shape      | `--shy-space-*`, `--shy-radius-*`, `--shy-size-control-*`, `--shy-border-width*`, `--shy-shadow-1…5`       |
+| Motion     | `--shy-duration-*`, `--shy-ease-*`, `--shy-motion-distance`                                                |
+| Layers     | `--shy-z-{base,raised,dropdown,sticky,fixed,drawer,modal,popover,tooltip,toast}`                           |
+
+### SCSS API
+
+`ru($n)`, `z($layer, $offset)`, `shy-layer`, `up($bp)`/`down($bp)`, `focus-ring`, `shy-state`, `state-layer`, `disabled-state`, `transition`, `visually-hidden`, plus the legacy `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode`. The old `$color-*` palette still exists for components not yet migrated and goes away in the next phase.
+
+> Breaking in `0.1.0`: `--responsive-unit`, `--dynamic-*`, `$responsive-unit` and `$dynamic-*` no longer exist (no alias). Use `--shy-responsive-unit` / `ru(N)` and `--shy-dynamic-*`.
 
 ### Snackbar Tokens
 
@@ -190,12 +211,12 @@ The `<shy-snackbar>` component can be customized via CSS custom properties on a 
 | --------------------------- | -------------------------- | -------------------------------- |
 | `--shySnackbarBackground`   | `$color-dark` (`#222428`)  | Background color                 |
 | `--shySnackbarColor`        | `$color-white` (`#ffffff`) | Text and icon color              |
-| `--shySnackbarWidth`        | `110 * responsive-unit`    | Width                            |
-| `--shySnackbarBorderRadius` | `2 * responsive-unit`      | Border radius                    |
-| `--shySnackbarOffset`       | `15 * responsive-unit`     | Distance from top or bottom edge |
+| `--shySnackbarWidth`        | `ru(110)`                  | Width                            |
+| `--shySnackbarBorderRadius` | `ru(2)`                    | Border radius                    |
+| `--shySnackbarOffset`       | `ru(15)`                   | Distance from top or bottom edge |
 | `--shySnackbarFontFamily`   | `monospace`                | Font family of the message text  |
-| `--shySnackbarFontSize`     | `7 * responsive-unit`      | Font size of the message text    |
-| `--shySnackbarIconSize`     | `8 * responsive-unit`      | Size of the dismiss icon         |
+| `--shySnackbarFontSize`     | `ru(7)`                    | Font size of the message text    |
+| `--shySnackbarIconSize`     | `ru(8)`                    | Size of the dismiss icon         |
 
 ### Select Tokens
 
@@ -203,14 +224,14 @@ The `<shy-select>` component can be customized via CSS custom properties:
 
 | Token                              | Default                                 | Description                            |
 | ---------------------------------- | --------------------------------------- | -------------------------------------- |
-| `--shySelectHeight`                | `20 * responsive-unit`                  | Minimum height of the trigger          |
-| `--shySelectWidth`                 | `90 * responsive-unit`                  | Minimum width of the component         |
-| `--shySelectBorderRadius`          | `2 * responsive-unit`                   | Border radius of trigger and dropdown  |
+| `--shySelectHeight`                | `ru(20)`                                | Minimum height of the trigger          |
+| `--shySelectWidth`                 | `ru(90)`                                | Minimum width of the component         |
+| `--shySelectBorderRadius`          | `ru(2)`                                 | Border radius of trigger and dropdown  |
 | `--shySelectBackground`            | `$color-black` (`#000000`)              | Background color of the trigger        |
 | `--shySelectColor`                 | `$color-white` (`#ffffff`)              | Text and icon color                    |
 | `--shySelectFontFamily`            | `monospace`                             | Font family                            |
-| `--shySelectFontSize`              | `6 * responsive-unit`                   | Font size                              |
-| `--shySelectIconSize`              | `8 * responsive-unit`                   | Size of all icons inside the component |
+| `--shySelectFontSize`              | `ru(6)`                                 | Font size                              |
+| `--shySelectIconSize`              | `ru(8)`                                 | Size of all icons inside the component |
 | `--shySelectDropdownBackground`    | `$color-dark` (`#222428`)               | Background color of the dropdown panel |
 | `--shySelectDropdownBoxShadow`     | `0 0 1.5ru 0.1ru $color-white`          | Box shadow of the dropdown panel       |
 | `--shySelectSelectedColor`         | `$color-primary` (`#3880ff`)            | Color of the selected option           |
@@ -227,9 +248,14 @@ The `<shy-select>` component can be customized via CSS custom properties:
 export { IconComponent } from './lib/components/icon/icon.component';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
+export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Services
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
+export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResolvedTheme, ShyThemeConfig } from './lib/services/theme/theme.service';
+
+// Utilities
+export { ru } from './lib/utils/ru';
 
 // Interfaces
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';

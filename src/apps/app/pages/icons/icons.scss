@@ -2,11 +2,11 @@
 @use 'styles' as *;
 @use 'sass:color';
 
-$input-margin-block: calc(#{$responsive-unit} * 2);
-$input-height: calc(#{$responsive-unit} * 15);
+$input-margin-block: ru(2);
+$input-height: ru(15);
 $input-total-height: calc(#{$input-height} + #{$input-margin-block} * 2);
 
-$grid-margin-block: calc(#{$responsive-unit} * 2);
+$grid-margin-block: ru(2);
 $grid-height: calc(#{$default-content-height} - #{$input-total-height} - #{$grid-margin-block} * 2);
 $grid-total-height: calc(#{$grid-height} + #{$grid-margin-block} * 2);
 
@@ -21,14 +21,14 @@ $grid-total-height: calc(#{$grid-height} + #{$grid-margin-block} * 2);
 .icon-search {
   border: none;
   outline: none;
-  padding: calc(#{$responsive-unit} * 4);
-  border-radius: calc(#{$responsive-unit} * 2);
+  padding: ru(4);
+  border-radius: ru(2);
   background-color: $color-danger;
-  border-width: calc(#{$responsive-unit} * 1);
+  border-width: ru(1);
   border-color: $color-white;
   border-style: solid;
-  width: calc(#{$dynamic-width-unit} * 50);
-  font-size: calc(#{$responsive-unit} * 8);
+  width: calc(var(--shy-dynamic-width-unit) * 50);
+  font-size: ru(8);
   margin-block: $input-margin-block;
   height: $input-height;
   color: $color-white;
@@ -42,7 +42,7 @@ $grid-total-height: calc(#{$grid-height} + #{$grid-margin-block} * 2);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: calc(#{$responsive-unit} * 6);
+  gap: ru(6);
   margin-block: $grid-margin-block;
   overflow-y: auto;
   height: $grid-height;
@@ -53,13 +53,13 @@ $grid-total-height: calc(#{$grid-height} + #{$grid-margin-block} * 2);
     align-items: center;
     justify-content: space-between;
     background-color: color.adjust($color-danger, $lightness: 32.5%);
-    padding: calc(#{$responsive-unit} * 5);
-    border-radius: calc(#{$responsive-unit} * 2);
+    padding: ru(5);
+    border-radius: ru(2);
     border-color: $color-danger;
-    border-width: calc(#{$responsive-unit} * 1);
+    border-width: ru(1);
     border-style: solid;
-    width: calc(#{$responsive-unit} * 95);
-    height: calc(#{$responsive-unit} * 50);
+    width: ru(95);
+    height: ru(50);
     cursor: pointer;
     @include allVendors(transition, all 250ms ease-in-out);
 
@@ -68,13 +68,13 @@ $grid-total-height: calc(#{$grid-height} + #{$grid-margin-block} * 2);
     }
 
     shy-icon {
-      --shyIconSize: calc(#{$responsive-unit} * 17);
+      --shyIconSize: ru(17);
 
       color: $color-danger;
     }
 
     .icon-name {
-      font-size: calc(#{$responsive-unit} * 6);
+      font-size: ru(6);
       text-align: center;
     }
   }
@@ -83,10 +83,10 @@ $grid-total-height: calc(#{$grid-height} + #{$grid-margin-block} * 2);
 shy-snackbar {
   --shySnackbarBackground: #{$color-success};
   --shySnackbarColor: #{$color-white};
-  --shySnackbarWidth: calc(#{$responsive-unit} * 110);
-  --shySnackbarBorderRadius: calc(#{$responsive-unit} * 2);
+  --shySnackbarWidth: ru(110);
+  --shySnackbarBorderRadius: ru(2);
   --shySnackbarFontFamily: sans-serif;
-  --shySnackbarFontSize: calc(#{$responsive-unit} * 7);
-  --shySnackbarIconSize: calc(#{$responsive-unit} * 8);
-  --shySnackbarOffset: calc(#{$responsive-unit} * 15);
+  --shySnackbarFontSize: ru(7);
+  --shySnackbarIconSize: ru(8);
+  --shySnackbarOffset: ru(15);
 }

@@ -1,0 +1,24 @@
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:meta';
+
+// Mesma ordem de tokens/layers.css (check-tokens confere).
+$layers: (base, raised, dropdown, sticky, fixed, drawer, modal, popover, tooltip, toast);
+
+/// z-index de uma camada nomeada, com ajuste fino opcional (-50 a 50).
+@function z($layer, $offset: 0) {
+  @if not list.index($layers, $layer) {
+    @error 'Camada desconhecida: #{$layer}. Use: #{$layers}.';
+  }
+  @if $offset < -50 or $offset > 50 {
+    @error 'Offset de z() fora de -50..50: #{$offset}.';
+  }
+  @if $offset == 0 {
+    @return var(--shy-z-#{$layer});
+  }
+  @return calc(var(--shy-z-#{$layer}) + #{$offset});
+}
+
+@mixin shy-layer($layer, $offset: 0) {
+  z-index: z($layer, $offset);
+}

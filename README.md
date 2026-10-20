@@ -20,14 +20,16 @@ npm run build   # Compila as libs para dist/
 
 ## Scripts
 
-| Comando                  | Descrição                                                          |
-| ------------------------ | ------------------------------------------------------------------ |
-| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                |
-| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                  |
-| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                              |
-| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                           |
-| `npm run build:showcase` | Build do showcase                                                  |
-| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/libs/ui/src/assets/svg/` |
+| Comando                  | Descrição                                                                                    |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                          |
+| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                            |
+| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                        |
+| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                     |
+| `npm run build:showcase` | Build do showcase                                                                            |
+| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/libs/ui/src/assets/svg/`                           |
+| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes)    |
+| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom) |
 
 ## Design System (em desenvolvimento)
 
@@ -41,11 +43,12 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 
 ## Componentes (`@shyland-dev/ui`)
 
-| Componente   | Selector         | Descrição                                                         |
-| ------------ | ---------------- | ----------------------------------------------------------------- |
-| **Icon**     | `<shy-icon>`     | Ícones SVG inline com suporte a hover fill e tamanho customizável |
-| **Select**   | `<shy-select>`   | Dropdown customizável com suporte a ícones e imagens nas opções   |
-| **Snackbar** | `<shy-snackbar>` | Notificação temporária no topo ou rodapé da página                |
+| Componente      | Selector             | Descrição                                                           |
+| --------------- | -------------------- | ------------------------------------------------------------------- |
+| **Icon**        | `<shy-icon>`         | Ícones SVG inline com suporte a hover fill e tamanho customizável   |
+| **Select**      | `<shy-select>`       | Dropdown customizável com suporte a ícones e imagens nas opções     |
+| **Snackbar**    | `<shy-snackbar>`     | Notificação temporária no topo ou rodapé da página                  |
+| **ThemeToggle** | `<shy-theme-toggle>` | Controle segmentado claro / sistema / escuro (usa o `ThemeService`) |
 
 ---
 
@@ -150,14 +153,14 @@ shy-select {
 
 | Token                              | Padrão                         | Descrição                           |
 | ---------------------------------- | ------------------------------ | ----------------------------------- |
-| `--shySelectHeight`                | `20 * responsive-unit`         | Altura mínima do trigger            |
-| `--shySelectWidth`                 | `90 * responsive-unit`         | Largura mínima do componente        |
-| `--shySelectBorderRadius`          | `2 * responsive-unit`          | Border radius do trigger e dropdown |
+| `--shySelectHeight`                | `ru(20)`                       | Altura mínima do trigger            |
+| `--shySelectWidth`                 | `ru(90)`                       | Largura mínima do componente        |
+| `--shySelectBorderRadius`          | `ru(2)`                        | Border radius do trigger e dropdown |
 | `--shySelectBackground`            | `$color-black` (`#000000`)     | Cor de fundo do trigger             |
 | `--shySelectColor`                 | `$color-white` (`#ffffff`)     | Cor do texto e ícones               |
 | `--shySelectFontFamily`            | `monospace`                    | Fonte do componente                 |
-| `--shySelectFontSize`              | `6 * responsive-unit`          | Tamanho da fonte                    |
-| `--shySelectIconSize`              | `8 * responsive-unit`          | Tamanho dos ícones internos         |
+| `--shySelectFontSize`              | `ru(6)`                        | Tamanho da fonte                    |
+| `--shySelectIconSize`              | `ru(8)`                        | Tamanho dos ícones internos         |
 | `--shySelectDropdownBackground`    | `$color-dark` (`#222428`)      | Cor de fundo do painel dropdown     |
 | `--shySelectDropdownBoxShadow`     | `0 0 1.5ru 0.1ru $color-white` | Box shadow do dropdown              |
 | `--shySelectSelectedColor`         | `$color-primary` (`#3880ff`)   | Cor da opção selecionada            |
@@ -226,12 +229,12 @@ shy-snackbar {
 | --------------------------- | -------------------------- | ------------------------------------ |
 | `--shySnackbarBackground`   | `$color-dark` (`#222428`)  | Cor de fundo                         |
 | `--shySnackbarColor`        | `$color-white` (`#ffffff`) | Cor do texto e ícone                 |
-| `--shySnackbarWidth`        | `110 * responsive-unit`    | Largura mínima                       |
-| `--shySnackbarBorderRadius` | `2 * responsive-unit`      | Border radius                        |
-| `--shySnackbarOffset`       | `15 * responsive-unit`     | Distância da borda superior/inferior |
+| `--shySnackbarWidth`        | `ru(110)`                  | Largura mínima                       |
+| `--shySnackbarBorderRadius` | `ru(2)`                    | Border radius                        |
+| `--shySnackbarOffset`       | `ru(15)`                   | Distância da borda superior/inferior |
 | `--shySnackbarFontFamily`   | `monospace`                | Fonte da mensagem                    |
-| `--shySnackbarFontSize`     | `7 * responsive-unit`      | Tamanho da fonte                     |
-| `--shySnackbarIconSize`     | `8 * responsive-unit`      | Tamanho do ícone de fechar           |
+| `--shySnackbarFontSize`     | `ru(7)`                    | Tamanho da fonte                     |
+| `--shySnackbarIconSize`     | `ru(8)`                    | Tamanho do ícone de fechar           |
 
 ---
 
@@ -269,43 +272,111 @@ npm install @shyland-dev/ui @shyland-dev/utils
 
 ### 2. Configurar os estilos globais (`@shyland-dev/ui`)
 
-No arquivo `src/styles.scss` da aplicação, importe os estilos base:
+Tokens (cores, tipografia, espaço, motion, camadas), fontes self-hosted, animações e o reset base vêm em um único CSS. Escolha **uma** das formas:
 
-```scss
-/* Sass variables, CSS custom properties (design tokens) e mixins */
-@use '@shyland-dev/ui/styles' as *;
+```json
+// angular.json > projects.<app>.architect.build.options.styles (recomendado)
+"styles": ["node_modules/@shyland-dev/ui/styles/index.css", "src/styles.scss"]
 ```
 
-> Nenhuma configuração adicional no `angular.json` é necessária. O Angular CLI (esbuild) resolve automaticamente os caminhos `@shyland-dev/...` via `node_modules`.
+```css
+/* ou, em um arquivo .css */
+@import '@shyland-dev/ui/styles/index.css';
+```
+
+```scss
+// ou, em um arquivo .scss (equivalente ao index.css; não combine com as formas acima)
+@use '@shyland-dev/ui/styles/global';
+```
+
+As fontes (JetBrains Mono, `woff2` subset latin, licença OFL em `styles/fonts/*/OFL.txt`) são emitidas pelo build do app em `media/`. Para evitar o flash de fonte, faça preload da principal:
+
+```html
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/media/JetBrainsMono-Variable.woff2" />
+```
+
+> Os nomes dos arquivos em `media/` podem ganhar hash conforme a configuração do build; confira a saída (`dist/<app>/browser/media`).
+
+#### Tema (escuro por padrão)
+
+O tema escuro vale sem JavaScript. O claro entra com `data-theme="light"` no `<html>`, gravado pelo `ThemeService`:
+
+```typescript
+import { ThemeService, provideShyTheme } from '@shyland-dev/ui';
+
+// opcional: provideShyTheme({ defaultMode: 'system', storageKey: 'meu-tema' }) em providers
+const theme = inject(ThemeService);
+theme.setMode('light'); // 'dark' | 'light' | 'system'
+theme.mode(); // modo escolhido (signal)
+theme.resolved(); // 'dark' | 'light' efetivo (signal)
+theme.toggle();
+```
+
+```html
+<shy-theme-toggle />
+<!-- rótulos traduzidos: [labels]="{ group: 'Tema', light: 'Claro', system: 'Sistema', dark: 'Escuro' }" -->
+```
+
+**Sem flash:** o `ThemeService` só roda depois do Angular carregar. Para aplicar o tema salvo antes do primeiro paint, coloque no `<head>` do `index.html` (use a mesma chave do `storageKey`; com CSP, libere por nonce ou hash):
+
+```html
+<script>
+    (function () {
+        try {
+            var mode = localStorage.getItem('shy-theme');
+            if (mode !== 'light' && mode !== 'system') mode = 'dark';
+            var light = mode === 'light' || (mode === 'system' && matchMedia('(prefers-color-scheme: light)').matches);
+            document.documentElement.setAttribute('data-theme', light ? 'light' : 'dark');
+            document.documentElement.setAttribute('data-theme-mode', mode);
+        } catch (e) {}
+    })();
+</script>
+```
+
+Motion reduzido: `prefers-reduced-motion` já zera as durações; o app pode forçar com `data-motion="reduced"` no `<html>`.
 
 ---
 
-### 3. Usar variáveis e mixins em componentes
+### 3. Usar unidades, camadas e mixins nos SCSS
 
-Em qualquer arquivo SCSS de componente que precise das Sass variables ou mixins:
+**Regra de unidades:** toda medida é `calc(var(--shy-responsive-unit) * N)`. Em SCSS, `ru(N)`; em TypeScript, o helper `ru(n)`. Nada de `px`, `rem`, `em`, `vw`, `vh` etc. (exceção só em `_breakpoints.scss`, nas condições de `@media`). Detalhes em [`docs/design-system/units.md`](docs/design-system/units.md).
 
 ```scss
 @use '@shyland-dev/ui/styles' as *;
 
 .meu-elemento {
-    color: $color-primary;
-    @include fixedHeight(200px);
+    padding: ru(4) ru(6);
+    border: var(--shy-border-width) solid var(--shy-color-border);
+    background: var(--shy-color-surface);
+    color: var(--shy-color-text);
+    @include shy-layer(sticky); // z-index: var(--shy-z-sticky)
+    @include up(md) {
+        padding: ru(8);
+    }
 }
 ```
 
-**Mixins disponíveis:**
+```typescript
+import { ru } from '@shyland-dev/ui';
 
-| Mixin                          | Descrição                                           |
-| ------------------------------ | --------------------------------------------------- |
-| `fixedHeight($h)`              | Define `height`, `min-height` e `max-height`        |
-| `fixedWidth($w)`               | Define `width`, `min-width` e `max-width`           |
-| `fixedSquare($s)`              | Aplica `fixedWidth` e `fixedHeight` com mesmo valor |
-| `square($s)`                   | Define `width` e `height`                           |
-| `allVendors($property, $args)` | Adiciona prefixos de vendor a uma propriedade CSS   |
-| `landscape`                    | Media query `(orientation: landscape)`              |
-| `portrait`                     | Media query `(orientation: portrait)`               |
-| `dark-mode`                    | Media query `(prefers-color-scheme: dark)`          |
-| `light-mode`                   | Media query `(prefers-color-scheme: light)`         |
+ru(4); // 'calc(var(--shy-responsive-unit) * 4)'
+```
+
+**Funções e mixins** (`@use '@shyland-dev/ui/styles'`):
+
+| Item                                                                                                                   | Descrição                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ru($n)`                                                                                                               | `calc(var(--shy-responsive-unit) * $n)`; aceita decimais e negativos                                                                                       |
+| `z($layer, $offset: 0)`                                                                                                | `z-index` de uma camada nomeada (`base`, `raised`, `dropdown`, `sticky`, `fixed`, `drawer`, `modal`, `popover`, `tooltip`, `toast`); `$offset` de -50 a 50 |
+| `@include shy-layer($layer, $offset)`                                                                                  | `z-index: z($layer, $offset)`                                                                                                                              |
+| `@include up($bp)` / `down($bp)`                                                                                       | Media query de largura (`sm` 600, `md` 840, `lg` 1200, `xl` 1600); único lugar com px                                                                      |
+| `@include focus-ring`                                                                                                  | Anel de foco do contrato de estados                                                                                                                        |
+| `@include shy-state(hover\|focus\|active)`                                                                             | Gera o seletor real (`hover` só com `@media (hover: hover)`) e `[data-shy-state]` para a matriz do showcase                                                |
+| `@include state-layer`                                                                                                 | Camada de hover/pressed sem cor própria por variante                                                                                                       |
+| `@include disabled-state`                                                                                              | `opacity` e `cursor` de desabilitado                                                                                                                       |
+| `@include transition($props, $duration, $ease)`                                                                        | `transition` com os tokens de motion                                                                                                                       |
+| `@include visually-hidden`                                                                                             | Esconde só visualmente (em ru, sem `1px`)                                                                                                                  |
+| `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode` | Mixins antigos, mantidos por enquanto                                                                                                                      |
 
 ---
 
@@ -342,35 +413,20 @@ export class MeuComponent {
 
 ## Design Tokens
 
-CSS custom properties definidas em `src/libs/ui/src/lib/styles/_variables.scss`, incluídas automaticamente ao importar `@shyland-dev/ui/styles`.
+CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--shy-primary-600`), semântico (`--shy-color-text`, muda com o tema) e de componente (F2 em diante). Componentes usam só os semânticos. Guia completo: [`docs/design-system/tokens.md`](docs/design-system/tokens.md).
 
-| Token               | Descrição                                |
-| ------------------- | ---------------------------------------- |
-| `--responsive-unit` | Unidade fluida baseada em viewport + rem |
-| `--dynamic-height`  | `100dvh` (com fallback para `100vh`)     |
-| `--dynamic-width`   | `100dvw` (com fallback para `100vw`)     |
+| Grupo             | Exemplos                                                                                                                                                                                                   | Arquivo                            |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Unidades          | `--shy-responsive-unit`, `--shy-dynamic-height`, `--shy-dynamic-width` (+ `-unit`)                                                                                                                         | `tokens/units.css`                 |
+| Primitivos        | `--shy-{primary,neutral,success,warning,danger,info}-{50…950}`, `--shy-gradient-brand`                                                                                                                     | `tokens/primitives.css`            |
+| Tipografia        | `--shy-font-family-{mono,sans,base,code}`, `--shy-text-{xs…5xl}`, `--shy-weight-*`, `--shy-leading-*`                                                                                                      | `tokens/primitives.css`            |
+| Espaço, forma     | `--shy-space-*`, `--shy-radius-*`, `--shy-size-control-*`, `--shy-size-icon-*`, `--shy-border-width*`, `--shy-focus-ring-*`                                                                                | `tokens/primitives.css`            |
+| Semânticos de cor | `--shy-color-{bg,surface,surface-raised,surface-sunken,text*,border*,line,focus,scrim*,neutral-soft}`, por intenção `--shy-color-{primary,success,warning,danger,info}[-text\|-soft]` e `--shy-color-on-*` | `tokens/semantic-{dark,light}.css` |
+| Sombras           | `--shy-shadow-1…5` (redefinidas por tema)                                                                                                                                                                  | `tokens/semantic-*.css`            |
+| Motion            | `--shy-duration-*`, `--shy-ease-*`, `--shy-motion-distance`, `--shy-transition-*`                                                                                                                          | `tokens/motion.css`                |
+| Camadas           | `--shy-z-{base,raised,dropdown,sticky,fixed,drawer,modal,popover,tooltip,toast}` (passo de 100)                                                                                                            | `tokens/layers.css`                |
 
-**Sass variables** (disponíveis ao `@use '@shyland-dev/ui/styles' as *`):
-
-| Variável               | Valor                        |
-| ---------------------- | ---------------------------- |
-| `$color-void`          | `#ffffff00`                  |
-| `$color-primary`       | `#3880ff`                    |
-| `$color-secondary`     | `#3dc2ff`                    |
-| `$color-tertiary`      | `#5260ff`                    |
-| `$color-success`       | `#2dd36f`                    |
-| `$color-warning`       | `#ffc409`                    |
-| `$color-danger`        | `#eb445a`                    |
-| `$color-dark`          | `#222428`                    |
-| `$color-medium`        | `#92949c`                    |
-| `$color-light`         | `#f4f5f8`                    |
-| `$color-black`         | `#000000`                    |
-| `$color-white`         | `#ffffff`                    |
-| `$responsive-unit`     | `var(--responsive-unit)`     |
-| `$dynamic-height`      | `var(--dynamic-height)`      |
-| `$dynamic-height-unit` | `var(--dynamic-height-unit)` |
-| `$dynamic-width`       | `var(--dynamic-width)`       |
-| `$dynamic-width-unit`  | `var(--dynamic-width-unit)`  |
+> Mudança da `0.0.x` para a `0.1.0` (breaking): `--responsive-unit`, `--dynamic-*`, `$responsive-unit`, `$dynamic-*` **deixaram de existir**, sem alias. Troque por `--shy-responsive-unit` / `ru(N)` e `--shy-dynamic-*`. As Sass variables `$color-*` (paleta antiga) continuam só para os componentes ainda não migrados e saem na F2. Guia: [`docs/design-system/migration-0.0-to-0.1.md`](docs/design-system/migration-0.0-to-0.1.md).
 
 ---
 
@@ -382,8 +438,14 @@ export { IconComponent } from './lib/components/icon/icon.component';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 
+export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
+
 // Serviços
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
+export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResolvedTheme, ShyThemeConfig } from './lib/services/theme/theme.service';
+
+// Utilitários
+export { ru } from './lib/utils/ru';
 
 // Interfaces
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
@@ -417,7 +479,8 @@ npm/
 │       │           ├── interfaces/     # SelectOption, SnackbarShowOptions...
 │       │           ├── services/
 │       │           │   └── snackbar/   # SnackbarService
-│       │           ├── styles/         # _variables.scss, _mixins.scss
+│       │           ├── styles/         # tokens/*.css, fonts/, index.css, _global.scss, _functions/_layers/_mixins.scss
+│       │           ├── utils/          # ru()
 │       │           └── types/          # SnackbarPosition
 │       └── utils/                  # @shyland-dev/utils — utilitários
 │           └── src/lib/services/
@@ -426,7 +489,8 @@ npm/
 │   ├── DESIGN-SYSTEM-PLAN.md       # Plano mestre do Design System
 │   └── design-system/              # Decisões e progresso das fases
 ├── scripts/
-│   └── generate-icons.mjs          # Gera icons.ts a partir dos SVGs
+│   ├── generate-icons.mjs          # Gera icons.ts a partir dos SVGs
+│   └── check-*.mjs                 # npm run check:ds (unidades, tokens, contraste, fontes...)
 ├── CLAUDE.md                       # Regras do repo e comando /build
 └── angular.json
 ```
