@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F3 Onda 1**, sessão **F3-S3** (FormField, Input, Textarea)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Gate da F3-S2 aprovado pelo `/build` de 2026-10-20 (commit `53e2902`). O plano da F3-S3 está em `sessions/F3-onda-1.md`; o próximo `/build` o aprova e executa a sessão.
+- A F3-S3 foi executada e verificada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S3: relatório do gate". O próximo `/build` aprova o gate (ou um ajuste vira commit novo) e avança para a F3-S4 em `aguardando-plano`.
 
 ## Fases
 
@@ -26,7 +26,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
 | F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
-| F3-S3  | FormField, Input, Textarea                                                         | plano     |         |
+| F3-S3  | FormField, Input, Textarea                                                         | gate      |         |
 | F3-S4  | Checkbox, Radio, Switch                                                            | pendente  |         |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente  |         |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
@@ -50,6 +50,57 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: `/build` aprovou o gate da F3-S2 (`53e2902`, já enviado). F3-S3 em `aguardando-plano`.
 - 2026-10-20: feedback do dono (não é aprovação): o sistema de z-index/overlay pode se basear no Angular Material/CDK (container fixo em tela cheia + backdrop, só renderizado quando há overlay). Impacta ADR-F0-7 / seção 7.5 do plano e a F4-S1. Decisão de alto impacto: alternativas comparadas na thread, aguardando resposta do dono; nada alterado no plano ainda. Estado segue `aguardando-plano` da F3-S3.
 - 2026-10-20: dono escolheu o **híbrido** para o overlay (ADR-F4-1): container sob demanda com backdrop estilo CDK + top layer + `z()` fallback. Aplicado em ADR-F0-7 (emenda), plano 7.5 (item 3) e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F3-S3.
+- 2026-10-20: `/build` aprovou o plano da F3-S3 e a executou (Input/Textarea, FormField, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+
+## F3-S3: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados; 55 pares de contraste (3 novos)                                                                                                                                                 |
+| `npm test`               | verde: 14 arquivos, 85 testes (novos: `form-field` 11, `input` 3)                                                                                                                                                                                  |
+| `npm run build`          | verde (`ui` e `utils`)                                                                                                                                                                                                                             |
+| `npm run build:showcase` | verde                                                                                                                                                                                                                                              |
+| ARIA (jsdom + Chromium)  | `label[for]` = `id` do controle; `aria-describedby` = dica + erro; `aria-invalid`/`aria-errormessage` só inválido; no Chromium a árvore de acessibilidade dá nome "Name", descrição "As on your ID This field is required", `required` e `invalid` |
+| Quando o erro aparece    | só com touched/dirty (blur) ou `markAllAsTouched` (submit, sem blur); some ao ficar válido; `invalid` forçado no campo ou no controle (testado)                                                                                                    |
+| Foco, prefixo, contador  | anel `solid` na cor `--shy-color-focus`; recuo do texto = altura do campo (45,8 px) com prefixo; contador `3/40` acompanha a digitação                                                                                                             |
+| forced-colors (emulação) | borda `FieldText` (branca na emulação) e inválido `dashed`; conferir no Windows em alto contraste                                                                                                                                                  |
+| Temas e viewports        | form-field, input e textarea em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                                                            |
+| Contraste                | `text-muted`, `text-subtle` e `danger-text` sobre `surface-sunken` (4,5:1) e `border-strong` sobre ele (3:1, já existia) nos dois temas                                                                                                            |
+| Ambiente                 | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou. O lock foi ajustado à mão (só a linha do peer `@angular/forms`) porque o npm 10 remove campos `libc` do lock                                                          |
+
+Não verificado: leitor de tela real (NVDA/VoiceOver); autofill de verdade (o Chromium headless não preenche; a regra `:-webkit-autofill` só foi compilada); Windows em alto contraste.
+
+### Arquivos principais
+
+- `lib/components/input/` (`input.component.{ts,scss,spec.ts}`, `_input-theme.scss` com os tamanhos) e `lib/components/form-field/` (`.ts`, `.html`, `.scss`, `form-field.token.ts`, spec); `types/input/input.type.ts`; exports em `components/index.ts` e `types/index.ts`.
+- `scripts/contrast-pairs.json` (+3 pares); `src/libs/ui/package.json` e `package-lock.json` (peer `@angular/forms`).
+- Showcase: `components/{form-field,input,textarea}` (formulário reativo, matriz de estados × tamanho, prefixo/sufixo, override de token), rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens `--shy-input-*`/`--shy-form-field-*`, exports, requisitos), `decisions.md` (ADR-F3-3), `accessibility.md`.
+
+### Efeito prático
+
+- `<input shyInput>` e `<textarea shyInput>` funcionam com `ngModel`/`formControl`/`formControlName`, em `sm|md|lg`, com `invalid`, `required`, `readonly`, `disabled`.
+- `<shy-form-field label hint error counter size>` liga o ARIA sozinho e mostra o erro com ícone e texto; slots `prefix`/`suffix`.
+- Nenhuma API existente mudou. Sem bump, tag ou publish. Única dependência nova: peer `@angular/forms` (já usado pelo app).
+
+### Decisões e premissas (ADR-F3-3 em `decisions.md`)
+
+- `@angular/forms` como peer do `ui` (só `NgControl`); componente de template vazio em vez de diretiva com CSS global; tamanho em `shyInput="lg"` (o `size` nativo conflita); caixa no próprio input, com prefixo/sufixo absolutos e recuo por `:has()`; ligação por token `SHY_FORM_FIELD`; erro como string; autofill e forced-colors tratados.
+- O arquivo da sessão pedia prefixo/sufixo no Input; eles ficam no `shy-form-field` (precisam de um contêiner), e o Input sozinho não os tem.
+
+### Mensagem de commit
+
+```
+feat(ui): form-field, input e textarea
+
+- input[shyInput] e textarea[shyInput]: tamanhos sm/md/lg, invalid pelo NgControl, forced-colors e autofill
+- shy-form-field: label, dica, erro com ícone, contador e ARIA (for/id, describedby, invalid, errormessage)
+- slots prefix e suffix; token SHY_FORM_FIELD para os próximos controles
+- peer @angular/forms; tokens --shy-input-* e --shy-form-field-*
+- showcase: components/form-field, input e textarea; README e ADR-F3-3
+```
 
 ## F3-S2: relatório do gate (2026-10-20)
 

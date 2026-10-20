@@ -260,6 +260,21 @@
       "fg": "primary-text",
       "bg": "track",
       "min": 3
+    },
+    {
+      "fg": "text-muted",
+      "bg": "surface-sunken",
+      "min": 4.5
+    },
+    {
+      "fg": "text-subtle",
+      "bg": "surface-sunken",
+      "min": 4.5
+    },
+    {
+      "fg": "danger-text",
+      "bg": "surface-sunken",
+      "min": 4.5
     }
   ]
 }

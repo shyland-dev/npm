@@ -1,0 +1,120 @@
+@use '../../styles' as *;
+@use '../input/input-theme' as theme;
+
+:host {
+  display: block;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shy-form-field-gap, var(--shy-space-2));
+}
+
+.label {
+  color: var(--shy-form-field-label-color, var(--shy-color-text));
+  font-size: var(--shy-text-sm);
+  font-weight: var(--shy-weight-medium);
+  line-height: var(--shy-leading-snug);
+}
+
+.required {
+  margin-inline-start: var(--shy-space-1);
+  color: var(--shy-color-danger-text);
+}
+
+// Prefixo/sufixo ocupam um quadrado da altura do campo; o texto do input recua o mesmo tanto (--_affix-*).
+.control {
+  @include theme.size-vars(md);
+
+  position: relative;
+  display: block;
+  --shy-icon-size: var(--_icon);
+}
+
+@each $size in (sm, lg) {
+  .control[data-size='#{$size}'] {
+    @include theme.size-vars($size);
+  }
+}
+
+.prefix,
+.suffix {
+  position: absolute;
+  inset-block: 0;
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--_height);
+  color: var(--shy-color-text-muted);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.prefix {
+  inset-inline-start: 0;
+  pointer-events: none;
+}
+
+.suffix {
+  inset-inline-end: 0;
+}
+
+.control:has(.prefix:not(:empty)) {
+  --_affix-start: var(--_height);
+}
+
+.control:has(.suffix:not(:empty)) {
+  --_affix-end: var(--_height);
+}
+
+.meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--shy-space-4);
+  font-size: var(--shy-text-sm);
+  line-height: var(--shy-leading-snug);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shy-space-1);
+  min-inline-size: 0;
+}
+
+.hint {
+  color: var(--shy-form-field-hint-color, var(--shy-color-text-muted));
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--shy-space-2);
+  color: var(--shy-form-field-error-color, var(--shy-color-danger-text));
+
+  // A região live precisa existir antes do texto para ser anunciada: vazia, fica oculta mas presente.
+  &:empty {
+    @include visually-hidden;
+  }
+}
+
+.error-icon {
+  --shy-icon-size: var(--shy-size-icon-sm);
+
+  flex-shrink: 0;
+}
+
+.counter {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  color: var(--shy-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.field:has(:disabled) .label,
+.field:has(:disabled) .hint {
+  opacity: var(--shy-opacity-disabled);
+}

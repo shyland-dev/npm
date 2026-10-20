@@ -1,0 +1,55 @@
+<div class="page">
+  <h1 class="page-title">Input</h1>
+  <p class="page-lead"><code>&lt;input shyInput&gt;</code> styles the native element, so <code>ngModel</code>, <code>formControl</code> and <code>formControlName</code> work as usual. Wrap it in <code>&lt;shy-form-field&gt;</code> for label, hint, error and ARIA wiring. The invalid state is never only a color: the field adds an icon and a message. Sizes: <code>shyInput="sm|md|lg"</code>.</p>
+
+  <section class="section">
+    <h2>States × size</h2>
+    <div class="card table-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">state</th>
+            @for (size of sizes; track size) {
+              <th scope="col">{{ size }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (state of states; track state) {
+            <tr>
+              <th scope="row" class="token-name">{{ state }}</th>
+              @for (size of sizes; track size) {
+                <td>
+                  <input [shyInput]="size" [attr.data-shy-state]="state === 'hover' || state === 'focus' ? state : null" [invalid]="state === 'invalid' ? true : undefined" [disabled]="state === 'disabled'" [readOnly]="state === 'readonly'" [value]="state === 'readonly' ? 'Read only value' : ''" placeholder="Placeholder" [attr.aria-label]="state + ' ' + size" />
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Prefix and suffix</h2>
+    <div class="card shy-stack">
+      <shy-form-field label="Search" hint="Icon slots take a square of the field height">
+        <shy-icon slot="prefix" name="search" />
+        <input shyInput placeholder="Find a component" />
+      </shy-form-field>
+      <shy-form-field label="Password" size="lg">
+        <button shyIconButton slot="suffix" variant="ghost" size="sm" label="Show password" type="button"><shy-icon name="eye" /></button>
+        <input shyInput type="password" value="secret" />
+      </shy-form-field>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Autofill</h2>
+    <div class="card">
+      <shy-form-field label="Email" hint="Chrome's autofill keeps the field colors">
+        <input shyInput type="email" name="email" autocomplete="email" />
+      </shy-form-field>
+    </div>
+  </section>
+</div>

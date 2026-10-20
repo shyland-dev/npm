@@ -4,7 +4,7 @@ Angular component library by Shyland Dev — inline SVG icons, a notification sn
 
 ## Requirements
 
-- Angular **21+**
+- Angular **21+** (`@angular/core`, `@angular/common` and `@angular/forms` as peer dependencies)
 - Node.js **18+**
 
 ## Installation
@@ -103,6 +103,36 @@ Progress bar, linear or circular, with `role="progressbar"`, `aria-valuemin="0"`
 | `size`  | linear `'sm' \| 'md' \| 'lg'`; circular `'xs' \| 'sm' \| 'md' \| 'lg'` | `'md'`  | Linear: thickness `--shy-space-{1,2,3}`. Circular: as `shy-spinner` |
 
 The value change animates `transform`/`stroke-dashoffset` (never `width`). Indeterminate with reduced motion: the linear bar fills the track and the circular arc stops; both only fade.
+
+### `input[shyInput]`, `textarea[shyInput]`, `<shy-form-field>`
+
+Text field on the native element, so `ngModel`, `formControl` and `formControlName` work as usual (no custom ControlValueAccessor). Wrap it in `<shy-form-field>` for label, hint, error and counter; the field wires `for`/`id`, `aria-describedby` (hint + error), `aria-invalid` and `aria-errormessage`. The error appears after the control is touched, changed or the form is submitted (`markAllAsTouched`), always with an icon and text, in a polite live region.
+
+```html
+<shy-form-field label="Email" hint="We never share it" [error]="emailError()" [counter]="true">
+    <shy-icon slot="prefix" name="envelope" />
+    <input shyInput type="email" formControlName="email" required maxlength="80" />
+</shy-form-field>
+<textarea shyInput rows="4"></textarea>
+```
+
+| Input (`shyInput`) | Type                   | Default | Description                                                                              |
+| ------------------ | ---------------------- | ------- | ---------------------------------------------------------------------------------------- |
+| `shyInput`         | `'sm' \| 'md' \| 'lg'` | `'md'`  | Size; the field's `size` wins when set                                                   |
+| `invalid`          | `boolean`              | —       | Forces the state; otherwise it comes from the `NgControl` (invalid and touched or dirty) |
+| `required`         | `boolean`              | `false` | Native `required`; also marks the label with `*`                                         |
+| `maxlength`, `id`  | `number`, `string`     | —       | Native; `id` replaces the generated one (the label's `for` follows)                      |
+
+| Input (`shy-form-field`) | Type                   | Default | Description                                                     |
+| ------------------------ | ---------------------- | ------- | --------------------------------------------------------------- |
+| `label`, `hint`          | `string`               | —       | Label (`<label for>`) and hint (part of `aria-describedby`)     |
+| `error`                  | `string`               | —       | Message shown while the field is invalid                        |
+| `invalid`                | `boolean`              | —       | Forces the state (e.g. a server error)                          |
+| `required`               | `boolean`              | `false` | Adds `*` (`aria-hidden`); the control's `required` also adds it |
+| `counter`                | `boolean`              | `false` | `n/maxlength` (just `n` without `maxlength`)                    |
+| `size`                   | `'sm' \| 'md' \| 'lg'` | —       | Overrides the control's size                                    |
+
+Slots: `slot="prefix"` / `slot="suffix"` take a square of the field height inside the box and make room in the text (prefix ignores the pointer; suffix accepts a `shyIconButton`). Without `shy-form-field` the input works alone (no label/error/slots).
 
 ### `<shy-icon>`
 
@@ -333,6 +363,17 @@ Set on the element (or a parent). `IconButton` uses the same names with the `--s
 
 New foundation tokens: `--shy-color-track` (both themes), `--shy-opacity-track`, `--shy-duration-loop` (1000ms), `--shy-duration-loop-slow` (1600ms), `--shy-duration-breathe` (2000ms). Loop durations do not drop to 0.01ms with reduced motion: the components swap movement for an opacity pulse instead.
 
+### Input and Form Field Tokens
+
+| Token                                                                 | Default                                              | Description                     |
+| --------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------- |
+| `--shy-input-height`                                                  | `--shy-size-control-{sm,md,lg}`                      | Minimum height                  |
+| `--shy-input-pad-x`, `--shy-input-font-size`                          | `--shy-space-{6,7,8}`, `--shy-text-{sm,md,lg}`       | Padding and font size           |
+| `--shy-input-bg`, `--shy-input-fg`                                    | `--shy-color-surface-sunken`, `--shy-color-text`     | Background and text             |
+| `--shy-input-border-color`, `-hover`, `-invalid`                      | `border-strong`, `text-muted`, `danger-text`         | Border (≥ 3:1 over the surface) |
+| `--shy-input-placeholder`, `--shy-input-radius`                       | `--shy-color-text-subtle`, `--shy-radius-md`         | Placeholder and radius          |
+| `--shy-form-field-gap`, `-label-color`, `-hint-color`, `-error-color` | `--shy-space-2`, `text`, `text-muted`, `danger-text` | Field layout and message colors |
+
 ### Snackbar Tokens
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
@@ -379,7 +420,10 @@ The `<shy-select>` component can be customized via CSS custom properties:
 // Components
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
+export { FormFieldComponent } from './lib/components/form-field/form-field.component';
+export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';
+export { InputComponent } from './lib/components/input/input.component';
 export { ProgressComponent } from './lib/components/progress/progress.component';
 export { ProgressCircularComponent } from './lib/components/progress-circular/progress-circular.component';
 export { SelectComponent } from './lib/components/select/select.component';
@@ -402,6 +446,7 @@ export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interfac
 
 // Types
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
+export { ShyInputSize } from './lib/types/input/input.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
 export { ShyProgressSize } from './lib/types/progress/progress.type';
 export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';

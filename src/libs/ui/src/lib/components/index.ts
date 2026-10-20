@@ -1,5 +1,8 @@
 export * from './button/button.component';
 
+export * from './form-field/form-field.component';
+export * from './form-field/form-field.token';
+
 export * from './icon/icon.component';
 export * from './icon/icons';
 
@@ -7,6 +10,8 @@ export * from './icon-button/icon-button.component';
 
 export * from './progress/progress.component';
 export * from './progress-circular/progress-circular.component';
+
+export * from './input/input.component';
 
 export * from './select/select.component';
 

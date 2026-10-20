@@ -1,0 +1,31 @@
+<div class="field">
+  @if (label()) {
+    <label class="label" [attr.for]="forId()"
+      >{{ label() }}
+      @if (isRequired()) {
+        <span class="required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+  <div class="control" [attr.data-size]="size()">
+    <span class="prefix"><ng-content select="[slot=prefix]" /></span>
+    <ng-content />
+    <span class="suffix"><ng-content select="[slot=suffix]" /></span>
+  </div>
+  <div class="meta">
+    <div class="messages">
+      @if (hint()) {
+        <span class="hint" [id]="hintId">{{ hint() }}</span>
+      }
+      <div class="error" [id]="errorBoxId" aria-live="polite">
+        @if (showError()) {
+          <shy-icon class="error-icon" name="exclamation-circle" />
+          <span>{{ error() }}</span>
+        }
+      </div>
+    </div>
+    @if (counter()) {
+      <span class="counter">{{ counterText() }}</span>
+    }
+  </div>
+</div>
