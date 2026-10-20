@@ -95,3 +95,17 @@ Fora das exceções, a F0 confirmou que `calc(var(--shy-responsive-unit) * N)` f
 - **Showcase no Claude** (referência visual, px livre; não é código da lib): fundações, ação/formulário, feedback/overlays, loading/progresso, navegação/dados, nos dois temas.
 - **Catálogo:** Onda 1 ganha `Spinner` com 8 variantes, `Skeleton` e `ProgressCircular`; `Button` ganha `loadingPosition` (`start|end|replace`) e `loadingText`. Onda 3 detalha Tabs (underline/pill), Avatar, Table (seleção e ordenação).
 - **Achado do showcase:** o ícone de loading do botão sumia em uma variação porque dependia de `sc-if` aninhado no runtime do artifact; passou a existir sempre, escondido por classe. Problema do showcase, não do desenho do botão.
+
+### ADR-F0-9. Ajustes da revisão visual do showcase (2026-10-20)
+
+Dono revisou os boards e pediu 5 correções, aplicadas no showcase e registradas no plano (seção 7.1 e checklist 11.3):
+
+| Achado                                                          | Causa                                                                         | Regra para a lib                                                                                                  |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Spinner colado na borda esquerda do botão em loading            | Células estreitas (6 colunas) e padding de 12 px; conteúdo quase da largura   | Respiro lateral mínimo no botão (≥ `--shy-space-6`); matriz do showcase em 3 colunas                              |
+| Dots e spinner invisíveis no botão outline/ghost do tema escuro | Botão sem `background` na base: o navegador pintou o fundo claro padrão       | `background: transparent` na base de todo botão; cor do spinner = `currentColor`                                  |
+| Texto "Carregando relatório" escuro sobre scrim no tema claro   | Scrim de 40% sobre fundo claro dá cinza médio; texto usava `--shy-color-text` | Tokens `--shy-color-scrim-panel` e `--shy-color-on-scrim`: painel escuro com texto claro (≥ 4,5:1) nos dois temas |
+| Chip "+4" do grupo de avatares quase da cor do fundo            | Usava `surface-raised`, que mal difere da superfície nos dois temas           | Tokens `--shy-color-neutral-soft` / `--shy-color-on-neutral-soft`                                                 |
+| Linha do stepper pouco visível                                  | Usava `border` (decorativa)                                                   | Token `--shy-color-line` (mais claro no escuro, mais escuro no claro)                                             |
+
+Os novos pares entram em `scripts/contrast-pairs.json` na F1 (texto ≥ 4,5:1; `line` sobre `surface` ≥ 3:1).
