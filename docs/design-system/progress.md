@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F2 Refactor dos existentes (fase A)**
-- Estado: `aguardando-gate`
+- Fase: **F3 Onda 1**, sessão **F3-S1** (utilitários da Onda 0 + Button + IconButton)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- F2 executada (T1–T7); relatório do gate abaixo. O próximo `/build` aprova o gate **e** a mensagem de commit proposta, commita, faz push em `feat/design-system` e avança para a F3 em `aguardando-plano`.
+- O plano de cada sessão está em `docs/design-system/sessions/` (índice em `sessions/README.md`). O próximo `/build` aprova o plano da sessão atual, executa, roda as verificações e para em `aguardando-gate`; o `/build` seguinte commita, faz push em `feat/design-system` e avança para a próxima sessão em `aguardando-plano`.
 
 ## Fases
 
@@ -15,10 +15,36 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | ---------------------------------- | ------------------------- | ------------------------------------------------------------- |
 | F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
 | F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
-| F2 Refactor dos existentes         | aguardando gate           |                                                               |
-| F3 Onda 1                          | pendente                  |                                                               |
-| F4 Onda 2                          | pendente                  |                                                               |
-| F5 Onda 3 + hardening              | pendente                  |                                                               |
+| F2 Refactor dos existentes         | concluída (gate aprovado) | eb359ac                                                       |
+| F3 Onda 1                          | em andamento (6 sessões)  |                                                               |
+| F4 Onda 2                          | pendente (6 sessões)      |                                                               |
+| F5 Onda 3 + hardening              | pendente (4 sessões)      |                                                               |
+
+## Sessões
+
+| Sessão | Escopo                                                                             | Status   | Commit |
+| ------ | ---------------------------------------------------------------------------------- | -------- | ------ |
+| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | próxima  |        |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | pendente |        |
+| F3-S3  | FormField, Input, Textarea                                                         | pendente |        |
+| F3-S4  | Checkbox, Radio, Switch                                                            | pendente |        |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | pendente |        |
+| F3-S6  | Fechamento da Onda 1                                                               | pendente |        |
+| F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente |        |
+| F4-S2  | Dialog, Drawer                                                                     | pendente |        |
+| F4-S3  | Popover, Tooltip, Menu                                                             | pendente |        |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente |        |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente |        |
+| F4-S6  | Fechamento da Onda 2                                                               | pendente |        |
+| F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente |        |
+| F5-S2  | Lote 2                                                                             | pendente |        |
+| F5-S3  | Lote 3 (sob demanda)                                                               | pendente |        |
+| F5-S4  | Hardening e fechamento                                                             | pendente |        |
+
+## Registro
+
+- 2026-10-20: F2 aprovada e commitada (`eb359ac`), push em `feat/design-system`. Resíduos da Onda 0 (D-F2-1) ficam na F3-S1.
+- 2026-10-20: F3 a F5 divididas em sessões curtas (`docs/design-system/sessions/`), para o dono rodar uma por sessão do Claude.
 
 ## F2: relatório do gate (2026-10-20)
 

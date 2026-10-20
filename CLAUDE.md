@@ -25,6 +25,7 @@ Fluxo de cada `/build`:
 
 Regras do /build:
 
+- Da F3 em diante o trabalho é dividido em sessões (`docs/design-system/sessions/`). O "Estado" vale para a **sessão atual** de progress.md: o plano dela já está no arquivo da fase, então o `/build` em `aguardando-plano` aprova e executa só essa sessão; no `aguardando-gate` commita, faz push e avança para a próxima sessão em `aguardando-plano`. Uma sessão do Claude por sessão do DS.
 - Qualquer mensagem diferente de `/build` é ajuste ou feedback: aplicar, atualizar progress.md e parar no mesmo estado (o próximo /build segue dali).
 - `/build status`: só mostra o estado atual e o próximo passo, sem executar nada.
 - `/build F<N>`: muda o foco para a fase N (pede confirmação se pular gate pendente).
