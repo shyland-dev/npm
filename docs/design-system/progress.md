@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F4 Onda 2**, sessão **F4-S4** (Select v2)
-- Estado: `aguardando-gate`
+- Fase: **F4 Onda 2**, sessão **F4-S5** (Snackbar v2)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Relatório em "F4-S4: relatório do gate" abaixo. Sem decisão de alto impacto pendente (ADR-F4-2 respondida: B). O próximo `/build` aprova o gate, marca a F4-S4 concluída e mostra o plano da F4-S5 (Snackbar v2, com a decisão ADR-F4-3 a responder).
+- Plano em "F4-S5: plano da sessão" abaixo. **Duas decisões de alto impacto pendentes (ADR-F4-3a e 3b)**: o `/build` NÃO as aprova; só executa depois da resposta explícita do dono.
 
 ## Fases
 
@@ -34,7 +34,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
 | F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
-| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | plano     |         |
 | F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
 | F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
 | F5-S2  | Lote 2                                                                             | pendente  |         |
@@ -90,6 +90,48 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S5: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Reescrever o Snackbar: outlet global (sem `ViewChild`), fila, `SnackbarService.show(msg, opts)` (intent, ação, duração, posição), pausa em hover/foco, `role="status"` (`alert` para erro), sobre o `OverlayService` (layer `toast`).
+
+### Estado atual (causa do problema)
+
+`SnackbarService.show({ element, text, delay, position })` só repassa ao `SnackbarComponent` que o consumidor precisa colocar no template e obter por `viewChild`; um toast por vez (o novo sobrescreve o texto e reinicia o timer), sem intent, sem ação, sem pausa, sem fila.
+
+### Tarefas
+
+1. `SnackbarService.show(message, opts)` → `ShySnackbarRef` (`dismiss()`, `closed`, `action` event): `intent` (`neutral|success|warning|danger|info`), `action {label}`, `duration` (0 = não fecha), `position` (`top|bottom` + `start|center|end`).
+2. Outlet global: `provideShySnackbar(config)` ou `<shy-snackbar-outlet>` opcional; sem ele o serviço cria o contêiner no `body` (como o overlay). Fila com limite de visíveis (padrão 3) e demais esperando.
+3. Pausa do timer em hover e foco dentro do toast e em aba oculta; WCAG 2.2.1 (tempo ajustável): ação de fechar e duração configurável; padrão mais longo quando há ação.
+4. `role="status"` + `aria-live="polite"` (sucesso/info/neutro) e `role="alert"` (danger); região viva criada antes do texto para o leitor anunciar.
+5. Tokens `--shy-snackbar-*`, reduced-motion, forced-colors, light/dark, RTL.
+6. API antiga `@deprecated` conforme a decisão abaixo; showcase refeito; testes (fila, pausa, aria, ação); README e ADR-F4-9.
+7. Gate: `check:ds`, testes, builds, auditoria Chromium (inclusive com um Dialog aberto).
+
+### Decisão 3a (ADR-F4-3): destino de `SnackbarService.show({ element, ... })` e `<shy-snackbar>`
+
+| Opção                           | O que faz                                                                                | Custo                                                    |
+| ------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| A. Quebra limpa                 | Remove `element`/`<shy-snackbar>`; `show(message, opts)`                                 | Você migra os consumidores; código simples               |
+| B. `@deprecated` com substituto | `show({element,...})` e `<shy-snackbar>` continuam, mapeados para o novo fluxo até a 1.0 | Adaptador e sobrecarga de `show`; dois caminhos testados |
+| C. Dois serviços                | Novo `ShySnackbarService`, o antigo fica como está                                       | Duas APIs com nomes parecidos                            |
+
+Recomendação: **B** (mesma linha da ADR-F4-2 e da regra de depreciar antes de remover).
+
+### Decisão 3b (ADR-F4-3, limitação da ADR-F4-5): toast com ação sobre um modal aberto
+
+O modal deixa tudo fora dele `inert`; um toast aberto com um Dialog na tela fica visível mas sem clique (a ação não funciona).
+
+| Opção                     | O que faz                                                          | Custo                                     |
+| ------------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| A. Ação só sem modal      | Com modal aberto o toast mostra só o texto (sem botão de ação)     | Simples; a ação some nesse caso           |
+| B. Esperar o modal fechar | Toasts com ação entram na fila e aparecem depois que o modal fecha | O aviso pode chegar tarde                 |
+| C. Toast dentro do dialog | O toast vira filho do `<dialog>` aberto e some com ele             | Complexo; perde o toast ao fechar o modal |
+
+Recomendação: **A** (ação é redundante com a UI do modal; o texto continua sendo anunciado por `role="status"`).
 
 ## F4-S4: relatório do gate (2026-10-21)
 
