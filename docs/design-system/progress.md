@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F4 Onda 2**, sessão **F4-S2** (Dialog, Drawer)
-- Estado: `aguardando-gate`
+- Fase: **F4 Onda 2**, sessão **F4-S3** (Popover, Tooltip, Menu)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Relatório em "F4-S2: relatório do gate" abaixo. Commit `95e5ab3` (já criado e enviado). O próximo `/build` aprova o gate, marca a F4-S2 como concluída e avança para a F4-S3 (Popover, Tooltip, Menu) em `aguardando-plano`.
+- Plano em "F4-S3: plano da sessão" abaixo. Sem decisão de alto impacto pendente (nomes e comportamento seguem o catálogo do plano e a sessão; a API de abertura é a da ADR-F4-4). O próximo `/build` aprova o plano e executa a F4-S3.
 
 ## Fases
 
@@ -31,8 +31,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
 | F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
 | F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
-| F4-S2  | Dialog, Drawer                                                                     | gate      | 95e5ab3 |
-| F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
+| F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
+| F4-S3  | Popover, Tooltip, Menu                                                             | plano     |         |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
 | F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
@@ -60,6 +60,36 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
 - 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
 - 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
+
+## F4-S3: plano da sessão (2026-10-21)
+
+Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), ADR-F4-4/F4-5/F4-6. Premissa de base: o `OverlayService` já cuida de camada, posição (`computePosition`), Esc na pilha, clique fora, promoção e foco. Popover, Tooltip e Menu são **diretivas no gatilho** que abrem conteúdo por ele.
+
+### Como fica (resumo)
+
+- **Popover**: `<button [shyPopover]="tpl">` (aceita `TemplateRef` ou componente). Painel não modal na camada `popover`, ancorado no gatilho (`shyPopoverPlacement`, padrão `bottom-start`). Gatilho com `aria-expanded` e `aria-controls`; `aria-haspopup="dialog"`. Abre com foco no primeiro focável (se houver); Esc, clique fora e novo clique no gatilho fecham e **devolvem o foco ao gatilho**. Tab para além do último focável fecha e devolve o foco ao gatilho (o painel mora no fim do `body`, então sem isso o teclado não teria como sair dele na ordem certa). Superfície `shy-popover` (fundo, borda, sombra, padding) para o conteúdo.
+- **Tooltip**: `<button shyTooltip="Salvar">`. Abre por hover (depois do atraso) e por `:focus-visible`; `role="tooltip"` e `aria-describedby` no gatilho enquanto aberto. WCAG 1.4.13: **dispensável** (Esc fecha sem mover o foco), **passável** (o ponteiro pode ir do gatilho ao tooltip sem fechar) e **persistente** (fica até perder hover e foco). Fecha ao clicar no gatilho (também evita o tooltip ficar inerte atrás de um modal que o clique abre). Não abre em toque; nunca é o único acesso à informação (documentado).
+- **Menu**: `<button [shyMenu]="menu">` + `<ng-template #menu><shy-menu>…<button shyMenuItem>…</button></shy-menu></ng-template>`. Menu button APG: `aria-haspopup="menu"`, `aria-expanded`, `aria-controls`; painel `role="menu"` na camada `dropdown`, com `role="menuitem"` nos itens e foco por roving (`tabindex="-1"` e `focus()`): setas (↓ abre no primeiro, ↑ abre no último), Home/End, **typeahead**, Enter/Espaço ativam e fecham, Esc fecha e devolve o foco, Tab fecha. Item `disabled` fica focável com `aria-disabled` (APG) e não ativa. `shy-divider` entre grupos (`role="separator"`). **Sem submenus** nesta sessão (a sessão os chama de opcionais; ver premissas).
+- Base interna `OverlayTrigger` (não exportada) para Popover e Menu: abrir/fechar/alternar, `expanded` (signal), id do painel e devolução de foco. O Tooltip é à parte (hover/foco/atraso).
+
+### Tarefas
+
+1. `overlay/overlay-trigger.ts` (base): `open()`, `close()`, `toggle()`, `expanded`, `aria-*` no host, limpeza no `ngOnDestroy`; usa `OverlayService.open` com `anchor` = host.
+2. `components/popover/` (`[shyPopover]`, `shy-popover`), `components/tooltip/` (`[shyTooltip]`, painel interno do tooltip), `components/menu/` (`[shyMenu]`, `shy-menu`, `[shyMenuItem]`). Tipos em `types/` (`ShyPlacement` já existe).
+3. Atrasos do tooltip em tokens de motion (`--shy-delay-tooltip` 500ms, `--shy-delay-tooltip-hide` 100ms), lidos com `getComputedStyle` (reduced motion não muda atraso; muda só a animação). Entrada por `@starting-style` (fade) e saída por `animateOut`.
+4. Tokens de componente (padrão do Alert, com fallback): `--shy-popover-*`, `--shy-tooltip-*` (fundo `scrim-panel`, texto `on-scrim`, par já testado em `contrast-pairs.json`), `--shy-menu-*` (item hover/focus com `primary-soft`, selecionado, desabilitado). Hover só em `@media (hover: hover)`, `:focus-visible` com anel, `forced-colors`, sem literal de cor/unidade/tempo em SCSS.
+5. Testes (happy-dom): abrir/fechar/alternar e `aria-*` dos três; foco inicial e devolução; Esc, clique fora e Tab; tooltip por hover com atraso (timers falsos), por foco, Esc, passar o ponteiro para o tooltip, clique fecha, `aria-describedby` só aberto; menu com setas, Home/End, typeahead (reinício por pausa), item desabilitado, Enter/Espaço fecham, Tab fecha, abre por ↓/↑.
+6. Showcase: páginas `components/popover`, `components/tooltip`, `components/menu` (placements e flip na borda, tooltip em `IconButton`, popover com formulário, menu com divisor e item desabilitado, tudo dentro de um Dialog para exercitar a ADR-F4-5). Auditoria no Chromium nos 2 temas, 360 e 1366 px, RTL, reduced motion.
+7. A11y: `contrast-pairs.json` só se surgir par novo (item hover do menu sobre `surface-raised`); `accessibility.md` com a verificação dos três padrões APG e do 1.4.13.
+8. Docs: `src/libs/ui/README.md` e `README.md` (uso, tokens, exports), ADR-F4-7 em `decisions.md`, plano 12 e `sessions/F4-onda-2.md` se algo divergir.
+9. Verificações (`check:ds`, testes, `build`, `build:showcase`), relatório do gate e commit `feat(ui): popover, tooltip e menu`.
+
+### Premissas e decisões que valem se não houver objeção
+
+- Sem breaking e sem dependência nova; Popover, Tooltip e Menu são novos. `Select` (F4-S4) vai reaproveitar a base `OverlayTrigger` e o painel de listbox próprio.
+- **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
+- Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
+- Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
 
 ## F4-S2: relatório do gate (2026-10-21)
 
@@ -794,3 +824,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-21: dono escolheu a opção B da ADR-F4-4; `/build` aprovou o plano da F4-S1 e a executou (overlay core, showcase, docs). Verificações verdes; commit `3ac709b`. Estado `aguardando-gate`.
 - 2026-10-21: `/build` aprovou o gate da F4-S1 (`3ac709b`, já enviado). **F4-S1 concluída.** F4-S2 (Dialog, Drawer) em `aguardando-plano`; plano escrito acima, sem decisão de alto impacto pendente.
 - 2026-10-21: `/build` aprovou o plano da F4-S2 e a executou (Dialog, Drawer, serviços, showcase, docs). Verificações verdes; commit `95e5ab3`. Estado `aguardando-gate`.
+- 2026-10-21: `/build` aprovou o gate da F4-S2 (`95e5ab3`, já enviado). **F4-S2 concluída.** F4-S3 (Popover, Tooltip, Menu) em `aguardando-plano`; plano escrito acima, sem decisão de alto impacto pendente.
