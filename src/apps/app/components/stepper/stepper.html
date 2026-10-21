@@ -1,0 +1,48 @@
+<div class="page">
+  <h1 class="page-title">Stepper</h1>
+  <p class="page-lead"><code>&lt;shy-stepper&gt;</code> is a progress indicator: an ordered list with one native button per <code>&lt;shy-step&gt;</code> and <code>aria-current="step"</code> on the current one. It has no panels: show your own content from <code>[(value)]</code> (0-based index). Steps before the current one are completed; state is never conveyed by color alone (check, "!" and hidden status text).</p>
+
+  <section class="section">
+    <h2>Horizontal, with <code>[(value)]</code></h2>
+    <div class="card shy-stack">
+      <shy-stepper [(value)]="step" label="Checkout progress">
+        <shy-step label="Account" description="Your details" />
+        <shy-step label="Address" />
+        <shy-step label="Payment" />
+        <shy-step label="Review" />
+      </shy-stepper>
+      <div class="shy-cluster">
+        <button shyButton variant="outline" [disabled]="step() === 0" (click)="step.set(step() - 1)">Back</button>
+        <button shyButton [disabled]="step() === 3" (click)="step.set(step() + 1)">Next</button>
+        <span class="token-name">value: {{ step() }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Vertical, with error and disabled step</h2>
+    <div class="card">
+      <shy-stepper orientation="vertical" [value]="1" label="Setup">
+        <shy-step label="Create project" description="Done" />
+        <shy-step label="Connect repository" description="Token rejected" error />
+        <shy-step label="Deploy" disabled />
+      </shy-stepper>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><code>linear</code></h2>
+    <p>Only the current and earlier steps can be clicked; moving forward is up to your code (for example after validating).</p>
+    <div class="card shy-stack">
+      <shy-stepper linear [(value)]="linearStep" label="Linear flow">
+        <shy-step label="One" />
+        <shy-step label="Two" />
+        <shy-step label="Three" />
+      </shy-stepper>
+      <div class="shy-cluster">
+        <button shyButton [disabled]="linearStep() === 2" (click)="linearStep.set(linearStep() + 1)">Validate and continue</button>
+        <span class="token-name">value: {{ linearStep() }}</span>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,27 @@
+<button type="button" class="button" [disabled]="disabled()" [attr.aria-current]="index() === stepper.current() ? 'step' : null" [attr.aria-disabled]="!disabled() && !reachable() ? 'true' : null" (click)="stepper.go(this)">
+  <span class="marker" aria-hidden="true">
+    @switch (status()) {
+      @case ('complete') {
+        <shy-icon name="check-lg" />
+      }
+      @case ('error') {
+        <shy-icon name="exclamation-lg" />
+      }
+      @default {
+        {{ index() + 1 }}
+      }
+    }
+  </span>
+  <span class="text">
+    <span class="label">{{ label() }}</span>
+    @if (status() === 'complete') {
+      <span class="status-text">{{ stepper.completeLabel() }}</span>
+    } @else if (status() === 'error') {
+      <span class="status-text">{{ stepper.errorLabel() }}</span>
+    }
+    @if (description()) {
+      <span class="description">{{ description() }}</span>
+    }
+  </span>
+  <ng-content />
+</button>

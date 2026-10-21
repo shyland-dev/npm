@@ -68,3 +68,7 @@ export * from './table/table.component';
 export * from './combobox/combobox.component';
 export * from './slider/slider.component';
 export * from './file-dropzone/file-dropzone.component';
+export * from './stepper/step.component';
+export * from './stepper/stepper.component';
+export * from './stepper/stepper.token';
+export * from './app-shell/app-shell.component';

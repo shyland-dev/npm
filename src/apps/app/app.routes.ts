@@ -13,6 +13,8 @@ export const routes: Routes = [
   { path: 'components/checkbox', loadComponent: () => import('./components/checkbox/checkbox').then((m) => m.CheckboxPage) },
   { path: 'components/combobox', loadComponent: () => import('./components/combobox/combobox').then((m) => m.ComboboxPage) },
   { path: 'components/file-dropzone', loadComponent: () => import('./components/file-dropzone/file-dropzone').then((m) => m.FileDropzonePage) },
+  { path: 'components/stepper', loadComponent: () => import('./components/stepper/stepper').then((m) => m.StepperPage) },
+  { path: 'components/app-shell', loadComponent: () => import('./components/app-shell/app-shell').then((m) => m.AppShellPage) },
   { path: 'components/slider', loadComponent: () => import('./components/slider/slider').then((m) => m.SliderPage) },
   { path: 'components/dialog', loadComponent: () => import('./components/dialog/dialog').then((m) => m.DialogPage) },
   { path: 'components/divider', loadComponent: () => import('./components/divider/divider').then((m) => m.DividerPage) },

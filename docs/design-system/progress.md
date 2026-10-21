@@ -4,8 +4,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F5 Onda 3 + hardening**, sessão **F5-S3b** (lote 3, parte 2: Stepper, AppShell)
-- Estado: `aguardando-plano` (F5-S3a concluída e commitada em 2026-10-21; plano e premissas P4/P5 em "F5-S3: plano da sessão"; o próximo `/build` aprova e executa a S3b)
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S3b** (lote 3, parte 2: Stepper, AppShell); próxima: **F5-S4** (hardening e fechamento)
+- Estado: `aguardando-gate` (F5-S3b executada em 2026-10-21; relatório em "F5-S3b: relatório do gate"; o próximo `/build` aprova o gate e a mensagem de commit, commita, faz push em `feat/design-system` e avança para a F5-S4 em `aguardando-plano`)
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -63,14 +63,14 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 
 ## Fases
 
-| Fase                               | Status                          | Commit                                                        |
-| ---------------------------------- | ------------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)       | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)       | 0123029                                                       |
-| F2 Refactor dos existentes         | concluída (gate aprovado)       | eb359ac                                                       |
-| F3 Onda 1                          | concluída (gate aprovado)       | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | concluída (gate aprovado)       | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
-| F5 Onda 3 + hardening              | em andamento (F5-S3a concluída) |                                                               |
+| Fase                               | Status                        | Commit                                                        |
+| ---------------------------------- | ----------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado)     | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)     | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado)     | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado)     | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado)     | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | em andamento (F5-S3b em gate) |                                                               |
 
 ## Sessões
 
@@ -90,7 +90,8 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 | F4-S6  | Fechamento da Onda 2                                                               | gate      |               |
 | F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0       |
 | F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | concluída | (este commit) |
-| F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |               |
+| F5-S3a | Lote 3a (Combobox, Slider, FileDropzone)                                           | concluída | 1df194b       |
+| F5-S3b | Lote 3b (Stepper, AppShell)                                                        | gate      |               |
 | F5-S4  | Hardening e fechamento                                                             | pendente  |               |
 
 ## Registro
@@ -114,6 +115,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 - 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
 - 2026-10-21: `/build` aprovou o gate da F5-S1 (`78774a0`, já enviado). **F5-S1 concluída.** F5-S2 em `aguardando-plano` (plano acima).
 - 2026-10-21: `/build` (thread própria da F5-S2) aprovou o plano e o executou (Avatar, EmptyState, List, Table, showcase, docs, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
+- 2026-10-21: `/build` (thread própria da F5-S3b) aprovou o plano (premissas P4/P5) e executou Stepper e AppShell (showcase, docs, ADR-F5-4, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
 
 ## F4-S3: plano da sessão (2026-10-21)
 
@@ -144,6 +146,43 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S3b: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação                            | Resultado                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run check:ds`                     | ok (6 verificações; 1 aviso antigo de tokens não usados, a revisar na F5-S4)                                                                                                                                                                                                                                                                                 |
+| `npm test`                             | 296 testes passando (13 novos: Stepper 7, AppShell 6)                                                                                                                                                                                                                                                                                                        |
+| `npm run build`                        | ok (`@shyland-dev/ui` e `@shyland-dev/utils`)                                                                                                                                                                                                                                                                                                                |
+| `npm run build:showcase`               | ok (2 rotas novas: `components/stepper`, `components/app-shell`)                                                                                                                                                                                                                                                                                             |
+| Chromium (`/opt/pw-browsers/chromium`) | 2 páginas × dark/light × 360 e 1366 px × LTR/RTL × normal/`forced-colors`/`reduced-motion` (48 cenários): sem scroll horizontal nem erros de console. Interação: clique e Shift+Tab (foco visível) no Stepper, `linear` ignorando clique adiante, Drawer do AppShell abrindo pelo menu, modo `auto` compacto a 360 px e inline a 1366 px, skip link com foco |
+| Node                                   | 22.22 no container (o projeto pede 24.14.1)                                                                                                                                                                                                                                                                                                                  |
+
+Achados na auditoria (corrigidos): (1) `inject(DestroyRef)` dentro do callback do `afterNextRender` lançava NG0203 (os testes não pegaram porque o `ResizeObserver` do AppShell só roda no navegador real); agora o `DestroyRef` é campo da classe. (2) O skip link ficava visível fora da caixa (só `translate`); agora usa `visually-hidden` e aparece só em `:focus-visible`. (3) Conector do Stepper horizontal ficava no meio da altura quando um passo tinha descrição; agora alinha ao centro do marcador. (4) A coluna da sidebar não esticava até o rodapé; o conteúdo gruda (`sticky`) dentro de uma coluna que estica.
+
+Não verificado: leitor de tela real, Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- `components/stepper/` (`shy-stepper`, `shy-step`, token `SHY_STEPPER`; `[(value)]` índice 0-based, `orientation`, `linear`, `error`, `disabled`, `description`) e `components/app-shell/` (`shy-app-shell`; slots `header`/`sidebar`/`footer`, `sidebarMode` `auto|inline|drawer`, skip link, sidebar em `DrawerService` abaixo de `md`, `openSidebar()`); tipos `ShyStepperOrientation` e `ShyAppShellSidebarMode`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: páginas `components/{stepper,app-shell}`, rotas e menu. README da lib (2 seções, tabela de tokens e a lista de exports, que também ganhou Combobox/Slider/FileDropzone esquecidos na S3a), `tokens.md`, `accessibility.md`, ADR-F5-4 em `decisions.md`. `README.md` da raiz não precisou mudar (nenhum script/build alterado).
+- Sem par de contraste novo, sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Decisões e premissas (ADR-F5-4)
+
+- P4 e P5 do plano seguidas: Stepper sem painéis (`value` = índice); AppShell sem `@angular/router`. Eram premissas marcadas "aguardam confirmação"; o estado `aguardando-plano` registrava que o `/build` as aprovaria, então foram executadas. Se preferir `value` por passo (em vez de índice) ou outro breakpoint, é ajuste pequeno.
+- O breakpoint do AppShell vive só em `_breakpoints.scss`; o componente lê `--_compact` via `getComputedStyle` (TypeScript não pode ter `px`).
+- Sem breaking, sem `@deprecated`.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): stepper e app-shell
+
+Stepper (lista com botões, aria-current, linear, erro) e AppShell (landmarks, skip link, sidebar que vira Drawer abaixo de md), com tokens, testes, showcase e docs.
+```
 
 ## F5-S3a: relatório do gate (2026-10-21)
 

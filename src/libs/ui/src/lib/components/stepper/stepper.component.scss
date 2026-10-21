@@ -1,0 +1,17 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  color: var(--shy-color-text);
+}
+
+.list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:host([data-orientation='vertical']) .list {
+  flex-direction: column;
+}

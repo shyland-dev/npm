@@ -95,6 +95,15 @@ Pares de contraste: um par novo, `text` sobre `neutral-soft` (hover da linha da 
 
 Pares de contraste: um par novo, `primary-text` sobre `surface-sunken` (borda da área em hover/arraste e ponteiro do slider sobre o campo); o resto (`primary-text`/`track`, `primary-text`/`surface`, `on-primary-soft`/`primary-soft`, `text-subtle`/`surface-sunken`) já estava coberto.
 
+## Tokens de componente (Onda 3, lote 3b)
+
+| Componente | Tokens                                                                                                                                                                                                                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Stepper    | `--shy-stepper-{marker-size,gap,connector-min,marker-bg,marker-fg,marker-border-color,label-fg,description-fg,bg-hover,marker-bg-current,marker-fg-current,label-fg-current,marker-bg-complete,marker-fg-complete,label-fg-complete,connector-color,connector-color-done,marker-bg-error,marker-fg-error,label-fg-error}` |
+| AppShell   | `--shy-app-shell-{sidebar-width,header-height,pad,main-pad,min-height,header-bg,sidebar-bg,footer-bg,border-color}`                                                                                                                                                                                                       |
+
+Pares de contraste: nenhum par novo (marcadores usam `on-neutral-soft`/`neutral-soft`, `on-primary`/`primary`, `on-primary-soft`/`primary-soft`, `on-danger`/`danger`; rótulos `text`, `text-muted`, `danger-text`; skip link `on-primary`/`primary`), todos já verificados por `check-contrast`.
+
 ### Pares de contraste da Onda 1
 
 Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json` (56 pares × 2 temas): texto sobre superfícies (`text*`/`surface*`), sólidos (`on-X`/`X`), suaves (`on-X-soft`/`X-soft`, `X-text`/`X-soft`), texto de intenção sobre superfícies (`X-text`), borda de controle e foco (`border-strong`, `focus`, ≥ 3:1), trilho (`primary-text`/`track`, `text-muted`/`track`). Ficam de fora, por serem decorativos (WCAG 1.4.11 não exige): `border`, `line` (divider, borda de card), `track` contra a página e o fundo do skeleton. O fundo `primary` sólido no tema escuro (2,6:1 sobre `bg`) só aparece com texto/glifo `on-primary` por cima; o contorno dos controles marcados usa `primary-text` (ADR-F3-6).

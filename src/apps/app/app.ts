@@ -21,7 +21,7 @@ export class App implements OnInit {
   readonly nav: NavGroup[] = [
     {
       label: 'Components',
-      items: ['accordion', 'alert', 'avatar', 'badge', 'breadcrumb', 'button', 'card', 'checkbox', 'combobox', 'dialog', 'divider', 'drawer', 'empty-state', 'file-dropzone', 'form-field', 'icon', 'icon-button', 'input', 'list', 'menu', 'pagination', 'popover', 'progress', 'radio', 'select', 'skeleton', 'slider', 'snackbar', 'spinner', 'switch', 'table', 'tabs', 'textarea', 'tooltip'].map((name) => ({ path: `components/${name}`, label: name })),
+      items: ['accordion', 'alert', 'app-shell', 'avatar', 'badge', 'breadcrumb', 'button', 'card', 'checkbox', 'combobox', 'dialog', 'divider', 'drawer', 'empty-state', 'file-dropzone', 'form-field', 'icon', 'icon-button', 'input', 'list', 'menu', 'pagination', 'popover', 'progress', 'radio', 'select', 'skeleton', 'slider', 'snackbar', 'spinner', 'stepper', 'switch', 'table', 'tabs', 'textarea', 'tooltip'].map((name) => ({ path: `components/${name}`, label: name })),
     },
     {
       label: 'Examples',

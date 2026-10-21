@@ -15,3 +15,5 @@ export * from './dialog/dialog.type';
 export * from './tabs/tabs.type';
 export * from './avatar/avatar.type';
 export * from './table/table.type';
+export * from './stepper/stepper.type';
+export * from './app-shell/app-shell.type';

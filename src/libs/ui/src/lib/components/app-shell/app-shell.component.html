@@ -1,0 +1,21 @@
+<a class="skip" [attr.href]="'#' + mainId" (click)="skip($event)">{{ skipLabel() }}</a>
+<header class="header">
+  @if (compact()) {
+    <button shyIconButton class="menu" [label]="menuLabel()" aria-haspopup="dialog" (click)="openSidebar()"><shy-icon name="list" /></button>
+  }
+  <div class="header-content"><ng-content select="[slot=header]" /></div>
+</header>
+@if (!compact()) {
+  <nav class="sidebar" [attr.aria-label]="sidebarLabel()">
+    <div class="sidebar-inner"><ng-container [ngTemplateOutlet]="sidebarTpl" /></div>
+  </nav>
+}
+<main class="main" [id]="mainId" tabindex="-1"><ng-content /></main>
+<footer class="footer"><ng-content select="[slot=footer]" /></footer>
+
+<ng-template #sidebarTpl><ng-content select="[slot=sidebar]" /></ng-template>
+<ng-template #drawerTpl let-ref="overlayRef">
+  <shy-drawer [heading]="sidebarLabel()" (dismissed)="ref.close()">
+    <nav [attr.aria-label]="sidebarLabel()" (click)="onSidebarClick($event)"><ng-container [ngTemplateOutlet]="sidebarTpl" /></nav>
+  </shy-drawer>
+</ng-template>

@@ -1,0 +1,36 @@
+<div class="page">
+  <h1 class="page-title">App shell</h1>
+  <p class="page-lead"><code>&lt;shy-app-shell&gt;</code> lays out the page with projected slots: <code>slot="header"</code>, <code>slot="sidebar"</code>, the default content (<code>main</code>) and <code>slot="footer"</code>. It brings the landmarks (<code>banner</code>, <code>navigation</code>, <code>main</code>, <code>contentinfo</code>) and a "skip to content" link (press <kbd>Tab</kbd> once inside the box). Below the <code>md</code> breakpoint the sidebar becomes a <code>Drawer</code> opened from a menu button. No router dependency: links are yours.</p>
+
+  <section class="section">
+    <h2>Default (<code>sidebarMode="auto"</code>)</h2>
+    <p>Inline sidebar from <code>md</code> up; narrow the window to see it turn into the Drawer.</p>
+    <div class="card">
+      <shy-app-shell style="--shy-app-shell-min-height: calc(var(--shy-responsive-unit) * 130)">
+        <strong slot="header">Acme</strong>
+        <ul slot="sidebar" class="shy-stack" style="margin: 0; padding: 0; list-style: none">
+          <li><a href="/components/app-shell">Overview</a></li>
+          <li><a href="/components/stepper">Stepper</a></li>
+        </ul>
+        <h2 style="margin-block-start: 0">Content</h2>
+        <p>The content region is the <code>main</code> landmark.</p>
+        <span slot="footer">© Acme</span>
+      </shy-app-shell>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Sidebar as Drawer (<code>sidebarMode="drawer"</code>)</h2>
+    <p>This is what <code>auto</code> does below <code>md</code>; it is forced here so you can see it on a wide screen. A click on a link inside the Drawer closes it.</p>
+    <div class="card">
+      <shy-app-shell sidebarMode="drawer" sidebarLabel="Site menu" style="--shy-app-shell-min-height: calc(var(--shy-responsive-unit) * 90)">
+        <strong slot="header">Acme</strong>
+        <ul slot="sidebar" class="shy-stack" style="margin: 0; padding: 0; list-style: none">
+          <li><a href="/components/app-shell">Overview</a></li>
+          <li><a href="/components/stepper">Stepper</a></li>
+        </ul>
+        <p>Open the menu from the button in the header.</p>
+      </shy-app-shell>
+    </div>
+  </section>
+</div>

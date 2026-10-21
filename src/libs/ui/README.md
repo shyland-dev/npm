@@ -670,6 +670,62 @@ Two modes. **Declarative** (`[rows]`): describe the columns and the lib builds t
 
 **Native** (no `[rows]`): you write the `<table>` (`caption`, `thead`/`tbody`, `th scope`) and `shy-table` only styles it and contains horizontal scroll. Use it for `colspan`, grouped rows or very custom cells. Helpers: `th shySort [(direction)]` (native button + `aria-sort`; you sort the data), `data-numeric`, `data-narrow`, `data-selected` on `tr`.
 
+### `<shy-stepper>`, `<shy-step>`
+
+Progress indicator in steps. An ordered list (`<ol>`) with one native button per step and `aria-current="step"` on the current one. It has **no panels**: show your own content from `value`.
+
+```html
+<shy-stepper label="Checkout" [(value)]="step">
+    <shy-step label="Account" description="Your details" />
+    <shy-step label="Address" />
+    <shy-step label="Payment" [error]="paymentFailed()" />
+    <shy-step label="Review" />
+</shy-stepper>
+```
+
+| Input (`shy-stepper`)         | Default              | Notes                                                                                  |
+| ----------------------------- | -------------------- | -------------------------------------------------------------------------------------- |
+| `[(value)]`                   | `0`                  | 0-based index of the current step (clamped to the steps); steps before it are complete |
+| `orientation`                 | `'horizontal'`       | `'vertical'` stacks the steps with a vertical connector                                |
+| `linear`                      | `false`              | Only the current and earlier steps can be clicked (later ones get `aria-disabled`)     |
+| `label`                       | -                    | `aria-label` of the list                                                               |
+| `completeLabel`, `errorLabel` | `Completed`, `Error` | Hidden text read after the step name (translate them)                                  |
+
+| Input (`shy-step`) | Notes                                                                             |
+| ------------------ | --------------------------------------------------------------------------------- |
+| `label` (required) | Button text                                                                       |
+| `description`      | Secondary line                                                                    |
+| `error`            | Error state: "!" marker, danger color and hidden "Error" text (never color alone) |
+| `disabled`         | Native `disabled` on the button                                                   |
+
+- Marker: number, check (complete) or "!" (error), all `aria-hidden`; the state is read from the hidden status text. No `ControlValueAccessor`: it is navigation/progress, not a form control.
+
+### `<shy-app-shell>`
+
+Page shell with `header`, `sidebar`, content and `footer` by projection. No router dependency.
+
+```html
+<shy-app-shell sidebarLabel="Site menu">
+    <strong slot="header">Acme</strong>
+    <ul slot="sidebar">
+        <li><a routerLink="/home">Home</a></li>
+    </ul>
+    <router-outlet />
+    <span slot="footer">© Acme</span>
+</shy-app-shell>
+```
+
+| Input          | Default             | Notes                                                                              |
+| -------------- | ------------------- | ---------------------------------------------------------------------------------- |
+| `sidebarMode`  | `'auto'`            | `auto`: inline from `md` up, `Drawer` below; `inline` / `drawer` force one of them |
+| `sidebarLabel` | `'Navigation'`      | `aria-label` of the sidebar `nav` and heading of the Drawer                        |
+| `menuLabel`    | `'Open navigation'` | Accessible name of the menu button (only in Drawer mode)                           |
+| `skipLabel`    | `'Skip to content'` | Text of the skip link                                                              |
+
+- Landmarks: `<header>` (banner), `<nav aria-label>`, `<main tabindex="-1">` and `<footer>` (contentinfo). Empty regions are hidden. The skip link is the first focusable element and moves focus to `main` without touching the URL (safe with `<base href>`).
+- In Drawer mode a menu button appears in the header (`aria-haspopup="dialog"`); a click on a link inside the Drawer closes it, and going back to inline closes it too. `openSidebar()` is public (via `exportAs: shyAppShell`). With no `slot="sidebar"` content in Drawer mode use `sidebarMode="inline"` to avoid an empty menu.
+- The breakpoint lives only in `_breakpoints.scss` (`md`): the component reads the CSS custom property `--_compact` through `getComputedStyle`, so there is no pixel value in TypeScript.
+
 ## Styles
 
 Tokens (colors, typography, spacing, motion, layers), self-hosted fonts (JetBrains Mono, SIL OFL), animations and a base reset ship as one CSS. Pick **one** way to load it:
@@ -866,6 +922,18 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 | `--shy-file-dropzone-bg`, `-fg`, `-border-color`, `-border-color-active`, `-border-color-invalid`                                    | `surface-sunken`, `text`, `border-strong`, `primary-text`, `danger-text`                                 | Area                      |
 | `--shy-file-dropzone-radius`, `-pad`, `-gap`, `-icon-size`, `-file-bg`                                                               | `radius-lg`, `space-8`, `space-4`, `size-icon-lg`, `surface-raised`                                      | Area layout and file rows |
 
+### Stepper and App Shell Tokens
+
+| Token                                                                                                                        | Default                                                                                       | Description          |
+| ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------- |
+| `--shy-stepper-marker-size`, `-gap`, `-connector-min`                                                                        | `size-control-sm`, `space-4`, `space-8`                                                       | Marker and connector |
+| `--shy-stepper-marker-bg`, `-marker-fg`, `-marker-border-color`, `-label-fg`, `-description-fg`, `-bg-hover`                 | `neutral-soft`, `on-neutral-soft`, `transparent`, `text-muted`, `text-subtle`, `neutral-soft` | Upcoming step        |
+| `--shy-stepper-marker-bg-current`, `-marker-fg-current`, `-label-fg-current`                                                 | `primary`, `on-primary`, `text`                                                               | Current step         |
+| `--shy-stepper-marker-bg-complete`, `-marker-fg-complete`, `-label-fg-complete`, `-connector-color`, `-connector-color-done` | `primary-soft`, `on-primary-soft`, `text`, `line`, `primary`                                  | Completed step       |
+| `--shy-stepper-marker-bg-error`, `-marker-fg-error`, `-label-fg-error`                                                       | `danger`, `on-danger`, `danger-text`                                                          | Error step           |
+| `--shy-app-shell-sidebar-width`, `-header-height`, `-pad`, `-main-pad`, `-min-height`                                        | `ru(160)`, `size-control-lg`, `space-8`, `space-8`, `dynamic-height`                          | Layout               |
+| `--shy-app-shell-header-bg`, `-sidebar-bg`, `-footer-bg`, `-border-color`                                                    | `surface`, `surface`, `transparent`, `line`                                                   | Regions              |
+
 ### Snackbar Tokens
 
 The toasts can be customized via CSS custom properties on `:root` (the container lives in the overlay layer):
@@ -960,6 +1028,13 @@ export { SwitchComponent } from './lib/components/switch/switch.component';
 export { TabComponent } from './lib/components/tabs/tab.component';
 export { TabsComponent } from './lib/components/tabs/tabs.component';
 export { SHY_TABS, ShyTabsContext } from './lib/components/tabs/tabs.token';
+export { StepperComponent } from './lib/components/stepper/stepper.component';
+export { StepComponent } from './lib/components/stepper/step.component';
+export { SHY_STEPPER, ShyStepperContext } from './lib/components/stepper/stepper.token';
+export { AppShellComponent } from './lib/components/app-shell/app-shell.component';
+export { ComboboxComponent } from './lib/components/combobox/combobox.component';
+export { SliderComponent } from './lib/components/slider/slider.component';
+export { FileDropzoneComponent } from './lib/components/file-dropzone/file-dropzone.component';
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Services
@@ -984,12 +1059,15 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
 export { ShySelectOption, SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
+export { ShyFileRejection, ShyFileRejectionReason } from './lib/interfaces/file-dropzone/file-dropzone.interface';
 export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef, SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
 export { ShyAlertIntent } from './lib/types/alert/alert.type';
 export { ShyAvatarSize, ShyAvatarShape } from './lib/types/avatar/avatar.type';
 export { ShySortDirection, ShyTableSort, ShyTableCellContext } from './lib/types/table/table.type';
+export { ShyStepperOrientation } from './lib/types/stepper/stepper.type';
+export { ShyAppShellSidebarMode } from './lib/types/app-shell/app-shell.type';
 export { ShyBadgeVariant, ShyBadgeSize } from './lib/types/badge/badge.type';
 export { ShyCardElevation } from './lib/types/card/card.type';
 export { ShyDialogSize, ShyDrawerSide } from './lib/types/dialog/dialog.type';
