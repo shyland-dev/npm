@@ -20,16 +20,16 @@ npm run build   # Compila as libs para dist/
 
 ## Scripts
 
-| Comando                  | Descrição                                                                                    |
-| ------------------------ | -------------------------------------------------------------------------------------------- |
-| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                          |
-| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                            |
-| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                        |
-| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                     |
-| `npm run build:showcase` | Build do showcase                                                                            |
-| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/libs/ui/src/assets/svg/`                           |
-| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes)    |
-| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom) |
+| Comando                  | Descrição                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------- |
+| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                                |
+| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                  |
+| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                              |
+| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                           |
+| `npm run build:showcase` | Build do showcase                                                                                  |
+| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/libs/ui/src/assets/svg/`                                 |
+| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho) |
+| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)       |
 
 ## Design System (em desenvolvimento)
 
@@ -63,7 +63,7 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 | **FormField**   | `shy-form-field`                            | Label, dica, erro (ícone + texto) e contador; liga `for`/`id` e `aria-*`; slots `prefix`/`suffix`                  |
 | **Icon**        | `<shy-icon>`                                | Ícones SVG inline com suporte a hover fill e tamanho customizável                                                  |
 | **Select**      | `<shy-select>`                              | Combobox (CVA): `ngModel`/`formControl`, `multiple`, typeahead, painel em overlay                                  |
-| **Snackbar**    | `SnackbarService.show()`                    | Toasts com fila, intent, ação e pausa; `<shy-snackbar>` está `@deprecated`                                         |
+| **Snackbar**    | `SnackbarService.show()`                    | Toasts com fila, intent, ação e pausa                                                                              |
 | **ThemeToggle** | `<shy-theme-toggle>`                        | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                                                |
 | **Menu**        | `[shyMenu]` + `shy-menu` + `shyMenuItem`    | Menu button (APG): setas, Home/End, typeahead; fecha ao ativar o item; sem submenus                                |
 | **Popover**     | `[shyPopover]` + `shy-popover`              | Painel não modal ancorado; foco, Esc, clique fora e Tab devolvem o foco ao gatilho                                 |
@@ -135,7 +135,7 @@ paises: ShySelectOption[] = [
 ```
 
 - Valor por `ngModel`, `formControl`/`formControlName` ou `[(value)]` (array com `multiple`); `compareWith` para objetos; `disabled`, `invalid`, `required`, `placeholder`.
-- **Migração (API antiga `@deprecated` até a 1.0, ainda funciona):** `[selectOptions]` → `[options]` (sem `id`; `value` de qualquer tipo); `[selectedOption]` → `[(value)]`/`ngModel`/`formControl`; `(onSelectionChange)` → `(valueChange)`; `SelectOption`/`SelectionChangeEvent` → `ShySelectOption`.
+- **Migração da `0.0.x`:** `[selectOptions]`, `[selectedOption]`, `(onSelectionChange)`, `SelectOption` e `SelectionChangeEvent` foram removidos na 1.0 (ver [guia de migração](docs/design-system/migration-0.0-to-1.0.md)): use `[options]` (`ShySelectOption`, sem `id`), `[(value)]`/`ngModel`/`formControl` e `(valueChange)`.
 - Tokens do botão no próprio elemento; os do painel (`--shy-select-panel-*`, `--shy-select-option-*`) em `:root` (o painel mora no contêiner de overlays).
 
 **Customização via CSS:**
@@ -157,50 +157,7 @@ npm run generate:icons
 
 ---
 
-### SelectComponent
-
-```typescript
-import { SelectComponent, SelectOption, SelectionChangeEvent } from '@shyland-dev/ui';
-```
-
-```html
-<shy-select [selectOptions]="options" [selectedOption]="valorAtual" [selectIcon]="'check'" [dropdownIcon]="'chevron-down'" (onSelectionChange)="onSelect($event)"></shy-select>
-```
-
-```typescript
-import { SelectOption, SelectionChangeEvent } from '@shyland-dev/ui';
-
-options: SelectOption[] = [
-  { id: 0, value: 'a', label: 'Opção A' },
-  { id: 1, value: 'b', label: 'Opção B', img: 'https://...' },
-];
-
-onSelect(event: SelectionChangeEvent) {
-  console.log(event.selectedOption.value);
-}
-```
-
-| Input            | Tipo             | Padrão           | Descrição                                                 |
-| ---------------- | ---------------- | ---------------- | --------------------------------------------------------- |
-| `selectOptions`  | `SelectOption[]` | `[]`             | Array de opções do dropdown                               |
-| `selectedOption` | `string \| null` | `null`           | Valor da opção pré-selecionada (sincronizado via `value`) |
-| `selectIcon`     | `string`         | `'check'`        | Ícone exibido ao lado da opção selecionada                |
-| `dropdownIcon`   | `string`         | `'chevron-down'` | Ícone no botão de abertura do dropdown                    |
-
-| Output              | Payload                | Descrição                              |
-| ------------------- | ---------------------- | -------------------------------------- |
-| `onSelectionChange` | `SelectionChangeEvent` | Emitido quando o usuário escolhe opção |
-
-**Interface `SelectOption`:**
-
-```typescript
-interface SelectOption {
-    id: number;
-    value: string;
-    label: string;
-    img?: string; // URL de imagem opcional exibida na opção
-}
-```
+#### Tokens do Select
 
 **Customização via CSS:**
 
@@ -247,7 +204,7 @@ if ((await ref.closed) === 'action') restaurar();
 
 - `intent` (`neutral|info|success|warning|danger`; `danger` usa `role="alert"`), `action`, `duration` (`0` = só fecha por X/`dismiss()`), `position` (`top|bottom`), `align` (`start|center|end`). Fila de até 3 visíveis; pausa com ponteiro/foco e aba oculta. Padrões em `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel })`.
 - Com um modal aberto o toast fica `inert` (limitação do modal): a ação some até o modal fechar.
-- **Migração (API antiga `@deprecated` até a 1.0, ainda funciona):** remova o `<shy-snackbar>` e o `viewChild`; troque `show({ element, text, delay, position })` por `show(text, { duration: delay, position })`.
+- **Migração da `0.0.x`:** o `<shy-snackbar>` e `show({ element, ... })` foram removidos na 1.0: remova o elemento e o `viewChild` e troque por `show(text, { duration: delay, position })`.
 - Tokens `--shy-snackbar-*` em `:root` (o contêiner mora no overlay). Página no showcase: **components > snackbar**.
 
 ---
@@ -451,10 +408,10 @@ ru(4); // 'calc(var(--shy-responsive-unit) * 4)'
 Importe os componentes standalone diretamente nos `imports` do seu componente ou módulo:
 
 ```typescript
-import { ButtonComponent, IconButtonComponent, IconComponent, ProgressComponent, SelectComponent, SnackbarComponent, SnackbarService, SpinnerComponent } from '@shyland-dev/ui';
+import { ButtonComponent, IconButtonComponent, IconComponent, ProgressComponent, SelectComponent, SnackbarService, SpinnerComponent } from '@shyland-dev/ui';
 
 @Component({
-    imports: [ButtonComponent, IconButtonComponent, IconComponent, ProgressComponent, SelectComponent, SnackbarComponent, SpinnerComponent],
+    imports: [ButtonComponent, IconButtonComponent, IconComponent, ProgressComponent, SelectComponent, SpinnerComponent],
     providers: [SnackbarService],
 })
 export class MeuComponent {}
@@ -518,9 +475,9 @@ CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--s
 | Motion            | `--shy-duration-*`, `--shy-ease-*`, `--shy-motion-distance`, `--shy-transition-*`                                                                                                                          | `tokens/motion.css`                |
 | Camadas           | `--shy-z-{base,raised,dropdown,sticky,fixed,drawer,modal,popover,tooltip,toast}` (passo de 100)                                                                                                            | `tokens/layers.css`                |
 
-> Mudança da `0.0.x` para a `0.1.0` (breaking), nos componentes: `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*` e `--shySnackbar*` → `--shy-snackbar-*` (kebab-case, padrões vindos dos tokens semânticos, tabelas acima); o ícone de fallback para nome inexistente passa a ser `question-circle` (o `help` antigo nunca existiu); `Icon`, `Select` e `Snackbar` agora usam `input()`/`output()`/`model()` e `OnPush` (os nomes usados no template não mudam).
+> Mudança da `0.0.x` para a `1.0.0` (breaking), nos componentes: `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*` e `--shySnackbar*` → `--shy-snackbar-*` (kebab-case, padrões vindos dos tokens semânticos, tabelas acima); o ícone de fallback para nome inexistente passa a ser `question-circle` (o `help` antigo nunca existiu); `Icon`, `Select` e `Snackbar` agora usam `input()`/`output()`/`model()` e `OnPush` (os nomes usados no template não mudam).
 >
-> Mudança da `0.0.x` para a `0.1.0` (breaking), nos nomes globais: `--responsive-unit`, `--dynamic-*`, `$responsive-unit`, `$dynamic-*` **deixaram de existir**, sem alias. Troque por `--shy-responsive-unit` / `ru(N)` e `--shy-dynamic-*`. As Sass variables `$color-*` (paleta antiga) também foram removidas (`_variables.scss` não existe mais); use os tokens `--shy-color-*`. Guia: [`docs/design-system/migration-0.0-to-0.1.md`](docs/design-system/migration-0.0-to-0.1.md).
+> Mudança da `0.0.x` para a `1.0.0` (breaking), nos nomes globais: `--responsive-unit`, `--dynamic-*`, `$responsive-unit`, `$dynamic-*` **deixaram de existir**, sem alias. Troque por `--shy-responsive-unit` / `ru(N)` e `--shy-dynamic-*`. As Sass variables `$color-*` (paleta antiga) também foram removidas (`_variables.scss` não existe mais); use os tokens `--shy-color-*`. Guia: [`docs/design-system/migration-0.0-to-1.0.md`](docs/design-system/migration-0.0-to-1.0.md).
 
 ---
 
@@ -554,7 +511,6 @@ export { RadioComponent } from './lib/components/radio/radio.component';
 export { SHY_RADIO_GROUP, ShyRadioGroupContext } from './lib/components/radio/radio.token';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SkeletonComponent } from './lib/components/skeleton/skeleton.component';
-export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 export { SpinnerComponent } from './lib/components/spinner/spinner.component';
 
 export { SwitchComponent } from './lib/components/switch/switch.component';
@@ -581,8 +537,8 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
-export { ShySelectOption, SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
-export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef, SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
+export { ShySelectOption } from './lib/interfaces/select/select.interface';
+export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
 export { ShyAlertIntent } from './lib/types/alert/alert.type';
@@ -621,8 +577,8 @@ npm/
 │       │           ├── components/
 │       │           │   ├── icon/       # IconComponent
 │       │           │   ├── select/     # SelectComponent
-│       │           │   └── snackbar/   # SnackbarComponent
-│       │           ├── interfaces/     # SelectOption, SnackbarShowOptions...
+│       │           │   └── snackbar/   # SnackbarOutletComponent (interno)
+│       │           ├── interfaces/     # ShySelectOption, ShySnackbarOptions...
 │       │           ├── services/
 │       │           │   └── snackbar/   # SnackbarService
 │       │           ├── styles/         # tokens/*.css, fonts/, index.css, _global.scss, _functions/_layers/_mixins.scss

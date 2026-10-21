@@ -1,15 +1,4 @@
-import { SnackbarComponent } from '../../components/snackbar/snackbar.component';
 import { ShySnackbarAlign, ShySnackbarCloseReason, ShySnackbarIntent, SnackbarPosition } from '../../types';
-
-/**
- * @deprecated Use `SnackbarService.show(message, options)` (sem `element`). Removido na 1.0.
- */
-export interface SnackbarShowOptions {
-  element: SnackbarComponent;
-  position?: SnackbarPosition;
-  delay?: number;
-  text?: string;
-}
 
 export interface ShySnackbarOptions {
   /** Padrão: `neutral`. `danger` usa `role="alert"` (interrompe o leitor de tela); os demais, `role="status"`. */

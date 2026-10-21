@@ -294,7 +294,7 @@ if ((await ref.closed) === 'action') restore();
 - Queue: up to `maxVisible` (3) on screen, the rest wait. Defaults: `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel })` (optional, in `providers`).
 - The timer pauses while the pointer or focus is on the toast and while the tab is hidden, and resumes with what was left (WCAG 2.2.1).
 - A modal makes everything outside it `inert`, the toast included: with a modal open the action button is hidden (the text is still announced; the X is not clickable until the modal closes, the timer keeps running). Esc and outside clicks are not captured by the toast container.
-- **Deprecated until 1.0** (still working): `<shy-snackbar>` + `SnackbarService.show({ element, position, delay, text })`. Migration: remove `<shy-snackbar>` and the `viewChild`, call `show(text, { position, duration: delay })`.
+- **Removed in 1.0:** `<shy-snackbar>` and `SnackbarService.show({ element, position, delay, text })`. Migration: remove `<shy-snackbar>` and the `viewChild`, call `show(text, { position, duration: delay })`.
 - Tokens (`--shy-snackbar-*`) go on `:root` or an ancestor of `<body>`: the container lives in the overlay layer. Needs `styles/index.css` (ships `snackbar.css`).
 
 ---
@@ -333,7 +333,7 @@ countries: ShySelectOption[] = [
 
 - Keys: ↓/↑/Enter/Space open; ↓/↑/Home/End move the active option (disabled ones are skipped); Enter/Space choose; typing jumps to the option that starts with the letters; Esc closes (focus stays on the button); Tab closes and moves on.
 - Inside `shy-form-field` the button gets the label's `for`/`id`, `aria-describedby`, `aria-invalid` and `aria-errormessage`.
-- **Deprecated until 1.0** (still working, mapped to the new API): `selectOptions` (`SelectOption[]`) → `options`; `selectedOption` (string) → `[(value)]`/`ngModel`/`formControl`; `(onSelectionChange)` → `(valueChange)`. Interfaces `SelectOption` and `SelectionChangeEvent` are `@deprecated` too.
+- **Removed in 1.0:** `selectOptions` (`SelectOption[]`) → `options`; `selectedOption` (string) → `[(value)]`/`ngModel`/`formControl`; `(onSelectionChange)` → `(valueChange)`; `SelectOption` and `SelectionChangeEvent` → `ShySelectOption`.
 - The panel lives in the overlay container: panel tokens (`--shy-select-panel-*`, `--shy-select-option-*`) go on `:root` or an ancestor of `<body>`; button tokens go on the element.
 
 ---
@@ -790,9 +790,9 @@ Every length is `calc(var(--shy-responsive-unit) * N)`: `ru(N)` in SCSS, `ru(n)`
 
 `ru($n)`, `z($layer, $offset)`, `shy-layer`, `up($bp)`/`down($bp)`, `focus-ring`, `shy-state`, `state-layer`, `disabled-state`, `transition`, `visually-hidden`, `reduced-motion` (rules for `prefers-reduced-motion` or `data-motion="reduced"`), plus the legacy `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode`. The old `$color-*` palette is gone (`_variables.scss` was removed); use the `--shy-color-*` tokens.
 
-> Breaking in `0.1.0` (components): `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*`; `--shySnackbar*` → `--shy-snackbar-*`; the fallback icon for an unknown name is `question-circle`.
+> Breaking in `1.0.0` (components): `--shyIconSize` → `--shy-icon-size`; `--shySelect*` → `--shy-select-*`; `--shySnackbar*` → `--shy-snackbar-*`; the fallback icon for an unknown name is `question-circle`.
 >
-> Breaking in `0.1.0` (globals): `--responsive-unit`, `--dynamic-*`, `$responsive-unit` and `$dynamic-*` no longer exist (no alias). Use `--shy-responsive-unit` / `ru(N)` and `--shy-dynamic-*`.
+> Breaking in `1.0.0` (globals): `--responsive-unit`, `--dynamic-*`, `$responsive-unit` and `$dynamic-*` no longer exist (no alias). Use `--shy-responsive-unit` / `ru(N)` and `--shy-dynamic-*`.
 
 ### Button Tokens
 
@@ -1022,7 +1022,6 @@ export { RadioComponent } from './lib/components/radio/radio.component';
 export { SHY_RADIO_GROUP, ShyRadioGroupContext } from './lib/components/radio/radio.token';
 export { SelectComponent } from './lib/components/select/select.component';
 export { SkeletonComponent } from './lib/components/skeleton/skeleton.component';
-export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 export { SpinnerComponent } from './lib/components/spinner/spinner.component';
 export { SwitchComponent } from './lib/components/switch/switch.component';
 export { TabComponent } from './lib/components/tabs/tab.component';
@@ -1058,9 +1057,9 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
-export { ShySelectOption, SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
+export { ShySelectOption } from './lib/interfaces/select/select.interface';
 export { ShyFileRejection, ShyFileRejectionReason } from './lib/interfaces/file-dropzone/file-dropzone.interface';
-export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef, SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
+export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
 export { ShyAlertIntent } from './lib/types/alert/alert.type';

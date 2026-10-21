@@ -1,6 +1,6 @@
 # Plano: Design System `@shyland-dev/ui` (SHYLAND DEV LTDA)
 
-Data de referência: 2026-10-20 · Revisão 5 · Repo: `shyland-dev/npm` (monorepo `ui` + `utils`, Angular 21, `@shyland-dev/ui` v0.0.17)
+Data de referência: 2026-10-20 · Revisão 5 · Repo: `shyland-dev/npm` (monorepo `ui` + `utils`, Angular 21, `@shyland-dev/ui` v0.0.17 no início; fechada em 1.0.0 na F5-S4)
 Contexto: **SHYLAND DEV LTDA** (CNPJ). Não misturar com Midas (CLT) nem projetos pessoais.
 
 **Mudanças da revisão 2:** (1) os SVGs de logo são **somente referência de cor**, não fazem parte da lib (removido `shy-logo`, `assets/brand`, favicon, página de logo); (2) **regra absoluta:** toda unidade de comprimento do CSS usa `--shy-responsive-unit` (seção 6.4). Isso substitui a premissa anterior de usar `rem`.
@@ -286,9 +286,9 @@ Status: **removidos no `0.1.0`, sem alias** (decisão do dono em 2026-10-20: tud
 | Variável CSS                 | `--responsive-unit`, `--dynamic-height`, `--dynamic-width`, `--dynamic-*-unit` | `--shy-responsive-unit`, `--shy-dynamic-height`, `--shy-dynamic-width`, `--shy-dynamic-*-unit` | **Removidas no `0.1.0`**, sem alias                                                                                                                                      |
 | Variável SCSS                | `$responsive-unit`, `$dynamic-*` e `$color-*` (paleta Ionic)                   | função `ru(N)` e tokens `--shy-*`                                                              | **Removidas no `0.1.0`**, sem alias. `_variables.scss` fica como arquivo interno só durante a F1 e a F2 (select, snackbar e showcase ainda o importam) e é apagado na F2 |
 | Uso interno (lib + showcase) | misto                                                                          | só o novo                                                                                      | `check-units` falha em qualquer nome sem prefixo, a partir da F1                                                                                                         |
-| Remoção                      | n/a                                                                            | n/a                                                                                            | `0.1.0` (registrada no changelog e em `migration-0.0-to-0.1.md`)                                                                                                         |
+| Remoção                      | n/a                                                                            | n/a                                                                                            | `0.1.0` (registrada no changelog e em `migration-0.0-to-1.0.md`)                                                                                                         |
 
-O CLI copia esta seção para `docs/design-system/migration-0.0-to-0.1.md`.
+O CLI copia esta seção para `docs/design-system/migration-0.0-to-1.0.md`.
 
 #### Como substituir num app consumidor (qualquer projeto Angular da SHYLAND DEV)
 
@@ -799,7 +799,7 @@ Header fixo do showcase: título textual "SHYLAND DEV", seletor de tema (claro/s
 
 ### 14.3 Docs em `docs/design-system/`
 
-`principles.md`, `tokens.md`, `units.md` (regra D8, exceções, como escrever, migração do `--responsive-unit` para `--shy-responsive-unit`), `theming.md` (script anti-flash e como um app sobrescreve a marca), `motion.md`, `accessibility.md` (inclui o limite do zoom), `components-checklist.md`, `contributing.md`, `decisions.md` (premissas P1–P6 e ADRs curtos), `migration-0.0-to-0.1.md`, `progress.md` (estado das fases, lido pelo `/build`). README raiz e `src/libs/ui/README.md` atualizados **no mesmo commit** de cada mudança de uso (exigência do repo).
+`principles.md`, `tokens.md`, `units.md` (regra D8, exceções, como escrever, migração do `--responsive-unit` para `--shy-responsive-unit`), `theming.md` (script anti-flash e como um app sobrescreve a marca), `motion.md`, `accessibility.md` (inclui o limite do zoom), `components-checklist.md`, `contributing.md`, `decisions.md` (premissas P1–P6 e ADRs curtos), `migration-0.0-to-1.0.md`, `progress.md` (estado das fases, lido pelo `/build`). README raiz e `src/libs/ui/README.md` atualizados **no mesmo commit** de cada mudança de uso (exigência do repo).
 
 ---
 

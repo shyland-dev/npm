@@ -144,3 +144,18 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - **Stepper:** não é um widget com padrão APG próprio. É `<ol>` nomeada (`aria-label`) com `role="listitem"` explícito e um `<button>` nativo por passo (Tab/Enter/Espaço do navegador; sem roving tabindex, para não esconder passos). `aria-current="step"` só no passo atual. O marcador (número, check ou "!") é `aria-hidden`; concluído e erro são ditos por texto escondido ("Completed"/"Error", traduzíveis), então o estado não depende só de cor nem de forma. Em `linear` os passos adiante ficam com `aria-disabled="true"` (continuam focáveis e anunciados) e o clique é ignorado; `disabled` usa o atributo nativo. Alvo do botão ≥ `size-control-sm` + padding; `forced-colors` pinta marcador e conector com cores do sistema (atual em `Highlight`).
 - **AppShell:** landmarks `banner` (`<header>`), `navigation` com `aria-label` (`<nav>`), `main` e `contentinfo` (`<footer>`); regiões vazias saem do layout (`display: none`), sem landmark vazio. O skip link é o primeiro elemento focável, fica escondido (visually-hidden) até receber foco e leva o foco ao `main` (`tabindex="-1"`, sem anel) com `preventDefault` (um `href="#id"` puro quebra com `<base href>` e router). No modo Drawer o botão do menu tem nome acessível e `aria-haspopup="dialog"`; o painel é o Drawer da lib (`<dialog>` modal, foco preso, Esc fecha, foco volta ao botão) com o mesmo `nav` nomeado. Links dentro do Drawer o fecham (WCAG 3.2.2: navegar não deixa um painel aberto sobre a página nova).
 - **Contraste:** nenhum par novo; `check-contrast` cobre todos. **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`, 24 combinações por página): sem scroll horizontal nem erros de console; clique e Shift+Tab no Stepper (foco visível), `linear` ignorando o clique adiante, Drawer abrindo pelo menu, modo `auto` virando compacto a 360 px. **Não verificado:** leitor de tela real (anúncio de `aria-current="step"` e do texto escondido), Safari/Firefox, toque real (vai para a F5-S4).
+
+## Auditoria final (F5-S4, 2026-10-21)
+
+Script reaproveitável: `npm run build:showcase && PLAYWRIGHT_CORE=<caminho>/playwright-core node scripts/audit-showcase.mjs` (`--quick` roda um subconjunto). Não entra em `check:ds` porque precisa de navegador e não adiciona dependência ao projeto.
+
+**Cobertura automatizada (Chromium):** 46 rotas do showcase × dark/light × LTR/RTL × 360 e 1366 px × normal/`forced-colors`/`reduced-motion` = **1104 cenários, 0 achados**. Em cada um: sem scroll horizontal, sem erro de console nem `pageerror`, sem `id` duplicado, botões/links/campos com nome acessível, sem `img` sem `alt`, um `main` e um `h1`, e cada parada de Tab (25 por cenário) com indicador de foco visível. Contraste: `check-contrast` (57 pares, dois temas).
+
+**Achado corrigido:** o showcase não tinha landmark `main` (o conteúdo ficava num `div`); agora `<main id="main-content">`.
+
+**Não coberto (verificação manual do dono, o container não alcança):**
+
+- Leitor de tela real (NVDA/JAWS no Windows, VoiceOver no macOS/iOS, TalkBack): em especial `aria-activedescendant` do Select/Combobox (painel em outro contêiner) e as regiões vivas do Snackbar, do Combobox e do FileDropzone.
+- Safari e Firefox (só Chromium foi testado), principalmente `popover`, `<dialog>`, `inert`, `anchor` e `field-sizing`.
+- Toque real (o Tooltip não abre em toque, por desenho; testado só por evento sintético), zoom 200% e safe area (`env(safe-area-inset-*)`) em aparelho com notch.
+- AppShell: a página de demonstração aninha `<main>` dentro do `<main>` do showcase; em produção o AppShell é o único `main`.

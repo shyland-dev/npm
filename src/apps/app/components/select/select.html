@@ -47,13 +47,4 @@
       <shy-select class="custom" [options]="countries" placeholder="Custom tokens" label="Custom" />
     </div>
   </section>
-
-  <section class="section">
-    <h2>Deprecated API (until 1.0)</h2>
-    <p><code>selectOptions</code>, <code>selectedOption</code> and <code>(onSelectionChange)</code> still work. Use <code>options</code> and <code>[(value)]</code>/<code>ngModel</code>/<code>formControl</code> instead.</p>
-    <div class="card">
-      <shy-select [selectOptions]="legacyOptions" [selectedOption]="legacySelected()" (onSelectionChange)="legacyChange($event)">Select an option</shy-select>
-      <p class="token-name">last change: {{ last() }}</p>
-    </div>
-  </section>
 </div>

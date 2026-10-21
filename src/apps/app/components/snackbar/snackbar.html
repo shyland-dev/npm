@@ -36,13 +36,4 @@
     <h2>Over a modal</h2>
     <div class="shy-cluster"><button shyButton variant="outline" type="button" (click)="openDialog()">Open dialog, then toast with action</button></div>
   </section>
-
-  <section class="section">
-    <h2>Deprecated API (until 1.0)</h2>
-    <p>
-      <code>&lt;shy-snackbar&gt;</code> with <code>show({{ '{' }} element, … {{ '}' }})</code> still works. Use <code>show(message, options)</code> instead.
-    </p>
-    <div class="shy-cluster"><button shyButton variant="outline" type="button" (click)="legacy(old)">Show with the old API</button></div>
-    <shy-snackbar #old />
-  </section>
 </div>

@@ -6,6 +6,11 @@ const DEF_RE = /(--shy-[a-z0-9-]+)\s*:/g;
 const USE_RE = /var\(\s*(--shy-[a-z0-9-]+)\s*(,)?/g;
 const LEGACY_RE = /--shy[A-Z][\w]*/g;
 
+// Tokens públicos por contrato, sem uso interno estático: a escala primitiva (`--shy-<cor>-<passo>`) é para os projetos consumidores;
+// os demais são lidos por string em TS (`--shy-delay-tooltip*`) ou são atalhos e ganchos documentados em tokens.md/README.
+const PUBLIC_UNUSED = new Set(['--shy-delay-tooltip', '--shy-delay-tooltip-hide', '--shy-transition-opacity', '--shy-transition-transform', '--shy-gradient-brand', '--shy-tracking-normal', '--shy-dynamic-height-unit', '--shy-dynamic-width-unit', '--shy-button-radius']);
+const PRIMITIVE_SCALE_RE = /^--shy-(primary|neutral|success|warning|danger|info)-\d+$/;
+
 const names = (css, re = DEF_RE) => new Set([...css.matchAll(re)].map((m) => m[1]));
 const semantic = (css) => new Set([...names(css)].filter((n) => /^--shy-(color|shadow)-/.test(n)));
 
@@ -40,8 +45,8 @@ export function checkTokens() {
   const prefixes = [...used.keys()].filter((n) => n.endsWith('-'));
   for (const [n, u] of used) if (!n.endsWith('-') && u.required && !defined.has(n)) errors.push(`${n} usado e nunca definido (${[...u.files].join(', ')})`);
 
-  const unused = [...defined].filter((n) => !used.has(n) && !prefixes.some((p) => n.startsWith(p)));
-  if (unused.length) warnings.push(`${unused.length} token(s) definido(s) e ainda não usado(s) (esperado na F1; revisar na F5)`);
+  const unused = [...defined].filter((n) => !used.has(n) && !PUBLIC_UNUSED.has(n) && !PRIMITIVE_SCALE_RE.test(n) && !prefixes.some((p) => n.startsWith(p)));
+  if (unused.length) warnings.push(`${unused.length} token(s) definido(s) e sem uso e fora da lista de tokens públicos: ${unused.join(', ')}`);
   if (legacy) warnings.push(`${legacy} ocorrência(s) de custom property camelCase legada (--shyXxx); migram para kebab-case na F2`);
 
   const layersScss =

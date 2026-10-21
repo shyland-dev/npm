@@ -67,6 +67,6 @@ Fonte: plano mestre seção 12 (Onda 2), seção sobre camadas/overlay e ADR-F0-
 
 ## F4-S6: fechamento da Onda 2
 
-**Escopo**: exemplo integrado no showcase (dialog com formulário e select dentro, tooltip em IconButton, menu), auditoria de foco/camadas, docs (`accessibility.md`, `tokens.md`, `migration-0.0-to-0.1.md` com selects/snackbars), README e relatório consolidado da F4.
+**Escopo**: exemplo integrado no showcase (dialog com formulário e select dentro, tooltip em IconButton, menu), auditoria de foco/camadas, docs (`accessibility.md`, `tokens.md`, `migration-0.0-to-1.0.md` com selects/snackbars), README e relatório consolidado da F4.
 
 **Commit proposto**: `docs: fechar onda 2 (overlays, select e snackbar)`

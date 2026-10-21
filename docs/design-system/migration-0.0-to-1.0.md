@@ -1,6 +1,8 @@
-# Migração 0.0.x → 0.1.0
+# Migração 0.0.x → 1.0.0
 
-A `0.1.0` é breaking e **não mantém alias** (decisão de 2026-10-20). Estão aqui as mudanças da F1 (globais) e da F2 (componentes existentes).
+A `1.0.0` (a primeira major; decisão do dono, 2026-10-21) é breaking e **não mantém alias nem API `@deprecated`** (decisões de 2026-10-20 e 2026-10-21). Estão aqui as mudanças globais (F1), dos componentes existentes (F2) e a remoção do Select e do Snackbar antigos (F4/F5-S4). O que mudou em cada versão está no [CHANGELOG](../../CHANGELOG.md).
+
+Ordem sugerida: 1) estilos (seção 1), 2) busca e substituição (seção 2), 3) unidades e cores (3 e 4), 4) tokens de componente (5.1), 5) Select e Snackbar (5.2), 6) `npm run build` do seu projeto.
 
 ## 1. Carregar os estilos
 
@@ -105,22 +107,24 @@ Busca no seu projeto (bash): `grep -rnE -- '--shy(Icon|Select|Snackbar)[A-Z]' sr
 
 Outras mudanças dos componentes: `Icon`, `Select` e `Snackbar` usam `input()`/`output()`/`model()` e `OnPush` (nomes no template iguais); o ícone para nome inexistente é `question-circle` (o `help` antigo nunca existiu); `shy-select` ganhou ARIA de listbox e teclado básico; `shy-snackbar` ganhou `role="status"`; `shy-icon` ganhou `name` e `label` e é decorativo por padrão.
 
-## 5.2 Select e Snackbar (F4)
+## 5.2 Select e Snackbar (APIs antigas removidas na 1.0)
 
-A API antiga continua funcionando, marcada `@deprecated`, até a `1.0`. Migre quando puder.
+A API antiga foi marcada `@deprecated` na F4 e **removida na 1.0.0**. Não há mais compatibilidade: o template antigo deixa de compilar.
 
-| Antes (`@deprecated`)                                                              | Depois                                                                                      |
+| Antes (removido)                                                                   | Depois                                                                                      |
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | `<shy-select [selectOptions]="opcoes">`                                            | `<shy-select [options]="opcoes">` (`{ value, label, disabled?, img? }`, sem `id`)           |
 | `[selectedOption]="valor"` (string)                                                | `[(value)]="valor"`, `[(ngModel)]` ou `[formControl]` (qualquer tipo; array com `multiple`) |
 | `(onSelectionChange)="f($event)"` (`selectedOption`)                               | `(valueChange)="f($event)"`, `ngModel` ou `formControl`                                     |
 | `SelectOption`, `SelectionChangeEvent`                                             | `ShySelectOption`                                                                           |
 | `<shy-snackbar #s>` + `@ViewChild` + `show({ element: s, text, delay, position })` | `inject(SnackbarService).show(texto, { duration: delay, position })` (sem elemento)         |
+| `SnackbarComponent`, `SnackbarShowOptions`                                         | sem equivalente: remova o `<shy-snackbar>` e o `import`                                     |
 | conteúdo projetado em `<shy-snackbar>`                                             | primeiro argumento de `show()` (texto); `intent` e `action` são novos                       |
+| conteúdo projetado em `<shy-select>` como texto de "sem escolha"                   | continua valendo, mas prefira `placeholder`                                                 |
 
-Tokens do painel do Select e dos toasts (`--shy-select-panel-*`, `--shy-select-option-*`, `--shy-snackbar-*`) agora valem em `:root`, não no elemento: o painel mora no contêiner de overlays.
+Tokens do painel do Select e dos toasts (`--shy-select-panel-*`, `--shy-select-option-*`, `--shy-snackbar-*`) agora valem em `:root`, não no elemento: o painel mora no contêiner de overlays. Os tokens do `<shy-snackbar>` antigo (largura/posição de um elemento fixo) seguem valendo para o toast novo (`--shy-snackbar-width`, `-offset`, `-radius`...).
 
-Busca no seu projeto (bash): `grep -rnE 'selectOptions|selectedOption|onSelectionChange|<shy-snackbar|element:' src`.
+Busca no seu projeto (bash): `grep -rnE 'selectOptions|selectedOption|onSelectionChange|SelectionChangeEvent|SelectOption\b|<shy-snackbar|SnackbarComponent|SnackbarShowOptions|element:' src`.
 
 ## 6. Novidades úteis
 

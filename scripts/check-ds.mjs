@@ -2,7 +2,7 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const CHECKS = ['check-units', 'check-calibration', 'check-tokens', 'check-contrast', 'check-hardcoded', 'check-fonts'];
+const CHECKS = ['check-units', 'check-calibration', 'check-tokens', 'check-contrast', 'check-hardcoded', 'check-fonts', 'check-size'];
 
 let failed = 0;
 for (const name of CHECKS) {

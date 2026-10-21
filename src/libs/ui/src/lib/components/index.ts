@@ -50,7 +50,6 @@ export * from './radio/radio.token';
 export * from './select/select.component';
 
 export * from './skeleton/skeleton.component';
-export * from './snackbar/snackbar.component';
 export * from './spinner/spinner.component';
 export * from './switch/switch.component';
 export * from './tabs/tab.component';

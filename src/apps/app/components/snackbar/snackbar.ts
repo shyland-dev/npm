@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { ButtonComponent, DialogService, ShySnackbarAlign, ShySnackbarIntent, SnackbarComponent, SnackbarPosition, SnackbarService } from '@shyland-dev/ui';
+import { ButtonComponent, DialogService, ShySnackbarAlign, ShySnackbarIntent, SnackbarPosition, SnackbarService } from '@shyland-dev/ui';
 
 @Component({
   selector: 'app-snackbar-page',
-  imports: [ButtonComponent, SnackbarComponent],
+  imports: [ButtonComponent],
   templateUrl: './snackbar.html',
 })
 export class SnackbarPage {
@@ -36,10 +36,5 @@ export class SnackbarPage {
     const ref = this.dialogs.alert({ title: 'Toast over a modal', message: 'A toast with an action opens while this dialog is open: the action button is hidden (the toast is inert behind the modal).' });
     setTimeout(() => this.snackbar.show('Saved in the background', { action: { label: 'Undo' }, duration: 10000 }), 300);
     await ref;
-  }
-
-  // API antiga (@deprecated): <shy-snackbar> + show({ element, ... })
-  protected legacy(element: SnackbarComponent): void {
-    this.snackbar.show({ element, position: 'bottom', delay: 3000, text: 'Deprecated API: still works until 1.0' });
   }
 }

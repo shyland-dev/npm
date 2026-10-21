@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ButtonComponent, DialogComponent, DialogService, FormFieldComponent, SelectComponent, SelectionChangeEvent, SelectOption, ShySelectOption } from '@shyland-dev/ui';
+import { ButtonComponent, DialogComponent, DialogService, FormFieldComponent, SelectComponent, ShySelectOption } from '@shyland-dev/ui';
 
 @Component({
   selector: 'app-select-in-dialog',
@@ -41,18 +41,6 @@ export class SelectPage {
   protected readonly selected = signal<unknown>('us');
   protected readonly tags: ShySelectOption[] = ['Angular', 'TypeScript', 'CSS', 'Accessibility', 'Testing'].map((label) => ({ value: label.toLowerCase(), label }));
   protected readonly required = new FormControl('', { nonNullable: true, validators: [Validators.required] });
-
-  protected readonly legacyOptions: SelectOption[] = [
-    { id: 0, value: 'br', label: 'Brasil' },
-    { id: 1, value: 'us', label: 'United States' },
-  ];
-  protected readonly legacySelected = signal<string | null>(null);
-  protected readonly last = signal('none');
-
-  protected legacyChange(event: SelectionChangeEvent): void {
-    this.legacySelected.set(event.selectedOption.value);
-    this.last.set(event.selectedOption.label);
-  }
 
   protected openDialog(): void {
     this.dialogs.open(SelectInDialog);

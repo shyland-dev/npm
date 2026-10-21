@@ -167,12 +167,6 @@ describe('SnackbarService', () => {
     expect(toasts()[0].dataset['align']).toBe('end');
     expect(toasts()[0].closest('.region')!.getAttribute('data-position')).toBe('top');
   });
-
-  it('API antiga: show({ element }) delega ao <shy-snackbar>', () => {
-    const element = { show: vi.fn() } as never;
-    snackbar.show({ element, position: 'top', delay: 10, text: 'x' });
-    expect((element as { show: ReturnType<typeof vi.fn> }).show).toHaveBeenCalledWith({ position: 'top', delay: 10, text: 'x' });
-  });
 });
 
 describe('provideShySnackbar', () => {

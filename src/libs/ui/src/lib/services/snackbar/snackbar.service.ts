@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { SnackbarOutletComponent, SnackbarOutletData, SnackbarToast } from '../../components/snackbar/snackbar-outlet.component';
-import { ShySnackbarOptions, ShySnackbarRef, SnackbarShowOptions } from '../../interfaces/snackbar/snackbar.interface';
+import { ShySnackbarOptions, ShySnackbarRef } from '../../interfaces/snackbar/snackbar.interface';
 import { ShyOverlayRef } from '../../overlay/overlay-ref';
 import { OverlayService } from '../../overlay/overlay.service';
 import { ShySnackbarCloseReason } from '../../types';
@@ -65,20 +65,12 @@ export class SnackbarService {
   };
 
   /** Mostra um toast. */
-  show(message: string, options?: ShySnackbarOptions): ShySnackbarRef;
-  /** @deprecated Use `show(message, options)`; o `<shy-snackbar>` e o `element` saem na 1.0. */
-  show(options: SnackbarShowOptions): void;
-  show(arg: string | SnackbarShowOptions, options: ShySnackbarOptions = {}): ShySnackbarRef | void {
-    if (typeof arg !== 'string') {
-      const { element, position, delay, text } = arg;
-      element.show({ position, delay, text });
-      return;
-    }
+  show(message: string, options: ShySnackbarOptions = {}): ShySnackbarRef {
     // Sem DOM (SSR) não há toast: nenhum timer fica pendente no servidor.
     if (!this.isBrowser) return { dismiss: () => undefined, closed: Promise.resolve('dismiss') };
     const action = options.action?.label;
     const duration = options.duration ?? (action ? this.config.durationWithAction : this.config.duration);
-    const toast = new Toast(arg, options.intent ?? 'neutral', action, options.position ?? 'bottom', options.align ?? 'center', duration);
+    const toast = new Toast(message, options.intent ?? 'neutral', action, options.position ?? 'bottom', options.align ?? 'center', duration);
 
     if (this.visible().length < this.config.maxVisible) this.reveal(toast);
     else this.queue.push(toast);

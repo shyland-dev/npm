@@ -1,5 +1,5 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, model, output, signal, TemplateRef, untracked, viewChild } from '@angular/core';
-import { ShySelectOption, SelectionChangeEvent, SelectOption } from '../../interfaces/select/select.interface';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, model, signal, TemplateRef, viewChild } from '@angular/core';
+import { ShySelectOption } from '../../interfaces/select/select.interface';
 import { ShyOverlayContext } from '../../interfaces/overlay/overlay.interface';
 import { ShyOverlayRef } from '../../overlay/overlay-ref';
 import { OverlayService } from '../../overlay/overlay.service';
@@ -17,8 +17,6 @@ import { IconComponent } from '../icon/icon.component';
  *   (em `multiple` alternam e o painel continua aberto); digitar salta para a opção que começa com a letra; Esc fecha; Tab fecha e segue.
  * - Dentro de `shy-form-field` o botão recebe `id`/`for` do label, `aria-describedby`, `aria-invalid` e `aria-errormessage`.
  * - Texto sem escolha: `placeholder` ou o conteúdo projetado.
- *
- * A API antiga (`selectOptions`, `selectedOption`, `onSelectionChange`) continua funcionando, marcada `@deprecated`, até a 1.0.
  */
 @Component({
   selector: 'shy-select',
@@ -49,22 +47,12 @@ export class SelectComponent extends ControlBase<unknown> {
   readonly selectIcon = input('check');
   readonly dropdownIcon = input('chevron-down');
 
-  /** @deprecated Use `options`. Removido na 1.0. */
-  readonly selectOptions = input<readonly SelectOption[]>([]);
-  /** @deprecated Use `[(value)]`, `ngModel` ou `formControl`. Removido na 1.0. */
-  readonly selectedOption = input<string | null | undefined>(undefined);
-  /** @deprecated Use `(valueChange)`, `ngModel` ou `formControl`. Removido na 1.0. */
-  readonly onSelectionChange = output<SelectionChangeEvent>();
-
   protected readonly isOpen = signal(false);
   protected readonly activeIndex = signal(-1);
   private ref: ShyOverlayRef | null = null;
   private readonly search = new Typeahead();
 
-  protected readonly items = computed<readonly ShySelectOption[]>(() => {
-    const options = this.options();
-    return options.length ? options : this.selectOptions();
-  });
+  protected readonly items = this.options;
   protected readonly listId = computed(() => `${this.id()}-list`);
   protected readonly activeId = computed(() => (this.isOpen() && this.activeIndex() >= 0 ? this.optionId(this.activeIndex()) : null));
 
@@ -80,15 +68,6 @@ export class SelectComponent extends ControlBase<unknown> {
       .join(', '),
   );
   protected readonly firstImg = computed(() => (this.multiple() ? undefined : this.selectedItems()[0]?.img));
-
-  constructor() {
-    super();
-    // API antiga: `selectedOption` (string) escolhe a opção; `undefined` = não usado, não mexe no valor do CVA.
-    effect(() => {
-      const legacy = this.selectedOption();
-      if (legacy !== undefined) untracked(() => this.value.set(legacy));
-    });
-  }
 
   override writeValue(value: unknown): void {
     this.value.set(this.multiple() ? (Array.isArray(value) ? value : []) : (value ?? null));
@@ -165,7 +144,6 @@ export class SelectComponent extends ControlBase<unknown> {
       this.commit(next);
     } else {
       this.commit(item.value);
-      this.onSelectionChange.emit({ selectedOption: item as SelectOption });
       this.close();
     }
   }

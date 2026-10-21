@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SelectOption, SelectionChangeEvent, ShySelectOption } from '../../interfaces/select/select.interface';
+import { ShySelectOption } from '../../interfaces/select/select.interface';
 import { OverlayService } from '../../overlay/overlay.service';
 import { FormFieldComponent } from '../form-field/form-field.component';
 import { SelectComponent } from './select.component';
@@ -47,19 +47,6 @@ class SignalHost {
 class FieldHost {
   options = OPTIONS;
   control = new FormControl('', { nonNullable: true });
-}
-
-@Component({
-  imports: [SelectComponent],
-  template: `<shy-select [selectOptions]="legacy" [selectedOption]="selected()" (onSelectionChange)="events.push($event)">Pick legacy</shy-select>`,
-})
-class LegacyHost {
-  legacy: SelectOption[] = [
-    { id: 0, value: 'a', label: 'Alpha' },
-    { id: 1, value: 'b', label: 'Beta' },
-  ];
-  selected = signal<string | null>(null);
-  events: SelectionChangeEvent[] = [];
 }
 
 const pane = () => document.querySelector('.shy-overlay-pane') as HTMLElement | null;
@@ -303,30 +290,6 @@ describe('SelectComponent', () => {
       }
       const { trigger } = mount(ObjHost);
       expect(trigger.textContent).toContain('Two');
-    });
-  });
-
-  describe('API antiga (@deprecated)', () => {
-    it('mostra o conteúdo projetado como placeholder e escolhe por selectedOption', () => {
-      const { fixture, trigger, host } = mount(LegacyHost);
-      expect(trigger.textContent).toContain('Pick legacy');
-
-      host.selected.set('b');
-      fixture.detectChanges();
-      expect(trigger.textContent).toContain('Beta');
-    });
-
-    it('selectOptions + onSelectionChange: escolher emite o evento antigo', async () => {
-      const { fixture, trigger, host } = mount(LegacyHost);
-      trigger.click();
-      fixture.detectChanges();
-      optionEls()[1].click();
-      await tick();
-      await settle(fixture);
-
-      expect(host.events.map((e) => e.selectedOption.value)).toEqual(['b']);
-      expect(host.events[0].selectedOption.id).toBe(1);
-      expect(trigger.textContent).toContain('Beta');
     });
   });
 });

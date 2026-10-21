@@ -5,7 +5,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F5 Onda 3 + hardening**, sessão **F5-S4** (hardening e fechamento; F5-S3 inteira concluída)
-- Estado: `aguardando-plano` (F5-S3b concluída e commitada em `fe843f4`, 2026-10-21; plano em "F5-S4: plano da sessão"; **o `/build` aprova só a parte de baixo impacto** (auditoria, orçamento, docs); versão, remoção de `@deprecated` e publicação esperam resposta explícita do dono)
+- Estado: `aguardando-gate` (F5-S4 executada em 2026-10-21; relatório em "F5-S4: relatório do gate"; **o `/build` aprova o gate e a mensagem de commit**; tag, push na prod e publish continuam só sob pedido explícito)
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -63,14 +63,14 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 
 ## Fases
 
-| Fase                               | Status                            | Commit                                                        |
-| ---------------------------------- | --------------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)         | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)         | 0123029                                                       |
-| F2 Refactor dos existentes         | concluída (gate aprovado)         | eb359ac                                                       |
-| F3 Onda 1                          | concluída (gate aprovado)         | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | concluída (gate aprovado)         | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
-| F5 Onda 3 + hardening              | em andamento (S1 a S3 concluídas) |                                                               |
+| Fase                               | Status                    | Commit                                                        |
+| ---------------------------------- | ------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado) | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado) | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado) | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | gate da S4 pendente       |                                                               |
 
 ## Sessões
 
@@ -92,7 +92,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 | F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | concluída | 772b8e2 |
 | F5-S3a | Lote 3a (Combobox, Slider, FileDropzone)                                           | concluída | 1df194b |
 | F5-S3b | Lote 3b (Stepper, AppShell)                                                        | concluída | fe843f4 |
-| F5-S4  | Hardening e fechamento                                                             | pendente  |         |
+| F5-S4  | Hardening e fechamento                                                             | gate      |         |
 
 ## Registro
 
@@ -147,6 +147,39 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S4: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (7 verificações; `check-size` novo; o aviso dos 28 tokens sem uso deixou de existir)                                               |
+| `npm test`               | 288 testes passando (296 antes; -8 dos testes das APIs removidas)                                                                     |
+| `npm run build`          | ok (`@shyland-dev/ui` 1.0.0 e `@shyland-dev/utils`)                                                                                   |
+| `npm run build:showcase` | ok                                                                                                                                    |
+| Chromium                 | `scripts/audit-showcase.mjs`: 46 rotas × 24 cenários = 1104, 0 achados (1 corrigido antes: showcase sem `main`)                       |
+| `npm audit`              | 35 achados só em devDependencies (Angular CLI/Vite/launch-editor); a lib não tem dependência de runtime. `npm audit fix` não aplicado |
+| Node                     | 22.22 no container (o projeto pede 24.14.1)                                                                                           |
+
+### Resumo (arquivos principais)
+
+- **Decisões do dono aplicadas**: versão `1.0.0` (`src/libs/ui/package.json`; `utils` fica em 0.0.6); APIs `@deprecated` removidas (Select: `selectOptions`/`selectedOption`/`onSelectionChange`/`SelectOption`/`SelectionChangeEvent`; Snackbar: `SnackbarComponent`/`<shy-snackbar>`/`show({ element })`/`SnackbarShowOptions`). Showcase, testes e READMEs ajustados.
+- `CHANGELOG.md` (novo), `docs/design-system/migration-0.0-to-1.0.md` (renomeado de `0.0-to-0.1`, seção 5.2 reescrita), README raiz e da lib (seções antigas do Select removidas), `accessibility.md` (auditoria final e lacunas), ADR-F5-5.
+- `scripts/check-size.mjs` (CSS 28,1/40 KB; bundle 531/650 KB gzip), `scripts/audit-showcase.mjs` (fora do `check:ds`: precisa de navegador), `check-tokens` com lista explícita de tokens públicos sem uso.
+- Publish (lido, nada alterado): `publish.yml` roda em push para `prod` (PR só faz build); `publish-pkg.sh` publica `@shyland-dev/ui` e `utils` a partir de `dist`, pulando versão já existente no npm, `latest` sem `-` na versão, exige `NPM_TOKEN`. Para publicar a 1.0.0: merge `feat/design-system` → `prod` (o push dispara o publish; sem tag git automática).
+
+### Pendências manuais do dono
+
+Leitor de tela real, Safari/Firefox, toque real, safe area (detalhe em `accessibility.md`). Os projetos consumidores precisam seguir o guia de migração.
+
+### Mensagem de commit proposta
+
+```
+docs: auditoria de acessibilidade, changelog e fechamento do design system (1.0.0)
+
+Remove as APIs @deprecated (Select e Snackbar antigos), versão 1.0.0 da ui, check-size, auditoria no Chromium (1104 cenários), CHANGELOG e guia de migração 0.0 → 1.0.
+```
 
 ## F5-S4: plano da sessão (2026-10-21)
 
@@ -397,7 +430,7 @@ Não verificado: leitor de tela real, Safari/Firefox, toque real (ver "Pendênci
 
 - Showcase `examples/overlays` ("overlays together"): Menu → Dialog (Select e Tooltip dentro) → toast → confirmação → toast com ação; Popover e Tooltip no IconButton.
 - Achado da auditoria e correção: um Dialog aberto por um item do Menu lembrava o item (já removido) como foco anterior, e o foco caía no `body` ao fechar. O `MenuDirective` agora foca o botão em captura, antes do `(click)` do item (`menu.directive.ts` + teste).
-- Docs: `tokens.md` (tokens da Onda 2 e onde defini-los), `migration-0.0-to-0.1.md` (5.2 Select e Snackbar), `accessibility.md` (resumo da Onda 2), plano (Onda 2 concluída e divergências) e `README.md`.
+- Docs: `tokens.md` (tokens da Onda 2 e onde defini-los), `migration-0.0-to-1.0.md` (5.2 Select e Snackbar), `accessibility.md` (resumo da Onda 2), plano (Onda 2 concluída e divergências) e `README.md`.
 - Handoff por sessão para threads separadas (seção no topo deste arquivo).
 
 ### Relatório consolidado da F4 (Onda 2)
@@ -429,7 +462,7 @@ Fechar a Onda 2: um exemplo integrado que exercite os overlays juntos, auditoria
 
 1. Exemplo no showcase (`examples/overlays`): Dialog com formulário e Select dentro, Tooltip em IconButton, Menu abrindo Dialog de confirmação, toast ao salvar (com e sem modal), Popover com ação.
 2. Auditoria de foco e camadas no Chromium (dark/light, 360/1366, RTL, reduced-motion): ordem de empilhamento em combinações (menu → dialog → select → toast), retorno de foco, Esc um por vez, scroll lock, sem vazamento de painéis (`document.querySelectorAll('.shy-overlay-pane')` vazio ao fechar tudo).
-3. Docs: `tokens.md` (tokens novos da F4: `--shy-dialog/drawer/popover/menu/tooltip/select/snackbar-*`, `--shy-delay-tooltip*`), `migration-0.0-to-0.1.md` (Select e Snackbar: busca/substituição e tabela de API antiga → nova), `accessibility.md` (resumo da Onda 2), `DESIGN-SYSTEM-PLAN.md` (marcar a Onda 2 concluída e listar as divergências das ADR-F4-5 a 9, por Python; sem prettier no plano).
+3. Docs: `tokens.md` (tokens novos da F4: `--shy-dialog/drawer/popover/menu/tooltip/select/snackbar-*`, `--shy-delay-tooltip*`), `migration-0.0-to-1.0.md` (Select e Snackbar: busca/substituição e tabela de API antiga → nova), `accessibility.md` (resumo da Onda 2), `DESIGN-SYSTEM-PLAN.md` (marcar a Onda 2 concluída e listar as divergências das ADR-F4-5 a 9, por Python; sem prettier no plano).
 4. README (`README.md` e `src/libs/ui/README.md`): índice e exemplo integrado; conferir se os exports listados batem com `public-api`.
 5. Verificações completas e relatório consolidado da F4 em progress.md.
 
@@ -1157,12 +1190,12 @@ feat(ui): button, icon-button, tipografia e layout utilitários
 - `styles/_variables.scss` apagado; `scripts/units-baseline.json` e `hardcoded-baseline.json` apagados.
 - Showcase: `components/{icon,select,snackbar}` no lugar de `pages/{home,icons}`.
 - Testes novos: `icon.component.spec.ts`, `select.component.spec.ts`, `snackbar.component.spec.ts`.
-- Docs: `README.md` (raiz e `ui`), `docs/design-system/{migration-0.0-to-0.1,units,tokens,decisions}.md`.
+- Docs: `README.md` (raiz e `ui`), `docs/design-system/{migration-0.0-to-1.0,units,tokens,decisions}.md`.
 
 ### Efeito prático
 
 - Os três componentes seguem os dois temas e o contrato de tokens; nenhum valor fixo no SCSS.
-- Breaking (já previsto no `0.1.0`): `--shyIconSize`, `--shySelect*`, `--shySnackbar*` viram kebab-case (tabela de-para em `migration-0.0-to-0.1.md`); `$color-*` não existem mais.
+- Breaking (já previsto no `0.1.0`): `--shyIconSize`, `--shySelect*`, `--shySnackbar*` viram kebab-case (tabela de-para em `migration-0.0-to-1.0.md`); `$color-*` não existem mais.
 - Correções de passagem: ícone com nome inexistente agora mostra `question-circle`; ícone reage à mudança do nome projetado.
 - Sem dependências novas; sem bump de versão, tag ou publish.
 
@@ -1199,7 +1232,7 @@ Escopo do plano mestre (seções 13 e 16, fase A): `icon` refatorado; `select` e
 | T4  | Apagar `_variables.scss` e o `forward`; trocar os últimos `$color-*`; `check-units` e `check-hardcoded` com baseline vazia (e arquivos de baseline removidos)                                                                                                                                  | `styles/`, `scripts/`              |
 | T5  | Showcase: páginas `home`/`icons` viram `components/icon`, `components/select`, `components/snackbar` com matriz de estados nos dois temas, só tokens                                                                                                                                           | `src/apps/app/**`                  |
 | T6  | Testes: `icon`, `select` (teclado, ARIA, estados), `snackbar` e `SnackbarService`                                                                                                                                                                                                              | `*.spec.ts`                        |
-| T7  | README (raiz e `ui`): novos tokens de componente, tabela `$color-*` → token final; `migration-0.0-to-0.1.md`                                                                                                                                                                                   | `README.md`, `docs/design-system/` |
+| T7  | README (raiz e `ui`): novos tokens de componente, tabela `$color-*` → token final; `migration-0.0-to-1.0.md`                                                                                                                                                                                   | `README.md`, `docs/design-system/` |
 
 Gate da F2: `check:ds` verde com baselines vazias (nenhum literal de cor/unidade/tempo); testes dos três passam; `npm run build` e `npm run build:showcase` verdes; relatório; mensagem de commit; parar. Sem bump (o `0.1.0` só a pedido).
 
@@ -1227,7 +1260,7 @@ Escopo do plano mestre (seção 16): `styles/` (6.2), `units.css` + `ru()` + hel
 | T8  | Testes: devDependencies `vitest` (^4) e `happy-dom`; target `test` (`@angular/build:unit-test`) em `ui`; `setupFiles` com stubs da Popover API; testes de `ru()`, `ThemeService` e do toggle; script npm `test`                                                  | `package.json` (devDependencies), `angular.json`, `src/libs/ui/src/test-setup.ts`, `*.spec.ts`                    |
 | T9  | Migração dos nomes sem prefixo internos (`$responsive-unit`/`--responsive-unit` → `ru()`/`--shy-responsive-unit`; `$dynamic-*`/`--dynamic-*` → `--shy-dynamic-*`) em select, snackbar e showcase, só o necessário para `check-units` passar; o redesenho é da F2 | `select.component.scss`, `snackbar.component.scss`, `src/apps/styles.scss`, `app.scss`, `home.scss`, `icons.scss` |
 | T10 | Showcase: `angular.json > styles` com `index.css`; shell com toggle de tema/motion/fonte; páginas `/foundations/colors`, `typography`, `units` (tabela por viewport), `spacing`, `motion`, `layers`; tudo em ru                                                  | `src/apps/app/**`, `angular.json`                                                                                 |
-| T11 | Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-0.1}.md`; README raiz e `src/libs/ui/README.md` (consumo do CSS, `ThemeService`, `ru()`, `check:ds`, `test`)                                                    | `docs/design-system/*.md`, `README.md`, `src/libs/ui/README.md`                                                   |
+| T11 | Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-1.0}.md`; README raiz e `src/libs/ui/README.md` (consumo do CSS, `ThemeService`, `ru()`, `check:ds`, `test`)                                                    | `docs/design-system/*.md`, `README.md`, `src/libs/ui/README.md`                                                   |
 
 ### Gate da F1 (todos obrigatórios)
 
@@ -1241,7 +1274,7 @@ Escopo do plano mestre (seção 16): `styles/` (6.2), `units.css` + `ru()` + hel
 | D-F1-2 | Origem das fontes                                                | **a**: copiar uma vez os `woff2` de `@fontsource-variable/*` (sem dependência) com `OFL.txt` conferida na página oficial  |
 | D-F1-3 | `_variables.scss` (`$color-*`, `$responsive-unit`, `$dynamic-*`) | **b**: removido no `0.1.0`, sem shim publicado; shim interno só na F1/F2 (T3/T9 mantêm o arquivo até a F2 migrar os usos) |
 
-Ajustes no plano por causa dessas respostas (e da ADR-F1-4: nenhum alias, tudo com `shy`): T1, T3 e T9 não criam alias nenhum; `_variables.scss` fica na F1 só com `$color-*` (interno); a F2 passa a incluir a migração dos `$color-*` e a exclusão de `_variables.scss`; `migration-0.0-to-0.1.md` (T11) traz a tabela `$color-*` → token. A seção 6.5 do plano foi atualizada.
+Ajustes no plano por causa dessas respostas (e da ADR-F1-4: nenhum alias, tudo com `shy`): T1, T3 e T9 não criam alias nenhum; `_variables.scss` fica na F1 só com `$color-*` (interno); a F2 passa a incluir a migração dos `$color-*` e a exclusão de `_variables.scss`; `migration-0.0-to-1.0.md` (T11) traz a tabela `$color-*` → token. A seção 6.5 do plano foi atualizada.
 
 ### Premissas desta fase
 
@@ -1272,7 +1305,7 @@ Ajustes no plano por causa dessas respostas (e da ADR-F1-4: nenhum alias, tudo c
 - Testes: `angular.json` (target `test`), `tsconfig.spec.json`, `src/test-setup.ts` (stub da Popover API), devDependencies `vitest` e `happy-dom`.
 - Qualidade: `scripts/check-*.mjs`, `_shared.mjs`, `contrast-pairs.json`, `units-baseline.json`, `hardcoded-baseline.json`.
 - Showcase: novo shell (tema, reduce motion, fonte), páginas `/foundations/{colors,typography,units,spacing,motion,layers}`, anti-flash no `index.html`; `select`, `snackbar` e as páginas antigas migradas só nos nomes (`ru()`, `--shy-dynamic-*`).
-- Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-0.1}.md`, `README.md` raiz e `src/libs/ui/README.md`.
+- Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-1.0}.md`, `README.md` raiz e `src/libs/ui/README.md`.
 
 ### Efeito prático
 
@@ -1300,7 +1333,7 @@ feat(ui): fundação de tokens, temas, unidades e fontes
 - showcase com páginas /foundations e docs em docs/design-system
 - remove --responsive-unit, $responsive-unit e --dynamic-* sem alias
 
-BREAKING CHANGE: nomes sem prefixo shy removidos; ver migration-0.0-to-0.1.md
+BREAKING CHANGE: nomes sem prefixo shy removidos; ver migration-0.0-to-1.0.md
 ```
 
 ## F0: plano de verificações
