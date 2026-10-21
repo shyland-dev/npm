@@ -29,7 +29,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
-| F3-S6  | Fechamento da Onda 1                                                               | gate      |         |
+| F3-S6  | Fechamento da Onda 1                                                               | gate      | 0db8496 |
 | F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
 | F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
@@ -94,7 +94,7 @@ Não verificado: leitor de tela real; Windows em alto contraste real; RTL; zoom 
 | F3-S3  | FormField, Input, Textarea                                                                    | e119878 |
 | F3-S4  | Checkbox, Radio/RadioGroup, Switch                                                            | b410314 |
 | F3-S5  | Badge, Divider, Card, Alert                                                                   | 87644db |
-| F3-S6  | `examples/form`, auditoria a11y, 3 correções, matriz da Onda 1, tokens de componente nos docs | (este)  |
+| F3-S6  | `examples/form`, auditoria a11y, 3 correções, matriz da Onda 1, tokens de componente nos docs | 0db8496 |
 
 16 componentes novos na Onda 1, 114 testes, zero dependência de runtime nova, nenhuma devDependency nova. Sem bump, tag ou publish.
 
