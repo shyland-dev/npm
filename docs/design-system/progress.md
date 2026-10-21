@@ -7,7 +7,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - Fase: **F4 Onda 2**, sessão **F4-S5** (Snackbar v2)
 - Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Plano em "F4-S5: plano da sessão" abaixo. Decisão **ADR-F4-3b respondida em 2026-10-21: A (ação só sem modal)**. **Pendente: ADR-F4-3a** (API antiga): o `/build` NÃO a aprova; só executa depois da resposta explícita do dono.
+- Plano em "F4-S5: plano da sessão" abaixo. Decisão **ADR-F4-3b respondida em 2026-10-21: A (ação só sem modal)**. **ADR-F4-3a respondida em 2026-10-21: B (`@deprecated` com substituto)**. Sem decisão pendente: o próximo `/build` aprova o plano e executa a F4-S5.
 
 ## Fases
 
@@ -111,7 +111,7 @@ Reescrever o Snackbar: outlet global (sem `ViewChild`), fila, `SnackbarService.s
 6. API antiga `@deprecated` conforme a decisão abaixo; showcase refeito; testes (fila, pausa, aria, ação); README e ADR-F4-9.
 7. Gate: `check:ds`, testes, builds, auditoria Chromium (inclusive com um Dialog aberto).
 
-### Decisão 3a (ADR-F4-3): destino de `SnackbarService.show({ element, ... })` e `<shy-snackbar>`
+### Decisão 3a (ADR-F4-3, respondida em 2026-10-21: opção B): destino de `SnackbarService.show({ element, ... })` e `<shy-snackbar>`
 
 | Opção                           | O que faz                                                                                | Custo                                                    |
 | ------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------- |
