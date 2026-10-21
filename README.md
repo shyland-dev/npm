@@ -255,6 +255,21 @@ shy-snackbar {
 
 ---
 
+### OverlayService
+
+Abre um componente ou `TemplateRef` numa camada acima da página (base de Dialog, Drawer, Popover, Menu e dos novos Select/Snackbar da F4). Documentação completa e opções em [`src/libs/ui/README.md`](src/libs/ui/README.md#overlayservice-overlay-core).
+
+```ts
+const ref = inject(OverlayService).open(MeuPainel, { layer: 'modal', data: { id: 1 }, ariaLabel: 'Editar item' });
+const resultado = await ref.closed; // quem abre recebe o que o painel passou em ref.close(resultado)
+```
+
+- Painéis em `.shy-overlay-container` (no `body`, sob demanda). Modal = `<dialog>`; o resto = `[popover="manual"]`. No top layer vale a ordem de abertura: abrir um modal promove popover/tooltip/toast abertos acima dele.
+- Esc fecha só a camada do topo; clique fora configurável; modal prende o Tab, trava o scroll (`data-shy-scroll-lock` no `<html>`) e deixa o resto `inert`.
+- Exige o CSS da lib carregado (`styles/index.css` ou `global`: inclui `overlay.css`). Teste visual em **Foundations > layers** do showcase.
+
+---
+
 ## Utilitários (`@shyland-dev/utils`)
 
 | Export         | Descrição                                                       |
@@ -507,11 +522,19 @@ export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/the
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
 export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResolvedTheme, ShyThemeConfig } from './lib/services/theme/theme.service';
 
+// Overlay
+export { OverlayService } from './lib/overlay/overlay.service';
+export { ShyOverlayRef, SHY_OVERLAY_DATA } from './lib/overlay/overlay-ref';
+export { FocusScopeDirective, focusableElements, focusInitial, trapTab, restoreFocus } from './lib/overlay/focus-scope';
+export { computePosition, ShyComputePositionOptions } from './lib/overlay/position';
+export { shyLayer, layerRank } from './lib/overlay/layers';
+
 // Utilitários
 export { ru } from './lib/utils/ru';
 export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 
 // Interfaces
+export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
@@ -522,6 +545,7 @@ export { ShyCardElevation } from './lib/types/card/card.type';
 export { ShyDividerOrientation } from './lib/types/divider/divider.type';
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyInputSize } from './lib/types/input/input.type';
+export { SHY_LAYERS, ShyLayer, ShyOverlayLayer, ShyPlacement, ShySide, ShyInitialFocus } from './lib/types/overlay/overlay.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
 export { ShyProgressSize } from './lib/types/progress/progress.type';
 export { ShyRadioOrientation } from './lib/types/radio/radio.type';

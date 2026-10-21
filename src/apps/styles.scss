@@ -118,3 +118,9 @@ table.data {
   font-size: var(--shy-text-sm);
   text-align: center;
 }
+
+// Posição do toast da página de camadas (a lib deixa a posição do painel para quem o abre).
+.layers-toast {
+  inset-block: auto ru(4);
+  inset-inline: auto ru(4);
+}

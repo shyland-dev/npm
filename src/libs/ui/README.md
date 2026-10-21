@@ -365,6 +365,53 @@ updateSelection(event: SelectionChangeEvent) {
 
 ---
 
+### `OverlayService` (overlay core)
+
+Opens a component or a `TemplateRef` in a layer above the page. It is the base of Dialog, Drawer, Popover, Menu and the new Select/Snackbar (phase F4); you can also use it directly. Needs `styles/index.css` (or `global`) loaded: it ships `overlay.css`.
+
+```ts
+import { OverlayService, ShyOverlayRef, SHY_OVERLAY_DATA } from '@shyland-dev/ui';
+
+const overlay = inject(OverlayService);
+
+const ref = overlay.open<MyPanel, { id: number }, boolean>(MyPanel, {
+  layer: 'modal', // 'dropdown' | 'drawer' | 'modal' | 'popover' | 'tooltip' | 'toast' (default 'modal')
+  data: { id: 1 }, // inside MyPanel: inject(SHY_OVERLAY_DATA); in a template: let-data and let-ref="overlayRef"
+  ariaLabel: 'Edit item',
+});
+const confirmed = await ref.closed; // Promise<boolean | undefined>
+
+// inside MyPanel
+readonly ref = inject(ShyOverlayRef<boolean>);
+save() { this.ref.close(true); }
+```
+
+| Option                                                                                    | Default                                  | Description                                                                                                                                  |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `layer`                                                                                   | `modal`                                  | Position in the z-index scale; decides what is promoted above what                                                                           |
+| `modal`                                                                                   | `true` in `modal`/`drawer`               | `<dialog>.showModal()`: backdrop, rest of the page `inert`, Tab trap, scroll lock                                                            |
+| `anchor`, `position`                                                                      | none                                     | Places the panel next to an element: `placement` (12 logical placements, RTL aware), `offset`/`padding` in ru, `flip`, `shift`, `matchWidth` |
+| `closeOnEscape`                                                                           | `true`                                   | Esc closes only the topmost layer (and only if the content did not handle it with `preventDefault`)                                          |
+| `closeOnOutsideClick`                                                                     | `true` outside modals, `false` in modals | The `anchor` itself never counts as "outside"                                                                                                |
+| `initialFocus`                                                                            | `first` in modals, `none` otherwise      | `first` (or `[autofocus]`), `pane`, `none` or an element                                                                                     |
+| `restoreFocus`                                                                            | `true`                                   | Returns focus to the previous element on close (only if focus was lost or inside the panel)                                                  |
+| `data`, `injector`, `paneClass`, `role`, `ariaLabel`, `ariaLabelledBy`, `ariaDescribedBy` | none                                     | Extra data, parent injector, class and ARIA on the panel                                                                                     |
+
+`ShyOverlayRef<R>`: `close(result?)` (animates out, then removes), `closed: Promise<R | undefined>`, `isOpen` (signal), `updatePosition()`, `pane`, `componentInstance`. `OverlayService.closeAll()` closes everything, top to bottom.
+
+How it behaves:
+
+- Panels live in `.shy-overlay-container` (in `body`), created with the first overlay and removed with the last. Modals use `<dialog>`; everything else uses `[popover="manual"]`. Both are in the top layer, where the **opening order** decides who is on top, so opening a modal promotes any open popover/tooltip/toast of a higher layer above it (reopened without animation). Without the APIs (old browsers) the panel falls back to `position: fixed` with `--shy-z-*`.
+- A modal makes everything outside of it `inert`. A panel with an `anchor` inside an open modal (a Select inside a Dialog) becomes a child of that modal so it stays interactive, and closes with it. Overlays opened **before** a modal (a toast, for example) stay visible above it but are inert until it closes.
+- The panel is unstyled (transparent, no padding): the component you open draws its own surface, border and focus ring (including `forced-colors`). Entry uses `@starting-style`; exit uses `animateOut` (`data-state="closing"`), instant with reduced motion.
+- Position the panel with a class (`paneClass`): defaults have zero specificity. Anchored panels get `left`/`top` in `ru` calculated from the measured responsive unit.
+- Scroll lock sets `data-shy-scroll-lock` on `<html>` (`overflow: hidden` + `scrollbar-gutter: stable`, no px).
+- Outside the browser (SSR) `open()` returns an already closed ref.
+
+Helpers: `computePosition(anchorRect, floatingSize, viewportRect, options)` (pure TS, px in/out), `[shyFocusScope]` (`FocusScopeDirective`: initial focus, `shyFocusScopeTrap`, restores focus on destroy), `focusableElements`, `focusInitial`, `trapTab`, `restoreFocus`, `shyLayer(name)` and `layerRank(name)` (TS side of `z()`).
+
+---
+
 ## Styles
 
 Tokens (colors, typography, spacing, motion, layers), self-hosted fonts (JetBrains Mono, SIL OFL), animations and a base reset ship as one CSS. Pick **one** way to load it:
@@ -575,11 +622,19 @@ export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/the
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
 export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResolvedTheme, ShyThemeConfig } from './lib/services/theme/theme.service';
 
+// Overlay
+export { OverlayService } from './lib/overlay/overlay.service';
+export { ShyOverlayRef, SHY_OVERLAY_DATA } from './lib/overlay/overlay-ref';
+export { FocusScopeDirective, focusableElements, focusInitial, trapTab, restoreFocus } from './lib/overlay/focus-scope';
+export { computePosition, ShyComputePositionOptions } from './lib/overlay/position';
+export { shyLayer, layerRank } from './lib/overlay/layers';
+
 // Utilities
 export { ru } from './lib/utils/ru';
 export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 
 // Interfaces
+export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
@@ -590,6 +645,7 @@ export { ShyCardElevation } from './lib/types/card/card.type';
 export { ShyDividerOrientation } from './lib/types/divider/divider.type';
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyInputSize } from './lib/types/input/input.type';
+export { SHY_LAYERS, ShyLayer, ShyOverlayLayer, ShyPlacement, ShySide, ShyInitialFocus } from './lib/types/overlay/overlay.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
 export { ShyProgressSize } from './lib/types/progress/progress.type';
 export { ShyRadioOrientation } from './lib/types/radio/radio.type';

@@ -10,3 +10,4 @@ export * from './radio/radio.type';
 export * from './skeleton/skeleton.type';
 export * from './snackbar/snackbar.type';
 export * from './spinner/spinner.type';
+export * from './overlay/overlay.type';

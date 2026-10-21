@@ -73,3 +73,11 @@ Não verificado: leitor de tela real (NVDA, VoiceOver, TalkBack); Windows em alt
 ## Por componente (F2 em diante)
 
 Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo controle, `aria-*` conforme APG (Listbox/Select, Combobox, Dialog, Tabs, Menu button, Tooltip, Switch, Radio group, Checkbox, Accordion, Alert/Status), mensagens dinâmicas com `role="status"`/`role="alert"`, cor nunca como única pista. Checklist manual por onda: só teclado; zoom 200%; largura 320 px; `forced-colors`; `reduced-motion`; claro e escuro; 360×800, 1366×768 e 1920×1080.
+
+## Overlays (F4-S1, `OverlayService`)
+
+- **Modal** (`<dialog>.showModal()`): resto da página `inert` pelo navegador, Tab preso entre o primeiro e o último focável, foco inicial no primeiro focável (ou `[autofocus]`), foco devolvido a quem abriu ao fechar, scroll da página travado. O nome vem de `ariaLabel`/`ariaLabelledBy` (o Dialog da F4-S2 liga o título).
+- **Esc** fecha só a camada do topo e só se o conteúdo não tratou a tecla; o `cancel` nativo é bloqueado para a pilha do serviço decidir.
+- **Popover/tooltip/toast** (`[popover="manual"]`) não roubam foco por padrão (`initialFocus: 'none'`); quem abre o painel é responsável por `aria-expanded`/`aria-controls` (Popover, Menu e Select da F4-S3/S4).
+- **Limitação conhecida**: overlay aberto antes de um modal fica visível, mas inerte, até o modal fechar (ADR-F4-5). Painel ancorado em conteúdo do modal é filho dele e continua interativo.
+- **Verificado no Chromium** (página `foundations/layers`, dark e light): ordem de empilhamento nas 3 ordens de abertura, Esc um por vez, Tab preso, clique no backdrop não fecha o modal, clique fora fecha o popover, container e scroll lock removidos ao fechar, foco devolvido; popover irmão do modal fica inerte (hit-test cai no dialog) e popover filho do dialog recebe o clique (confirma a ADR-F4-5). **Não verificado**: leitor de tela, reduced motion no overlay (só a lógica do `animateOut`, testada em unidade), RTL real no navegador (testado só em unidade), Safari/Firefox.

@@ -1,6 +1,6 @@
 <div class="page">
   <h1 class="page-title">Layers</h1>
-  <p class="page-lead">Named z-index scale for elements outside the top layer, in steps of 100 so <code>z(modal, 1)</code> fits between two layers. Elements in the top layer (<code>&lt;dialog&gt;.showModal()</code>, <code>[popover]</code>) ignore z-index among themselves and follow the opening order; the overlay service (phase F4) promotes tooltips and toasts above newer dialogs.</p>
+  <p class="page-lead">Named z-index scale for elements outside the top layer, in steps of 100 so <code>z(modal, 1)</code> fits between two layers. Elements in the top layer (<code>&lt;dialog&gt;.showModal()</code>, <code>[popover]</code>) ignore z-index among themselves and follow the opening order; <code>OverlayService</code> promotes popovers, tooltips and toasts above a newer dialog.</p>
 
   <section class="section">
     <h2>Scale</h2>
@@ -36,5 +36,29 @@
         </div>
       }
     </div>
+  </section>
+
+  <section class="section">
+    <h2>Overlay order</h2>
+    <p>Each button opens a panel through <code>OverlayService.open()</code>. Open them in different orders: a popover or toast opened <em>before</em> a modal is promoted above it, and Esc closes only the topmost one. With a modal open the rest of the page is inert, so close it from its own button or with Esc.</p>
+    <div class="shy-cluster">
+      <button shyButton variant="outline" type="button" (click)="open('modal')">Open modal</button>
+      <button #popover shyButton variant="outline" type="button" (click)="open('popover')">Open popover</button>
+      <button shyButton variant="outline" type="button" (click)="open('toast')">Open toast</button>
+      <button shyButton variant="ghost" type="button" (click)="closeAll()">Close all</button>
+    </div>
+    <div class="shy-cluster">
+      @for (preset of presets; track preset.label) {
+        <button shyButton size="sm" type="button" (click)="openOrder(preset.order)">{{ preset.label }}</button>
+      }
+    </div>
+    <p class="order" aria-live="polite">
+      Opening order (last is on top):
+      @for (item of opened(); track item.id) {
+        <code>#{{ item.id }} {{ item.layer }}</code>
+      } @empty {
+        <span>none open</span>
+      }
+    </p>
   </section>
 </div>

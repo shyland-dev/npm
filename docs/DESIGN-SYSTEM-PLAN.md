@@ -529,6 +529,7 @@ Alvo de toque: controles ≥ 24 px em qualquer viewport (WCAG 2.5.8 AA; o script
     - TS: `shyLayer('tooltip')` lê a variável (para overlays criados em runtime).
     - O app consumidor pode inserir uma camada própria (ex.: `--shy-z-chat: 850`) entre duas existentes sem tocar a lib.
 2. **Ordem de abertura para o top layer, com promoção.** O `OverlayService` mantém a pilha dos overlays abertos com o **rank** da camada. Ao abrir um overlay de rank `r`, qualquer popover/toast/tooltip aberto de rank maior é promovido (`hidePopover()` + `showPopover()` sem animação, `data-promoting`) para continuar acima. Resultado: tooltip e toast nunca ficam atrás de um dialog; dialog sobre dialog empilha pela ordem natural. `<dialog>` é usado só para `modal`/`drawer` (não dá para promover sem fechar); o resto usa `[popover="manual"]`.
+    - Limitação (ADR-F4-5): `showModal()` deixa `inert` tudo fora do dialog, inclusive popover/toast promovido; painel ancorado em conteúdo do modal é filho dele e continua interativo.
     - Custo conhecido: a promoção reinicia o estado do popover (foco e transição); por isso o tooltip fecha ao abrir um modal e o toast é reapresentado sem animação.
 3. **Container de overlay sob demanda (decisão do dono, 2026-10-20, ADR-F4-1; inspirado no CDK).** O `OverlayService` cria `.shy-overlay-container` no `body` (fixo, tela cheia, `pointer-events: none`) quando o primeiro overlay abre e o remove quando o último fecha. Ele hospeda painéis e o backdrop dos modais (`pointer-events: auto` só neles). Com top layer disponível, os painéis são promovidos a ele (mecanismo 2); sem, o container fica em `z(modal)` e os painéis empilham pela ordem no DOM e por `z()`.
 
@@ -663,8 +664,8 @@ Tokens: `--shy-state-hover: 0.08`, `--shy-state-pressed: 0.12`.
 
 - Camada: `<dialog>` nativo (`showModal()` dá top layer, `inert` no resto e Esc) e Popover API (`popover="manual|auto"`) para popover/menu/tooltip/toast.
 - Posicionamento: util próprio `computePosition(anchor, floating, { placement, offset, flip, shift })` em TS (getBoundingClientRect + visualViewport). Offsets recebem ru via helper. CSS Anchor Positioning só como melhoria progressiva **se** o suporte nos navegadores-alvo estiver consolidado (CLI verifica em MDN/caniuse).
-- Foco: `FocusScope` próprio (guardar elemento anterior, foco inicial, devolver ao fechar). Em `<dialog>` modal o trap é nativo.
-- `OverlayService` mínimo: abrir componente/template dinamicamente em container no `body`, com `ref.close(result)`.
+- Foco: `FocusScopeDirective` (`[shyFocusScope]`) e funções puras (`focusInitial`, `trapTab`, `restoreFocus`): guardar elemento anterior, foco inicial, devolver ao fechar. Em `<dialog>` modal o trap é nativo.
+- `OverlayService` (ADR-F4-4, opção B): `open(componenteOuTemplate, config)` → `ShyOverlayRef<R>` (`close(result)`, `closed: Promise`, `isOpen`, `updatePosition()`; `SHY_OVERLAY_DATA`), em container no `body`. Implementado na F4-S1; detalhes e achados na ADR-F4-5 (painel ancorado dentro de modal vira filho dele; overlays abertos antes de um modal ficam inertes).
 - jsdom pode não implementar `showModal`/`showPopover`: stubs no setup de testes (o CLI verifica).
 
 ### 11.3 Checklist de "pronto" por componente

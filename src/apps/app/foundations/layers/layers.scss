@@ -19,3 +19,10 @@
   box-shadow: var(--shy-shadow-2);
   font-size: var(--shy-text-sm);
 }
+
+.order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--shy-space-2);
+  align-items: center;
+}
