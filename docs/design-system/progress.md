@@ -4,8 +4,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F5 Onda 3 + hardening**, sessão **F5-S1** (escolha da Onda 3 + lote 1)
-- Estado: `aguardando-gate` (F5-S1: relatório do gate abaixo; o próximo `/build` commita, faz push e avança para a F5-S2)
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S2** (lote 2: Avatar, EmptyState, List, Table)
+- Estado: `aguardando-plano` (F5-S1 concluída em `78774a0`; o próximo `/build` aprova o plano da F5-S2 abaixo e executa)
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -63,14 +63,14 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 
 ## Fases
 
-| Fase                               | Status                       | Commit                                                        |
-| ---------------------------------- | ---------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)    | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)    | 0123029                                                       |
-| F2 Refactor dos existentes         | concluída (gate aprovado)    | eb359ac                                                       |
-| F3 Onda 1                          | concluída (gate aprovado)    | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | concluída (gate aprovado)    | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
-| F5 Onda 3 + hardening              | em andamento (F5-S1 no gate) |                                                               |
+| Fase                               | Status                        | Commit                                                        |
+| ---------------------------------- | ----------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado)     | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)     | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado)     | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado)     | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado)     | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | em andamento (F5-S2 no plano) |                                                               |
 
 ## Sessões
 
@@ -88,8 +88,8 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
 | F4-S6  | Fechamento da Onda 2                                                               | gate      |         |
-| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | gate      |         |
-| F5-S2  | Lote 2                                                                             | pendente  |         |
+| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0 |
+| F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | plano     |         |
 | F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |         |
 | F5-S4  | Hardening e fechamento                                                             | pendente  |         |
 
@@ -112,6 +112,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 - 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
 - 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
 - 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
+- 2026-10-21: `/build` aprovou o gate da F5-S1 (`78774a0`, já enviado). **F5-S1 concluída.** F5-S2 em `aguardando-plano` (plano acima).
 
 ## F4-S3: plano da sessão (2026-10-21)
 
@@ -142,6 +143,27 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S2: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Implementar o lote 2 da Onda 3 (Avatar, EmptyState, List, Table) com o contrato comum, reaproveitando Pagination (F5-S1) como opção de paginação na Table.
+
+### Tarefas
+
+1. **Avatar** (`shy-avatar`): imagem com fallback para iniciais/ícone; tamanhos; `alt`/`aria-label`; token `--shy-avatar-*`.
+2. **EmptyState** (`shy-empty-state`): título, descrição, ícone e slot de ação; sem role especial.
+3. **List** (`shy-list`, `shy-list-item`): lista semântica (`ul/li`), itens com início/fim e estado interativo opcional (botão/link).
+4. **Table** (`shy-table`): tabela semântica (`<table>` nativa, `caption`, `scope`); ordenação opcional (`aria-sort`, botão no cabeçalho); seleção opcional (checkbox por linha + cabeçalho com estado indeterminado); estado vazio via EmptyState; **sem virtualização**; rolagem horizontal contida no wrapper.
+5. Tokens `--shy-<comp>-*`, estados (hover só com `(hover: hover)`, `focus-visible`, disabled), reduced-motion, forced-colors, light/dark, RTL.
+6. Testes, páginas no showcase (`components/{avatar,empty-state,list,table}`), rotas e menu, tabela de tokens no README da lib, `tokens.md`, `accessibility.md`, exports, ADR-F5-2.
+7. Gate: `check:ds`, testes, builds, auditoria Chromium.
+
+### Premissas (sem decisão de alto impacto pendente)
+
+- Table recebe linhas por projeção de conteúdo (`<tr>` nativo) e só adiciona comportamento (ordenação/seleção) por diretivas/atributos; sem modelo de dados próprio nem `columns[]` (evita API pesada; pode ser revisto sob demanda).
+- Mensagem de commit proposta no gate: `feat(ui): avatar, empty-state, list e table`.
 
 ## F5-S1: relatório do gate (2026-10-21)
 
