@@ -7,7 +7,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - Fase: **F5 Onda 3 + hardening**, sessão **F5-S1** (escolha da Onda 3 + lote 1)
 - Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono pendente:** quais componentes da Onda 3 os projetos usam e a ordem; o `/build` NÃO a aprova.
+- F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O próximo `/build` executa o lote 1.
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
 
 ## Handoff por sessão (threads separadas)
