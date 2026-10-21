@@ -1,0 +1,25 @@
+<div class="page">
+  <h1 class="page-title">Alert</h1>
+  <p class="page-lead"><code>&lt;shy-alert&gt;</code> pairs an icon (different per intent), a title and a message, so it never informs by color alone. It is <code>role="status"</code> by default; <code>urgent</code> makes it <code>role="alert"</code> only for <code>warning</code> and <code>danger</code>. Use it for content that appears after load, and keep urgent alerts rare.</p>
+
+  <section class="section">
+    <h2>Intents</h2>
+    <div class="shy-stack">
+      @for (intent of intents; track intent) {
+        <shy-alert [intent]="intent" [heading]="intent + ' title'">A short message that explains what happened and what to do next.</shy-alert>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Action and dismiss</h2>
+    <div class="shy-stack">
+      <shy-alert intent="danger" heading="Could not save" [urgent]="true" [dismissible]="true" dismissLabel="Dismiss error" (dismissed)="dismissed.update((n) => n + 1)">
+        Check your connection and try again.
+        <button slot="action" shyButton size="sm" variant="outline" intent="danger" type="button">Retry</button>
+      </shy-alert>
+      <span class="token-name">dismissed = {{ dismissed() }}</span>
+      <shy-alert intent="info">No title, just a message.</shy-alert>
+    </div>
+  </section>
+</div>

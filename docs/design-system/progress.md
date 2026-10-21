@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F3 Onda 1**, sessão **F3-S5** (Badge/Tag, Divider, Card, Alert)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Gate da F3-S4 aprovado pelo `/build` de 2026-10-20 (commit `b410314`). O plano da F3-S5 está em `sessions/F3-onda-1.md`; o próximo `/build` o aprova e executa a sessão.
+- A F3-S5 foi executada e verificada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S5: relatório do gate". O próximo `/build` aprova o gate (ou um ajuste vira commit novo) e avança para a F3-S6 em `aguardando-plano`.
 
 ## Fases
 
@@ -28,7 +28,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
 | F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
-| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | plano     |         |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | gate      |         |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
 | F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
@@ -54,6 +54,57 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: `/build` aprovou o gate da F3-S3 (`e119878`, já enviado). F3-S4 em `aguardando-plano`.
 - 2026-10-20: `/build` aprovou o plano da F3-S4 e a executou (Checkbox, Switch, Radio, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
 - 2026-10-20: `/build` aprovou o gate da F3-S4 (`b410314`, já enviado). F3-S5 em `aguardando-plano`.
+- 2026-10-21: `/build` aprovou o plano da F3-S5 e a executou (Badge, Divider, Card, Alert, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+
+## F3-S5: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados; 56 pares de contraste (nenhum novo: os pares `*-soft`/`on-*-soft`/`*-text` e `on-*`/`*` já cobriam Badge e Alert)                          |
+| `npm test`               | verde: 21 arquivos, 114 testes (novos: `badge` 4, `divider` 1, `card` 3, `alert` 5)                                                                                                                           |
+| `npm run build`          | verde (`ui` e `utils`)                                                                                                                                                                                        |
+| `npm run build:showcase` | verde                                                                                                                                                                                                         |
+| Papéis do Alert          | Chromium: `status` nos 4 alertas padrão e `alert` no danger com `urgent`; jsdom: `urgent` só vira `alert` em warning/danger, info/success continuam `status`; ícone diferente por intenção (4 SVGs distintos) |
+| Dismiss e remover        | botão de fechar do Alert (nome "Dismiss error") oculta e emite `dismissed`; remover do Badge tem `aria-label` e remove o item (3 para 2 tags no Chromium); alvo do remover ≈ 30 px (ícone 15 px + `::before`) |
+| Card interativo          | `a`/`button[shyCard]`: foco `solid` 2 px; botão-cartão dispara por Espaço e Enter (2 cliques no Chromium); `disabled` nativo; `shy-card` sem `tabindex`                                                       |
+| Temas e viewports        | badge, divider, card e alert em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                       |
+| forced-colors (emulação) | bordas `CanvasText`/`LinkText`, badge sólido em `Highlight`/`HighlightText`, ícone do Alert em `CanvasText`; capturado mas não inspecionado em detalhe: conferir no Windows                                   |
+| Ambiente                 | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                   |
+
+Achados corrigidos durante a sessão: o atributo `title` no `shy-alert` virava tooltip e nome acessível do host (agora o input é `heading`); `1lh` é proibido pelo `check-units`; páginas do showcase com estado em campo comum não re-renderizam em zoneless (viraram `signal`).
+
+Não verificado: leitor de tela real (NVDA/VoiceOver); Windows em alto contraste real; RTL; ponteiro grosso com dispositivo real.
+
+### Arquivos principais
+
+- `lib/components/badge/`, `divider/`, `card/`, `alert/` (`.ts`, `.html`, `.scss`, specs; divider sem `.html`) e `lib/types/{badge,divider,card,alert}/`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: `components/{badge,divider,card,alert}`, rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens, exports), `decisions.md` (ADR-F3-5), `accessibility.md`.
+
+### Efeito prático
+
+- `<shy-badge>` (intent × soft/solid/outline, `count`, `dot`, `removable`), `<shy-divider>`, `<shy-card>` e cartões interativos `a[shyCard]`/`button[shyCard]`, `<shy-alert>` com ícone por intenção, `urgent`, ação e `dismissible`.
+- Nenhuma API existente mudou. Sem dependência nova, bump, tag ou publish.
+
+### Decisões e premissas (ADR-F3-5 em `decisions.md`)
+
+- Card interativo é o elemento nativo (`a`/`button`), não um input `interactive` num `div`; Alert usa `heading` (não `title`) e `urgent` default `false`; `dismissible` se oculta sozinho e o foco depois é do app; mixins de cor do Button reaproveitados; texto padrão do botão de remover/fechar em inglês, sobrescrevível.
+- O arquivo da sessão dizia "`interactive` vira link/botão": o resultado é o mesmo, pelo elemento nativo.
+
+### Mensagem de commit
+
+```
+feat(ui): badge, divider, card e alert
+
+- shy-badge: intent, soft/solid/outline, count, dot e removable com botão nomeado
+- shy-divider: role="separator", horizontal/vertical, texto opcional
+- shy-card e a/button[shyCard]: slots header/footer, elevation 0 a 3, interativo pelo elemento nativo
+- shy-alert: ícone por intenção, heading, ação, urgent (role="alert") e dismissible
+- tokens --shy-badge-*, --shy-card-*, --shy-alert-* e --shy-divider-*
+- showcase: components/badge, divider, card e alert; README e ADR-F3-5
+```
 
 ## F3-S4: relatório do gate (2026-10-20)
 

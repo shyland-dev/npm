@@ -1,0 +1,62 @@
+@use '../../styles' as *;
+@use '../button/button-theme' as theme;
+
+@each $intent in (info, success, warning, danger) {
+  :host([data-intent='#{$intent}']) {
+    --_text: var(--shy-color-#{$intent}-text);
+    --_soft: var(--shy-color-#{$intent}-soft);
+    --_on-soft: var(--shy-color-on-#{$intent}-soft);
+  }
+}
+
+:host {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: start;
+  gap: var(--shy-alert-gap, var(--shy-space-5));
+  box-sizing: border-box;
+  padding: var(--shy-alert-pad, var(--shy-space-6) var(--shy-space-7));
+  border: var(--shy-border-width) solid var(--shy-alert-border-color, var(--_text));
+  border-radius: var(--shy-alert-radius, var(--shy-radius-md));
+  background: var(--shy-alert-bg, var(--_soft));
+  color: var(--shy-alert-fg, var(--_on-soft));
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.icon {
+  --shy-icon-size: var(--shy-size-icon-lg);
+
+  // Acompanha a primeira linha de texto.
+  margin-block-start: calc((var(--shy-text-md) * var(--shy-leading-normal) - var(--shy-size-icon-lg)) / 2);
+  color: var(--shy-alert-icon-color, var(--_text));
+}
+
+.title {
+  font-weight: var(--shy-weight-semibold);
+}
+
+.message:empty,
+.action:empty {
+  display: none;
+}
+
+.close {
+  margin-block: calc(var(--shy-space-2) * -1);
+  margin-inline-end: calc(var(--shy-space-3) * -1);
+  color: inherit;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+
+  .icon {
+    color: CanvasText;
+  }
+}

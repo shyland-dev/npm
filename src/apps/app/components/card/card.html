@@ -1,0 +1,47 @@
+<div class="page">
+  <h1 class="page-title">Card</h1>
+  <p class="page-lead"><code>&lt;shy-card&gt;</code> has <code>header</code> and <code>footer</code> slots around the body, and <code>elevation</code> 0 to 3 (<code>--shy-shadow-*</code>). For a clickable card use a native element, <code>&lt;a shyCard href&gt;</code> or <code>&lt;button shyCard&gt;</code>: focus ring, hover (pointer devices only) and pressed state come with it. An interactive card must not contain other controls.</p>
+
+  <section class="section">
+    <h2>Elevation</h2>
+    <div class="grid">
+      @for (level of levels; track level) {
+        <shy-card [elevation]="level">
+          <span slot="header">Elevation {{ level }}</span>
+          Body text of the card.
+          <span slot="footer">Footer</span>
+        </shy-card>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>With content</h2>
+    <div class="grid">
+      <shy-card>
+        <span slot="header">Release 0.1.0 <shy-badge intent="success">new</shy-badge></span>
+        Tokens, themes and the first components.
+        <span slot="footer"><button shyButton size="sm" variant="outline">Read notes</button></span>
+      </shy-card>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Interactive</h2>
+    <div class="grid">
+      <a shyCard href="#link" [elevation]="1">
+        <span slot="header">Link card</span>
+        Navigates on Enter; focus with Tab.
+      </a>
+      <button shyCard type="button" (click)="clicks.update((n) => n + 1)">
+        <span slot="header">Button card</span>
+        Clicked {{ clicks() }} times (Enter or Space).
+      </button>
+      <button shyCard type="button" disabled>
+        <span slot="header">Disabled</span>
+        Not focusable.
+      </button>
+      <a shyCard href="#focus" data-shy-state="focus"><span slot="header">Forced focus</span> For the state matrix.</a>
+    </div>
+  </section>
+</div>

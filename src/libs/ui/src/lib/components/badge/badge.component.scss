@@ -1,0 +1,90 @@
+@use '../../styles' as *;
+@use '../button/button-theme' as theme;
+
+@include theme.intents;
+@include theme.variants;
+
+:host {
+  --_height: #{ru(10)};
+  --_pad-x: var(--shy-space-4);
+  --_font-size: var(--shy-text-sm);
+  --_icon: var(--shy-size-icon-sm);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--shy-badge-gap, var(--shy-space-2));
+  box-sizing: border-box;
+  min-block-size: var(--shy-badge-height, var(--_height));
+  padding-inline: var(--shy-badge-pad-x, var(--_pad-x));
+  border: var(--shy-border-width) solid var(--shy-badge-border-color, var(--_border));
+  border-radius: var(--shy-badge-radius, var(--shy-radius-full));
+  background: var(--shy-badge-bg, var(--_bg));
+  color: var(--shy-badge-fg, var(--_fg));
+  font-size: var(--shy-badge-font-size, var(--_font-size));
+  font-weight: var(--shy-weight-medium);
+  line-height: var(--shy-leading-tight);
+  white-space: nowrap;
+  vertical-align: middle;
+  --shy-icon-size: var(--_icon);
+}
+
+:host([data-size='sm']) {
+  --_height: #{ru(8)};
+  --_pad-x: var(--shy-space-3);
+  --_font-size: var(--shy-text-xs);
+  --_icon: #{ru(5)};
+}
+
+// O ponto usa a cor do texto do badge: sempre tem o contraste do par fg/bg.
+.dot {
+  flex-shrink: 0;
+  inline-size: var(--shy-badge-dot-size, #{ru(2.5)});
+  block-size: var(--shy-badge-dot-size, #{ru(2.5)});
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.text:empty {
+  display: none;
+}
+
+.remove {
+  position: relative;
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  margin: 0;
+  margin-inline-end: calc(var(--shy-space-2) * -1);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  @include state-layer;
+
+  // Alvo de toque maior que o ícone (≥ 24 px, WCAG 2.5.8) sem inflar o badge.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--shy-space-3) * -1);
+  }
+
+  &:focus-visible {
+    @include focus-ring(0);
+  }
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+
+  :host([data-variant='solid']) {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}

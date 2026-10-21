@@ -1,0 +1,11 @@
+@if (dot()) {
+  <span class="dot" aria-hidden="true"></span>
+}
+@if (countText() !== null) {
+  <span class="text">{{ countText() }}</span>
+} @else {
+  <span class="text"><ng-content /></span>
+}
+@if (removable()) {
+  <button class="remove" type="button" [attr.aria-label]="removeLabel()" (click)="removed.emit()"><shy-icon name="x" /></button>
+}

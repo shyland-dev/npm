@@ -43,22 +43,26 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 
 ## Componentes (`@shyland-dev/ui`)
 
-| Componente      | Selector                                | Descrição                                                                                         |
-| --------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| **Button**      | `button[shyButton]`, `a[shyButton]`     | Botão de ação: `variant`, `intent`, `size`, `loading` (`aria-busy`, foco mantido), `block`        |
-| **IconButton**  | `button[shyIconButton]`                 | Botão só com ícone; `label` obrigatório vira `aria-label`                                         |
-| **Spinner**     | `shy-spinner`                           | 8 variantes, `size` xs a lg, `label` opcional (`role="status"`), cor por `currentColor`           |
-| **Skeleton**    | `shy-skeleton`                          | Placeholder `text`/`circle`/`rect`, `lines`, `shimmer`/`still`; decorativo (`aria-hidden`)        |
-| **Progress**    | `shy-progress`, `shy-progress-circular` | `role="progressbar"`, `value`/`max`, indeterminado sem `value`                                    |
-| **Checkbox**    | `shy-checkbox`                          | Sobre o checkbox nativo: `[(checked)]`, `indeterminate`, CVA, `invalid` do `NgControl`            |
-| **Radio**       | `shy-radio-group`, `shy-radio`          | `role="radiogroup"` com radios nativos (setas e roving tabindex do navegador), CVA                |
-| **Switch**      | `shy-switch`                            | Checkbox nativo com `role="switch"`; mesma API do Checkbox                                        |
-| **Input**       | `input[shyInput]`, `textarea[shyInput]` | Campo sobre o nativo (`ngModel`/`formControl`), tamanhos, `invalid` do `NgControl`                |
-| **FormField**   | `shy-form-field`                        | Label, dica, erro (ícone + texto) e contador; liga `for`/`id` e `aria-*`; slots `prefix`/`suffix` |
-| **Icon**        | `<shy-icon>`                            | Ícones SVG inline com suporte a hover fill e tamanho customizável                                 |
-| **Select**      | `<shy-select>`                          | Dropdown customizável com suporte a ícones e imagens nas opções                                   |
-| **Snackbar**    | `<shy-snackbar>`                        | Notificação temporária no topo ou rodapé da página                                                |
-| **ThemeToggle** | `<shy-theme-toggle>`                    | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                               |
+| Componente      | Selector                                    | Descrição                                                                                               |
+| --------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Button**      | `button[shyButton]`, `a[shyButton]`         | Botão de ação: `variant`, `intent`, `size`, `loading` (`aria-busy`, foco mantido), `block`              |
+| **IconButton**  | `button[shyIconButton]`                     | Botão só com ícone; `label` obrigatório vira `aria-label`                                               |
+| **Spinner**     | `shy-spinner`                               | 8 variantes, `size` xs a lg, `label` opcional (`role="status"`), cor por `currentColor`                 |
+| **Skeleton**    | `shy-skeleton`                              | Placeholder `text`/`circle`/`rect`, `lines`, `shimmer`/`still`; decorativo (`aria-hidden`)              |
+| **Progress**    | `shy-progress`, `shy-progress-circular`     | `role="progressbar"`, `value`/`max`, indeterminado sem `value`                                          |
+| **Badge**       | `shy-badge`                                 | Etiqueta `soft`/`solid`/`outline`, `count`, `dot`, `removable`; o texto diz o estado                    |
+| **Divider**     | `shy-divider`                               | `role="separator"`, horizontal ou vertical, texto opcional                                              |
+| **Card**        | `shy-card`, `a[shyCard]`, `button[shyCard]` | Slots header/body/footer, `elevation` 0 a 3; interativo pelo elemento nativo                            |
+| **Alert**       | `shy-alert`                                 | Ícone por intenção + título; `role="status"` (ou `alert` com `urgent` em warning/danger), `dismissible` |
+| **Checkbox**    | `shy-checkbox`                              | Sobre o checkbox nativo: `[(checked)]`, `indeterminate`, CVA, `invalid` do `NgControl`                  |
+| **Radio**       | `shy-radio-group`, `shy-radio`              | `role="radiogroup"` com radios nativos (setas e roving tabindex do navegador), CVA                      |
+| **Switch**      | `shy-switch`                                | Checkbox nativo com `role="switch"`; mesma API do Checkbox                                              |
+| **Input**       | `input[shyInput]`, `textarea[shyInput]`     | Campo sobre o nativo (`ngModel`/`formControl`), tamanhos, `invalid` do `NgControl`                      |
+| **FormField**   | `shy-form-field`                            | Label, dica, erro (ícone + texto) e contador; liga `for`/`id` e `aria-*`; slots `prefix`/`suffix`       |
+| **Icon**        | `<shy-icon>`                                | Ícones SVG inline com suporte a hover fill e tamanho customizável                                       |
+| **Select**      | `<shy-select>`                              | Dropdown customizável com suporte a ícones e imagens nas opções                                         |
+| **Snackbar**    | `<shy-snackbar>`                            | Notificação temporária no topo ou rodapé da página                                                      |
+| **ThemeToggle** | `<shy-theme-toggle>`                        | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                                     |
 
 ---
 
@@ -457,7 +461,11 @@ CSS custom properties `--shy-*` em kebab-case, em três camadas: primitivo (`--s
 // Componentes
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
+export { AlertComponent } from './lib/components/alert/alert.component';
+export { BadgeComponent } from './lib/components/badge/badge.component';
 export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
+export { CardComponent } from './lib/components/card/card.component';
+export { DividerComponent } from './lib/components/divider/divider.component';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';
@@ -488,6 +496,10 @@ export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/sele
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
+export { ShyAlertIntent } from './lib/types/alert/alert.type';
+export { ShyBadgeVariant, ShyBadgeSize } from './lib/types/badge/badge.type';
+export { ShyCardElevation } from './lib/types/card/card.type';
+export { ShyDividerOrientation } from './lib/types/divider/divider.type';
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyInputSize } from './lib/types/input/input.type';
 export { ShyIntent } from './lib/types/intent/intent.type';

@@ -1,0 +1,91 @@
+@use '../../styles' as *;
+
+:host {
+  --_shadow: none;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: var(--shy-border-width) solid var(--shy-card-border-color, var(--shy-color-border));
+  border-radius: var(--shy-card-radius, var(--shy-radius-lg));
+  background: var(--shy-card-bg, var(--shy-color-surface));
+  box-shadow: var(--shy-card-shadow, var(--_shadow));
+  color: var(--shy-card-fg, var(--shy-color-text));
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  @include transition(color background-color border-color box-shadow);
+}
+
+@for $level from 1 through 3 {
+  :host([data-elevation='#{$level}']) {
+    --_shadow: var(--shy-shadow-#{$level});
+  }
+}
+
+.header,
+.body,
+.footer {
+  display: block;
+  padding-block: var(--shy-card-pad-y, var(--shy-space-6));
+  padding-inline: var(--shy-card-pad-x, var(--shy-space-8));
+
+  &:empty {
+    display: none;
+  }
+}
+
+.header {
+  font-weight: var(--shy-weight-semibold);
+  padding-block-end: 0;
+}
+
+.body {
+  flex: 1;
+}
+
+.footer {
+  padding-block-start: 0;
+  color: var(--shy-color-text-muted);
+}
+
+// Cartão interativo: elemento nativo (a/button), então teclado e foco vêm do navegador.
+:host([data-interactive]) {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include state-layer;
+}
+
+:host([data-interactive]:focus-visible) {
+  @include focus-ring;
+}
+
+:host([data-interactive][data-shy-state='focus']) {
+  @include focus-ring;
+}
+
+@media (hover: hover) {
+  :host([data-interactive]:hover),
+  :host([data-interactive][data-shy-state='hover']) {
+    border-color: var(--shy-card-border-color-hover, var(--shy-color-border-strong));
+  }
+}
+
+:host([data-interactive]:disabled),
+:host([data-interactive][aria-disabled='true']) {
+  opacity: var(--shy-opacity-disabled);
+  cursor: not-allowed;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+
+  :host([data-interactive]) {
+    border-color: LinkText;
+  }
+}

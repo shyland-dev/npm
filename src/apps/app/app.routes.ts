@@ -3,8 +3,12 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   { path: '', redirectTo: 'components/icon', pathMatch: 'full' },
 
+  { path: 'components/alert', loadComponent: () => import('./components/alert/alert').then((m) => m.AlertPage) },
+  { path: 'components/badge', loadComponent: () => import('./components/badge/badge').then((m) => m.BadgePage) },
   { path: 'components/button', loadComponent: () => import('./components/button/button').then((m) => m.ButtonPage) },
+  { path: 'components/card', loadComponent: () => import('./components/card/card').then((m) => m.CardPage) },
   { path: 'components/checkbox', loadComponent: () => import('./components/checkbox/checkbox').then((m) => m.CheckboxPage) },
+  { path: 'components/divider', loadComponent: () => import('./components/divider/divider').then((m) => m.DividerPage) },
   { path: 'components/form-field', loadComponent: () => import('./components/form-field/form-field').then((m) => m.FormFieldPage) },
   { path: 'components/icon', loadComponent: () => import('./components/icon/icon').then((m) => m.IconPage) },
   { path: 'components/icon-button', loadComponent: () => import('./components/icon-button/icon-button').then((m) => m.IconButtonPage) },

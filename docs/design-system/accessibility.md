@@ -32,6 +32,17 @@ Contraste dos pares sobre `surface-sunken` conferido em `check-contrast`. `force
 
 Estado marcado visível sem cor (glifo e posição) e em `forced-colors`; alvo ≥ `--shy-size-control-sm`; inválido tracejado em `forced-colors`.
 
+## Feedback e conteúdo (F3-S5)
+
+| Componente    | Teclado / ARIA                                                                                                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shy-badge`   | Texto diz o estado (cor só reforça); só ponto exige `label` (`role="img"`); `removable`: botão com `aria-label` e alvo ≈ 30 px                              |
+| `shy-divider` | `role="separator"`, `aria-orientation="vertical"` quando vertical; texto é visual                                                                           |
+| `shy-card`    | Estático; `a[shyCard]`/`button[shyCard]` são nativos (Enter no link, Enter/Espaço no botão), foco `:focus-visible`, `disabled` nativo                       |
+| `shy-alert`   | Ícone (muda por intenção) + `heading`: nunca só cor; `role="status"` por padrão, `role="alert"` só com `urgent` em warning/danger; botão de fechar com nome |
+
+Contraste dos pares `*-soft`/`on-*-soft`/`*-text` e `on-*`/`*` nos dois temas conferido em `check-contrast`.
+
 ## Por componente (F2 em diante)
 
 Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo controle, `aria-*` conforme APG (Listbox/Select, Combobox, Dialog, Tabs, Menu button, Tooltip, Switch, Radio group, Checkbox, Accordion, Alert/Status), mensagens dinâmicas com `role="status"`/`role="alert"`, cor nunca como única pista. Checklist manual por onda: só teclado; zoom 200%; largura 320 px; `forced-colors`; `reduced-motion`; claro e escuro; 360×800, 1366×768 e 1920×1080.

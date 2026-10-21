@@ -179,6 +179,63 @@ Boolean controls over a native `<input type="checkbox">` (the switch adds `role=
 
 The error of a `shy-form-field` shows after the focus leaves the group or the form is submitted.
 
+### `<shy-badge>`
+
+Short label for a state or category. The text says the meaning; color only reinforces it. `count` shows a number (`max+` past `max`), `dot` adds a decorative dot (dot-only badges need `label`, which becomes `role="img"`), `removable` adds a button (`removeLabel` is its accessible name) that emits `removed`.
+
+```html
+<shy-badge intent="success" variant="solid">Paid</shy-badge> <shy-badge intent="danger" [count]="150" /> <shy-badge [removable]="true" removeLabel="Remove Angular" (removed)="drop()">Angular</shy-badge>
+```
+
+| Input                      | Type                                                                     | Default             | Description                                   |
+| -------------------------- | ------------------------------------------------------------------------ | ------------------- | --------------------------------------------- |
+| `intent`                   | `'neutral' \| 'primary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'neutral'`         | Color role                                    |
+| `variant`                  | `'soft' \| 'solid' \| 'outline'`                                         | `'soft'`            | Fill                                          |
+| `size`                     | `'sm' \| 'md'`                                                           | `'md'`              | Size                                          |
+| `dot`                      | `boolean`                                                                | `false`             | Decorative dot before the text                |
+| `count`, `max`             | `number`                                                                 | —, `99`             | Number shown instead of the text              |
+| `label`                    | `string`                                                                 | —                   | `aria-label` + `role="img"` (dot-only badges) |
+| `removable`, `removeLabel` | `boolean`, `string`                                                      | `false`, `'Remove'` | Remove button and its name; output `removed`  |
+
+### `<shy-divider>`
+
+`role="separator"` (the vertical one adds `aria-orientation="vertical"`). Optional text between the lines (horizontal only) is visual; do not put essential information in it. For `orientation="vertical"` use it in a flex row (it stretches).
+
+```html
+<shy-divider /> <shy-divider>or</shy-divider> <shy-divider orientation="vertical" />
+```
+
+### `shy-card`, `a[shyCard]`, `button[shyCard]`
+
+Container with slots `slot="header"`, the body (default) and `slot="footer"`, and `elevation` 0 to 3 (`--shy-shadow-*`). `<shy-card>` is static. For a clickable card use a native element, `<a shyCard href>` or `<button shyCard>`: it gets the focus ring, hover (`@media (hover: hover)`) and pressed state, and Enter/Space come from the browser. An interactive card must not contain other links or buttons.
+
+```html
+<shy-card [elevation]="2"> <span slot="header">Title</span> Body <span slot="footer">Footer</span> </shy-card> <a shyCard href="/docs"><span slot="header">Docs</span> Read more</a>
+```
+
+| Input       | Type               | Default | Description            |
+| ----------- | ------------------ | ------- | ---------------------- |
+| `elevation` | `0 \| 1 \| 2 \| 3` | `1`     | `--shy-shadow-{1,2,3}` |
+
+### `<shy-alert>`
+
+Highlighted message in the page (not a toast): an icon that changes per intent, `heading`, the projected message and an action (`slot="action"`). It never informs by color alone. `role="status"` by default; `urgent` makes it `role="alert"` only for `warning`/`danger` (`info`/`success` are always `status`), and applies to content that appears after the page loads. `dismissible` adds a close button (`dismissLabel`), hides the alert and emits `dismissed`; moving focus afterwards is up to the app.
+
+```html
+<shy-alert intent="danger" heading="Could not save" [urgent]="true" [dismissible]="true" (dismissed)="clear()">
+    Check your connection.
+    <button slot="action" shyButton size="sm" variant="outline" intent="danger">Retry</button>
+</shy-alert>
+```
+
+| Input                         | Type                                           | Default              | Description                                                            |
+| ----------------------------- | ---------------------------------------------- | -------------------- | ---------------------------------------------------------------------- |
+| `intent`                      | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'`             | Color and default icon                                                 |
+| `heading`                     | `string`                                       | —                    | Short title (not `title`: the browser would add a tooltip to the host) |
+| `icon`                        | `string`                                       | by `intent`          | Icon name from the catalog                                             |
+| `urgent`                      | `boolean`                                      | `false`              | `role="alert"` (only `warning`/`danger`)                               |
+| `dismissible`, `dismissLabel` | `boolean`, `string`                            | `false`, `'Dismiss'` | Close button and its name                                              |
+
 ### `<shy-icon>`
 
 Renders an inline SVG icon from the built-in catalog. Supports a _-fill_ variant with a hover transition.
@@ -434,6 +491,18 @@ New foundation tokens: `--shy-color-track` (both themes), `--shy-opacity-track`,
 
 The touch target is at least `--shy-size-control-sm` tall (it grows with a coarse pointer), even with a smaller mark.
 
+### Badge, Card, Alert and Divider Tokens
+
+| Token                                                                                | Default                                                                         | Description                   |
+| ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- | ----------------------------- |
+| `--shy-badge-bg`, `-fg`, `-border-color`                                             | by `intent` and `variant`                                                       | Badge colors                  |
+| `--shy-badge-height`, `-pad-x`, `-gap`, `-font-size`, `-radius`, `-dot-size`         | by `size`, `--shy-radius-full`                                                  | Badge box                     |
+| `--shy-card-bg`, `-fg`, `-border-color`, `-border-color-hover`, `-shadow`, `-radius` | `surface`, `text`, `border`, `border-strong`, by `elevation`, `--shy-radius-lg` | Card                          |
+| `--shy-card-pad-x`, `--shy-card-pad-y`                                               | `--shy-space-8`, `--shy-space-6`                                                | Padding of header/body/footer |
+| `--shy-alert-bg`, `-fg`, `-border-color`, `-icon-color`                              | `*-soft`, `on-*-soft`, `*-text`, `*-text`                                       | Alert colors by `intent`      |
+| `--shy-alert-pad`, `-gap`, `-radius`                                                 | `space-6 space-7`, `space-5`, `radius-md`                                       | Alert box                     |
+| `--shy-divider-color`, `-text-color`, `-gap`                                         | `--shy-color-line`, `text-muted`, `space-6`                                     | Divider                       |
+
 ### Snackbar Tokens
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
@@ -480,7 +549,11 @@ The `<shy-select>` component can be customized via CSS custom properties:
 // Components
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
+export { AlertComponent } from './lib/components/alert/alert.component';
+export { BadgeComponent } from './lib/components/badge/badge.component';
 export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
+export { CardComponent } from './lib/components/card/card.component';
+export { DividerComponent } from './lib/components/divider/divider.component';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';
@@ -510,6 +583,10 @@ export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/sele
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
+export { ShyAlertIntent } from './lib/types/alert/alert.type';
+export { ShyBadgeVariant, ShyBadgeSize } from './lib/types/badge/badge.type';
+export { ShyCardElevation } from './lib/types/card/card.type';
+export { ShyDividerOrientation } from './lib/types/divider/divider.type';
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyInputSize } from './lib/types/input/input.type';
 export { ShyIntent } from './lib/types/intent/intent.type';
