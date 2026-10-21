@@ -285,6 +285,11 @@
       "fg": "text-muted",
       "bg": "track",
       "min": 3
+    },
+    {
+      "fg": "primary-text",
+      "bg": "surface-sunken",
+      "min": 3
     }
   ]
 }

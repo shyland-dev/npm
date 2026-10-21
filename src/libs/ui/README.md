@@ -338,6 +338,86 @@ countries: ShySelectOption[] = [
 
 ---
 
+### `<shy-combobox>`
+
+Text field with a list of suggestions (APG combobox with list autocomplete) on the `OverlayService`: focus stays on the `<input role="combobox">` and the active option is announced with `aria-activedescendant`; the list (`role="listbox"`) opens in the `dropdown` layer with the field's width. Same options and value as `shy-select`, but **single value and no free text**: leaving the field restores the text of the chosen option, and clearing the text clears the value.
+
+**Selector:** `shy-combobox` (`exportAs: shyCombobox`)
+
+```html
+<shy-form-field label="Country" hint="Type to filter">
+    <shy-combobox [options]="countries" [formControl]="country" placeholder="Search a country" />
+</shy-form-field>
+<shy-combobox [options]="countries" [(value)]="selected" label="Country" emptyText="Nothing found" />
+```
+
+| Input                                           | Type                         | Default                         | Description                                                     |
+| ----------------------------------------------- | ---------------------------- | ------------------------------- | --------------------------------------------------------------- |
+| `options`                                       | `ShySelectOption[]`          | `[]`                            | `{ value, label, disabled? }` (`img` is ignored)                |
+| `value` (`model`)                               | `unknown`                    | `null`                          | Chosen value; also written by `ngModel`/`formControl`           |
+| `placeholder`                                   | `string`                     | none                            | Text without a choice                                           |
+| `compareWith`                                   | `(a, b) => boolean`          | `===`                           | Compare object values                                           |
+| `filterFn`                                      | `(option, query) => boolean` | `contains`, no accents, no case | Decides which options match the typed text                      |
+| `emptyText`                                     | `string`                     | `No results`                    | Shown (in a `role="status"` region) when nothing matches        |
+| `dropdownIcon`                                  | `string`                     | `chevron-down`                  | Icon                                                            |
+| `disabled`, `invalid`, `required`, `name`, `id` | as the other controls        | —                               | `invalid` forces the state; otherwise it comes from the control |
+| `label`                                         | `string`                     | none                            | `aria-label` when there is no `shy-form-field` label            |
+
+- Keys: typing opens and filters; ↓ opens, ↓/↑ move the active option (disabled ones are skipped); Enter chooses; Esc closes and restores the text; Tab closes and moves on; Home/End keep moving the text cursor. The list is not filtered while the text is just the chosen label.
+- The panel lives in the overlay container: panel tokens (`--shy-combobox-panel-*`, `--shy-combobox-option-*`, `--shy-combobox-empty-fg`) go on `:root`; field tokens go on the element.
+
+---
+
+### `<shy-slider>`
+
+Single-value slider on the native `<input type="range">`: arrows, Page Up/Down and Home/End, `role="slider"` and `aria-valuenow/min/max` come from the browser. For a range, use two sliders (a two-thumb slider is not part of this version).
+
+**Selector:** `shy-slider` (`exportAs: shySlider`)
+
+```html
+<shy-slider [(value)]="volume" label="Volume" showValue /> <shy-form-field label="Maximum price"><shy-slider [formControl]="price" [min]="0" [max]="1000" [step]="50" [displayWith]="money" showValue /></shy-form-field>
+```
+
+| Input                                           | Type                        | Default   | Description                                                     |
+| ----------------------------------------------- | --------------------------- | --------- | --------------------------------------------------------------- |
+| `value` (`model`)                               | `number`                    | `0`       | Current value; also written by `ngModel`/`formControl`          |
+| `min`, `max`, `step`                            | `number`                    | 0, 100, 1 | Range and step                                                  |
+| `displayWith`                                   | `(value: number) => string` | none      | Formats the value for `aria-valuetext` and for `showValue`      |
+| `showValue`                                     | `boolean`                   | `false`   | Shows the value next to the control                             |
+| `disabled`, `invalid`, `required`, `name`, `id` | as the other controls       | —         | `invalid` forces the state; otherwise it comes from the control |
+| `label`                                         | `string`                    | none      | `aria-label` when there is no `shy-form-field` label            |
+
+---
+
+### `<shy-file-dropzone>`
+
+Area to choose or drop files. A native `<input type="file">` covers the area, so click, Enter and Space open the picker and the input takes the keyboard focus. **It only selects and validates files; it never uploads.** The value is a `File[]`.
+
+**Selector:** `shy-file-dropzone` (`exportAs: shyFileDropzone`)
+
+```html
+<shy-form-field label="Attachments" hint="Images or PDF, up to 1 MB each">
+    <shy-file-dropzone [formControl]="docs" accept="image/*,.pdf" [maxSize]="1048576" multiple (rejected)="onRejected($event)" />
+</shy-form-field>
+<shy-file-dropzone [(files)]="avatar" label="Avatar" accept="image/*">Drag your avatar here</shy-file-dropzone>
+```
+
+| Input / Output                                  | Type                  | Default                                        | Description                                                                    |
+| ----------------------------------------------- | --------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------ |
+| `files` (`model`)                               | `File[]`              | `[]`                                           | Chosen files; also written by `ngModel`/`formControl`                          |
+| `accept`                                        | `string`              | `''`                                           | Extensions (`.pdf`), types (`image/png`) and wildcards (`image/*`)             |
+| `multiple`                                      | `boolean`             | `false`                                        | Adds to the list; without it a new choice replaces the previous one            |
+| `maxSize`                                       | `number` (bytes)      | none                                           | Per-file limit                                                                 |
+| `prompt`, `removeLabel`                         | `string`              | `Drop files here or click to choose`, `Remove` | Interface texts (set them to translate); projected content replaces the prompt |
+| `(rejected)`                                    | `ShyFileRejection[]`  | —                                              | `{ file, reason: 'type' \| 'size' }` for each refused file                     |
+| `disabled`, `invalid`, `required`, `name`, `id` | as the other controls | —                                              | `invalid` forces the state; otherwise it comes from the control                |
+| `label`                                         | `string`              | none                                           | `aria-label` when there is no `shy-form-field` label                           |
+
+- The same validation runs for the picker and for drag and drop. A `role="status"` region announces "N files added" and each rejection; removed files are announced too.
+- Each listed file has a remove button named "Remove <file name>".
+
+---
+
 ### `OverlayService` (overlay core)
 
 Opens a component or a `TemplateRef` in a layer above the page. It is the base of Dialog, Drawer, Popover, Menu and the new Select/Snackbar (phase F4); you can also use it directly. Needs `styles/index.css` (or `global`) loaded: it ships `overlay.css`.
@@ -773,6 +853,18 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 | `--shy-table-bg`, `-border-color`, `-divider-color`, `-radius`, `-header-bg`, `-header-fg`    | `surface`, `border`, `line`, `radius-lg`, `surface-sunken`, `text-muted`      | Table surface and header      |
 | `--shy-table-stripe-bg`, `-row-bg-hover`, `-row-bg-selected`, `-row-fg-selected`              | `surface-sunken`, `neutral-soft`, `primary-soft`, `on-primary-soft`           | Row states                    |
 | `--shy-table-cell-pad-x`, `-cell-pad-y`, `-cell-pad-y-dense`                                  | `space-6`, `space-4`, `space-2`                                               | Cell padding                  |
+
+### Combobox, Slider and File Dropzone Tokens
+
+| Token                                                                                                                                | Default                                                                                                  | Description               |
+| ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `--shy-combobox-height`, `-width`, `-radius`, `-bg`, `-fg`, `-border`, `-font-family`, `-font-size`, `-icon-size`                    | as `--shy-select-*`                                                                                      | Field (on the element)    |
+| `--shy-combobox-placeholder-fg`, `-border-color-invalid`                                                                             | `text-subtle`, `danger-text`                                                                             | Field states              |
+| `--shy-combobox-panel-max-height`, `-panel-bg`, `-panel-shadow`, `-selected-fg`, `-option-hover-bg`, `-option-hover-fg`, `-empty-fg` | `ru(100)`, `surface-raised`, `shadow-3`, `primary-text`, `primary-soft`, `on-primary-soft`, `text-muted` | Panel (on `:root`)        |
+| `--shy-slider-width`, `-track-height`, `-track-bg`, `-fill`, `-radius`                                                               | `ru(100)`, `ru(2)`, `track`, `primary-text`, `radius-full`                                               | Track and fill            |
+| `--shy-slider-thumb-size`, `-thumb-bg`, `-thumb-border`, `-gap`, `-value-fg`, `-value-width`                                         | `ru(7)`, `primary-text`, `surface`, `space-4`, `text-muted`, `ru(10)`                                    | Thumb and value text      |
+| `--shy-file-dropzone-bg`, `-fg`, `-border-color`, `-border-color-active`, `-border-color-invalid`                                    | `surface-sunken`, `text`, `border-strong`, `primary-text`, `danger-text`                                 | Area                      |
+| `--shy-file-dropzone-radius`, `-pad`, `-gap`, `-icon-size`, `-file-bg`                                                               | `radius-lg`, `space-8`, `space-4`, `size-icon-lg`, `surface-raised`                                      | Area layout and file rows |
 
 ### Snackbar Tokens
 

@@ -4,8 +4,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F5 Onda 3 + hardening**, sessão **F5-S3** (lote 3 sob demanda: Combobox, Slider, FileDropzone, Stepper, AppShell)
-- Estado: `aguardando-plano` (F5-S2 concluída). **Decisão do dono (2026-10-21, card):** fazer o lote 3 completo. Plano em "F5-S3: plano da sessão" abaixo; a API pública dos 5 componentes (premissas P1 a P5) espera confirmação explícita do dono antes de executar
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S3b** (lote 3, parte 2: Stepper, AppShell)
+- Estado: `aguardando-plano` (F5-S3a concluída e commitada em 2026-10-21; plano e premissas P4/P5 em "F5-S3: plano da sessão"; o próximo `/build` aprova e executa a S3b)
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -63,14 +63,14 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 
 ## Fases
 
-| Fase                               | Status                       | Commit                                                        |
-| ---------------------------------- | ---------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)    | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)    | 0123029                                                       |
-| F2 Refactor dos existentes         | concluída (gate aprovado)    | eb359ac                                                       |
-| F3 Onda 1                          | concluída (gate aprovado)    | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | concluída (gate aprovado)    | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
-| F5 Onda 3 + hardening              | em andamento (F5-S2 no gate) |                                                               |
+| Fase                               | Status                          | Commit                                                        |
+| ---------------------------------- | ------------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado)       | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)       | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado)       | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado)       | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado)       | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | em andamento (F5-S3a concluída) |                                                               |
 
 ## Sessões
 
@@ -144,6 +144,41 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S3a: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação                            | Resultado                                                                                                                                                                                                        |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                     | ok (6 verificações; 1 aviso antigo de tokens não usados, a revisar na F5-S4)                                                                                                                                     |
+| `npm test`                             | 283 testes passando (19 novos: Combobox 9, Slider 4, FileDropzone 6)                                                                                                                                             |
+| `npm run build`                        | ok (`@shyland-dev/ui` e `@shyland-dev/utils`)                                                                                                                                                                    |
+| `npm run build:showcase`               | ok                                                                                                                                                                                                               |
+| Chromium (`/opt/pw-browsers/chromium`) | 3 páginas × dark/light × LTR/RTL × 360 e 1366 px: sem scroll horizontal nem erros de console; teclado do Combobox (digitar, ↓, Enter), Slider (setas, End) e FileDropzone (arquivo aceito e recusado) conferidos |
+| Node                                   | 22.22 no container (o projeto pede 24.14.1)                                                                                                                                                                      |
+
+Achado na auditoria: o painel do Combobox abria virado para cima e ficava solto quando o filtro encolhia a lista. Corrigido com `afterRenderEffect` chamando `ShyOverlayRef.updatePosition()` a cada mudança da lista visível.
+
+### Resumo (arquivos principais)
+
+- `components/combobox/` (`shy-combobox`): APG combobox com lista, `ControlBase`, `ShySelectOption`, filtro sem acento/caixa (`filterFn`), vazio em `role="status"`, painel no `OverlayService`.
+- `components/slider/` (`shy-slider`): `<input type="range">` nativo estilizado, `min/max/step`, `displayWith` → `aria-valuetext`, `showValue`, RTL e forced-colors.
+- `components/file-dropzone/` + `interfaces/file-dropzone/` (`shy-file-dropzone`): `<input type="file">` nativo sobre a área, `File[]`, `accept`/`maxSize`, `(rejected)`, região de status, remover por arquivo, sem upload.
+- Showcase: `components/{combobox,slider,file-dropzone}` (rotas e menu). README da lib (3 seções + tabela de tokens), `tokens.md`, `accessibility.md`, ADR-F5-3 em `decisions.md`, um par novo em `contrast-pairs.json` (`primary-text`/`surface-sunken`, 57 pares).
+
+### Decisões e premissas (ADR-F5-3)
+
+- P1 a P3 confirmadas: Combobox sem valor livre; Slider nativo, valor único (faixa de dois polegares fora da v1); FileDropzone nunca envia.
+- Sem breaking, sem `@deprecated`, sem dependência nova.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): combobox, slider e file-dropzone
+
+Combobox (APG, filtro sem acento, painel no OverlayService), Slider sobre input range nativo e FileDropzone (File[], accept/maxSize, sem upload), com tokens, testes, showcase e docs.
+```
 
 ## F5-S3: plano da sessão (2026-10-21)
 

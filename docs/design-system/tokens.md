@@ -85,6 +85,16 @@ Mesma regra (nunca definidos pela lib; o componente lê com fallback no semânti
 
 Pares de contraste: um par novo, `text` sobre `neutral-soft` (hover da linha da Table), em `contrast-pairs.json`. O resto já estava coberto (`on-primary-soft`/`primary-soft` no avatar, linha selecionada e item selecionado; `text-muted` sobre `surface` e `surface-sunken` no cabeçalho e no texto de apoio).
 
+## Tokens de componente (Onda 3, lote 3)
+
+| Componente   | Tokens                                                                                                                                                                                                                                              |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Combobox     | `--shy-combobox-{height,width,radius,bg,fg,border,border-color-invalid,placeholder-fg,font-family,font-size,icon-size,panel-max-height,panel-bg,panel-shadow,selected-fg,option-hover-bg,option-hover-fg,empty-fg}` (os de painel valem em `:root`) |
+| Slider       | `--shy-slider-{width,track-height,track-bg,fill,radius,thumb-size,thumb-bg,thumb-border,gap,value-fg,value-width}`                                                                                                                                  |
+| FileDropzone | `--shy-file-dropzone-{bg,fg,border-color,border-color-active,border-color-invalid,radius,pad,gap,icon-size,file-bg}`                                                                                                                                |
+
+Pares de contraste: um par novo, `primary-text` sobre `surface-sunken` (borda da área em hover/arraste e ponteiro do slider sobre o campo); o resto (`primary-text`/`track`, `primary-text`/`surface`, `on-primary-soft`/`primary-soft`, `text-subtle`/`surface-sunken`) já estava coberto.
+
 ### Pares de contraste da Onda 1
 
 Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json` (56 pares × 2 temas): texto sobre superfícies (`text*`/`surface*`), sólidos (`on-X`/`X`), suaves (`on-X-soft`/`X-soft`, `X-text`/`X-soft`), texto de intenção sobre superfícies (`X-text`), borda de controle e foco (`border-strong`, `focus`, ≥ 3:1), trilho (`primary-text`/`track`, `text-muted`/`track`). Ficam de fora, por serem decorativos (WCAG 1.4.11 não exige): `border`, `line` (divider, borda de card), `track` contra a página e o fundo do skeleton. O fundo `primary` sólido no tema escuro (2,6:1 sobre `bg`) só aparece com texto/glifo `on-primary` por cima; o contorno dos controles marcados usa `primary-text` (ADR-F3-6).
@@ -96,7 +106,7 @@ Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json`
 | Script              | Garante                                                                                                        |
 | ------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `check-tokens`      | mesmos tokens semânticos nos dois temas; `var(--shy-x)` sem fallback sempre definido; `$layers` = `layers.css` |
-| `check-contrast`    | 56 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas  |
+| `check-contrast`    | 57 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas  |
 | `check-calibration` | tamanhos em px nos viewports de referência                                                                     |
 | `check-hardcoded`   | sem cor, tempo, easing, `z-index` nem `font-family` literais em SCSS de componente                             |
 

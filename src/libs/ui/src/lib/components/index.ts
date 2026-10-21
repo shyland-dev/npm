@@ -65,3 +65,6 @@ export * from './list/list.component';
 export * from './table/table-column.component';
 export * from './table/table-sort.component';
 export * from './table/table.component';
+export * from './combobox/combobox.component';
+export * from './slider/slider.component';
+export * from './file-dropzone/file-dropzone.component';

@@ -1,0 +1,27 @@
+<input #input class="combobox__input" type="text" role="combobox" autocomplete="off" aria-autocomplete="list" aria-haspopup="listbox" [id]="id()" [value]="query()" [placeholder]="placeholder() ?? ''" [disabled]="isDisabled()" [attr.name]="name() ?? null" [attr.aria-expanded]="isOpen()" [attr.aria-controls]="isOpen() ? listId() : null" [attr.aria-activedescendant]="activeId()" [attr.aria-label]="label() ?? null" [attr.aria-required]="required() ? 'true' : null" [attr.aria-invalid]="showInvalid() ? 'true' : null" [attr.aria-describedby]="field?.describedBy() ?? null" [attr.aria-errormessage]="showInvalid() ? (field?.errorId() ?? null) : null" (input)="onInput(input.value)" (keydown)="onKeydown($event)" (blur)="onBlur()" />
+<!-- Ícone só decorativo e para o mouse: o teclado abre com ↓ no campo. -->
+<span class="combobox__toggle" aria-hidden="true" (mousedown)="$event.preventDefault()" (click)="toggle()">
+  <shy-icon class="combobox__icon" [class.combobox__icon--open]="isOpen()">{{ dropdownIcon() }}</shy-icon>
+</span>
+
+<ng-template #panel>
+  <!-- O foco fica no campo: o mousedown não pode tirá-lo dele. -->
+  <div class="combobox__panel" (mousedown)="$event.preventDefault()">
+    @if (visible().length) {
+      <ul class="combobox__list" role="listbox" [id]="listId()" [attr.aria-labelledby]="field?.labelId() ?? null" [attr.aria-label]="field?.labelId() ? null : (label() ?? null)">
+        @for (option of visible(); track $index) {
+          <li class="combobox__option" role="option" [id]="optionId($index)" [class.combobox__option--active]="activeIndex() === $index" [attr.aria-selected]="isSelected(option)" [attr.aria-disabled]="option.disabled ? 'true' : null" (click)="choose($index)" (pointermove)="option.disabled || activeIndex() === $index ? null : activeIndex.set($index)">
+            <span class="combobox__option-icon">
+              @if (isSelected(option)) {
+                <shy-icon>check</shy-icon>
+              }
+            </span>
+            <span class="combobox__option-label">{{ option.label }}</span>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="combobox__empty" role="status">{{ emptyText() }}</p>
+    }
+  </div>
+</ng-template>
