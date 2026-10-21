@@ -300,7 +300,7 @@ Painéis ancorados sobre o `OverlayService`. API e tokens em [`src/libs/ui/READM
 ```
 
 - Popover e Menu viram `aria-expanded`/`aria-controls` no gatilho; Esc, clique fora e Tab fecham e devolvem o foco. Menu: setas, Home/End e digitação; sem submenus.
-- Tooltip só complementa o nome (aparece no hover do mouse e no foco por teclado, não no toque). Páginas no showcase: **components > popover**, **menu** e **tooltip**.
+- Tooltip só complementa o nome (aparece no hover do mouse e no foco por teclado, não no toque). Páginas no showcase: **components > popover**, **menu** e **tooltip**; exemplo integrado dos overlays (Menu, Dialog, Select, Tooltip, Snackbar): **examples > overlays together**.
 
 ---
 

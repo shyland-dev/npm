@@ -108,3 +108,10 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - **WCAG 2.2.1 (tempo ajustável):** `duration` configurável (`0` = não fecha sozinho), padrão mais longo com ação, pausa com ponteiro/foco e aba oculta, botão de fechar. **2.4.11/2.1.1:** a ação e o X são botões focáveis; o contêiner não captura Esc.
 - **Com modal aberto** o toast fica `inert` (ADR-F4-5): a ação é ocultada (ADR-F4-3b) e o texto continua anunciado; o X não recebe clique até o modal fechar.
 - **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`): fila de 3, pausa em hover, `danger` na região `alert`, Esc fecha o Dialog por baixo, toast visível sobre o modal, sem erros de console. **Não verificado:** leitor de tela real (anúncio das regiões), Safari/Firefox, toque real.
+
+## Onda 2: resumo de fechamento (F4-S6)
+
+- **Camadas:** ordem de abertura decide o empilhamento; Esc fecha só o topo (o contêiner de toasts é `passive` e não captura Esc nem clique fora); modal deixa o resto `inert`; painel ancorado dentro de um modal vira filho do `<dialog>`; scroll lock e `inert` são removidos ao fechar tudo.
+- **Foco:** retorna ao elemento de origem; o Menu devolve o foco ao botão **antes** do `(click)` do item, então um Dialog aberto por um item lembra o botão e devolve o foco a ele ao fechar.
+- **Exemplo integrado** (showcase, `examples > overlays together`): Menu → Dialog (Select e Tooltip dentro) → toast → confirmação → toast com ação. Verificado no Chromium (dark/light, 360 e 1366 px, LTR e RTL, `reduced-motion`): Esc um por vez, sem painéis nem `inert`/scroll lock sobrando, sem erros de console.
+- **Não verificado na Onda 2:** leitor de tela real (NVDA/VoiceOver; atenção ao `aria-activedescendant` do Select e às regiões vivas do Snackbar), Safari/Firefox, toque real. Fica para a auditoria da F5-S4.

@@ -105,6 +105,23 @@ Busca no seu projeto (bash): `grep -rnE -- '--shy(Icon|Select|Snackbar)[A-Z]' sr
 
 Outras mudanças dos componentes: `Icon`, `Select` e `Snackbar` usam `input()`/`output()`/`model()` e `OnPush` (nomes no template iguais); o ícone para nome inexistente é `question-circle` (o `help` antigo nunca existiu); `shy-select` ganhou ARIA de listbox e teclado básico; `shy-snackbar` ganhou `role="status"`; `shy-icon` ganhou `name` e `label` e é decorativo por padrão.
 
+## 5.2 Select e Snackbar (F4)
+
+A API antiga continua funcionando, marcada `@deprecated`, até a `1.0`. Migre quando puder.
+
+| Antes (`@deprecated`)                                                              | Depois                                                                                      |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `<shy-select [selectOptions]="opcoes">`                                            | `<shy-select [options]="opcoes">` (`{ value, label, disabled?, img? }`, sem `id`)           |
+| `[selectedOption]="valor"` (string)                                                | `[(value)]="valor"`, `[(ngModel)]` ou `[formControl]` (qualquer tipo; array com `multiple`) |
+| `(onSelectionChange)="f($event)"` (`selectedOption`)                               | `(valueChange)="f($event)"`, `ngModel` ou `formControl`                                     |
+| `SelectOption`, `SelectionChangeEvent`                                             | `ShySelectOption`                                                                           |
+| `<shy-snackbar #s>` + `@ViewChild` + `show({ element: s, text, delay, position })` | `inject(SnackbarService).show(texto, { duration: delay, position })` (sem elemento)         |
+| conteúdo projetado em `<shy-snackbar>`                                             | primeiro argumento de `show()` (texto); `intent` e `action` são novos                       |
+
+Tokens do painel do Select e dos toasts (`--shy-select-panel-*`, `--shy-select-option-*`, `--shy-snackbar-*`) agora valem em `:root`, não no elemento: o painel mora no contêiner de overlays.
+
+Busca no seu projeto (bash): `grep -rnE 'selectOptions|selectedOption|onSelectionChange|<shy-snackbar|element:' src`.
+
 ## 6. Novidades úteis
 
 `ThemeService` + `<shy-theme-toggle>`, `ru()` (SCSS e TS), `z()` / `shy-layer`, `up()` / `down()`, `focus-ring`, `shy-state`, `state-layer`, fontes self-hosted, `npm run check:ds` para o seu projeto copiar a ideia dos scripts de `scripts/`.

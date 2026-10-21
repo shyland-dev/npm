@@ -5,9 +5,61 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S6** (fechamento da Onda 2)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Plano em "F4-S6: plano da sessão" abaixo. Sem decisão de alto impacto pendente (é fechamento: exemplo integrado, auditoria e docs). O próximo `/build` aprova o plano e executa a F4-S6.
+- Relatório em "F4-S6: relatório do gate" abaixo. O próximo `/build` aprova o gate, marca a Onda 2 (F4) como concluída e mostra o plano da F5-S1 (em `aguardando-plano`, com decisão do dono sobre quais componentes da Onda 3 priorizar).
+- **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
+
+## Handoff por sessão (threads separadas)
+
+Pedido do dono (2026-10-21): thread longa; depois da F4-S6, cada sessão restante roda numa thread própria do Claude. Só a F5 falta (4 sessões). O repositório está pronto: tudo commitado e com push em `feat/design-system`; o estado fica só aqui.
+
+### Como abrir cada thread (todas)
+
+1. Primeira mensagem da thread: `/build status` (mostra sessão e próximo passo); depois `/build` conforme o estado.
+2. O container da thread abre numa branch `claude/project-thread-*` sem os docs do DS. Antes de tudo (bash):
+
+```bash
+git fetch origin feat/design-system && git checkout -B feat/design-system origin/feat/design-system && npm ci
+```
+
+3. Leitura obrigatória: `CLAUDE.md`, este arquivo, `docs/design-system/sessions/README.md` e o arquivo da fase (`sessions/F5-onda-3-hardening.md`, só a sessão atual), plano seções 11, 12 e 17, `decisions.md` e `tokens.md`.
+4. Gate (bash): `npm run check:ds && npm test && npm run build && npm run build:showcase`. Estado em 2026-10-21: 228 testes passando; Node 22 no container (o projeto pede 24.14.1: registrar no relatório).
+5. Commit em pt-BR (Conventional Commits) e push só em `feat/design-system`, sem bump/tag/publish. Depois do push, copiar `docs/design-system/*.md` para `/mnt/project-files/design-system/` (espelho do projeto).
+
+### Peças prontas para reaproveitar (F3/F4)
+
+| Peça                                      | Onde                                                                                                           |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `ControlBase` (CVA, `invalid`, FormField) | `components/toggle/control-base.ts` (Checkbox, Switch, Radio, Select)                                          |
+| `OverlayService` / `ShyOverlayRef`        | `overlay/` (`passive`, `modalOpen`, `anchor`, `matchWidth`; painel ancorado em modal vira filho do `<dialog>`) |
+| `OverlayTrigger` (gatilho + painel)       | `overlay/overlay-trigger.ts` (Popover, Menu)                                                                   |
+| `Typeahead`, `animateOut`, `ru()`         | `utils/` (`typeahead.ts` e `animate-out.ts` internos)                                                          |
+| Padrões de teste                          | `*.spec.ts` (vitest; `vi.useFakeTimers`; `await settle(fixture)` para `ngModel`)                               |
+
+### Armadilhas conhecidas
+
+- `prettier --write` só nos arquivos tocados; nunca em `docs/DESIGN-SYSTEM-PLAN.md` (edite por Python), `icons.ts` nem `src/apps/index.html`.
+- Auditoria no Chromium: `/opt/pw-browsers/chromium` com `playwright-core` (instale em uma pasta do scratchpad); sirva `dist/showcase/browser` com um servidor com fallback para `index.html`; use `Tab` (não `focus()`) para testar `:focus-visible`; não use `pkill -f <nome-do-script>` no mesmo comando que o contém.
+- Painéis em overlay não herdam tokens do elemento que os abriu: tokens de painel vão em `:root`.
+- `ngModel` escreve o valor inicial de forma assíncrona: em teste, `await fixture.whenStable()` antes de interagir.
+
+### Handoff por sessão
+
+| Sessão | Estado ao abrir a thread                     | Decisões abertas (o `/build` NÃO aprova)                                                                                                                           | Retomada                                                                                                                                                                                                                         |
+| ------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F5-S1  | `aguardando-plano` (depois do gate da F4-S6) | **Quais componentes da Onda 3 os projetos usam** e a ordem (candidatos no arquivo da fase). Se algum nome/API público novo for ambíguo, comparar e perguntar       | `/build status`; o Claude lista os candidatos e pergunta; só depois `/build` executa o lote 1 (sugestão: Tabs, Accordion, Breadcrumb, Pagination)                                                                                |
+| F5-S2  | `pendente` até o gate da F5-S1               | Itens extras que o dono priorizou (Avatar, EmptyState, List, Table; Table sem virtualização)                                                                       | Segue o arquivo da fase, com o contrato comum; reaproveita Tabs/Pagination se o lote 1 os entregou                                                                                                                               |
+| F5-S3  | `pendente` (sob demanda; pode ser pulada)    | Se vale fazer (Combobox, Slider, FileDropzone, Stepper, AppShell): perguntar ao dono; pode ser dividida                                                            | Só com prioridade do dono; senão marcar "pulada" em `progress.md` e ir para a F5-S4                                                                                                                                              |
+| F5-S4  | `pendente`                                   | **Versão (`0.1.0`/`1.0.0`)**, **remoção das APIs `@deprecated`** (Select e Snackbar antigos, só em major) e **publicação**: alto impacto, pedido explícito do dono | Auditoria a11y completa (inclui o que ficou sem verificação: leitor de tela real, Safari/Firefox, toque), orçamento de tamanho, changelog, guia de migração final; ler `publish.yml` e `publish-pkg.sh` antes de tocar em versão |
+
+### Pendências herdadas da F4 (para a F5-S4)
+
+- Verificar com leitor de tela real: `aria-activedescendant` do Select (painel em outro contêiner) e regiões vivas do Snackbar.
+- Safari/Firefox e toque real (Tooltip não abre em toque; testado só por evento sintético).
+- Remover da 1.0: `selectOptions`, `selectedOption`, `onSelectionChange`, `SelectOption`, `SelectionChangeEvent`, `<shy-snackbar>`, `SnackbarService.show({ element })`, `SnackbarShowOptions`.
+- Aviso antigo do `check-tokens` (28 tokens definidos e ainda não usados): revisar na F5.
+- Safe area (`env(safe-area-inset-*)`) não tratada (ADR-F4-6, item 8): reavaliar em aparelho com notch.
 
 ## Fases
 
@@ -35,7 +87,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
-| F4-S6  | Fechamento da Onda 2                                                               | plano     |         |
+| F4-S6  | Fechamento da Onda 2                                                               | gate      |         |
 | F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
 | F5-S2  | Lote 2                                                                             | pendente  |         |
 | F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |         |
@@ -90,6 +142,47 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S6: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                         |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                          |
+| `npm test`               | 228 testes passando (1 novo: foco do Menu antes do `(click)` do item)                                                             |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                               |
+| `npm run build:showcase` | ok                                                                                                                                |
+| Chromium (Playwright)    | exemplo integrado em dark/light, 360 e 1366 px, LTR e RTL, `reduced-motion`: camadas, Esc um por vez, foco, sem sobras, sem erros |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                            |
+
+Não verificado: leitor de tela real, Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- Showcase `examples/overlays` ("overlays together"): Menu → Dialog (Select e Tooltip dentro) → toast → confirmação → toast com ação; Popover e Tooltip no IconButton.
+- Achado da auditoria e correção: um Dialog aberto por um item do Menu lembrava o item (já removido) como foco anterior, e o foco caía no `body` ao fechar. O `MenuDirective` agora foca o botão em captura, antes do `(click)` do item (`menu.directive.ts` + teste).
+- Docs: `tokens.md` (tokens da Onda 2 e onde defini-los), `migration-0.0-to-0.1.md` (5.2 Select e Snackbar), `accessibility.md` (resumo da Onda 2), plano (Onda 2 concluída e divergências) e `README.md`.
+- Handoff por sessão para threads separadas (seção no topo deste arquivo).
+
+### Relatório consolidado da F4 (Onda 2)
+
+| Sessão | Entrega                                            | Commits          | Decisões (ADR)                                       |
+| ------ | -------------------------------------------------- | ---------------- | ---------------------------------------------------- |
+| F4-S1  | `OverlayService`, `computePosition`, foco, camadas | 3ac709b, 2eb7cfd | F4-1 (híbrido), F4-4 (API componente/template), F4-5 |
+| F4-S2  | Dialog, Drawer, `confirm()`/`alert()`              | 95e5ab3, b05109c | F4-6                                                 |
+| F4-S3  | Popover, Tooltip, Menu                             | ba59390, 5be8c8f | F4-7                                                 |
+| F4-S4  | Select v2 (combobox APG, CVA, multiple)            | 56b8162, 42a27e7 | F4-2 (B: `@deprecated`), F4-8                        |
+| F4-S5  | Snackbar v2 (fila, intent, ação, outlet)           | 1b43599, e39faed | F4-3a (B), F4-3b (A: ação some sob modal), F4-9      |
+| F4-S6  | Fechamento: exemplo integrado, docs, handoff       | (este gate)      |                                                      |
+
+Testes: 170 (início da F4) → 228. Sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Mensagem de commit proposta
+
+`docs: fechar onda 2 (overlays, select e snackbar)`
+
+Corpo: exemplo integrado dos overlays, correção do foco do Menu, docs consolidadas e handoff por sessão.
 
 ## F4-S6: plano da sessão (2026-10-21)
 

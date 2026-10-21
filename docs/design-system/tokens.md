@@ -43,6 +43,22 @@ Terceira camada: `--shy-<componente>-*`, **nunca definidos pela lib**. O compone
 
 Regras: cor de componente sempre cai num semântico que já está em `contrast-pairs.json` (ao sobrescrever, o app assume o contraste); medidas caem em `--shy-space-*`, `--shy-size-*`, `--shy-radius-*` ou `ru(N)`. Variáveis `--_x` dentro do SCSS são privadas e não fazem parte da API.
 
+## Tokens de componente (Onda 2)
+
+Mesma regra da Onda 1 (nunca definidos pela lib; o componente lê com fallback no semântico). Painéis que moram no contêiner de overlays (Select, Snackbar, Popover, Menu, Tooltip, Dialog, Drawer) leem os tokens **do ancestral do `<body>`**: defina em `:root` (ou numa classe no `html`/`body`), não no elemento que abriu o painel. Os tokens do botão do Select valem no próprio elemento.
+
+| Componente | Tokens                                                                                                                                                                                                                     |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dialog     | `--shy-dialog-{width,bg,fg,border-color,shadow,radius,padding}`                                                                                                                                                            |
+| Drawer     | `--shy-drawer-{width,height,bg,fg,border-color,shadow,radius,padding}`                                                                                                                                                     |
+| Popover    | `--shy-popover-{bg,fg,border-color,shadow,radius,padding,max-width}`                                                                                                                                                       |
+| Menu       | `--shy-menu-*` (superfície) e `--shy-menu-item-*`                                                                                                                                                                          |
+| Tooltip    | `--shy-tooltip-{bg,fg,border-color,radius,padding,max-width}`; atrasos `--shy-delay-tooltip` (500 ms) e `--shy-delay-tooltip-hide` (100 ms) em `motion.css`                                                                |
+| Select     | `--shy-select-{height,width,radius,bg,fg,border,border-color-invalid,placeholder-fg,font-family,font-size,icon-size,panel-bg,panel-shadow,panel-max-height,selected-fg,option-hover-bg,option-hover-fg,option-img-radius}` |
+| Snackbar   | `--shy-snackbar-{bg,fg,border,width,radius,offset,gap,font-family,font-size,icon-size}`                                                                                                                                    |
+
+Os atrasos do tooltip são intenção, não movimento: `prefers-reduced-motion` não os zera. Pares de contraste: nenhum par novo na Onda 2 (Popover/Menu/Select/Dialog usam `surface-raised`; Tooltip usa `on-scrim` sobre `scrim-panel`; toasts por intenção usam os pares `*-soft` do Alert).
+
 ### Pares de contraste da Onda 1
 
 Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json` (56 pares × 2 temas): texto sobre superfícies (`text*`/`surface*`), sólidos (`on-X`/`X`), suaves (`on-X-soft`/`X-soft`, `X-text`/`X-soft`), texto de intenção sobre superfícies (`X-text`), borda de controle e foco (`border-strong`, `focus`, ≥ 3:1), trilho (`primary-text`/`track`, `text-muted`/`track`). Ficam de fora, por serem decorativos (WCAG 1.4.11 não exige): `border`, `line` (divider, borda de card), `track` contra a página e o fundo do skeleton. O fundo `primary` sólido no tema escuro (2,6:1 sobre `bg`) só aparece com texto/glifo `on-primary` por cima; o contorno dos controles marcados usa `primary-text` (ADR-F3-6).
