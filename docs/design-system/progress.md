@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F3 Onda 1**, sessão **F3-S6** (Fechamento da Onda 1)
-- Estado: `aguardando-gate` (gate da sessão **e** da fase F3)
+- Fase: **F4 Onda 2**, sessão **F4-S1** (Núcleo de overlay)
+- Estado: `aguardando-plano`, com **decisão de alto impacto pendente (ADR-F4-4: API pública do `OverlayService`)**
 - Branch: `feat/design-system`
-- A F3-S6 foi executada e verificada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S6: relatório do gate e fechamento da F3". O próximo `/build` aprova o gate da F3 (ou um ajuste vira commit novo) e avança para a F4-S1 em `aguardando-plano`; a F4-S1 tem decisão de arquitetura própria (ADR-F4-1, já escolhida: híbrido).
+- Plano em "F4-S1: plano da sessão" abaixo. O próximo `/build` aprova o plano, mas **não** a ADR-F4-4: ela espera resposta explícita do dono (opção A, B ou C). Sem resposta, o `/build` pergunta de novo e não executa.
 
 ## Fases
 
@@ -16,8 +16,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
 | F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
 | F2 Refactor dos existentes         | concluída (gate aprovado) | eb359ac                                                       |
-| F3 Onda 1                          | gate (6 sessões)          |                                                               |
-| F4 Onda 2                          | pendente (6 sessões)      |                                                               |
+| F3 Onda 1                          | concluída (gate aprovado) | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | em andamento (6 sessões)  |                                                               |
 | F5 Onda 3 + hardening              | pendente (4 sessões)      |                                                               |
 
 ## Sessões
@@ -29,8 +29,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
-| F3-S6  | Fechamento da Onda 1                                                               | gate      | 0db8496 |
-| F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
+| F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
+| F4-S1  | Núcleo de overlay (ADR-F4-1 decidida; ADR-F4-4 pendente)                           | plano     |         |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
 | F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
@@ -57,6 +57,61 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-21: `/build` aprovou o plano da F3-S5 e a executou (Badge, Divider, Card, Alert, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
 - 2026-10-21: `/build` aprovou o gate da F3-S5 (`87644db`, já enviado). F3-S6 em `aguardando-plano`.
 - 2026-10-21: `/build` aprovou o plano da F3-S6 e a executou (formulário completo, auditoria no Chromium, 3 correções de a11y, docs). Verificações verdes; gate da F3 em `aguardando-gate`.
+- 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
+
+## F4-S1: plano da sessão (2026-10-21)
+
+Fonte: `sessions/F4-onda-2.md` (F4-S1), plano 7.5 (itens 1 a 3), 9.4, 11.2 e ADR-F0-7 com a emenda ADR-F4-1 (híbrido, já decidido).
+
+### Decisão pendente: ADR-F4-4, API pública do `OverlayService` (alto impacto)
+
+| Opção                                    | O que exporta                                                                                                                                                          | Prós                                                                                                                                                  | Contras                                                                                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **A. Baixo nível (elemento)**            | `OverlayService.attach(pane: HTMLElement, config)` → `ShyOverlayRef`; quem chama cria e renderiza o conteúdo                                                           | API menor; serviço não conhece Angular (`createComponent`)                                                                                            | Dialog, Popover, Menu, Select e Snackbar repetem a renderização dinâmica; o app não consegue abrir um componente sem boilerplate |
+| **B. Componente/template (recomendada)** | `OverlayService.open(componentOuTemplate, config)` → `ShyOverlayRef<R>` com `close(result)`, `closed: Promise<R \| undefined>`, `updatePosition()`; `SHY_OVERLAY_DATA` | É o que o plano 11.2 já descreve; Dialog/Snackbar/Popover/Select viram camadas finas; app consegue overlays próprios; modelo conhecido (CDK/Material) | Mais superfície pública para manter; o serviço cuida de `createComponent`/`appRef.attachView`                                    |
+| **C. Interno**                           | Nada público na F4-S1 (`ɵOverlayService`); o consumidor só usa Dialog, Popover, Menu etc.                                                                              | Zero compromisso de API agora                                                                                                                         | App não cria overlay próprio; se exportar depois, vira breaking de qualquer forma                                                |
+
+**Recomendação: B.** Motivo: todos os overlays da F4 (S2 a S5) abrem um componente ou um `TemplateRef`; centralizar isso evita cinco cópias da mesma lógica de render/destroy, e o próprio plano (11.2) já previa `ref.close(result)`. Em 0.x a superfície pode ser ajustada com depreciação.
+
+Esboço da API na opção B (nomes seguem o padrão do repo: serviço sem prefixo, tipos `Shy*`):
+
+```ts
+const ref = inject(OverlayService).open<MyComp, Data, Result>(MyComp /* ou TemplateRef */, {
+    layer: 'modal', // 'dropdown' | 'drawer' | 'modal' | 'popover' | 'tooltip' | 'toast'
+    modal: true, // default: true em modal/drawer. Backdrop, trap de foco, inert no fundo e scroll lock
+    anchor: buttonEl, // opcional: posiciona com computePosition
+    position: { placement: 'bottom-start', offset: 2 /* em ru */, flip: true, shift: true, matchWidth: false },
+    closeOnEscape: true, // Esc fecha só a camada do topo
+    closeOnOutsideClick: true, // default: true fora de modal
+    restoreFocus: true,
+    initialFocus: 'first', // 'first' | 'pane' | 'none' | HTMLElement
+    data: { id: 1 }, // inject(SHY_OVERLAY_DATA) no conteúdo
+    injector, // opcional
+    paneClass: 'my-pane',
+});
+await ref.close(result); // animateOut e depois remove; resolve ref.closed
+const result = await ref.closed;
+```
+
+Dentro do conteúdo: `inject(ShyOverlayRef)`. Sem RxJS na API (Promise + `signal` `isOpen`), para não amarrar o consumidor a Observable.
+
+### Tarefas (executadas só depois da ADR-F4-4)
+
+1. **Confirmar suporte** de `<dialog>`/`showModal()`, Popover API (`popover="manual"`), `inert` e `@starting-style` no MDN, com data; registrar no relatório e em `decisions.md`.
+2. **`computePosition`** (`lib/overlay/position.ts`): TS puro sobre `DOMRect` (sem DOM de tamanho; guarda SSR), `placement` (12 posições, lógicas `start/end` com RTL), `offset` em ru (via `ru()`), `flip`, `shift`, `matchWidth`, viewport por `visualViewport`. Testes de unidade de flip/shift com rects falsos.
+3. **`ShyFocusScope`** (`[shyFocusScope]` + funções usadas pelo serviço): guarda o foco anterior, foco inicial, Tab cíclico quando `trap`, devolve o foco ao fechar. Em `<dialog>` modal o `inert` é nativo; no fallback aplica `inert` nos irmãos do container.
+4. **`OverlayService`** (`lib/overlay/overlay.service.ts`), conforme a opção escolhida: container `.shy-overlay-container` sob demanda (cria no 1º, remove no último); painel `<dialog>` para `modal`/`drawer` e `[popover="manual"]` para o resto; fallback `position: fixed` + `z()` sem top layer; pilha por abertura com **promoção** (`data-promoting`, sem animação) de popover/tooltip/toast acima de um modal novo; Esc só no topo; clique fora configurável; scroll lock (`overflow: hidden` no `html` + compensação da barra via `scrollbar-gutter`, sem px); `animateOut` na saída; `DestroyRef` limpa tudo.
+5. **Estilos** (`styles/overlay.css` ou SCSS do serviço): container, painel, backdrop (`--shy-color-scrim`), entrada com `@starting-style`, saída por `data-state="closing"`, reduced-motion e `forced-colors`. Só tokens e `ru()`.
+6. **Testes** (happy-dom com os stubs de `test-setup.ts`, ampliados para `showModal`/`close` se faltarem): ordem da pilha e promoção, Esc só no topo, clique fora, foco inicial e retorno, trap de Tab, scroll lock aplicado e removido, container criado e removido, `closed` resolvendo com o resultado.
+7. **Showcase** `foundations/layers`: abrir três camadas (modal, popover, toast) em ordens diferentes e mostrar a ordem; conferir no Chromium nos dois temas.
+8. **Docs**: `src/libs/ui/README.md` (API do overlay), README raiz se mudar uso, `decisions.md` (ADR-F4-4), plano 11.2 se a API final divergir.
+9. Verificações (`check:ds`, testes, `build`, `build:showcase`), relatório do gate e commit `feat(ui): núcleo de overlay (posicionamento, foco e camadas)`.
+
+### Premissas
+
+- Sem dependência nova (runtime ou dev). Os stubs de `showModal` entram em `test-setup.ts` se o happy-dom não tiver.
+- `OverlayService` `providedIn: 'root'`, sem `provideShyOverlay()` obrigatório.
+- Os componentes (Dialog, Popover etc.) ficam para a F4-S2+; a F4-S1 entrega só o núcleo e a página de camadas.
 
 ## F3-S6: relatório do gate e fechamento da F3 (2026-10-21)
 
