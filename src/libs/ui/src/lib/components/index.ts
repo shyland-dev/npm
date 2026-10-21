@@ -1,6 +1,13 @@
+export * from './accordion/accordion-item.component';
+export * from './accordion/accordion.component';
+export * from './accordion/accordion.token';
+
 export * from './alert/alert.component';
 
 export * from './badge/badge.component';
+
+export * from './breadcrumb/breadcrumb-item.component';
+export * from './breadcrumb/breadcrumb.component';
 
 export * from './button/button.component';
 
@@ -26,6 +33,8 @@ export * from './menu/menu-item.component';
 export * from './menu/menu.component';
 export * from './menu/menu.directive';
 
+export * from './pagination/pagination.component';
+
 export * from './popover/popover.component';
 export * from './popover/popover.directive';
 
@@ -44,5 +53,8 @@ export * from './skeleton/skeleton.component';
 export * from './snackbar/snackbar.component';
 export * from './spinner/spinner.component';
 export * from './switch/switch.component';
+export * from './tabs/tab.component';
+export * from './tabs/tabs.component';
+export * from './tabs/tabs.token';
 export * from './theme-toggle/theme-toggle.component';
 export * from './tooltip/tooltip.directive';

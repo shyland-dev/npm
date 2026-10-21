@@ -1,0 +1,29 @@
+<div class="page">
+  <h1 class="page-title">Pagination</h1>
+  <p class="page-lead"><code>&lt;shy-pagination&gt;</code> is a <code>nav</code> of native buttons; the current page has <code>aria-current="page"</code>. <code>[(page)]</code> is 1-based. Accessible texts are inputs, so they can be translated.</p>
+
+  <section class="section">
+    <h2>Default</h2>
+    <div class="card">
+      <shy-pagination label="Results" [pageCount]="20" [(page)]="page" />
+      <p>
+        Page: <code>{{ page() }}</code>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Few pages and wider window</h2>
+    <div class="card shy-stack">
+      <shy-pagination label="Short list" [pageCount]="5" [page]="2" />
+      <shy-pagination label="Wide window" [pageCount]="30" [page]="15" [siblings]="2" [boundaries]="2" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Disabled</h2>
+    <div class="card">
+      <shy-pagination label="Disabled" [pageCount]="8" [page]="3" disabled />
+    </div>
+  </section>
+</div>

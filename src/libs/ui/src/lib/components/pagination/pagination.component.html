@@ -1,0 +1,25 @@
+@if (count() > 0) {
+  <nav [attr.aria-label]="label()">
+    <ul class="list">
+      <li>
+        <button type="button" class="item" [attr.aria-label]="previousLabel()" [disabled]="disabled() || current() <= 1" (click)="go(current() - 1)">
+          <shy-icon class="arrow">chevron-left</shy-icon>
+        </button>
+      </li>
+      @for (entry of entries(); track entry.key) {
+        <li>
+          @if (entry.page; as n) {
+            <button type="button" class="item" [disabled]="disabled()" [attr.aria-label]="pageLabel() + ' ' + n" [attr.aria-current]="n === current() ? 'page' : null" (click)="go(n)">{{ n }}</button>
+          } @else {
+            <span class="gap" aria-hidden="true">…</span>
+          }
+        </li>
+      }
+      <li>
+        <button type="button" class="item" [attr.aria-label]="nextLabel()" [disabled]="disabled() || current() >= count()" (click)="go(current() + 1)">
+          <shy-icon class="arrow">chevron-right</shy-icon>
+        </button>
+      </li>
+    </ul>
+  </nav>
+}

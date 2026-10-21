@@ -1,0 +1,7 @@
+:host {
+  display: block;
+  border: var(--shy-border-width) solid var(--shy-accordion-border-color, var(--shy-color-border));
+  border-radius: var(--shy-accordion-radius, var(--shy-radius-lg));
+  background: var(--shy-accordion-bg, var(--shy-color-surface));
+  overflow: hidden;
+}

@@ -1,0 +1,72 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  color: var(--shy-color-text);
+
+  & + & {
+    border-block-start: var(--shy-border-width) solid var(--shy-accordion-border-color, var(--shy-color-border));
+  }
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--shy-accordion-gap, var(--shy-space-6));
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--shy-accordion-height, var(--shy-size-control-lg));
+  margin: 0;
+  padding-block: var(--shy-space-4);
+  padding-inline: var(--shy-accordion-pad-x, var(--shy-space-8));
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--shy-text-md);
+  font-weight: var(--shy-weight-semibold);
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include state-layer;
+
+  @include shy-state(focus) {
+    @include focus-ring(ru(-1));
+  }
+
+  @include disabled-state;
+}
+
+.chevron {
+  flex: none;
+  color: var(--shy-color-text-muted);
+  transition: transform var(--shy-duration-base) var(--shy-ease-standard);
+}
+
+:host([data-open]) .chevron {
+  transform: rotate(180deg);
+}
+
+// Altura animada por grid (0fr → 1fr): sem medir o conteúdo em JS.
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--shy-duration-base) var(--shy-ease-standard);
+}
+
+:host([data-open]) .panel {
+  grid-template-rows: 1fr;
+}
+
+.panel-clip {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+.content {
+  padding-block: var(--shy-accordion-content-pad-y, var(--shy-space-2) var(--shy-space-8));
+  padding-inline: var(--shy-accordion-pad-x, var(--shy-space-8));
+  color: var(--shy-accordion-content-color, var(--shy-color-text-muted));
+}

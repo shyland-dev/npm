@@ -472,6 +472,62 @@ Anchored overlays on the `OverlayService` (they flip and shift to stay in the vi
 
 ---
 
+### `<shy-tabs>`, `<shy-tab>`
+
+APG Tabs. `<shy-tab value label>` is the panel (`role="tabpanel"`, content projected) and its `label` becomes the tab button.
+
+```html
+<shy-tabs label="Account" [(value)]="tab">
+    <shy-tab value="profile" label="Profile">…</shy-tab>
+    <shy-tab value="password" label="Password" disabled>…</shy-tab>
+    <shy-tab value="plan" label="Plan">…</shy-tab>
+</shy-tabs>
+```
+
+| Input (`shy-tabs`) | Default        | Notes                                                                     |
+| ------------------ | -------------- | ------------------------------------------------------------------------- |
+| `[(value)]`        | first enabled  | Value of the selected tab; without a match the first enabled tab is shown |
+| `orientation`      | `'horizontal'` | `'vertical'` switches the arrows to ↓/↑                                   |
+| `activation`       | `'automatic'`  | `'manual'`: arrows only move focus, Enter/Space selects                   |
+| `label`            | —              | `aria-label` of the tablist                                               |
+
+- Roving tabindex (Tab enters the selected tab), arrows wrap around (mirrored in RTL), Home/End go to the ends, disabled tabs are skipped. No `ControlValueAccessor`: it is navigation, not a form control.
+
+### `<shy-accordion>`, `<shy-accordion-item>`
+
+APG Accordion. Each item: a `role="heading"` (`level`, default 3) with a button (`aria-expanded`, `aria-controls`) and a `role="region"` panel that is `inert` while closed.
+
+```html
+<shy-accordion>
+    <shy-accordion-item label="What is it?" [(open)]="open">…</shy-accordion-item>
+    <shy-accordion-item label="Disabled" disabled>…</shy-accordion-item>
+</shy-accordion>
+```
+
+- `multiple` on the group allows several open items; by default opening one closes the others (only when the user opens; `[open]` set by code does not close the rest).
+- ↓/↑/Home/End move between enabled headers (no wrap). The height animates with `grid-template-rows` (no JS measuring) and follows `prefers-reduced-motion`.
+
+### `<shy-breadcrumb>`, `<shy-breadcrumb-item>`
+
+`role="navigation"` (`label`, default "Breadcrumb") with a list of items. Project your own link (`<a href>`, `<a routerLink>`); the current page is `<shy-breadcrumb-item current>Text</shy-breadcrumb-item>` (`aria-current="page"`). The separator is CSS (`--shy-breadcrumb-separator`, default `'/'`) with empty alternative text, so screen readers skip it.
+
+### `<shy-pagination>`
+
+`nav` (`label`, default "Pagination") of native buttons; the current page has `aria-current="page"`.
+
+```html
+<shy-pagination label="Results" [pageCount]="20" [(page)]="page" />
+```
+
+| Input                                              | Default                                            | Notes                                                                      |
+| -------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| `[(page)]`, `pageCount`                            | `1`, required                                      | 1-based; `pageCount` of `0` renders nothing                                |
+| `siblings`, `boundaries`                           | `1`, `1`                                           | Pages around the current one and fixed at each end; the rest become "…"    |
+| `disabled`                                         | `false`                                            |                                                                            |
+| `label`, `previousLabel`, `nextLabel`, `pageLabel` | `Pagination`, `Previous page`, `Next page`, `Page` | Accessible texts (the lib does not translate); each page is named "Page 3" |
+
+A gap of a single page shows that page instead of "…". Arrows mirror in RTL.
+
 ## Styles
 
 Tokens (colors, typography, spacing, motion, layers), self-hosted fonts (JetBrains Mono, SIL OFL), animations and a base reset ship as one CSS. Pick **one** way to load it:
@@ -633,6 +689,17 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 | `--shy-tooltip-bg`, `-fg`, `-border-color`, `-radius`, `-padding`, `-max-width` | `scrim-panel`, `on-scrim`, `scrim-panel-border`, `radius-md`, `space-2 space-3`, `ru(90)` | Tooltip surface                                                  |
 | `--shy-delay-tooltip`, `--shy-delay-tooltip-hide`                               | `500ms`, `100ms`                                                                          | Show/hide delays (intent, not motion: reduced motion keeps them) |
 
+### Tabs, Accordion, Breadcrumb and Pagination Tokens
+
+| Token                                                                                                      | Default                                                                                    | Description                             |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------- |
+| `--shy-tabs-fg`, `-fg-hover`, `-fg-selected`, `-bg-hover`, `-bg-active`, `-indicator-color`, `-line-color` | `text-muted`, `on-neutral-soft`, `text`, `neutral-soft`, `neutral-soft`, `primary`, `line` | Tab colors                              |
+| `--shy-tabs-height`, `-pad-x`, `-gap`, `-list-gap`, `-panel-pad-y`                                         | `size-control-md`, `space-7`, `space-8`, `space-2`, `space-6`                              | Measures (`gap`: vertical list ↔ panel) |
+| `--shy-accordion-bg`, `-border-color`, `-radius`, `-content-color`                                         | `surface`, `border`, `radius-lg`, `text-muted`                                             | Group surface and panel text            |
+| `--shy-accordion-height`, `-pad-x`, `-gap`, `-content-pad-y`                                               | `size-control-lg`, `space-8`, `space-6`, `space-2 space-8`                                 | Header height, padding and gaps         |
+| `--shy-breadcrumb-fg`, `-fg-current`, `-separator`, `-gap`                                                 | `text-muted`, `text`, `'/'`, `space-3`                                                     | Colors, separator text and its spacing  |
+| `--shy-pagination-fg`, `-bg-current`, `-fg-current`, `-size`, `-radius`, `-gap`                            | `text`, `primary`, `on-primary`, `size-control-md`, `radius-md`, `space-2`                 | Page buttons                            |
+
 ### Snackbar Tokens
 
 The toasts can be customized via CSS custom properties on `:root` (the container lives in the overlay layer):
@@ -687,6 +754,11 @@ export { IconButtonComponent } from './lib/components/icon-button/icon-button.co
 export { AlertComponent } from './lib/components/alert/alert.component';
 export { BadgeComponent } from './lib/components/badge/badge.component';
 export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
+export { AccordionComponent } from './lib/components/accordion/accordion.component';
+export { AccordionItemComponent } from './lib/components/accordion/accordion-item.component';
+export { SHY_ACCORDION, ShyAccordionContext, ShyAccordionPanel } from './lib/components/accordion/accordion.token';
+export { BreadcrumbComponent } from './lib/components/breadcrumb/breadcrumb.component';
+export { BreadcrumbItemComponent } from './lib/components/breadcrumb/breadcrumb-item.component';
 export { CardComponent } from './lib/components/card/card.component';
 export { DialogComponent } from './lib/components/dialog/dialog.component';
 export { DividerComponent } from './lib/components/divider/divider.component';
@@ -694,6 +766,7 @@ export { DrawerComponent } from './lib/components/drawer/drawer.component';
 export { MenuComponent } from './lib/components/menu/menu.component';
 export { MenuItemComponent } from './lib/components/menu/menu-item.component';
 export { MenuDirective } from './lib/components/menu/menu.directive';
+export { PaginationComponent } from './lib/components/pagination/pagination.component';
 export { PopoverComponent } from './lib/components/popover/popover.component';
 export { PopoverDirective } from './lib/components/popover/popover.directive';
 export { TooltipDirective } from './lib/components/tooltip/tooltip.directive';
@@ -711,6 +784,9 @@ export { SkeletonComponent } from './lib/components/skeleton/skeleton.component'
 export { SnackbarComponent } from './lib/components/snackbar/snackbar.component';
 export { SpinnerComponent } from './lib/components/spinner/spinner.component';
 export { SwitchComponent } from './lib/components/switch/switch.component';
+export { TabComponent } from './lib/components/tabs/tab.component';
+export { TabsComponent } from './lib/components/tabs/tabs.component';
+export { SHY_TABS, ShyTabsContext } from './lib/components/tabs/tabs.token';
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Services

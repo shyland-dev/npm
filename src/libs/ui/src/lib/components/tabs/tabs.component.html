@@ -1,0 +1,8 @@
+<div class="list" role="tablist" [attr.aria-orientation]="orientation()" [attr.aria-label]="label() ?? null" (keydown)="onKeydown($event)">
+  @for (tab of tabs(); track tab) {
+    <button type="button" role="tab" class="tab" [id]="tab.tabId" [disabled]="tab.disabled()" [attr.aria-selected]="tab.selected()" [attr.aria-controls]="tab.panelId" [attr.tabindex]="tab.selected() ? 0 : -1" (click)="select(tab)">
+      {{ tab.label() }}
+    </button>
+  }
+</div>
+<div class="panels"><ng-content /></div>

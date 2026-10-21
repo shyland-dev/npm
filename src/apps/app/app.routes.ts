@@ -3,8 +3,10 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   { path: '', redirectTo: 'components/icon', pathMatch: 'full' },
 
+  { path: 'components/accordion', loadComponent: () => import('./components/accordion/accordion').then((m) => m.AccordionPage) },
   { path: 'components/alert', loadComponent: () => import('./components/alert/alert').then((m) => m.AlertPage) },
   { path: 'components/badge', loadComponent: () => import('./components/badge/badge').then((m) => m.BadgePage) },
+  { path: 'components/breadcrumb', loadComponent: () => import('./components/breadcrumb/breadcrumb').then((m) => m.BreadcrumbPage) },
   { path: 'components/button', loadComponent: () => import('./components/button/button').then((m) => m.ButtonPage) },
   { path: 'components/card', loadComponent: () => import('./components/card/card').then((m) => m.CardPage) },
   { path: 'components/checkbox', loadComponent: () => import('./components/checkbox/checkbox').then((m) => m.CheckboxPage) },
@@ -12,6 +14,7 @@ export const routes: Routes = [
   { path: 'components/divider', loadComponent: () => import('./components/divider/divider').then((m) => m.DividerPage) },
   { path: 'components/drawer', loadComponent: () => import('./components/drawer/drawer').then((m) => m.DrawerPage) },
   { path: 'components/menu', loadComponent: () => import('./components/menu/menu').then((m) => m.MenuPage) },
+  { path: 'components/pagination', loadComponent: () => import('./components/pagination/pagination').then((m) => m.PaginationPage) },
   { path: 'components/popover', loadComponent: () => import('./components/popover/popover').then((m) => m.PopoverPage) },
   { path: 'components/tooltip', loadComponent: () => import('./components/tooltip/tooltip').then((m) => m.TooltipPage) },
   { path: 'components/form-field', loadComponent: () => import('./components/form-field/form-field').then((m) => m.FormFieldPage) },
@@ -25,6 +28,7 @@ export const routes: Routes = [
   { path: 'components/snackbar', loadComponent: () => import('./components/snackbar/snackbar').then((m) => m.SnackbarPage) },
   { path: 'components/spinner', loadComponent: () => import('./components/spinner/spinner').then((m) => m.SpinnerPage) },
   { path: 'components/switch', loadComponent: () => import('./components/switch/switch').then((m) => m.SwitchPage) },
+  { path: 'components/tabs', loadComponent: () => import('./components/tabs/tabs').then((m) => m.TabsPage) },
   { path: 'components/textarea', loadComponent: () => import('./components/textarea/textarea').then((m) => m.TextareaPage) },
 
   { path: 'examples/form', loadComponent: () => import('./examples/form/form').then((m) => m.FormExample) },

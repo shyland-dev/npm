@@ -115,3 +115,11 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - **Foco:** retorna ao elemento de origem; o Menu devolve o foco ao botão **antes** do `(click)` do item, então um Dialog aberto por um item lembra o botão e devolve o foco a ele ao fechar.
 - **Exemplo integrado** (showcase, `examples > overlays together`): Menu → Dialog (Select e Tooltip dentro) → toast → confirmação → toast com ação. Verificado no Chromium (dark/light, 360 e 1366 px, LTR e RTL, `reduced-motion`): Esc um por vez, sem painéis nem `inert`/scroll lock sobrando, sem erros de console.
 - **Não verificado na Onda 2:** leitor de tela real (NVDA/VoiceOver; atenção ao `aria-activedescendant` do Select e às regiões vivas do Snackbar), Safari/Firefox, toque real. Fica para a auditoria da F5-S4.
+
+## Tabs, Accordion, Breadcrumb e Pagination (F5-S1)
+
+- **Tabs (APG Tabs):** `tablist` nomeada (`label`), `tab` com `aria-selected`/`aria-controls`, `tabpanel` com `aria-labelledby` e `tabindex="0"`; roving tabindex, setas com volta (invertidas em RTL), Home/End, desabilitadas puladas; ativação automática ou manual. Indicador por borda (sobrevive ao `forced-colors`, onde vira `Highlight`).
+- **Accordion (APG Accordion):** cabeçalho `role="heading"` + `aria-level` com botão `aria-expanded`/`aria-controls`; painel `role="region"` com `aria-labelledby`, `inert` fechado (fora do Tab e dos leitores). ↓/↑/Home/End entre cabeçalhos. Altura animada só com `--shy-duration-base` (zerada em reduced motion).
+- **Breadcrumb:** `navigation` nomeada, lista de `listitem`, `aria-current="page"` só no item atual; separador CSS com texto alternativo vazio (fora da árvore de acessibilidade).
+- **Pagination:** `nav` nomeada, botões nativos nomeados ("Page 3", "Previous page"), `aria-current="page"`, reticências `aria-hidden`; textos traduzíveis por input. Alvos ≥ `size-control-md` (crescem em ponteiro grosso).
+- **Contraste:** nenhum par novo (ver `tokens.md`). **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`): sem scroll horizontal nem erros de console; teclado das abas em LTR/RTL. **Não verificado:** leitor de tela real, Safari/Firefox, toque real (vai para a F5-S4).

@@ -59,6 +59,19 @@ Mesma regra da Onda 1 (nunca definidos pela lib; o componente lê com fallback n
 
 Os atrasos do tooltip são intenção, não movimento: `prefers-reduced-motion` não os zera. Pares de contraste: nenhum par novo na Onda 2 (Popover/Menu/Select/Dialog usam `surface-raised`; Tooltip usa `on-scrim` sobre `scrim-panel`; toasts por intenção usam os pares `*-soft` do Alert).
 
+## Tokens de componente (Onda 3, lote 1)
+
+Mesma regra (nunca definidos pela lib; o componente lê com fallback no semântico). Tudo vive no elemento do componente, sem painel em overlay.
+
+| Componente | Tokens                                                                                                                     |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Tabs       | `--shy-tabs-{fg,fg-hover,fg-selected,bg-hover,bg-active,indicator-color,line-color,height,pad-x,gap,list-gap,panel-pad-y}` |
+| Accordion  | `--shy-accordion-{bg,border-color,radius,content-color,height,pad-x,gap,content-pad-y}`                                    |
+| Breadcrumb | `--shy-breadcrumb-{fg,fg-current,separator,gap}`                                                                           |
+| Pagination | `--shy-pagination-{fg,bg-current,fg-current,size,radius,gap}`                                                              |
+
+Pares de contraste: nenhum par novo (`text`/`text-muted`/`text-subtle` sobre `bg`/`surface`, `on-neutral-soft` sobre `neutral-soft` no hover/active da aba, `on-primary` sobre `primary` na página atual e `focus` já estão em `contrast-pairs.json`).
+
 ### Pares de contraste da Onda 1
 
 Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json` (56 pares × 2 temas): texto sobre superfícies (`text*`/`surface*`), sólidos (`on-X`/`X`), suaves (`on-X-soft`/`X-soft`, `X-text`/`X-soft`), texto de intenção sobre superfícies (`X-text`), borda de controle e foco (`border-strong`, `focus`, ≥ 3:1), trilho (`primary-text`/`track`, `text-muted`/`track`). Ficam de fora, por serem decorativos (WCAG 1.4.11 não exige): `border`, `line` (divider, borda de card), `track` contra a página e o fundo do skeleton. O fundo `primary` sólido no tema escuro (2,6:1 sobre `bg`) só aparece com texto/glifo `on-primary` por cima; o contorno dos controles marcados usa `primary-text` (ADR-F3-6).

@@ -12,3 +12,4 @@ export * from './snackbar/snackbar.type';
 export * from './spinner/spinner.type';
 export * from './overlay/overlay.type';
 export * from './dialog/dialog.type';
+export * from './tabs/tabs.type';

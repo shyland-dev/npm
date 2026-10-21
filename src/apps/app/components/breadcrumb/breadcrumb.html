@@ -1,0 +1,27 @@
+<div class="page">
+  <h1 class="page-title">Breadcrumb</h1>
+  <p class="page-lead"><code>&lt;shy-breadcrumb&gt;</code> is a <code>navigation</code> landmark with a list of <code>&lt;shy-breadcrumb-item&gt;</code>. The current page uses <code>current</code> (<code>aria-current="page"</code>). The separator is CSS and hidden from screen readers; change it with <code>--shy-breadcrumb-separator</code>.</p>
+
+  <section class="section">
+    <h2>Default</h2>
+    <div class="card">
+      <shy-breadcrumb label="You are here">
+        <shy-breadcrumb-item><a href="/">Home</a></shy-breadcrumb-item>
+        <shy-breadcrumb-item><a href="/components/icon">Components</a></shy-breadcrumb-item>
+        <shy-breadcrumb-item current>Breadcrumb</shy-breadcrumb-item>
+      </shy-breadcrumb>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Custom separator</h2>
+    <div class="card">
+      <shy-breadcrumb style="--shy-breadcrumb-separator: '›'">
+        <shy-breadcrumb-item><a href="/">Home</a></shy-breadcrumb-item>
+        <shy-breadcrumb-item><a href="/components/icon">Components</a></shy-breadcrumb-item>
+        <shy-breadcrumb-item><a href="/components/tabs">Tabs</a></shy-breadcrumb-item>
+        <shy-breadcrumb-item current>Vertical</shy-breadcrumb-item>
+      </shy-breadcrumb>
+    </div>
+  </section>
+</div>
