@@ -1,0 +1,1403 @@
+# Progresso do Design System
+
+Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada tarefa concluída.
+
+## Estado atual
+
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S4** (hardening e fechamento; F5-S3 inteira concluída)
+- Estado: `aguardando-gate` (F5-S4 executada em 2026-10-21; relatório em "F5-S4: relatório do gate"; **o `/build` aprova o gate e a mensagem de commit**; tag, push na prod e publish continuam só sob pedido explícito)
+- Branch: `feat/design-system`
+- F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
+- **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
+
+## Handoff por sessão (threads separadas)
+
+Pedido do dono (2026-10-21): thread longa; depois da F4-S6, cada sessão restante roda numa thread própria do Claude. Só a F5 falta (4 sessões). O repositório está pronto: tudo commitado e com push em `feat/design-system`; o estado fica só aqui.
+
+### Como abrir cada thread (todas)
+
+1. Primeira mensagem da thread: `/build status` (mostra sessão e próximo passo); depois `/build` conforme o estado.
+2. O container da thread abre numa branch `claude/project-thread-*` sem os docs do DS. Antes de tudo (bash):
+
+```bash
+git fetch origin feat/design-system && git checkout -B feat/design-system origin/feat/design-system && npm ci
+```
+
+3. Leitura obrigatória: `CLAUDE.md`, este arquivo, `docs/design-system/sessions/README.md` e o arquivo da fase (`sessions/F5-onda-3-hardening.md`, só a sessão atual), plano seções 11, 12 e 17, `decisions.md` e `tokens.md`.
+4. Gate (bash): `npm run check:ds && npm test && npm run build && npm run build:showcase`. Estado em 2026-10-21: 228 testes passando; Node 22 no container (o projeto pede 24.14.1: registrar no relatório).
+5. Commit em pt-BR (Conventional Commits) e push só em `feat/design-system`, sem bump/tag/publish. Depois do push, copiar `docs/design-system/*.md` para `/mnt/project-files/design-system/` (espelho do projeto).
+
+### Peças prontas para reaproveitar (F3/F4)
+
+| Peça                                      | Onde                                                                                                           |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `ControlBase` (CVA, `invalid`, FormField) | `components/toggle/control-base.ts` (Checkbox, Switch, Radio, Select)                                          |
+| `OverlayService` / `ShyOverlayRef`        | `overlay/` (`passive`, `modalOpen`, `anchor`, `matchWidth`; painel ancorado em modal vira filho do `<dialog>`) |
+| `OverlayTrigger` (gatilho + painel)       | `overlay/overlay-trigger.ts` (Popover, Menu)                                                                   |
+| `Typeahead`, `animateOut`, `ru()`         | `utils/` (`typeahead.ts` e `animate-out.ts` internos)                                                          |
+| Padrões de teste                          | `*.spec.ts` (vitest; `vi.useFakeTimers`; `await settle(fixture)` para `ngModel`)                               |
+
+### Armadilhas conhecidas
+
+- `prettier --write` só nos arquivos tocados; nunca em `docs/DESIGN-SYSTEM-PLAN.md` (edite por Python), `icons.ts` nem `src/apps/index.html`.
+- Auditoria no Chromium: `/opt/pw-browsers/chromium` com `playwright-core` (instale em uma pasta do scratchpad); sirva `dist/showcase/browser` com um servidor com fallback para `index.html`; use `Tab` (não `focus()`) para testar `:focus-visible`; não use `pkill -f <nome-do-script>` no mesmo comando que o contém.
+- Painéis em overlay não herdam tokens do elemento que os abriu: tokens de painel vão em `:root`.
+- `ngModel` escreve o valor inicial de forma assíncrona: em teste, `await fixture.whenStable()` antes de interagir.
+
+### Handoff por sessão
+
+| Sessão | Estado ao abrir a thread                     | Decisões abertas (o `/build` NÃO aprova)                                                                                                                           | Retomada                                                                                                                                                                                                                         |
+| ------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F5-S1  | `aguardando-plano` (depois do gate da F4-S6) | **Quais componentes da Onda 3 os projetos usam** e a ordem (candidatos no arquivo da fase). Se algum nome/API público novo for ambíguo, comparar e perguntar       | `/build status`; o Claude lista os candidatos e pergunta; só depois `/build` executa o lote 1 (sugestão: Tabs, Accordion, Breadcrumb, Pagination)                                                                                |
+| F5-S2  | `pendente` até o gate da F5-S1               | Itens extras que o dono priorizou (Avatar, EmptyState, List, Table; Table sem virtualização)                                                                       | Segue o arquivo da fase, com o contrato comum; reaproveita Tabs/Pagination se o lote 1 os entregou                                                                                                                               |
+| F5-S3  | `pendente` (sob demanda; pode ser pulada)    | Se vale fazer (Combobox, Slider, FileDropzone, Stepper, AppShell): perguntar ao dono; pode ser dividida                                                            | Só com prioridade do dono; senão marcar "pulada" em `progress.md` e ir para a F5-S4                                                                                                                                              |
+| F5-S4  | `pendente`                                   | **Versão (`0.1.0`/`1.0.0`)**, **remoção das APIs `@deprecated`** (Select e Snackbar antigos, só em major) e **publicação**: alto impacto, pedido explícito do dono | Auditoria a11y completa (inclui o que ficou sem verificação: leitor de tela real, Safari/Firefox, toque), orçamento de tamanho, changelog, guia de migração final; ler `publish.yml` e `publish-pkg.sh` antes de tocar em versão |
+
+### Pendências herdadas da F4 (para a F5-S4)
+
+- Verificar com leitor de tela real: `aria-activedescendant` do Select (painel em outro contêiner) e regiões vivas do Snackbar.
+- Safari/Firefox e toque real (Tooltip não abre em toque; testado só por evento sintético).
+- Remover da 1.0: `selectOptions`, `selectedOption`, `onSelectionChange`, `SelectOption`, `SelectionChangeEvent`, `<shy-snackbar>`, `SnackbarService.show({ element })`, `SnackbarShowOptions`.
+- Aviso antigo do `check-tokens` (28 tokens definidos e ainda não usados): revisar na F5.
+- Safe area (`env(safe-area-inset-*)`) não tratada (ADR-F4-6, item 8): reavaliar em aparelho com notch.
+
+## Fases
+
+| Fase                               | Status                    | Commit                                                        |
+| ---------------------------------- | ------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado) | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado) | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado) | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | gate da S4 pendente       |                                                               |
+
+## Sessões
+
+| Sessão | Escopo                                                                             | Status    | Commit  |
+| ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
+| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
+| F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
+| F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
+| F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
+| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
+| F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
+| F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
+| F4-S6  | Fechamento da Onda 2                                                               | gate      |         |
+| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0 |
+| F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | concluída | 772b8e2 |
+| F5-S3a | Lote 3a (Combobox, Slider, FileDropzone)                                           | concluída | 1df194b |
+| F5-S3b | Lote 3b (Stepper, AppShell)                                                        | concluída | fe843f4 |
+| F5-S4  | Hardening e fechamento                                                             | gate      |         |
+
+## Registro
+
+- 2026-10-20: F2 aprovada e commitada (`eb359ac`), push em `feat/design-system`. Resíduos da Onda 0 (D-F2-1) ficam na F3-S1.
+- 2026-10-20: F3 a F5 divididas em sessões curtas (`docs/design-system/sessions/`), para o dono rodar uma por sessão do Claude.
+- 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou. Gate em `aguardando-gate`; relatório abaixo.
+- 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou (Spinner, Skeleton, Progress, ProgressCircular, Button com o Spinner). Verificações verdes, commit e push em `feat/design-system`; gate em `aguardando-gate`.
+- 2026-10-20: `/build` aprovou o gate da F3-S2 (`53e2902`, já enviado). F3-S3 em `aguardando-plano`.
+- 2026-10-20: feedback do dono (não é aprovação): o sistema de z-index/overlay pode se basear no Angular Material/CDK (container fixo em tela cheia + backdrop, só renderizado quando há overlay). Impacta ADR-F0-7 / seção 7.5 do plano e a F4-S1. Decisão de alto impacto: alternativas comparadas na thread, aguardando resposta do dono; nada alterado no plano ainda. Estado segue `aguardando-plano` da F3-S3.
+- 2026-10-20: dono escolheu o **híbrido** para o overlay (ADR-F4-1): container sob demanda com backdrop estilo CDK + top layer + `z()` fallback. Aplicado em ADR-F0-7 (emenda), plano 7.5 (item 3) e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F3-S3.
+- 2026-10-20: `/build` aprovou o plano da F3-S3 e a executou (Input/Textarea, FormField, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+- 2026-10-20: `/build` aprovou o gate da F3-S3 (`e119878`, já enviado). F3-S4 em `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F3-S4 e a executou (Checkbox, Switch, Radio, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+- 2026-10-20: `/build` aprovou o gate da F3-S4 (`b410314`, já enviado). F3-S5 em `aguardando-plano`.
+- 2026-10-21: `/build` aprovou o plano da F3-S5 e a executou (Badge, Divider, Card, Alert, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
+- 2026-10-21: `/build` aprovou o gate da F3-S5 (`87644db`, já enviado). F3-S6 em `aguardando-plano`.
+- 2026-10-21: `/build` aprovou o plano da F3-S6 e a executou (formulário completo, auditoria no Chromium, 3 correções de a11y, docs). Verificações verdes; gate da F3 em `aguardando-gate`.
+- 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
+- 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
+- 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
+- 2026-10-21: `/build` aprovou o gate da F5-S1 (`78774a0`, já enviado). **F5-S1 concluída.** F5-S2 em `aguardando-plano` (plano acima).
+- 2026-10-21: `/build` (thread própria da F5-S2) aprovou o plano e o executou (Avatar, EmptyState, List, Table, showcase, docs, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
+- 2026-10-21: `/build` (thread própria da F5-S3b) aprovou o plano (premissas P4/P5) e executou Stepper e AppShell (showcase, docs, ADR-F5-4, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
+- 2026-10-21: `/build` aprovou o gate da F5-S3b (`fe843f4`, push feito). **F5-S3 concluída.** F5-S4 em `aguardando-plano` (plano abaixo, com 3 decisões de alto impacto em aberto).
+
+## F4-S3: plano da sessão (2026-10-21)
+
+Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), ADR-F4-4/F4-5/F4-6. Premissa de base: o `OverlayService` já cuida de camada, posição (`computePosition`), Esc na pilha, clique fora, promoção e foco. Popover, Tooltip e Menu são **diretivas no gatilho** que abrem conteúdo por ele.
+
+### Como fica (resumo)
+
+- **Popover**: `<button [shyPopover]="tpl">` (aceita `TemplateRef` ou componente). Painel não modal na camada `popover`, ancorado no gatilho (`shyPopoverPlacement`, padrão `bottom-start`). Gatilho com `aria-expanded` e `aria-controls`; `aria-haspopup="dialog"`. Abre com foco no primeiro focável (se houver); Esc, clique fora e novo clique no gatilho fecham e **devolvem o foco ao gatilho**. Tab para além do último focável fecha e devolve o foco ao gatilho (o painel mora no fim do `body`, então sem isso o teclado não teria como sair dele na ordem certa). Superfície `shy-popover` (fundo, borda, sombra, padding) para o conteúdo.
+- **Tooltip**: `<button shyTooltip="Salvar">`. Abre por hover (depois do atraso) e por `:focus-visible`; `role="tooltip"` e `aria-describedby` no gatilho enquanto aberto. WCAG 1.4.13: **dispensável** (Esc fecha sem mover o foco), **passável** (o ponteiro pode ir do gatilho ao tooltip sem fechar) e **persistente** (fica até perder hover e foco). Fecha ao clicar no gatilho (também evita o tooltip ficar inerte atrás de um modal que o clique abre). Não abre em toque; nunca é o único acesso à informação (documentado).
+- **Menu**: `<button [shyMenu]="menu">` + `<ng-template #menu><shy-menu>…<button shyMenuItem>…</button></shy-menu></ng-template>`. Menu button APG: `aria-haspopup="menu"`, `aria-expanded`, `aria-controls`; painel `role="menu"` na camada `dropdown`, com `role="menuitem"` nos itens e foco por roving (`tabindex="-1"` e `focus()`): setas (↓ abre no primeiro, ↑ abre no último), Home/End, **typeahead**, Enter/Espaço ativam e fecham, Esc fecha e devolve o foco, Tab fecha. Item `disabled` fica focável com `aria-disabled` (APG) e não ativa. `shy-divider` entre grupos (`role="separator"`). **Sem submenus** nesta sessão (a sessão os chama de opcionais; ver premissas).
+- Base interna `OverlayTrigger` (não exportada) para Popover e Menu: abrir/fechar/alternar, `expanded` (signal), id do painel e devolução de foco. O Tooltip é à parte (hover/foco/atraso).
+
+### Tarefas
+
+1. `overlay/overlay-trigger.ts` (base): `open()`, `close()`, `toggle()`, `expanded`, `aria-*` no host, limpeza no `ngOnDestroy`; usa `OverlayService.open` com `anchor` = host.
+2. `components/popover/` (`[shyPopover]`, `shy-popover`), `components/tooltip/` (`[shyTooltip]`, painel interno do tooltip), `components/menu/` (`[shyMenu]`, `shy-menu`, `[shyMenuItem]`). Tipos em `types/` (`ShyPlacement` já existe).
+3. Atrasos do tooltip em tokens de motion (`--shy-delay-tooltip` 500ms, `--shy-delay-tooltip-hide` 100ms), lidos com `getComputedStyle` (reduced motion não muda atraso; muda só a animação). Entrada por `@starting-style` (fade) e saída por `animateOut`.
+4. Tokens de componente (padrão do Alert, com fallback): `--shy-popover-*`, `--shy-tooltip-*` (fundo `scrim-panel`, texto `on-scrim`, par já testado em `contrast-pairs.json`), `--shy-menu-*` (item hover/focus com `primary-soft`, selecionado, desabilitado). Hover só em `@media (hover: hover)`, `:focus-visible` com anel, `forced-colors`, sem literal de cor/unidade/tempo em SCSS.
+5. Testes (happy-dom): abrir/fechar/alternar e `aria-*` dos três; foco inicial e devolução; Esc, clique fora e Tab; tooltip por hover com atraso (timers falsos), por foco, Esc, passar o ponteiro para o tooltip, clique fecha, `aria-describedby` só aberto; menu com setas, Home/End, typeahead (reinício por pausa), item desabilitado, Enter/Espaço fecham, Tab fecha, abre por ↓/↑.
+6. Showcase: páginas `components/popover`, `components/tooltip`, `components/menu` (placements e flip na borda, tooltip em `IconButton`, popover com formulário, menu com divisor e item desabilitado, tudo dentro de um Dialog para exercitar a ADR-F4-5). Auditoria no Chromium nos 2 temas, 360 e 1366 px, RTL, reduced motion.
+7. A11y: `contrast-pairs.json` só se surgir par novo (item hover do menu sobre `surface-raised`); `accessibility.md` com a verificação dos três padrões APG e do 1.4.13.
+8. Docs: `src/libs/ui/README.md` e `README.md` (uso, tokens, exports), ADR-F4-7 em `decisions.md`, plano 12 e `sessions/F4-onda-2.md` se algo divergir.
+9. Verificações (`check:ds`, testes, `build`, `build:showcase`), relatório do gate e commit `feat(ui): popover, tooltip e menu`.
+
+### Premissas e decisões que valem se não houver objeção
+
+- Sem breaking e sem dependência nova; Popover, Tooltip e Menu são novos. `Select` (F4-S4) vai reaproveitar a base `OverlayTrigger` e o painel de listbox próprio.
+- **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
+- Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
+- Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S4: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                             |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (7 verificações; `check-size` novo; o aviso dos 28 tokens sem uso deixou de existir)                                               |
+| `npm test`               | 288 testes passando (296 antes; -8 dos testes das APIs removidas)                                                                     |
+| `npm run build`          | ok (`@shyland-dev/ui` 1.0.0 e `@shyland-dev/utils`)                                                                                   |
+| `npm run build:showcase` | ok                                                                                                                                    |
+| Chromium                 | `scripts/audit-showcase.mjs`: 46 rotas × 24 cenários = 1104, 0 achados (1 corrigido antes: showcase sem `main`)                       |
+| `npm audit`              | 35 achados só em devDependencies (Angular CLI/Vite/launch-editor); a lib não tem dependência de runtime. `npm audit fix` não aplicado |
+| Node                     | 22.22 no container (o projeto pede 24.14.1)                                                                                           |
+
+### Resumo (arquivos principais)
+
+- **Decisões do dono aplicadas**: versão `1.0.0` (`src/libs/ui/package.json`; `utils` fica em 0.0.6); APIs `@deprecated` removidas (Select: `selectOptions`/`selectedOption`/`onSelectionChange`/`SelectOption`/`SelectionChangeEvent`; Snackbar: `SnackbarComponent`/`<shy-snackbar>`/`show({ element })`/`SnackbarShowOptions`). Showcase, testes e READMEs ajustados.
+- `CHANGELOG.md` (novo), `docs/design-system/migration-0.0-to-1.0.md` (renomeado de `0.0-to-0.1`, seção 5.2 reescrita), README raiz e da lib (seções antigas do Select removidas), `accessibility.md` (auditoria final e lacunas), ADR-F5-5.
+- `scripts/check-size.mjs` (CSS 28,1/40 KB; bundle 531/650 KB gzip), `scripts/audit-showcase.mjs` (fora do `check:ds`: precisa de navegador), `check-tokens` com lista explícita de tokens públicos sem uso.
+- Publish (lido, nada alterado): `publish.yml` roda em push para `prod` (PR só faz build); `publish-pkg.sh` publica `@shyland-dev/ui` e `utils` a partir de `dist`, pulando versão já existente no npm, `latest` sem `-` na versão, exige `NPM_TOKEN`. Para publicar a 1.0.0: merge `feat/design-system` → `prod` (o push dispara o publish; sem tag git automática).
+
+### Pendências manuais do dono
+
+Leitor de tela real, Safari/Firefox, toque real, safe area (detalhe em `accessibility.md`). Os projetos consumidores precisam seguir o guia de migração.
+
+### Mensagem de commit proposta
+
+```
+docs: auditoria de acessibilidade, changelog e fechamento do design system (1.0.0)
+
+Remove as APIs @deprecated (Select e Snackbar antigos), versão 1.0.0 da ui, check-size, auditoria no Chromium (1104 cenários), CHANGELOG e guia de migração 0.0 → 1.0.
+```
+
+## F5-S4: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Fechar a F5: auditoria de acessibilidade WCAG 2.2 AA de todos os componentes, orçamento de tamanho, `check:ds` completo, `npm audit`, docs finais (CHANGELOG, guia de migração, README) e preparar o fechamento da versão. **Bump, tag, publish e remoção de APIs `@deprecated` não fazem parte do que o `/build` aprova.**
+
+### Tarefas (baixo impacto; o `/build` aprova)
+
+1. Auditoria a11y no Chromium de todas as páginas do showcase (teclado, foco visível, `forced-colors`, `reduced-motion`, dark/light, LTR/RTL, 360 e 1366 px) em script reaproveitável; consolidar o relatório em `accessibility.md`. Lacunas que o container não cobre (leitor de tela real, Safari/Firefox, toque) ficam listadas como verificação manual do dono.
+2. Orçamento de tamanho: medir o bundle da lib e o CSS; propor limites e (se fizer sentido) um script `check:size` em `check:ds`. Tratar os 28 tokens "definidos e não usados" do aviso do `check-tokens` (remover ou justificar).
+3. `npm audit` e `check-fonts`; confirmar que nada novo vem da lib.
+4. Docs: `CHANGELOG.md` (todas as fases, com a busca/substituição da regra 2), guia de migração `0.0 → 0.1` completo, README raiz e da lib, `docs/design-system/` coerente com o plano.
+5. Ler `.github/workflows/publish.yml` e `.github/scripts/publish-pkg.sh` e registrar como o publish funciona e o que o bump exige (sem alterar nada).
+6. Gate: `check:ds`, testes, builds. Commit proposto: `docs: auditoria de acessibilidade, changelog e fechamento do design system`.
+
+### Decisões de alto impacto (esperam resposta explícita; o `/build` NÃO aprova)
+
+| #   | Decisão             | Opções                                                                                                                                                                                                                                   | Recomendação                                                                                                   |
+| --- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| D1  | Versão a fechar     | `0.1.0` (semver 0.x, breaking permitido) ou `1.0.0`                                                                                                                                                                                      | `0.1.0`: os projetos consumidores ainda serão migrados por você; `1.0.0` só depois de eles rodarem sobre a lib |
+| D2  | APIs `@deprecated`  | Remover já (Select e Snackbar antigos: `selectOptions`, `selectedOption`, `onSelectionChange`, `SelectOption`, `SelectionChangeEvent`, `<shy-snackbar>`, `SnackbarService.show({ element })`, `SnackbarShowOptions`) ou manter até a 1.0 | Manter até a 1.0 (regra do projeto: `@deprecated` antes de remover; remoção só em major)                       |
+| D3  | Bump, tag e publish | Agora ou depois                                                                                                                                                                                                                          | Só quando você pedir; esta sessão apenas prepara o changelog e a lista do que o bump exige                     |
+
+## F5-S3b: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação                            | Resultado                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run check:ds`                     | ok (6 verificações; 1 aviso antigo de tokens não usados, a revisar na F5-S4)                                                                                                                                                                                                                                                                                 |
+| `npm test`                             | 296 testes passando (13 novos: Stepper 7, AppShell 6)                                                                                                                                                                                                                                                                                                        |
+| `npm run build`                        | ok (`@shyland-dev/ui` e `@shyland-dev/utils`)                                                                                                                                                                                                                                                                                                                |
+| `npm run build:showcase`               | ok (2 rotas novas: `components/stepper`, `components/app-shell`)                                                                                                                                                                                                                                                                                             |
+| Chromium (`/opt/pw-browsers/chromium`) | 2 páginas × dark/light × 360 e 1366 px × LTR/RTL × normal/`forced-colors`/`reduced-motion` (48 cenários): sem scroll horizontal nem erros de console. Interação: clique e Shift+Tab (foco visível) no Stepper, `linear` ignorando clique adiante, Drawer do AppShell abrindo pelo menu, modo `auto` compacto a 360 px e inline a 1366 px, skip link com foco |
+| Node                                   | 22.22 no container (o projeto pede 24.14.1)                                                                                                                                                                                                                                                                                                                  |
+
+Achados na auditoria (corrigidos): (1) `inject(DestroyRef)` dentro do callback do `afterNextRender` lançava NG0203 (os testes não pegaram porque o `ResizeObserver` do AppShell só roda no navegador real); agora o `DestroyRef` é campo da classe. (2) O skip link ficava visível fora da caixa (só `translate`); agora usa `visually-hidden` e aparece só em `:focus-visible`. (3) Conector do Stepper horizontal ficava no meio da altura quando um passo tinha descrição; agora alinha ao centro do marcador. (4) A coluna da sidebar não esticava até o rodapé; o conteúdo gruda (`sticky`) dentro de uma coluna que estica.
+
+Não verificado: leitor de tela real, Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- `components/stepper/` (`shy-stepper`, `shy-step`, token `SHY_STEPPER`; `[(value)]` índice 0-based, `orientation`, `linear`, `error`, `disabled`, `description`) e `components/app-shell/` (`shy-app-shell`; slots `header`/`sidebar`/`footer`, `sidebarMode` `auto|inline|drawer`, skip link, sidebar em `DrawerService` abaixo de `md`, `openSidebar()`); tipos `ShyStepperOrientation` e `ShyAppShellSidebarMode`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: páginas `components/{stepper,app-shell}`, rotas e menu. README da lib (2 seções, tabela de tokens e a lista de exports, que também ganhou Combobox/Slider/FileDropzone esquecidos na S3a), `tokens.md`, `accessibility.md`, ADR-F5-4 em `decisions.md`. `README.md` da raiz não precisou mudar (nenhum script/build alterado).
+- Sem par de contraste novo, sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Decisões e premissas (ADR-F5-4)
+
+- P4 e P5 do plano seguidas: Stepper sem painéis (`value` = índice); AppShell sem `@angular/router`. Eram premissas marcadas "aguardam confirmação"; o estado `aguardando-plano` registrava que o `/build` as aprovaria, então foram executadas. Se preferir `value` por passo (em vez de índice) ou outro breakpoint, é ajuste pequeno.
+- O breakpoint do AppShell vive só em `_breakpoints.scss`; o componente lê `--_compact` via `getComputedStyle` (TypeScript não pode ter `px`).
+- Sem breaking, sem `@deprecated`.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): stepper e app-shell
+
+Stepper (lista com botões, aria-current, linear, erro) e AppShell (landmarks, skip link, sidebar que vira Drawer abaixo de md), com tokens, testes, showcase e docs.
+```
+
+## F5-S3a: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação                            | Resultado                                                                                                                                                                                                        |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                     | ok (6 verificações; 1 aviso antigo de tokens não usados, a revisar na F5-S4)                                                                                                                                     |
+| `npm test`                             | 283 testes passando (19 novos: Combobox 9, Slider 4, FileDropzone 6)                                                                                                                                             |
+| `npm run build`                        | ok (`@shyland-dev/ui` e `@shyland-dev/utils`)                                                                                                                                                                    |
+| `npm run build:showcase`               | ok                                                                                                                                                                                                               |
+| Chromium (`/opt/pw-browsers/chromium`) | 3 páginas × dark/light × LTR/RTL × 360 e 1366 px: sem scroll horizontal nem erros de console; teclado do Combobox (digitar, ↓, Enter), Slider (setas, End) e FileDropzone (arquivo aceito e recusado) conferidos |
+| Node                                   | 22.22 no container (o projeto pede 24.14.1)                                                                                                                                                                      |
+
+Achado na auditoria: o painel do Combobox abria virado para cima e ficava solto quando o filtro encolhia a lista. Corrigido com `afterRenderEffect` chamando `ShyOverlayRef.updatePosition()` a cada mudança da lista visível.
+
+### Resumo (arquivos principais)
+
+- `components/combobox/` (`shy-combobox`): APG combobox com lista, `ControlBase`, `ShySelectOption`, filtro sem acento/caixa (`filterFn`), vazio em `role="status"`, painel no `OverlayService`.
+- `components/slider/` (`shy-slider`): `<input type="range">` nativo estilizado, `min/max/step`, `displayWith` → `aria-valuetext`, `showValue`, RTL e forced-colors.
+- `components/file-dropzone/` + `interfaces/file-dropzone/` (`shy-file-dropzone`): `<input type="file">` nativo sobre a área, `File[]`, `accept`/`maxSize`, `(rejected)`, região de status, remover por arquivo, sem upload.
+- Showcase: `components/{combobox,slider,file-dropzone}` (rotas e menu). README da lib (3 seções + tabela de tokens), `tokens.md`, `accessibility.md`, ADR-F5-3 em `decisions.md`, um par novo em `contrast-pairs.json` (`primary-text`/`surface-sunken`, 57 pares).
+
+### Decisões e premissas (ADR-F5-3)
+
+- P1 a P3 confirmadas: Combobox sem valor livre; Slider nativo, valor único (faixa de dois polegares fora da v1); FileDropzone nunca envia.
+- Sem breaking, sem `@deprecated`, sem dependência nova.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): combobox, slider e file-dropzone
+
+Combobox (APG, filtro sem acento, painel no OverlayService), Slider sobre input range nativo e FileDropzone (File[], accept/maxSize, sem upload), com tokens, testes, showcase e docs.
+```
+
+## F5-S3: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Implementar o lote 3 completo da Onda 3 (Combobox, Slider, FileDropzone, Stepper, AppShell) com o contrato comum. Dividido em duas sessões para caber no contexto: **F5-S3a** = Combobox, Slider, FileDropzone (controles de formulário, CVA); **F5-S3b** = Stepper, AppShell (navegação/layout). Um gate e um commit por sessão.
+
+### Tarefas
+
+1. **Combobox** (`shy-combobox`): APG combobox com listbox popup; CVA; filtro por texto (padrão `contains`, sem acento/caixa; `filterFn` opcional); `OverlayService` com `matchWidth`; `aria-activedescendant`, `aria-expanded`, `aria-autocomplete="list"`; Esc limpa/fecha; estado vazio ("sem resultados", `aria-live`); mesma forma de opção do `shy-select` (`ShySelectOption`).
+2. **Slider** (`shy-slider`): CVA; `role="slider"` por thumb em `<input type="range">` nativo estilizado (teclado/AT de graça); `min/max/step`; valor único e faixa (dois thumbs) como fase opcional; `aria-valuetext` via `displayWith`; RTL.
+3. **FileDropzone** (`shy-file-dropzone`): CVA com `File[]`; `<input type="file">` nativo oculto + botão; arrastar-e-soltar; `accept`, `multiple`, `maxSize`; erros por arquivo em `output()`; região viva para status; sem upload (só seleciona).
+4. **Stepper** (`shy-stepper`, `shy-step`): indicador de progresso horizontal/vertical, `aria-current="step"`; estados concluído/atual/erro/desabilitado; `linear` opcional; `model()` para o passo atual; sem conteúdo de painel obrigatório.
+5. **AppShell** (`shy-app-shell`): grid header/sidebar/main/footer por slots de projeção; sidebar colapsa em `Drawer` abaixo de breakpoint; landmarks (`header`, `nav`, `main`, `footer`), skip link; sem router próprio.
+6. Tokens `--shy-<comp>-*`, estados, reduced-motion, forced-colors, light/dark, RTL; testes; páginas no showcase; README da lib; `tokens.md`; `accessibility.md`; exports; ADR-F5-3 (S3a) e ADR-F5-4 (S3b).
+7. Gate de cada sessão: `check:ds`, testes, builds, auditoria Chromium.
+
+### Premissas de API pública (alto impacto: aguardam confirmação)
+
+- P1: Combobox reaproveita `ShySelectOption` e `ControlBase`; sem criação livre de valor (`allowCustom`) na primeira versão.
+- P2: Slider usa `<input type="range">` nativo; faixa (dois thumbs) fica de fora se complicar (revisão no gate).
+- P3: FileDropzone só seleciona e valida; **nunca faz upload**.
+- P4: Stepper sem painéis de conteúdo; o consumidor controla o conteúdo pelo `model()` do passo.
+- P5: AppShell sem dependência de `@angular/router`; slots por projeção.
+- Commits propostos: `feat(ui): combobox, slider e file-dropzone` e `feat(ui): stepper e app-shell`.
+
+## F5-S2: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Implementar o lote 2 da Onda 3 (Avatar, EmptyState, List, Table) com o contrato comum, reaproveitando Pagination (F5-S1) como opção de paginação na Table.
+
+### Tarefas
+
+1. **Avatar** (`shy-avatar`): imagem com fallback para iniciais/ícone; tamanhos; `alt`/`aria-label`; token `--shy-avatar-*`.
+2. **EmptyState** (`shy-empty-state`): título, descrição, ícone e slot de ação; sem role especial.
+3. **List** (`shy-list`, `shy-list-item`): lista semântica (`ul/li`), itens com início/fim e estado interativo opcional (botão/link).
+4. **Table** (`shy-table`): tabela semântica (`<table>` nativa, `caption`, `scope`); ordenação opcional (`aria-sort`, botão no cabeçalho); seleção opcional (checkbox por linha + cabeçalho com estado indeterminado); estado vazio via EmptyState; **sem virtualização**; rolagem horizontal contida no wrapper.
+5. Tokens `--shy-<comp>-*`, estados (hover só com `(hover: hover)`, `focus-visible`, disabled), reduced-motion, forced-colors, light/dark, RTL.
+6. Testes, páginas no showcase (`components/{avatar,empty-state,list,table}`), rotas e menu, tabela de tokens no README da lib, `tokens.md`, `accessibility.md`, exports, ADR-F5-2.
+7. Gate: `check:ds`, testes, builds, auditoria Chromium.
+
+### Premissas (sem decisão de alto impacto pendente)
+
+- Table recebe linhas por projeção de conteúdo (`<tr>` nativo) e só adiciona comportamento (ordenação/seleção) por diretivas/atributos; sem modelo de dados próprio nem `columns[]` (evita API pesada; pode ser revisto sob demanda).
+- Mensagem de commit proposta no gate: `feat(ui): avatar, empty-state, list e table`.
+
+## F5-S2: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                                                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                                                                                                                                                                                        |
+| `npm test`               | 264 testes passando (244 + 20 novos: Avatar 4, EmptyState 2, List 4, Table 4 nativa + 6 declarativa)                                                                                                                                                                                            |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                                                                                                                                                                                             |
+| `npm run build:showcase` | ok (4 rotas novas)                                                                                                                                                                                                                                                                              |
+| Chromium (Playwright)    | 4 páginas × dark/light × 360/1366 px × LTR/RTL × normal/`forced-colors`/`reduced-motion` (96 cenários): sem scroll horizontal da página, sem erros de console. Interação: ordenação por Enter (`aria-sort`), seleção com `indeterminate` no cabeçalho, filtro → estado vazio (modo declarativo) |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                                                                                                                                                                                          |
+
+Não verificado: leitor de tela real (anúncio de `aria-sort` e da região rolável), Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- `components/avatar/` (`shy-avatar`), `components/empty-state/` (`shy-empty-state`), `components/list/` (`shy-list`, `shy-list-item`), `components/table/` (`shy-table`, `shy-column`, `shyCell`, `th[shySort]`); tipos `ShyAvatarSize`/`ShyAvatarShape`/`ShySortDirection`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: páginas `components/{avatar,empty-state,list,table}`, rotas e menu (a da Table mostra o modo declarativo com ordenação, seleção, paginação, célula custom, filtro e vazio, e o modo nativo).
+- `scripts/contrast-pairs.json`: par novo `text`/`neutral-soft` (hover da linha).
+- Docs: ADR-F5-2 (`decisions.md`), `tokens.md`, `accessibility.md`, README da lib (uso, tokens, exports). `README.md` da raiz não precisou mudar (nenhum script/build alterado).
+- Sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Decisões e premissas
+
+- Table: após o gate inicial o dono pediu um HTML mais simples e escolheu (card, 2026-10-21) **colunas declarativas + modo nativo**: `<shy-table [rows]>` com `<shy-column>` (ordenação, seleção, paginação, vazio, `serverSide`); a `<table>` nativa continua como escape hatch. Sem cabeçalho fixo nem virtualização. Detalhes na ADR-F5-2.
+- Um bug achado nos testes e corrigido: `name` só com espaços virava nome acessível (agora `trim`).
+- Nada ambíguo de alto impacto: API segue o contrato comum e as convenções existentes.
+
+### Mensagem de commit proposta
+
+`feat(ui): avatar, empty-state, list e table`
+
+Corpo: quatro componentes da Onda 3 (lote 2) com semântica nativa/APG, tokens `--shy-<comp>-*`, testes, páginas no showcase e docs.
+
+## F5-S1: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                                                                           |
+| `npm test`               | 244 testes passando (228 + 16 novos: Tabs 6, Accordion 4, Breadcrumb 1, Pagination 5)                                                                                              |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                                                                                |
+| `npm run build:showcase` | ok (4 rotas novas)                                                                                                                                                                 |
+| Chromium (Playwright)    | 4 páginas em dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`: sem scroll horizontal, sem erros de console; setas das abas em LTR/RTL; accordion abre/fecha |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                                                                             |
+
+Não verificado: leitor de tela real, Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- `components/tabs/` (`shy-tabs`, `shy-tab`, token `SHY_TABS`), `components/accordion/` (`shy-accordion`, `shy-accordion-item`), `components/breadcrumb/` (`shy-breadcrumb`, `shy-breadcrumb-item`), `components/pagination/` (`shy-pagination`); tipo `ShyTabsOrientation`/`ShyTabsActivation`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: páginas `components/{tabs,accordion,breadcrumb,pagination}`, rotas e menu.
+- Docs: ADR-F5-1 (`decisions.md`), `tokens.md` (tokens do lote 1), `accessibility.md`, README da lib (uso, tokens, exports). `README.md` da raiz não precisou mudar (nenhum script/build alterado).
+- Sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Decisões e premissas
+
+- Tabs só com o estilo underline; o pill (base do `shy-theme-toggle`) fica para quando for necessário. Breadcrumb sem colapso de itens. Detalhes na ADR-F5-1.
+- API pública nova segue o contrato comum e a convenção de nomes existente; nada ambíguo que exigisse decisão de alto impacto.
+
+### Mensagem de commit proposta
+
+`feat(ui): tabs, accordion, breadcrumb e pagination`
+
+Corpo: quatro componentes da Onda 3 (lote 1) com ARIA/teclado APG, tokens `--shy-<comp>-*`, testes, páginas no showcase e docs.
+
+## F5-S1: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Escolher com o dono quais componentes da Onda 3 (navegação e dados) entram e em que ordem, e implementar o primeiro lote com o contrato comum (CVA onde couber, tokens `--shy-<comp>-*`, estados, APG, testes, página no showcase, README).
+
+### Candidatos (plano 12, Onda 3)
+
+Tabs, Accordion, Breadcrumb, Pagination, Stepper, Avatar, Table, List, EmptyState, AppShell, Combobox, Slider, FileDropzone. Regra do plano: **construir sob demanda dos projetos reais; Onda 3 sem consumidor espera.**
+
+### Tarefas (depois da resposta do dono)
+
+1. Registrar a ordem escolhida em `progress.md` (lote 1 = F5-S1; lote 2 = F5-S2; lote 3 = F5-S3, sob demanda) e as dependências entre componentes (Tabs na base do `shy-theme-toggle`; Pagination usa Button/Select).
+2. Lote 1 (sugestão: **Tabs, Accordion, Breadcrumb, Pagination**): `.ts/.html/.scss`, tokens, estados (hover só com `(hover: hover)`, `focus-visible`, active, disabled), ARIA/teclado APG (Tabs: setas/Home/End, automático ou manual; Accordion: botões com `aria-expanded`/`aria-controls`; Breadcrumb: `nav` + `aria-current`; Pagination: `nav` + `aria-current="page"`), reduced-motion, forced-colors, light/dark, RTL.
+3. Testes, páginas no showcase, tabela de tokens no `src/libs/ui/README.md`, exports, ADR-F5-1.
+4. Gate: `check:ds`, testes, builds e auditoria Chromium.
+
+### Decisão pendente (do dono)
+
+Quais componentes os seus projetos usam de fato? Recomendação: lote 1 = Tabs, Accordion, Breadcrumb, Pagination (são os de menor risco e cobrem navegação e conteúdo); Table e List no lote 2 (F5-S2); Combobox, Slider, FileDropzone, Stepper e AppShell só se algum projeto precisar (F5-S3).
+
+## F4-S6: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                         |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                          |
+| `npm test`               | 228 testes passando (1 novo: foco do Menu antes do `(click)` do item)                                                             |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                               |
+| `npm run build:showcase` | ok                                                                                                                                |
+| Chromium (Playwright)    | exemplo integrado em dark/light, 360 e 1366 px, LTR e RTL, `reduced-motion`: camadas, Esc um por vez, foco, sem sobras, sem erros |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                            |
+
+Não verificado: leitor de tela real, Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- Showcase `examples/overlays` ("overlays together"): Menu → Dialog (Select e Tooltip dentro) → toast → confirmação → toast com ação; Popover e Tooltip no IconButton.
+- Achado da auditoria e correção: um Dialog aberto por um item do Menu lembrava o item (já removido) como foco anterior, e o foco caía no `body` ao fechar. O `MenuDirective` agora foca o botão em captura, antes do `(click)` do item (`menu.directive.ts` + teste).
+- Docs: `tokens.md` (tokens da Onda 2 e onde defini-los), `migration-0.0-to-1.0.md` (5.2 Select e Snackbar), `accessibility.md` (resumo da Onda 2), plano (Onda 2 concluída e divergências) e `README.md`.
+- Handoff por sessão para threads separadas (seção no topo deste arquivo).
+
+### Relatório consolidado da F4 (Onda 2)
+
+| Sessão | Entrega                                            | Commits          | Decisões (ADR)                                       |
+| ------ | -------------------------------------------------- | ---------------- | ---------------------------------------------------- |
+| F4-S1  | `OverlayService`, `computePosition`, foco, camadas | 3ac709b, 2eb7cfd | F4-1 (híbrido), F4-4 (API componente/template), F4-5 |
+| F4-S2  | Dialog, Drawer, `confirm()`/`alert()`              | 95e5ab3, b05109c | F4-6                                                 |
+| F4-S3  | Popover, Tooltip, Menu                             | ba59390, 5be8c8f | F4-7                                                 |
+| F4-S4  | Select v2 (combobox APG, CVA, multiple)            | 56b8162, 42a27e7 | F4-2 (B: `@deprecated`), F4-8                        |
+| F4-S5  | Snackbar v2 (fila, intent, ação, outlet)           | 1b43599, e39faed | F4-3a (B), F4-3b (A: ação some sob modal), F4-9      |
+| F4-S6  | Fechamento: exemplo integrado, docs, handoff       | (este gate)      |                                                      |
+
+Testes: 170 (início da F4) → 228. Sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Mensagem de commit proposta
+
+`docs: fechar onda 2 (overlays, select e snackbar)`
+
+Corpo: exemplo integrado dos overlays, correção do foco do Menu, docs consolidadas e handoff por sessão.
+
+## F4-S6: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Fechar a Onda 2: um exemplo integrado que exercite os overlays juntos, auditoria de foco e camadas, docs consolidadas (incluindo migração de Select e Snackbar) e o relatório da F4. Sem componente novo.
+
+### Tarefas
+
+1. Exemplo no showcase (`examples/overlays`): Dialog com formulário e Select dentro, Tooltip em IconButton, Menu abrindo Dialog de confirmação, toast ao salvar (com e sem modal), Popover com ação.
+2. Auditoria de foco e camadas no Chromium (dark/light, 360/1366, RTL, reduced-motion): ordem de empilhamento em combinações (menu → dialog → select → toast), retorno de foco, Esc um por vez, scroll lock, sem vazamento de painéis (`document.querySelectorAll('.shy-overlay-pane')` vazio ao fechar tudo).
+3. Docs: `tokens.md` (tokens novos da F4: `--shy-dialog/drawer/popover/menu/tooltip/select/snackbar-*`, `--shy-delay-tooltip*`), `migration-0.0-to-1.0.md` (Select e Snackbar: busca/substituição e tabela de API antiga → nova), `accessibility.md` (resumo da Onda 2), `DESIGN-SYSTEM-PLAN.md` (marcar a Onda 2 concluída e listar as divergências das ADR-F4-5 a 9, por Python; sem prettier no plano).
+4. README (`README.md` e `src/libs/ui/README.md`): índice e exemplo integrado; conferir se os exports listados batem com `public-api`.
+5. Verificações completas e relatório consolidado da F4 em progress.md.
+
+### Fora do escopo
+
+Remoção da API `@deprecated` (fica para a 1.0), novos componentes (F5).
+
+## F4-S5: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                   |
+| `npm test`               | 227 testes passando (11 novos do `SnackbarService`: regiões vivas, intents, fila, pausa, ação, modal, Esc, config, legado) |
+| `npm run build`          | ok (`ui` e `utils`); `snackbar.css` sai em `dist/ui/styles`                                                                |
+| `npm run build:showcase` | ok                                                                                                                         |
+| Chromium (Playwright)    | dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`: fila, pausa, `alert`, toast sobre modal, Esc      |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                     |
+
+Não verificado: leitor de tela real (anúncio das regiões vivas), Safari/Firefox, toque real.
+
+### Resumo (arquivos principais)
+
+- `services/snackbar/snackbar.service.ts` (`show(message, options)` → `ShySnackbarRef`, fila, pausa, `dismissAll()`) e `snackbar.config.ts` (`provideShySnackbar`, `SHY_SNACKBAR_CONFIG`).
+- `components/snackbar/snackbar-outlet.component.*` (contêiner interno nas camadas `toast`: regiões `status`/`alert` por posição) e `styles/snackbar.css` (painel).
+- `overlay/overlay.service.ts`: opção `passive` (fora do Esc/clique fora) e signal `modalOpen`.
+- Tipos/interfaces novos (`ShySnackbarIntent|Align|CloseReason`, `ShySnackbarOptions|Config|Ref`); API antiga `@deprecated` (`<shy-snackbar>`, `show({ element })`, `SnackbarShowOptions`).
+- Showcase `components/snackbar` refeito (intents, posições, ação, fila, persistente, sobre modal, API antiga); página `icon` migrada para a API nova.
+- Docs: ADR-F4-9, ADR-F4-3, `accessibility.md`, `README.md` e `src/libs/ui/README.md` (com guia de migração).
+
+### Efeito prático
+
+`inject(SnackbarService).show('Salvo', { intent: 'success' })` em qualquer lugar, sem elemento no template. A API antiga continua funcionando, marcada `@deprecated`, até a 1.0.
+
+### Decisões e premissas (ADR-F4-3 e ADR-F4-9 em `decisions.md`)
+
+1. ADR-F4-3a (dono): opção B, API antiga `@deprecated`. ADR-F4-3b (dono): opção A, a ação some com modal aberto.
+2. Sem `<shy-snackbar-outlet>` público (divergência do plano): o contêiner abre sob demanda; só `provideShySnackbar(config)` é opcional.
+3. O contêiner é `passive` no overlay (senão bloquearia o Esc de um Dialog por baixo) e fica aberto, com regiões vivas fixas.
+4. Padrões 5000 ms (8000 com ação), 3 visíveis; tokens `--shy-snackbar-*` em `:root` (o contêiner mora no overlay).
+5. Sem dependência nova, sem par de contraste novo, sem bump de versão. README atualizado.
+
+### Mensagem de commit proposta
+
+`feat(ui)!: snackbar com fila, intent e ação sem elemento`
+
+Corpo: `SnackbarService.show(message, options)` com contêiner no overlay, regiões `status`/`alert`, pausa em hover/foco e fila; API antiga `@deprecated` até a 1.0 (ADR-F4-3).
+
+## F4-S5: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Reescrever o Snackbar: outlet global (sem `ViewChild`), fila, `SnackbarService.show(msg, opts)` (intent, ação, duração, posição), pausa em hover/foco, `role="status"` (`alert` para erro), sobre o `OverlayService` (layer `toast`).
+
+### Estado atual (causa do problema)
+
+`SnackbarService.show({ element, text, delay, position })` só repassa ao `SnackbarComponent` que o consumidor precisa colocar no template e obter por `viewChild`; um toast por vez (o novo sobrescreve o texto e reinicia o timer), sem intent, sem ação, sem pausa, sem fila.
+
+### Tarefas
+
+1. `SnackbarService.show(message, opts)` → `ShySnackbarRef` (`dismiss()`, `closed`, `action` event): `intent` (`neutral|success|warning|danger|info`), `action {label}`, `duration` (0 = não fecha), `position` (`top|bottom` + `start|center|end`).
+2. Outlet global: `provideShySnackbar(config)` ou `<shy-snackbar-outlet>` opcional; sem ele o serviço cria o contêiner no `body` (como o overlay). Fila com limite de visíveis (padrão 3) e demais esperando.
+3. Pausa do timer em hover e foco dentro do toast e em aba oculta; WCAG 2.2.1 (tempo ajustável): ação de fechar e duração configurável; padrão mais longo quando há ação.
+4. `role="status"` + `aria-live="polite"` (sucesso/info/neutro) e `role="alert"` (danger); região viva criada antes do texto para o leitor anunciar.
+5. Tokens `--shy-snackbar-*`, reduced-motion, forced-colors, light/dark, RTL.
+6. API antiga `@deprecated` conforme a decisão abaixo; showcase refeito; testes (fila, pausa, aria, ação); README e ADR-F4-9.
+7. Gate: `check:ds`, testes, builds, auditoria Chromium (inclusive com um Dialog aberto).
+
+### Decisão 3a (ADR-F4-3, respondida em 2026-10-21: opção B): destino de `SnackbarService.show({ element, ... })` e `<shy-snackbar>`
+
+| Opção                           | O que faz                                                                                | Custo                                                    |
+| ------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| A. Quebra limpa                 | Remove `element`/`<shy-snackbar>`; `show(message, opts)`                                 | Você migra os consumidores; código simples               |
+| B. `@deprecated` com substituto | `show({element,...})` e `<shy-snackbar>` continuam, mapeados para o novo fluxo até a 1.0 | Adaptador e sobrecarga de `show`; dois caminhos testados |
+| C. Dois serviços                | Novo `ShySnackbarService`, o antigo fica como está                                       | Duas APIs com nomes parecidos                            |
+
+Recomendação: **B** (mesma linha da ADR-F4-2 e da regra de depreciar antes de remover).
+
+### Decisão 3b (ADR-F4-3, limitação da ADR-F4-5), respondida em 2026-10-21: opção A. Toast com ação sobre um modal aberto
+
+O modal deixa tudo fora dele `inert`; um toast aberto com um Dialog na tela fica visível mas sem clique (a ação não funciona).
+
+| Opção                     | O que faz                                                          | Custo                                     |
+| ------------------------- | ------------------------------------------------------------------ | ----------------------------------------- |
+| A. Ação só sem modal      | Com modal aberto o toast mostra só o texto (sem botão de ação)     | Simples; a ação some nesse caso           |
+| B. Esperar o modal fechar | Toasts com ação entram na fila e aparecem depois que o modal fecha | O aviso pode chegar tarde                 |
+| C. Toast dentro do dialog | O toast vira filho do `<dialog>` aberto e some com ele             | Complexo; perde o toast ao fechar o modal |
+
+Recomendação: **A** (ação é redundante com a UI do modal; o texto continua sendo anunciado por `role="status"`).
+
+## F4-S4: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                             |
+| `npm test`               | 216 testes passando (10 novos de Select: CVA, signals, multiple, teclado, ARIA, API antiga)                          |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                  |
+| `npm run build:showcase` | ok                                                                                                                   |
+| Chromium (Playwright)    | dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`: foco no botão, opção ativa, multiple, select dentro de Dialog |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                               |
+
+Não verificado: leitor de tela real (o `aria-activedescendant` aponta para o painel, em outro contêiner do DOM), Safari/Firefox, toque real.
+
+### Resumo (arquivos principais)
+
+- `components/select/` reescrito: `shy-select` (combobox APG, `ControlBase` como CVA, `model` `value`, `multiple`, `placeholder`, `compareWith`, painel pelo `OverlayService`), template e estilos.
+- `interfaces/select/select.interface.ts`: `ShySelectOption`; `SelectOption` e `SelectionChangeEvent` `@deprecated`.
+- `utils/typeahead.ts` (interno), usado por Select e Menu.
+- Showcase `components/select` refeito (CVA, form field obrigatório, multiple, disabled/invalid, dentro de Dialog, API antiga).
+- Docs: ADR-F4-8, `accessibility.md`, `README.md` e `src/libs/ui/README.md` (com guia de migração).
+
+### Efeito prático
+
+`<shy-select [options]="..." [(ngModel)]="x" />` ou `[formControl]` ou `[(value)]`, com teclado e ARIA do APG, no Dialog e no form field. A API antiga continua funcionando, marcada `@deprecated`, até a 1.0.
+
+### Decisões e premissas (ADR-F4-2 e ADR-F4-8 em `decisions.md`)
+
+1. ADR-F4-2 (dono): opção B, API antiga `@deprecated` mapeada para a v2.
+2. Foco no botão com `aria-activedescendant` (sem foco por item); `mousedown` no painel cancelado; blur fecha e marca `touched`.
+3. Tokens do painel só em `:root`/ancestral do `<body>` (o painel mora no contêiner de overlays); documentado.
+4. Sem `<select>` nativo; sem dependência nova; sem par de contraste novo; sem bump de versão. README atualizado.
+
+### Mensagem de commit proposta
+
+`feat(ui): select com CVA, typeahead e overlay`
+
+Corpo: combobox APG sobre o `OverlayService`, `multiple`, `compareWith`, API antiga `@deprecated` até a 1.0 e `Typeahead` compartilhado com o Menu.
+
+## F4-S4: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Reescrever o `shy-select` como listbox APG com `ControlValueAccessor` (`ngModel`, `formControl`, signals), typeahead, `multiple`, `placeholder`, `invalid`/`disabled`, integração com `FormField` e painel pelo `OverlayService` (layer `dropdown`, `matchWidth`).
+
+### Estado atual (causa do problema)
+
+`select.component.ts`: sem CVA (`selectedOption` input + `onSelectionChange` output), lista inline com `@if (isOpen())` (sem top layer, cortada por `overflow`), fecha por `(document:click)`, sem typeahead, sem `multiple`/`invalid`/`disabled`, foco por item sem `aria-activedescendant`.
+
+### Tarefas
+
+1. Gatilho (`button`, `role="combobox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`) e painel `role="listbox"` aberto via `OverlayService` (`layer: 'dropdown'`, `matchWidth`, flip/shift), foco por `aria-activedescendant` no listbox (o foco fica no painel).
+2. CVA (`value`, `disabled`, `touched`), `multiple` (`aria-multiselectable`, valor em array), `placeholder`, `invalid` (`aria-invalid`), `disabled`; ligação com `FormField` (label/hint/erro).
+3. Teclado: ↑/↓/Home/End, typeahead, Enter/Espaço escolhem, Esc fecha e devolve o foco, Tab fecha; opção desabilitada (`aria-disabled`).
+4. Tokens `--shy-select-*` com fallback; estados do contrato; forced-colors; Dialog (ADR-F4-5).
+5. Testes (CVA com `ngModel`, `formControl` e signals; teclado; ARIA; multiple), página do showcase refeita, README e ADR-F4-8.
+6. Gate: `check:ds`, testes, builds, auditoria Chromium (dark/light, 360/1366, RTL, dentro do Dialog).
+
+### Decisão (ADR-F4-2, respondida em 2026-10-21: opção B)
+
+Consumidores usam `[selectOptions]`, `[selectedOption]` e `(onSelectionChange)`.
+
+| Opção                           | O que faz                                                                                | Custo                                           |
+| ------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| A. Quebra limpa                 | Remove a API antiga (0.x permite; sem shims)                                             | Você migra os consumidores; código mais simples |
+| B. `@deprecated` com substituto | Mantém `selectOptions`/`selectedOption`/`onSelectionChange` mapeados para a v2 até a 1.0 | Código a mais, dois caminhos para testar        |
+| C. Novo seletor                 | `shy-select` novo e o antigo vira `shy-select-legacy`                                    | Duas implementações                             |
+
+Recomendação: **B**. O plano mestre e as regras do projeto pedem `@deprecated` com substituto para APIs fora da regra 2; o custo é pequeno (adaptador de poucas linhas) e remove-se na 1.0.
+
+## F4-S3: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                 |
+| `npm test`               | 206 testes passando (20 novos: Popover, Menu, Tooltip)                                                                   |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                      |
+| `npm run build:showcase` | ok                                                                                                                       |
+| Chromium (Playwright)    | dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`: foco, ↑/↓, flip na borda, tooltip no foco/hover, dentro de Dialog |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                   |
+
+Não verificado: leitor de tela, Safari/Firefox, toque real (o Tooltip ignora `pointerType: touch`, testado só por evento sintético).
+
+### Resumo (arquivos principais)
+
+- `overlay/overlay-trigger.ts`: base interna `OverlayTrigger` (abrir/fechar, `aria-expanded`/`aria-controls`, Tab). Não exportada.
+- `components/popover/` (`[shyPopover]`, `shy-popover`), `components/menu/` (`[shyMenu]`, `shy-menu`, `shyMenuItem`), `components/tooltip/` (`[shyTooltip]` + conteúdo interno).
+- Tokens `--shy-popover-*`, `--shy-menu-*`, `--shy-menu-item-*`, `--shy-tooltip-*` (com fallback no componente) e `--shy-delay-tooltip`/`--shy-delay-tooltip-hide` em `motion.css`.
+- Showcase: `components/popover`, `components/menu`, `components/tooltip` (placements, borda, formulário, ícones, tudo dentro de um Dialog).
+- Docs: ADR-F4-7, `accessibility.md`, `README.md` e `src/libs/ui/README.md`.
+
+### Efeito prático
+
+O app abre painéis ancorados com `[shyPopover]`, menus com `[shyMenu]` e dicas com `shyTooltip="texto"`, com teclado, foco e ARIA do APG, e funcionam também dentro de um Dialog.
+
+### Decisões e premissas (ADR-F4-7 em `decisions.md`)
+
+1. Diretivas de gatilho sobre uma base interna comum; o painel é componente/`TemplateRef` no `OverlayService`.
+2. Tab que sai do painel fecha e segue a partir do gatilho (o painel fica no fim do `body`).
+3. Menu sem submenus; itens desabilitados focáveis (`aria-disabled`); o `disabled` estático é removido do elemento nativo (achado nos testes).
+4. Tooltip: sem toque, atrasos como tokens (não zerados por `reduced-motion`), só complementa o nome.
+5. Sem par de contraste novo, sem dependência nova, sem bump de versão. README atualizado.
+6. Divergência do plano: nenhuma além de "sem submenus" (já prevista no plano da sessão).
+
+### Mensagem de commit proposta
+
+`feat(ui): popover, tooltip e menu`
+
+Corpo: diretivas `[shyPopover]`, `[shyMenu]` e `[shyTooltip]` sobre o `OverlayService`, com foco, teclado e ARIA do APG; tokens de atraso do tooltip; páginas no showcase.
+
+## F4-S2: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                      |
+| `npm test`               | 186 testes passando (16 novos: Dialog, Drawer, serviços, confirm/alert, TemplateRef)                          |
+| `npm run build`          | ok (`ui` e `utils`); `drawer.css` sai em `dist/ui/styles`                                                     |
+| `npm run build:showcase` | ok                                                                                                            |
+| Chromium (Playwright)    | dark/light, 900×700 e 360×800, LTR e RTL, `reduced-motion` e `forced-colors` (detalhes em `accessibility.md`) |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                        |
+
+Não verificado: leitor de tela, Safari/Firefox, aparelho com notch (`safe-area`). Fontes web: nenhuma fonte externa nova nesta sessão (só a Baseline já registrada na ADR-F4-5).
+
+### Resumo (arquivos principais)
+
+- `components/dialog/` (`shy-dialog`, base interna `DialogSurface`, `PromptDialogComponent` interno) e `components/drawer/` (`shy-drawer`).
+- `services/dialog/dialog.service.ts` (`open`, `confirm`, `alert`) e `services/drawer/drawer.service.ts` (`open`, `side`).
+- `styles/drawer.css` (painel do Drawer por lado, entrada por `@starting-style`, RTL, `forced-colors`), importado em `index.css` e `_global.scss`.
+- Tipos e interfaces: `types/dialog`, `interfaces/dialog`. Tokens `--shy-dialog-*` e `--shy-drawer-*` (com fallback, no padrão do Alert).
+- Showcase: `components/dialog` (4 tamanhos, formulário, popover dentro do dialog, dialog sobre dialog, confirm, alert) e `components/drawer` (4 lados, corpo longo). Docs: `src/libs/ui/README.md`, `README.md`, ADR-F4-6, plano 12, `accessibility.md`.
+
+### Efeito prático
+
+O app abre diálogos com `DialogService.open(MeuComponente)` (ou `confirm()`/`alert()` em uma linha) e painéis laterais com `DrawerService.open`, recebendo o resultado por `await ref.closed`. Título, foco, Esc, scroll lock e devolução de foco vêm prontos; o popover ou select aberto dentro do dialog continua clicável.
+
+### Decisões e premissas (ADR-F4-6 em `decisions.md`)
+
+1. Dialog não fecha por clique no fundo (evita perder formulário); Drawer fecha. Ambos configuráveis. `confirm()`/`alert()` nunca fecham por clique fora.
+2. `aria-labelledby`/`aria-describedby` ligados achando o painel pelo DOM, o que cobre também `TemplateRef` (onde o `ShyOverlayRef` não é injetável); no template, fechar é por `(dismissed)="ref.close()"`.
+3. Sem `dialog.css` (o Dialog se dimensiona sozinho); só `drawer.css`. Divergência do plano, registrada.
+4. Drawer com 4 lados (o plano listava 3). Achado na auditoria: o componente do app entre o painel e o `<shy-drawer>` impedia a rolagem; corrigido com `dialog.shy-drawer-pane > *` em flex.
+5. Sem `env(safe-area-inset-*)` nem pares novos em `contrast-pairs.json` (os do painel já existiam). Reavaliar safe-area em aparelho real.
+6. Efeito do scroll lock (`scrollbar-gutter: stable`): o `full` fica alguns px mais estreito que a tela em navegador com barra de rolagem clássica.
+7. Sem dependência nova. README atualizado (`README.md` e `src/libs/ui/README.md`). Sem bump de versão.
+8. **Para a F4-S3/S4:** o Select dentro do Dialog depende da regra da ADR-F4-5 (painel com `anchor` dentro do modal vira filho dele); já testada aqui com um popover.
+
+### Mensagem de commit
+
+Já commitada (`95e5ab3`): `feat(ui): dialog e drawer`.
+
+## F4-S2: plano da sessão (2026-10-21)
+
+Fonte: `sessions/F4-onda-2.md` (F4-S2), plano 11.2 e 12 (Onda 2), ADR-F4-4/F4-5. Premissa de base: o `OverlayService` já entrega `<dialog>`, foco, Esc, scroll lock e saída animada; Dialog e Drawer são a **superfície** (visual, título, ações, ARIA) e uma camada fina de abertura.
+
+### Como fica (resumo)
+
+- **Superfície** `shy-dialog` e `shy-drawer`: o conteúdo aberto pelo serviço renderiza `<shy-dialog heading="…">…</shy-dialog>`. Ele desenha o painel (fundo `surface-raised`, borda, raio, sombra, foco, `forced-colors`), liga `aria-labelledby`/`aria-describedby` ao `<dialog>` pai e traz o botão de fechar (`closeLabel`, padrão "Close"). Slots: cabeçalho (`heading` ou projetado), corpo e `slot="footer"` com as ações.
+- **Abertura**: `DialogService.open(ComponenteOuTemplate, config)` e `DrawerService.open(…)` = `OverlayService.open` com defaults (camada `modal`/`drawer`, `role`, `closeOnOutsideClick`, classe de tamanho/lado). Devolvem o mesmo `ShyOverlayRef<R>`; sem API nova de ref.
+- **Prontos**: `DialogService.confirm({ title, message, confirmLabel, cancelLabel, intent })` → `Promise<boolean>` e `DialogService.alert({ title, message, okLabel })` → `Promise<void>`, em `role="alertdialog"` com foco inicial no botão seguro (cancelar/OK) e sem fechar por clique fora.
+- **Tamanhos do Dialog**: `sm`, `md` (padrão), `lg`, `full`. **Lados do Drawer**: `start`, `end`, `top`, `bottom` (a sessão lista 4 e o plano 3; vale a sessão, mais completa). Em telas estreitas o Dialog ocupa a largura toda e o Drawer `bottom` vira sheet.
+- A posição do painel vem de CSS global da lib (`styles/dialog.css`, `styles/drawer.css`, importados em `index.css`/`_global.scss`), por classe no `paneClass`, já que o painel fica fora do componente (encapsulamento de estilo).
+
+### Tarefas
+
+1. `types/dialog/dialog.type.ts` (`ShyDialogSize`, `ShyDrawerSide`) e `interfaces/dialog/dialog.interface.ts` (`ShyDialogConfig`, `ShyConfirmOptions`, `ShyAlertOptions`, `ShyDrawerConfig`).
+2. `components/dialog/dialog.component.*` (`shy-dialog`): `heading`, `dismissible`, `closeLabel`, slots; IDs únicos por contador; o botão de fechar chama `ShyOverlayRef.close()` quando há ref (opcional via `inject(ShyOverlayRef, { optional: true })`), senão emite `closed`.
+3. `components/drawer/drawer.component.*` (`shy-drawer`): mesma estrutura, com `side`.
+4. `services/dialog/dialog.service.ts` (`open`, `confirm`, `alert`) e `services/drawer/drawer.service.ts` (`open`). `confirm`/`alert` usam um componente interno (`ShyConfirmDialog`) não exportado.
+5. `styles/dialog.css` e `styles/drawer.css`: tamanho, posição, entrada (`@starting-style`: `shy-scale-in` no dialog, slide por lado no drawer, via `--shy-motion-distance`), saída por `data-state="closing"`, mobile, `forced-colors`. Só tokens e `ru()`. Tokens novos: `--shy-dialog-width-{sm,md,lg}`, `--shy-dialog-padding`, `--shy-dialog-radius`, `--shy-dialog-bg`, `--shy-dialog-shadow`, `--shy-drawer-width`, `--shy-drawer-height`, mais o padrão de 3 camadas (componente → semântico → primitivo).
+6. **Safe-area**: avaliar `env(safe-area-inset-*)` para o Drawer `bottom`/Dialog `full`. É unidade de comprimento fora do `calc(ru)`: se for necessário, vira exceção documentada (sessão prevê), com `check-units` ajustado e registro no plano 6.4. Se o layout do showcase dispensar, não entra.
+7. Testes (happy-dom): abre/fecha por serviço, título liga `aria-labelledby`, `confirm`/`alert` (resultado, foco inicial no botão seguro, Esc = `false`/`undefined`), tamanhos e lados por classe, `dismissible: false` oculta o X, Esc e foco devolvido.
+8. Showcase: páginas `components/dialog` e `components/drawer` (tamanhos, lados, confirm/alert, formulário dentro, dialog sobre dialog, popover sobre dialog para exercitar a ADR-F4-5); nav e rotas. Auditoria no Chromium nos 2 temas, 360 e 1366 px.
+9. A11y: `contrast-pairs.json` com os pares do painel (texto/`surface-raised`, borda do painel, foco) nos 2 temas; `check:ds` falha se regredir; `accessibility.md`.
+10. Docs: `src/libs/ui/README.md` e `README.md` (uso, tokens, exports), ADR-F4-6 em `decisions.md`, plano 12 (Drawer: 4 lados), `sessions/F4-onda-2.md` se algo divergir.
+11. Verificações (`check:ds`, testes, `build`, `build:showcase`), relatório do gate e commit `feat(ui): dialog e drawer`.
+
+### Premissas e decisões que valem se não houver objeção
+
+- Sem breaking: Dialog e Drawer são novos; nada existente muda. Sem dependência nova.
+- `confirm`/`alert` ficam no `DialogService` (não em serviço à parte) e não exportam o componente interno.
+- O Dialog não trava o `closeOnOutsideClick` do serviço: padrão `false` (modal) e `true` só se o app pedir; `alert` sempre `false`.
+- Texto padrão em inglês ("Close", "Cancel", "OK", "Confirm"), configurável por input/opção; a lib não traduz (mesmo critério de `Alert`/`Badge`).
+
+## F4-S1: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação                         | Resultado                                                                                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                  | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                                                 |
+| `npm test`                          | 170 testes passando (56 novos: posição 13, foco 9, serviço 34)                                                                                           |
+| `npm run build`                     | ok (`ui` e `utils`); `overlay.css` sai em `dist/ui/styles`                                                                                               |
+| `npm run build:showcase`            | ok                                                                                                                                                       |
+| Chromium (Playwright, dark e light) | 3 ordens de abertura, Esc um por vez, Tab preso, backdrop, clique fora, container/scroll lock removidos, foco devolvido (detalhes em `accessibility.md`) |
+| Node                                | 22.22.0 neste ambiente (o projeto pede 24.14.1, `.nvmrc`); nada específico do Node 24 foi usado                                                          |
+
+Não rodado: leitor de tela, Safari/Firefox, RTL no navegador (só em teste de unidade), CSS Anchor Positioning (fora de escopo). O MDN está bloqueado na rede deste ambiente: o suporte foi confirmado em `web-features` 3.43.0 (ADR-F4-5), com a ressalva registrada lá.
+
+### Resumo (arquivos principais)
+
+- `lib/overlay/overlay.service.ts`: `OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef` (ADR-F4-4, opção B). Container sob demanda, `<dialog>` (modal/drawer) e `[popover="manual"]` (resto), promoção por ordem de abertura, Esc só no topo, clique fora, scroll lock, fallback sem top layer, `closeAll`.
+- `lib/overlay/overlay-ref.ts` (`ShyOverlayRef`, `SHY_OVERLAY_DATA`), `position.ts` (`computePosition`), `focus-scope.ts` (`FocusScopeDirective` + `focusInitial`, `trapTab`, `restoreFocus`), `layers.ts` (`shyLayer`, `layerRank`).
+- `styles/overlay.css` (container, painel, backdrop, `@starting-style`, saída por `data-state="closing"`, scroll lock), tipos e interfaces em `types/overlay` e `interfaces/overlay`.
+- Showcase `foundations/layers`: botões para abrir modal, popover e toast em 3 ordens, com a ordem de abertura ao vivo.
+- Docs: `src/libs/ui/README.md` e `README.md` (API e exports), ADR-F4-5, plano 7.5/11.2, `accessibility.md`.
+
+### Efeito prático
+
+O app (e os componentes da F4-S2 a S5) abre qualquer componente ou template em camada com uma chamada e recebe o resultado por `await ref.closed`. Toast e popover abertos antes de um modal continuam por cima dele; Esc fecha um por vez; foco e scroll são tratados pelo serviço.
+
+### Decisões e premissas (ADR-F4-5 em `decisions.md`)
+
+1. Painel ancorado dentro de um modal vira filho do `<dialog>` e fecha com ele. Motivo: `showModal()` deixa inerte tudo fora dele, inclusive popover do top layer (confirmado no Chromium). Sem isso, Select dentro de Dialog não recebe clique.
+2. **Limitação a decidir antes da F4-S5 (alto impacto, Snackbar):** toast/tooltip abertos antes de um modal ficam visíveis, mas inertes até ele fechar; um toast com ação sobre um modal não é clicável. Alternativas para o Snackbar v2: (a) ação só quando não há modal (recomendada: simples e previsível), (b) toast espera o modal fechar, (c) toast vira filho do dialog e some com ele. Entra na ADR-F4-3 na F4-S5; **não precisa de resposta agora**.
+3. `computePosition` em px, serviço converte de/para ru com sonda de `--shy-responsive-unit` (mantém a regra de unidades); `left`/`top` físicos porque vêm de `getBoundingClientRect`.
+4. Esc em fase de bolha (conteúdo pode consumir antes), `cancel` nativo sempre cancelado; clique fora só na camada do topo, âncora nunca conta como fora.
+5. Scroll lock via `data-shy-scroll-lock` (`overflow: hidden` + `scrollbar-gutter: stable`); em página sem barra de rolagem o `stable` reserva uma faixa em navegadores com barra clássica.
+6. Estilos de posição do painel com `:where()` (especificidade 0); o painel é transparente, e o visual (fundo, borda, foco, `forced-colors`) é do conteúdo.
+7. Sem dependência nova (nem dev). `happy-dom` já tinha `showModal`/`close`; os stubs de popover do `test-setup.ts` bastaram.
+8. README: atualizado (`README.md` e `src/libs/ui/README.md`). Sem bump de versão.
+
+### Mensagem de commit
+
+Já commitada (`3ac709b`): `feat(ui): núcleo de overlay (posicionamento, foco e camadas)`.
+
+## F4-S1: plano da sessão (2026-10-21)
+
+Fonte: `sessions/F4-onda-2.md` (F4-S1), plano 7.5 (itens 1 a 3), 9.4, 11.2 e ADR-F0-7 com a emenda ADR-F4-1 (híbrido, já decidido).
+
+### ADR-F4-4, API pública do `OverlayService` (decidida: B, dono em 2026-10-21)
+
+| Opção                                    | O que exporta                                                                                                                                                          | Prós                                                                                                                                                  | Contras                                                                                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **A. Baixo nível (elemento)**            | `OverlayService.attach(pane: HTMLElement, config)` → `ShyOverlayRef`; quem chama cria e renderiza o conteúdo                                                           | API menor; serviço não conhece Angular (`createComponent`)                                                                                            | Dialog, Popover, Menu, Select e Snackbar repetem a renderização dinâmica; o app não consegue abrir um componente sem boilerplate |
+| **B. Componente/template (recomendada)** | `OverlayService.open(componentOuTemplate, config)` → `ShyOverlayRef<R>` com `close(result)`, `closed: Promise<R \| undefined>`, `updatePosition()`; `SHY_OVERLAY_DATA` | É o que o plano 11.2 já descreve; Dialog/Snackbar/Popover/Select viram camadas finas; app consegue overlays próprios; modelo conhecido (CDK/Material) | Mais superfície pública para manter; o serviço cuida de `createComponent`/`appRef.attachView`                                    |
+| **C. Interno**                           | Nada público na F4-S1 (`ɵOverlayService`); o consumidor só usa Dialog, Popover, Menu etc.                                                                              | Zero compromisso de API agora                                                                                                                         | App não cria overlay próprio; se exportar depois, vira breaking de qualquer forma                                                |
+
+**Recomendação: B.** Motivo: todos os overlays da F4 (S2 a S5) abrem um componente ou um `TemplateRef`; centralizar isso evita cinco cópias da mesma lógica de render/destroy, e o próprio plano (11.2) já previa `ref.close(result)`. Em 0.x a superfície pode ser ajustada com depreciação.
+
+Esboço da API na opção B (nomes seguem o padrão do repo: serviço sem prefixo, tipos `Shy*`):
+
+```ts
+const ref = inject(OverlayService).open<MyComp, Data, Result>(MyComp /* ou TemplateRef */, {
+    layer: 'modal', // 'dropdown' | 'drawer' | 'modal' | 'popover' | 'tooltip' | 'toast'
+    modal: true, // default: true em modal/drawer. Backdrop, trap de foco, inert no fundo e scroll lock
+    anchor: buttonEl, // opcional: posiciona com computePosition
+    position: { placement: 'bottom-start', offset: 2 /* em ru */, flip: true, shift: true, matchWidth: false },
+    closeOnEscape: true, // Esc fecha só a camada do topo
+    closeOnOutsideClick: true, // default: true fora de modal
+    restoreFocus: true,
+    initialFocus: 'first', // 'first' | 'pane' | 'none' | HTMLElement
+    data: { id: 1 }, // inject(SHY_OVERLAY_DATA) no conteúdo
+    injector, // opcional
+    paneClass: 'my-pane',
+});
+await ref.close(result); // animateOut e depois remove; resolve ref.closed
+const result = await ref.closed;
+```
+
+Dentro do conteúdo: `inject(ShyOverlayRef)`. Sem RxJS na API (Promise + `signal` `isOpen`), para não amarrar o consumidor a Observable.
+
+### Tarefas (opção B)
+
+1. **Confirmar suporte** de `<dialog>`/`showModal()`, Popover API (`popover="manual"`), `inert` e `@starting-style` no MDN, com data; registrar no relatório e em `decisions.md`.
+2. **`computePosition`** (`lib/overlay/position.ts`): TS puro sobre `DOMRect` (sem DOM de tamanho; guarda SSR), `placement` (12 posições, lógicas `start/end` com RTL), `offset` em ru (via `ru()`), `flip`, `shift`, `matchWidth`, viewport por `visualViewport`. Testes de unidade de flip/shift com rects falsos.
+3. **`ShyFocusScope`** (`[shyFocusScope]` + funções usadas pelo serviço): guarda o foco anterior, foco inicial, Tab cíclico quando `trap`, devolve o foco ao fechar. Em `<dialog>` modal o `inert` é nativo; no fallback aplica `inert` nos irmãos do container.
+4. **`OverlayService`** (`lib/overlay/overlay.service.ts`), conforme a opção escolhida: container `.shy-overlay-container` sob demanda (cria no 1º, remove no último); painel `<dialog>` para `modal`/`drawer` e `[popover="manual"]` para o resto; fallback `position: fixed` + `z()` sem top layer; pilha por abertura com **promoção** (`data-promoting`, sem animação) de popover/tooltip/toast acima de um modal novo; Esc só no topo; clique fora configurável; scroll lock (`overflow: hidden` no `html` + compensação da barra via `scrollbar-gutter`, sem px); `animateOut` na saída; `DestroyRef` limpa tudo.
+5. **Estilos** (`styles/overlay.css` ou SCSS do serviço): container, painel, backdrop (`--shy-color-scrim`), entrada com `@starting-style`, saída por `data-state="closing"`, reduced-motion e `forced-colors`. Só tokens e `ru()`.
+6. **Testes** (happy-dom com os stubs de `test-setup.ts`, ampliados para `showModal`/`close` se faltarem): ordem da pilha e promoção, Esc só no topo, clique fora, foco inicial e retorno, trap de Tab, scroll lock aplicado e removido, container criado e removido, `closed` resolvendo com o resultado.
+7. **Showcase** `foundations/layers`: abrir três camadas (modal, popover, toast) em ordens diferentes e mostrar a ordem; conferir no Chromium nos dois temas.
+8. **Docs**: `src/libs/ui/README.md` (API do overlay), README raiz se mudar uso, `decisions.md` (ADR-F4-4), plano 11.2 se a API final divergir.
+9. Verificações (`check:ds`, testes, `build`, `build:showcase`), relatório do gate e commit `feat(ui): núcleo de overlay (posicionamento, foco e camadas)`.
+
+### Premissas
+
+- Sem dependência nova (runtime ou dev). Os stubs de `showModal` entram em `test-setup.ts` se o happy-dom não tiver.
+- `OverlayService` `providedIn: 'root'`, sem `provideShyOverlay()` obrigatório.
+- Os componentes (Dialog, Popover etc.) ficam para a F4-S2+; a F4-S1 entrega só o núcleo e a página de camadas.
+
+## F3-S6: relatório do gate e fechamento da F3 (2026-10-21)
+
+### Verificações
+
+| Verificação               | Resultado                                                                                                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`        | verde (6 verificações); aviso de 27 tokens não usados **sem órfão novo**: 26 primitivos/atalhos da F1 (escalas 100/300/500/900, `gradient-brand`, `transition-*`, `tracking-normal`, `dynamic-*-unit`) e o `--shy-button-radius` do exemplo de override do showcase |
+| `check-contrast`          | 56 pares × 2 temas; todos os pares usados pela Onda 1 estão cobertos (lista em `tokens.md`). Os de fora são decorativos (`border`, `line`, `track` contra a página)                                                                                                 |
+| `npm test`                | verde: 21 arquivos, 114 testes (sem teste novo: as correções são de CSS `:has()`/`forced-colors`, que o happy-dom não calcula; conferidas no Chromium)                                                                                                              |
+| `npm run build`           | verde (`ui` e `utils`)                                                                                                                                                                                                                                              |
+| `npm run build:showcase`  | verde                                                                                                                                                                                                                                                               |
+| Contraste em runtime      | Chromium 141 sobre o build: todo texto visível de 16 páginas (15 componentes + `examples/form`) × dark/light × 1366/360 px: nenhum par abaixo de 4,5:1 (3:1 texto grande); sem erro de console; sem scroll horizontal                                               |
+| Teclado (`examples/form`) | ordem de Tab = ordem visual (10 paradas), anel `solid` 2 px em todas nos dois temas; seta no radio seleciona; Espaço no checkbox e no switch; Enter envia                                                                                                           |
+| Envio inválido / válido   | alerta `status` "Fix 4 field(s)", `aria-invalid` nos 4 campos, foco no primeiro inválido (no radio group, o primeiro radio); válido: `aria-busy` com foco mantido, progress `aria-valuenow=4`, alerta de sucesso                                                    |
+| Foco nos demais           | remover do Badge, fechar do Alert, cartão-link, Button e IconButton: `solid` 2 px                                                                                                                                                                                   |
+| Reduced motion            | spinner do botão só pulsa (`shy-pulse`)                                                                                                                                                                                                                             |
+| forced-colors (emulação)  | formulário e 11 páginas capturados; radio marcado e ponto do badge agora visíveis                                                                                                                                                                                   |
+| Ambiente                  | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                                                                         |
+
+Achados corrigidos nesta sessão (ADR-F3-6):
+
+1. **Contorno do controle marcado no tema escuro**: Checkbox, Radio e Switch marcados tinham a borda em `primary` (2,6:1 sobre `bg`, 2,1:1 sobre `surface-raised`), abaixo de 3:1 (WCAG 1.4.11). Agora a borda usa `--shy-*-checked-border` (padrão `primary-text`). No claro nada muda.
+2. **Campo inteiro apagado por uma opção desabilitada**: `.field:has(:disabled)` no `shy-form-field` pegava um `shy-radio` desabilitado dentro do grupo. Agora só o controle direto do campo conta.
+3. **Ponto invisível em `forced-colors`**: o radio marcado e o `dot` do badge usavam `background: currentColor`, que o alto contraste troca por `Canvas`.
+
+Não verificado: leitor de tela real; Windows em alto contraste real; RTL; zoom 200% (limite conhecido em `accessibility.md`); ponteiro grosso em dispositivo real.
+
+### Resumo da F3 (Onda 1)
+
+| Sessão | Entregou                                                                                      | Commit  |
+| ------ | --------------------------------------------------------------------------------------------- | ------- |
+| F3-S1  | tipografia, layout, `.shy-sr-only`, `animateOut`, Button, IconButton                          | 39c815b |
+| F3-S2  | Spinner (8 variantes), Skeleton, Progress, ProgressCircular                                   | 53e2902 |
+| F3-S3  | FormField, Input, Textarea                                                                    | e119878 |
+| F3-S4  | Checkbox, Radio/RadioGroup, Switch                                                            | b410314 |
+| F3-S5  | Badge, Divider, Card, Alert                                                                   | 87644db |
+| F3-S6  | `examples/form`, auditoria a11y, 3 correções, matriz da Onda 1, tokens de componente nos docs | 0db8496 |
+
+16 componentes novos na Onda 1, 114 testes, zero dependência de runtime nova, nenhuma devDependency nova. Sem bump, tag ou publish.
+
+### Arquivos principais (F3-S6)
+
+- Showcase: `src/apps/app/examples/form/` (novo), rota e grupo "Examples" no menu (`app.routes.ts`, `app.ts`).
+- Lib: `checkbox`, `radio`, `switch` (`.scss`: `checked-border`), `radio` e `badge` (`.scss`: `forced-colors`), `form-field` (`.scss`: seletor de desabilitado).
+- Docs: `tokens.md` (tokens de componente e pares da Onda 1; contagem 52 → 56 corrigida), `accessibility.md` (matriz da Onda 1 e resultado da auditoria), `decisions.md` (ADR-F3-6), `README.md` (exemplo de formulário), `src/libs/ui/README.md` (token `checked-border`).
+
+### Efeito prático
+
+- Controles marcados com contorno visível no escuro; formulário com radio desabilitado não parece desabilitado; radio e badge com ponto legíveis em alto contraste.
+- Tokens novos e opcionais: `--shy-{checkbox,radio,switch}-checked-border`. Nenhuma API removida ou renomeada.
+
+### Decisões e premissas
+
+- Mover o foco para o primeiro campo inválido fica no app (mostrado no exemplo), não no `shy-form-field`: depende do fluxo da página. Se quiser isso embutido na lib, é mudança de API para a F4/F5.
+- Tipo do commit: o arquivo da sessão propunha `docs:`, mas a sessão mudou CSS da lib que o consumidor vê; usei `fix(ui):` para o changelog refletir isso.
+- A sessão pedia "screenshot dos componentes nos dois temas": foram capturados (dark/light, forced-colors), mas não versionados no repo (binários sem uso na lib); ficam como evidência deste relatório.
+
+### Mensagem de commit
+
+```
+fix(ui): fechar onda 1 (formulário completo, a11y e tokens)
+
+- showcase: examples/form com todos os controles da Onda 1 no shy-form-field
+- fix: borda do checkbox/radio/switch marcados em primary-text (3:1 no tema escuro)
+- fix: shy-form-field só apaga rótulo/dica quando o próprio controle está desabilitado
+- fix: ponto do radio e do badge visível em forced-colors
+- docs: tokens de componente e pares da Onda 1, matriz de a11y, ADR-F3-6, README
+```
+
+## F3-S5: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados; 56 pares de contraste (nenhum novo: os pares `*-soft`/`on-*-soft`/`*-text` e `on-*`/`*` já cobriam Badge e Alert)                          |
+| `npm test`               | verde: 21 arquivos, 114 testes (novos: `badge` 4, `divider` 1, `card` 3, `alert` 5)                                                                                                                           |
+| `npm run build`          | verde (`ui` e `utils`)                                                                                                                                                                                        |
+| `npm run build:showcase` | verde                                                                                                                                                                                                         |
+| Papéis do Alert          | Chromium: `status` nos 4 alertas padrão e `alert` no danger com `urgent`; jsdom: `urgent` só vira `alert` em warning/danger, info/success continuam `status`; ícone diferente por intenção (4 SVGs distintos) |
+| Dismiss e remover        | botão de fechar do Alert (nome "Dismiss error") oculta e emite `dismissed`; remover do Badge tem `aria-label` e remove o item (3 para 2 tags no Chromium); alvo do remover ≈ 30 px (ícone 15 px + `::before`) |
+| Card interativo          | `a`/`button[shyCard]`: foco `solid` 2 px; botão-cartão dispara por Espaço e Enter (2 cliques no Chromium); `disabled` nativo; `shy-card` sem `tabindex`                                                       |
+| Temas e viewports        | badge, divider, card e alert em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                       |
+| forced-colors (emulação) | bordas `CanvasText`/`LinkText`, badge sólido em `Highlight`/`HighlightText`, ícone do Alert em `CanvasText`; capturado mas não inspecionado em detalhe: conferir no Windows                                   |
+| Ambiente                 | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                   |
+
+Achados corrigidos durante a sessão: o atributo `title` no `shy-alert` virava tooltip e nome acessível do host (agora o input é `heading`); `1lh` é proibido pelo `check-units`; páginas do showcase com estado em campo comum não re-renderizam em zoneless (viraram `signal`).
+
+Não verificado: leitor de tela real (NVDA/VoiceOver); Windows em alto contraste real; RTL; ponteiro grosso com dispositivo real.
+
+### Arquivos principais
+
+- `lib/components/badge/`, `divider/`, `card/`, `alert/` (`.ts`, `.html`, `.scss`, specs; divider sem `.html`) e `lib/types/{badge,divider,card,alert}/`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: `components/{badge,divider,card,alert}`, rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens, exports), `decisions.md` (ADR-F3-5), `accessibility.md`.
+
+### Efeito prático
+
+- `<shy-badge>` (intent × soft/solid/outline, `count`, `dot`, `removable`), `<shy-divider>`, `<shy-card>` e cartões interativos `a[shyCard]`/`button[shyCard]`, `<shy-alert>` com ícone por intenção, `urgent`, ação e `dismissible`.
+- Nenhuma API existente mudou. Sem dependência nova, bump, tag ou publish.
+
+### Decisões e premissas (ADR-F3-5 em `decisions.md`)
+
+- Card interativo é o elemento nativo (`a`/`button`), não um input `interactive` num `div`; Alert usa `heading` (não `title`) e `urgent` default `false`; `dismissible` se oculta sozinho e o foco depois é do app; mixins de cor do Button reaproveitados; texto padrão do botão de remover/fechar em inglês, sobrescrevível.
+- O arquivo da sessão dizia "`interactive` vira link/botão": o resultado é o mesmo, pelo elemento nativo.
+
+### Mensagem de commit
+
+```
+feat(ui): badge, divider, card e alert
+
+- shy-badge: intent, soft/solid/outline, count, dot e removable com botão nomeado
+- shy-divider: role="separator", horizontal/vertical, texto opcional
+- shy-card e a/button[shyCard]: slots header/footer, elevation 0 a 3, interativo pelo elemento nativo
+- shy-alert: ícone por intenção, heading, ação, urgent (role="alert") e dismissible
+- tokens --shy-badge-*, --shy-card-*, --shy-alert-* e --shy-divider-*
+- showcase: components/badge, divider, card e alert; README e ADR-F3-5
+```
+
+## F3-S4: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados; 57 pares de contraste (2 novos)                                                                                                                                            |
+| `npm test`               | verde: 17 arquivos, 101 testes (novos: `checkbox` 7, `switch` 2, `radio-group` 7)                                                                                                                                                             |
+| `npm run build`          | verde (`ui` e `utils`)                                                                                                                                                                                                                        |
+| `npm run build:showcase` | verde                                                                                                                                                                                                                                         |
+| Teclado (Chromium)       | Espaço marca o checkbox e o switch; no radio, setas movem **e selecionam** (↓ de Free vai a Pro; o próximo ↓ pula o desabilitado e volta a Free); anel de foco `solid` 2 px na marca                                                          |
+| ARIA (Chromium)          | switch: `role=switch`, nome "Label", `checked` na árvore de acessibilidade (sem `aria-checked`); radiogroup com `role` e `aria-label`; jsdom: `aria-describedby`/`aria-invalid`/`aria-errormessage` no form-field, `aria-labelledby` no grupo |
+| Erro nos formulários     | checkbox: erro após blur ou `markAllAsTouched`, some ao marcar; radio: erro só quando o foco **sai do grupo** (mover entre radios não conta) ou no submit                                                                                     |
+| Alvo de toque            | `.box` do switch com 35,6 px de altura a 1366×768 (≥ `--shy-size-control-sm`; ≥ 24 px)                                                                                                                                                        |
+| Temas e viewports        | checkbox, switch e radio em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                                                           |
+| forced-colors (emulação) | glifo do checkbox continua visível (opacidade 1) quando marcado, borda `ButtonText`, inválido tracejado, marcado do switch em `Highlight`; conferir no Windows                                                                                |
+| Ambiente                 | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                                                   |
+
+Não verificado: leitor de tela real (NVDA/VoiceOver); Windows em alto contraste real; RTL (a regra `:dir(rtl)` do botão do switch foi escrita, não medida); ponteiro grosso com dispositivo real.
+
+### Arquivos principais
+
+- `lib/components/checkbox/`, `switch/`, `radio/` (`radio-group.component.ts`, `radio.component.ts`, `radio.token.ts`, `.html`, `.scss`, specs) e `toggle/` interno (`control-base.ts`, `toggle-base.ts`, `_toggle-theme.scss`, não exportados); `types/radio/radio.type.ts`; exports em `components/index.ts` e `types/index.ts`.
+- `form-field`: `labelId` no contexto e `id` no `<label>` (aditivo).
+- `scripts/contrast-pairs.json` (+ `text-muted`/`track` 3:1, `on-primary`/`primary` 4,5:1).
+- Showcase: `components/{checkbox,switch,radio}` (matriz de estados, select-all com indeterminate, dentro do form-field), rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens, exports), `decisions.md` (ADR-F3-4), `accessibility.md`.
+
+### Efeito prático
+
+- `<shy-checkbox>`, `<shy-switch>` e `<shy-radio-group>`/`<shy-radio>` com `[(checked)]`/`[(value)]`, `ngModel`, `formControl` e `formControlName`, estados do contrato e integração com o `shy-form-field` (invalid, hint, erro).
+- Nenhuma API existente mudou (só o `labelId` aditivo no contexto do form-field). Sem dependência nova, bump, tag ou publish.
+
+### Decisões e premissas (ADR-F3-4 em `decisions.md`)
+
+- Controles sobre inputs nativos ocultos só visualmente (teclado e leitor de tela do navegador); radio com `name` compartilhado em vez de roving tabindex manual; switch sem `aria-checked`; CVA registrado pelo `NgControl` com base interna `ControlBase<T>`; erro do grupo de radio ao sair do grupo.
+- O arquivo da sessão dizia "roving tabindex, setas movem e selecionam" no Radio: o resultado é o mesmo, entregue pelo navegador.
+
+### Mensagem de commit
+
+```
+feat(ui): checkbox, radio e switch
+
+- shy-checkbox e shy-switch sobre checkbox nativo: [(checked)], indeterminate, CVA, invalid pelo NgControl
+- shy-radio-group e shy-radio sobre radios nativos: setas e roving tabindex do navegador, CVA, aria-labelledby do form-field
+- glifo e posição do botão mostram o estado sem depender de cor; forced-colors e alvo de toque ≥ control-sm
+- tokens --shy-checkbox-*, --shy-radio-* e --shy-switch-*; labelId no form-field
+- showcase: components/checkbox, radio e switch; README e ADR-F3-4
+```
+
+## F3-S3: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados; 55 pares de contraste (3 novos)                                                                                                                                                 |
+| `npm test`               | verde: 14 arquivos, 85 testes (novos: `form-field` 11, `input` 3)                                                                                                                                                                                  |
+| `npm run build`          | verde (`ui` e `utils`)                                                                                                                                                                                                                             |
+| `npm run build:showcase` | verde                                                                                                                                                                                                                                              |
+| ARIA (jsdom + Chromium)  | `label[for]` = `id` do controle; `aria-describedby` = dica + erro; `aria-invalid`/`aria-errormessage` só inválido; no Chromium a árvore de acessibilidade dá nome "Name", descrição "As on your ID This field is required", `required` e `invalid` |
+| Quando o erro aparece    | só com touched/dirty (blur) ou `markAllAsTouched` (submit, sem blur); some ao ficar válido; `invalid` forçado no campo ou no controle (testado)                                                                                                    |
+| Foco, prefixo, contador  | anel `solid` na cor `--shy-color-focus`; recuo do texto = altura do campo (45,8 px) com prefixo; contador `3/40` acompanha a digitação                                                                                                             |
+| forced-colors (emulação) | borda `FieldText` (branca na emulação) e inválido `dashed`; conferir no Windows em alto contraste                                                                                                                                                  |
+| Temas e viewports        | form-field, input e textarea em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                                                            |
+| Contraste                | `text-muted`, `text-subtle` e `danger-text` sobre `surface-sunken` (4,5:1) e `border-strong` sobre ele (3:1, já existia) nos dois temas                                                                                                            |
+| Ambiente                 | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou. O lock foi ajustado à mão (só a linha do peer `@angular/forms`) porque o npm 10 remove campos `libc` do lock                                                          |
+
+Não verificado: leitor de tela real (NVDA/VoiceOver); autofill de verdade (o Chromium headless não preenche; a regra `:-webkit-autofill` só foi compilada); Windows em alto contraste.
+
+### Arquivos principais
+
+- `lib/components/input/` (`input.component.{ts,scss,spec.ts}`, `_input-theme.scss` com os tamanhos) e `lib/components/form-field/` (`.ts`, `.html`, `.scss`, `form-field.token.ts`, spec); `types/input/input.type.ts`; exports em `components/index.ts` e `types/index.ts`.
+- `scripts/contrast-pairs.json` (+3 pares); `src/libs/ui/package.json` e `package-lock.json` (peer `@angular/forms`).
+- Showcase: `components/{form-field,input,textarea}` (formulário reativo, matriz de estados × tamanho, prefixo/sufixo, override de token), rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens `--shy-input-*`/`--shy-form-field-*`, exports, requisitos), `decisions.md` (ADR-F3-3), `accessibility.md`.
+
+### Efeito prático
+
+- `<input shyInput>` e `<textarea shyInput>` funcionam com `ngModel`/`formControl`/`formControlName`, em `sm|md|lg`, com `invalid`, `required`, `readonly`, `disabled`.
+- `<shy-form-field label hint error counter size>` liga o ARIA sozinho e mostra o erro com ícone e texto; slots `prefix`/`suffix`.
+- Nenhuma API existente mudou. Sem bump, tag ou publish. Única dependência nova: peer `@angular/forms` (já usado pelo app).
+
+### Decisões e premissas (ADR-F3-3 em `decisions.md`)
+
+- `@angular/forms` como peer do `ui` (só `NgControl`); componente de template vazio em vez de diretiva com CSS global; tamanho em `shyInput="lg"` (o `size` nativo conflita); caixa no próprio input, com prefixo/sufixo absolutos e recuo por `:has()`; ligação por token `SHY_FORM_FIELD`; erro como string; autofill e forced-colors tratados.
+- O arquivo da sessão pedia prefixo/sufixo no Input; eles ficam no `shy-form-field` (precisam de um contêiner), e o Input sozinho não os tem.
+
+### Mensagem de commit
+
+```
+feat(ui): form-field, input e textarea
+
+- input[shyInput] e textarea[shyInput]: tamanhos sm/md/lg, invalid pelo NgControl, forced-colors e autofill
+- shy-form-field: label, dica, erro com ícone, contador e ARIA (for/id, describedby, invalid, errormessage)
+- slots prefix e suffix; token SHY_FORM_FIELD para os próximos controles
+- peer @angular/forms; tokens --shy-input-* e --shy-form-field-*
+- showcase: components/form-field, input e textarea; README e ADR-F3-3
+```
+
+## F3-S2: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                     | Resultado                                                                                                                                                                                                                               |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`              | verde (6 verificações); mesmo aviso de 27 tokens ainda não usados (todos os tokens novos estão em uso)                                                                                                                                  |
+| `npm test`                      | verde: 12 arquivos, 71 testes (novos: `spinner` 11, `skeleton` 3, `progress` + `progress-circular` 4; `button` confere o `shy-spinner` decorativo)                                                                                      |
+| `npm run build`                 | verde (`ui` e `utils`)                                                                                                                                                                                                                  |
+| `npm run build:showcase`        | verde                                                                                                                                                                                                                                   |
+| Contraste                       | par novo `primary-text` sobre `track` (≥ 3:1): **4,59:1** no escuro e **5,82:1** no claro                                                                                                                                               |
+| Reduced motion (Chromium)       | `prefers-reduced-motion` e `data-motion="reduced"`: as 8 variantes do Spinner, o indeterminado linear (barra cheia) e o circular e o shimmer do Skeleton param de se mover e só rodam `shy-pulse` (2 s); nada interno anima             |
+| ARIA                            | `role="progressbar"`, `aria-valuemin/max/now`, indeterminado sem `aria-valuenow`, valor limitado a `[0, max]` (testado); Spinner com `label` = `role="status"`, sem `label` = `aria-hidden`                                             |
+| Button loading (Chromium)       | usa o `shy-spinner` (`ring`) do tamanho do ícone (20,3 px = `shy-icon` md a 1366×768); largura igual antes/durante (186,4 px); `aria-busy="true"`                                                                                       |
+| Progress determinado (Chromium) | barra de 60% ocupa 0,60 do trilho (translate, sem animar `width`)                                                                                                                                                                       |
+| Temas e viewports               | spinner, skeleton, progress e button em dark e light, 1366 e 360 px: sem erro de console, sem scroll horizontal                                                                                                                         |
+| forced-colors (emulação)        | pontos/barras do Spinner em `CanvasText`; Progress com borda `CanvasText` e barra `Highlight`; ProgressCircular com trilho `GrayText` e barra `Highlight` (a paleta da emulação do Chromium deixa os dois escuros; conferir no Windows) |
+| Ambiente                        | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                                             |
+
+Não verificado: leitor de tela real (NVDA/VoiceOver) anunciando o `role="status"`; Windows em alto contraste real.
+
+### Arquivos principais
+
+- Tokens: `--shy-duration-loop`, `-loop-slow`, `-breathe` (`motion.css`), `--shy-opacity-track` (`primitives.css`), `--shy-color-track` (`semantic-dark.css`/`semantic-light.css`); keyframes `shy-spinner-dash`, `-dot`, `-bar`, `-ping` (`animations.css`); mixin `reduced-motion` (`_mixins.scss`).
+- `lib/components/spinner/`, `skeleton/`, `progress/` (inclui `progress-value.ts`, base interna), `progress-circular/` (`.ts`, `.html`, `.scss`, spec); tipos em `types/{spinner,skeleton,progress}/`; exports em `components/index.ts` e `types/index.ts`.
+- Button: `<shy-spinner class="spinner">` no lugar do anel provisório; mixin `spinner` removido de `_button-theme.scss`.
+- `scripts/contrast-pairs.json` (+ `primary-text`/`track`).
+- Showcase: `components/spinner`, `components/skeleton`, `components/progress`, rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens, exports), `decisions.md` (ADR-F3-2), `motion.md`, `tokens.md`, `accessibility.md` (contagem de pares corrigida), `sessions/F3-onda-1.md` (regra de reduced motion alinhada ao plano 12).
+
+### Efeito prático
+
+- `<shy-spinner>` com 8 variantes e 4 tamanhos, cor herdada; `<shy-skeleton>` text/circle/rect; `<shy-progress>` e `<shy-progress-circular>` determinados e indeterminados.
+- Button em loading usa o Spinner (`ring`); com reduced motion ele pulsa em vez de ficar parado.
+- Sem dependência nova; sem bump, tag ou publish. Nenhuma API existente mudou (só o visual do spinner do botão).
+
+### Decisões e premissas (ADR-F3-2 em `decisions.md`)
+
+- Reduced motion = pulso de opacidade (plano 12), não indicador estático (texto da sessão): o arquivo da sessão foi alinhado.
+- Durações de laço próprias que não zeram com reduced motion; token `track` para trilho/skeleton; barra padrão `primary-text`.
+- Tamanhos do Spinner/ProgressCircular pela escala de ícones (lg = `ru(16)`); Progress sem `intent` (cor por token, `--shy-progress-bar`).
+
+### Mensagem de commit
+
+```
+feat(ui): spinner, skeleton e progress
+
+- shy-spinner: 8 variantes, tamanhos xs a lg, label opcional (role="status")
+- shy-skeleton: text/circle/rect, lines, shimmer/still
+- shy-progress e shy-progress-circular: role="progressbar", value/max, indeterminado
+- reduced motion troca o movimento por pulso de opacidade
+- button em loading passa a usar o shy-spinner
+- tokens --shy-color-track, --shy-opacity-track e --shy-duration-loop*
+- showcase: components/spinner, skeleton e progress; README e ADR-F3-2
+```
+
+## F3-S1: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                                     | Resultado                                                                                                                                                                                |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                              | verde (6 verificações); 1 aviso de tokens ainda não usados (27; revisão na F5)                                                                                                           |
+| `npm test`                                      | verde: 9 arquivos, 53 testes (novos: `animate-out` 6, `button` 10, `icon-button` 3)                                                                                                      |
+| `npm run build`                                 | verde (`ui` e `utils`); `typography.css` e `layout.css` saem em `dist/ui/styles/`                                                                                                        |
+| `npm run build:showcase`                        | verde                                                                                                                                                                                    |
+| Contraste da matriz (Chromium, cor renderizada) | variant × intent de Button e IconButton: mínimo **4,76:1** no escuro (danger sólido) e **6,02:1** no claro (success sólido); par novo `bg`/`text` no `check-contrast` (19,15:1)          |
+| Loading (Chromium)                              | largura igual antes/durante (`start` + `loadingText`: 193,4 px; `replace`: 203,1 px); `aria-busy="true"`; foco continua no botão; Enter e Espaço durante o loading não disparam o clique |
+| Teclado (Chromium)                              | Espaço no `button` ativa; Espaço no `a[shyButton]` não navega; Enter no `a` navega (com `routerLink`); clique no `a` com `disabled` não navega                                           |
+| Estados                                         | `data-shy-state`: state layer 0,08 (hover) e 0,12 (active); anel de foco sólido; disabled com `--shy-opacity-disabled`                                                                   |
+| Temas e viewports                               | dark e light em 1366 e 360 px: sem erro de console, sem scroll horizontal; IconButton md = 33 px em 360 (≥ 24 px)                                                                        |
+| forced-colors                                   | bordas visíveis (`ButtonText`), state layer desligado, variante `link` sem caixa                                                                                                         |
+| Ambiente                                        | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou sem o `npx npm@11`                                                                                           |
+
+Não verificado: ponteiro grosso (`pointer: coarse`) com dispositivo real; o token já cresce por CSS (F1) e a página mostra os tamanhos.
+
+### Arquivos principais
+
+- Estilos: `styles/typography.css` (`.shy-display`, `.shy-h1`…`.shy-h6`, `.shy-body-lg`, `.shy-body`, `.shy-small`, `.shy-caption`, `.shy-overline`, `.shy-code`, `.shy-sr-only`), `styles/layout.css` (`.shy-stack`, `.shy-cluster`, `.shy-grid`, `.shy-container`), ambos em `index.css` e `_global.scss`.
+- `lib/utils/animate-out.ts` + spec, exportado.
+- `lib/components/button/` (`button.component.{ts,html,scss,spec.ts}`, `_button-theme.scss` compartilhado) e `lib/components/icon-button/` (`.ts`, `.scss`, spec).
+- Tipos: `types/button/button.type.ts` (`ShyButtonVariant`, `ShyButtonSize`, `ShyButtonLoadingPosition`, `ShyIconButtonVariant`), `types/intent/intent.type.ts` (`ShyIntent`).
+- `scripts/contrast-pairs.json` (+ `bg` sobre `text`).
+- Showcase: `components/button`, `components/icon-button` (matriz variant × intent, tamanhos, estados, loading ao vivo, link/block, override de token), "Text styles" em `foundations/typography`, "Layout utilities" em `foundations/spacing`, `.demo-box` em `styles.scss`, rotas e menu.
+- Docs: `README.md` raiz, `src/libs/ui/README.md` (API, tokens `--shy-button-*`/`--shy-icon-button-*`, classes, exports), `decisions.md` (ADR-F3-1).
+
+### Efeito prático
+
+- `<button shyButton>` / `<a shyButton>` com 5 variantes × 6 intenções × 3 tamanhos, `loading` sem perder o foco nem mudar a largura (`replace`), `loadingText`, `block`, `disabled` também em link.
+- `<button shyIconButton label="…">` com nome acessível obrigatório e alvo pelo token de controle.
+- Classes utilitárias de texto e layout disponíveis só com o `index.css`.
+- `animateOut` pronto para os overlays da F4.
+- Sem dependência nova; sem bump, tag ou publish. Nenhuma API existente mudou.
+
+### Decisões e premissas (ADR-F3-1 em `decisions.md`)
+
+- `loadingPosition` padrão `replace`; em `start`/`end` sem ícone na ponta o botão cresce (documentado).
+- Ícones nas pontas por `slot="start"`/`slot="end"`; intenção `neutral` = sólido invertido; padding lateral mínimo `space-6`.
+- IconButton sem `link` e sem `loading` nesta sessão; spinner provisório parado com reduced motion até a S2.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): button, icon-button, tipografia e layout utilitários
+
+- button[shyButton] e a[shyButton]: variant, intent, size, loading (aria-busy, foco mantido), loadingPosition, loadingText, block, disabled
+- button[shyIconButton] com label obrigatório (aria-label)
+- typography.css e layout.css no index.css e no _global.scss
+- animateOut para a saída de dialog/popover
+- showcase: components/button, components/icon-button, estilos de texto e layout
+- par de contraste bg/text; README e ADR-F3-1
+```
+
+## F2: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                                  | Resultado                                                                                                                                                            |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                           | verde com **baselines removidas**: nenhum literal de cor, unidade, tempo, easing, z-index ou font-family em SCSS (lib e showcase); 1 aviso (tokens ainda não usados) |
+| `npm test`                                   | verde: 6 arquivos, 34 testes (`icon` 6, `select` 8, `snackbar` 5 + service 1, mais os 14 da F1)                                                                      |
+| `npm run build`                              | verde (`ui` e `utils`)                                                                                                                                               |
+| `npm run build:showcase`                     | verde                                                                                                                                                                |
+| Chromium (showcase buildado, claro e escuro) | sem erro de console; select abre por teclado, foca a opção, Enter seleciona e o foco volta ao trigger; snackbar aparece e é legível nos dois temas                   |
+
+### Arquivos principais
+
+- `icon`: `icon.component.{ts,html,scss}` (`input()`, `name`, `label`, `aria-hidden` por padrão, `--shy-icon-size`, OnPush).
+- `select`: `select.component.{ts,html,scss}` (tokens `--shy-select-*`, ARIA de listbox, teclado básico, `z(dropdown)`, hover só com ponteiro fino, foco visível, forced-colors).
+- `snackbar`: `snackbar.component.{ts,html,scss}` (tokens `--shy-snackbar-*`, `role="status"`, `z(toast)`, motion por token).
+- `styles/_variables.scss` apagado; `scripts/units-baseline.json` e `hardcoded-baseline.json` apagados.
+- Showcase: `components/{icon,select,snackbar}` no lugar de `pages/{home,icons}`.
+- Testes novos: `icon.component.spec.ts`, `select.component.spec.ts`, `snackbar.component.spec.ts`.
+- Docs: `README.md` (raiz e `ui`), `docs/design-system/{migration-0.0-to-1.0,units,tokens,decisions}.md`.
+
+### Efeito prático
+
+- Os três componentes seguem os dois temas e o contrato de tokens; nenhum valor fixo no SCSS.
+- Breaking (já previsto no `0.1.0`): `--shyIconSize`, `--shySelect*`, `--shySnackbar*` viram kebab-case (tabela de-para em `migration-0.0-to-1.0.md`); `$color-*` não existem mais.
+- Correções de passagem: ícone com nome inexistente agora mostra `question-circle`; ícone reage à mudança do nome projetado.
+- Sem dependências novas; sem bump de versão, tag ou publish.
+
+### Decisões e premissas (ADR-F2-1 em `decisions.md`)
+
+- ARIA e teclado básico do select entraram já na fase A (a API não mudou); a reescrita é F4.
+- Matriz de estados do select/snackbar limitada aos estados reais da API.
+- Catálogo de ícones do showcase limitado a 240 resultados.
+
+### Mensagem de commit proposta
+
+```
+refactor(ui): icon, select e snackbar com tokens e remoção de $color-*
+
+- icon: input(), name/label, decorativo por padrão, --shy-icon-size
+- select: tokens --shy-select-*, ARIA de listbox e teclado básico
+- snackbar: tokens --shy-snackbar-*, role="status", sem transform horizontal
+- remove _variables.scss e as baselines do check:ds
+- showcase com páginas components/icon, select e snackbar
+- testes de icon, select, snackbar e SnackbarService
+
+BREAKING CHANGE: --shyIconSize, --shySelect* e --shySnackbar* renomeados; $color-* removidos
+```
+
+## F2: plano (2026-10-20)
+
+Escopo do plano mestre (seções 13 e 16, fase A): `icon` refatorado; `select` e `snackbar` re-skin com tokens (API intacta, nada hardcoded); showcase migrado; README. Entram os resíduos da F1: esvaziar as duas baselines, apagar `_variables.scss` (`$color-*`), tokens camelCase → kebab-case e o `ThemeService`/toggle já feitos.
+
+| #   | Tarefa                                                                                                                                                                                                                                                                                         | Arquivos principais                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| T1  | `shy-icon`: `input()` para `hoverFill`/`hoverFillDelay`, `name` e `label` opcionais, `aria-hidden` por padrão (com `label`: `role="img"` + `aria-label`), OnPush; `1em` vira `--shy-icon-size` (padrão `--shy-size-icon-md`); `--shyIconSize` → `--shy-icon-size`; zera a baseline de unidades | `icon.component.*`                 |
+| T2  | `shy-select` (fase A): tokens `--shy-select-*` (mapa da seção 13), cores/estados/motion/z-index por token (`z(dropdown)`), contrato de estados e foco, contraste do hover corrigido, fonte por token                                                                                           | `select.component.*`               |
+| T3  | `shy-snackbar` (fase A): `--shy-snackbar-*`, intenção por token, `z(toast)`, motion por token e `reduced-motion`, `role="status"`; remove o `.icon-layer` duplicado                                                                                                                            | `snackbar.component.*`             |
+| T4  | Apagar `_variables.scss` e o `forward`; trocar os últimos `$color-*`; `check-units` e `check-hardcoded` com baseline vazia (e arquivos de baseline removidos)                                                                                                                                  | `styles/`, `scripts/`              |
+| T5  | Showcase: páginas `home`/`icons` viram `components/icon`, `components/select`, `components/snackbar` com matriz de estados nos dois temas, só tokens                                                                                                                                           | `src/apps/app/**`                  |
+| T6  | Testes: `icon`, `select` (teclado, ARIA, estados), `snackbar` e `SnackbarService`                                                                                                                                                                                                              | `*.spec.ts`                        |
+| T7  | README (raiz e `ui`): novos tokens de componente, tabela `$color-*` → token final; `migration-0.0-to-1.0.md`                                                                                                                                                                                   | `README.md`, `docs/design-system/` |
+
+Gate da F2: `check:ds` verde com baselines vazias (nenhum literal de cor/unidade/tempo); testes dos três passam; `npm run build` e `npm run build:showcase` verdes; relatório; mensagem de commit; parar. Sem bump (o `0.1.0` só a pedido).
+
+### Decisão pequena (alto impacto não; recomendação vale se não houver resposta)
+
+| #      | Decisão                                                                                                                                                                  | Recomendação                                                                  |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| D-F2-1 | Resíduos da Onda 0 não feitos na F1: classes de tipografia (`.shy-h1`…), `.shy-sr-only`, layout (`shy-stack`, `shy-cluster`, `shy-grid`, `shy-container`) e `animateOut` | **F3** (junto com os componentes que os usam), para a F2 ficar só no refactor |
+
+## F1: plano (2026-10-20)
+
+Escopo do plano mestre (seção 16): `styles/` (6.2), `units.css` + `ru()` + helper TS, `ThemeService` + toggle, `fonts.css` + arquivos, base/motion/animations, scripts da seção 15, showcase `/foundations/*`. Entram também as decisões já aprovadas: exports `./styles/*` + `_global.scss` (ADR-F0-1), `vitest` + `happy-dom` (ADR-F0-2), camadas `z()` (ADR-F0-7, só tokens e função; a promoção de overlays é da F4) e os tokens da ADR-F0-9. Sem bump de versão (o `0.1.0` é ao fechar a F2).
+
+### Tarefas
+
+| #   | Tarefa                                                                                                                                                                                                                                                           | Arquivos principais                                                                                               |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| T1  | Unidades: `--shy-responsive-unit` e `--shy-dynamic-*` (sem nenhum alias: ADR-F1-4); `ru()` em SCSS; helper `ru(n)` em TS exportado; `_breakpoints.scss` (único lugar com px, em condição de `@media`)                                                            | `styles/tokens/units.css`, `styles/_functions.scss`, `styles/_breakpoints.scss`, `src/lib/utils/ru.ts`            |
+| T2  | Tokens: primitivos (7.1), semânticos escuro (padrão) e claro com os tokens novos (`line`, `neutral-soft`, `scrim-panel`), tipografia, espaço/raio/tamanho/borda/foco (7.2–7.3), sombras, `layers.css` + `_layers.scss` (`z()`), `motion.css`, `animations.css`   | `styles/tokens/*.css`, `styles/_layers.scss`, `styles/animations.css`                                             |
+| T3  | `base.css` (reset moderno, foco, seleção, scrollbar, forced-colors, `font-family` nunca só `monospace`) e `index.css` (um `@import` por arquivo); `_mixins.scss` (focus-ring, state, motion, visually-hidden) e `_index.scss`; `_global.scss` para Sass          | `styles/base.css`, `styles/index.css`, `styles/_mixins.scss`, `styles/_index.scss`, `styles/_global.scss`         |
+| T4  | Fontes self-hosted: `fonts.css` (`font-display: swap`, `unicode-range`) + `woff2` + `OFL.txt` (decisão D-F1-2)                                                                                                                                                   | `src/libs/ui/src/assets/fonts/**`, `styles/fonts.css`                                                             |
+| T5  | Empacotamento: `ng-package.json` com assets `.css`/`.woff2`; `package.json` do ui com `exports` `./styles/*`; conferir o pacote buildado com um consumidor simulado (como na F0)                                                                                 | `src/libs/ui/ng-package.json`, `src/libs/ui/package.json`                                                         |
+| T6  | `ThemeService` (`dark\|light\|system`, padrão `dark`, `localStorage`, `matchMedia`, `data-theme`, `meta theme-color`, guarda SSR), `provideShyTheme`, `shy-theme-toggle`, script anti-flash documentado                                                          | `src/lib/services/theme/*`, `src/lib/components/theme-toggle/*`, `public-api.ts`                                  |
+| T7  | Scripts Node puro: `check-units`, `check-calibration`, `check-tokens`, `check-contrast` (+ `contrast-pairs.json`), `check-hardcoded`, `check-fonts`, `check-ds`; script npm `check:ds`                                                                           | `scripts/*.mjs`, `scripts/contrast-pairs.json`, `package.json` (só `scripts`)                                     |
+| T8  | Testes: devDependencies `vitest` (^4) e `happy-dom`; target `test` (`@angular/build:unit-test`) em `ui`; `setupFiles` com stubs da Popover API; testes de `ru()`, `ThemeService` e do toggle; script npm `test`                                                  | `package.json` (devDependencies), `angular.json`, `src/libs/ui/src/test-setup.ts`, `*.spec.ts`                    |
+| T9  | Migração dos nomes sem prefixo internos (`$responsive-unit`/`--responsive-unit` → `ru()`/`--shy-responsive-unit`; `$dynamic-*`/`--dynamic-*` → `--shy-dynamic-*`) em select, snackbar e showcase, só o necessário para `check-units` passar; o redesenho é da F2 | `select.component.scss`, `snackbar.component.scss`, `src/apps/styles.scss`, `app.scss`, `home.scss`, `icons.scss` |
+| T10 | Showcase: `angular.json > styles` com `index.css`; shell com toggle de tema/motion/fonte; páginas `/foundations/colors`, `typography`, `units` (tabela por viewport), `spacing`, `motion`, `layers`; tudo em ru                                                  | `src/apps/app/**`, `angular.json`                                                                                 |
+| T11 | Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-1.0}.md`; README raiz e `src/libs/ui/README.md` (consumo do CSS, `ThemeService`, `ru()`, `check:ds`, `test`)                                                    | `docs/design-system/*.md`, `README.md`, `src/libs/ui/README.md`                                                   |
+
+### Gate da F1 (todos obrigatórios)
+
+`npm run check:ds` verde (incluindo `check-units` e `check-calibration`); `npm test`, `npm run build` e `npm run build:showcase` verdes; temas sem flash; contraste ok nos dois temas; zero unidade proibida (exceto a baseline da D-F1-1); relatório com arquivos principais, efeito prático e decisões; mensagem de commit proposta (pt-BR); parar.
+
+### Decisões (respondidas pelo dono em 2026-10-20; detalhes em `decisions.md`, ADR-F1-1 a 3)
+
+| #      | Decisão                                                          | Escolha                                                                                                                   |
+| ------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| D-F1-1 | `1em` do `icon.component.scss`                                   | **a**: baseline `scripts/units-baseline.json` só com esse arquivo; a F2 a esvazia                                         |
+| D-F1-2 | Origem das fontes                                                | **a**: copiar uma vez os `woff2` de `@fontsource-variable/*` (sem dependência) com `OFL.txt` conferida na página oficial  |
+| D-F1-3 | `_variables.scss` (`$color-*`, `$responsive-unit`, `$dynamic-*`) | **b**: removido no `0.1.0`, sem shim publicado; shim interno só na F1/F2 (T3/T9 mantêm o arquivo até a F2 migrar os usos) |
+
+Ajustes no plano por causa dessas respostas (e da ADR-F1-4: nenhum alias, tudo com `shy`): T1, T3 e T9 não criam alias nenhum; `_variables.scss` fica na F1 só com `$color-*` (interno); a F2 passa a incluir a migração dos `$color-*` e a exclusão de `_variables.scss`; `migration-0.0-to-1.0.md` (T11) traz a tabela `$color-*` → token. A seção 6.5 do plano foi atualizada.
+
+### Premissas desta fase
+
+- O helper TS fica em `src/libs/ui/src/lib/utils/ru.ts`, exportado pelo entrypoint principal (`@shyland-dev/ui`).
+- `check-calibration` assume `rem` = 16 px (ADR-F0-6) e roda nos 7 viewports de referência; os valores iniciais da escala vêm da seção 7.2 do plano.
+- `check-contrast` lê os hex dos CSS e os pares de `scripts/contrast-pairs.json`, incluindo os pares novos da ADR-F0-9.
+- Node do ambiente de nuvem é 22.22.0; os scripts não dependem de recursos exclusivos do Node 24.
+
+## F1: relatório do gate (2026-10-20)
+
+### Verificações
+
+| Verificação                               | Resultado                                                                                                                                                                                                      |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                        | verde: check-units, check-calibration, check-tokens (2 avisos), check-contrast (100 pares, 2 temas), check-hardcoded, check-fonts (40 KB de 150)                                                               |
+| `npm test`                                | verde: 3 arquivos, 14 testes (`ru()`, `ThemeService`, `shy-theme-toggle`)                                                                                                                                      |
+| `npm run build`                           | verde (`ui` e `utils`)                                                                                                                                                                                         |
+| `npm run build:showcase`                  | verde; emite `JetBrainsMono-Variable.woff2` em `media/`                                                                                                                                                        |
+| Chromium (showcase buildado)              | sem erro de console; `data-theme` e `<meta theme-color>` corretos nos dois temas; fonte carregada; 360×800 sem scroll horizontal; com `light` salvo e o `main.js` bloqueado, o DOM já nasce claro (anti-flash) |
+| Consumidor simulado com o pacote buildado | 3 formas de consumo funcionam: `index.css` no `angular.json`, `@import` em CSS, `@use '.../styles/global'`; `ru()`/`z()`/`up()` compilam; fontes emitidas nos 3                                                |
+| Ambiente                                  | Node 22.22.0 (repo pede 24.14.1) e npm 10.9.4 (pede 11.11.0); `npm i` só funcionou com `npx npm@11.11.0` (ADR-F1-5, item 8)                                                                                    |
+
+### Arquivos principais
+
+- `src/libs/ui/src/lib/styles/`: `tokens/{units,primitives,semantic-dark,semantic-light,motion,layers}.css`, `fonts.css` + `fonts/**` (woff2 e OFL), `animations.css`, `base.css`, `index.css`, `_global.scss`, `_functions.scss`, `_breakpoints.scss`, `_layers.scss`, `_mixins.scss`, `_index.scss`, `_variables.scss` (só `$color-*`, interno).
+- `src/libs/ui/src/lib/`: `utils/ru.ts`, `services/theme/theme.service.ts`, `components/theme-toggle/*` e specs.
+- Empacotamento: `ng-package.json` (assets `.css`, `.woff2`, `OFL.txt`), `src/libs/ui/package.json` (`exports` `./styles/*`).
+- Testes: `angular.json` (target `test`), `tsconfig.spec.json`, `src/test-setup.ts` (stub da Popover API), devDependencies `vitest` e `happy-dom`.
+- Qualidade: `scripts/check-*.mjs`, `_shared.mjs`, `contrast-pairs.json`, `units-baseline.json`, `hardcoded-baseline.json`.
+- Showcase: novo shell (tema, reduce motion, fonte), páginas `/foundations/{colors,typography,units,spacing,motion,layers}`, anti-flash no `index.html`; `select`, `snackbar` e as páginas antigas migradas só nos nomes (`ru()`, `--shy-dynamic-*`).
+- Docs: `docs/design-system/{principles,tokens,units,theming,motion,accessibility,migration-0.0-to-1.0}.md`, `README.md` raiz e `src/libs/ui/README.md`.
+
+### Efeito prático
+
+- Um CSS (`index.css`) entrega tokens, temas, fontes e base; tema escuro por padrão, claro/sistema por `ThemeService` ou `<shy-theme-toggle>`.
+- Toda medida nova é `ru(N)`; o `check:ds` bloqueia unidade, cor, tempo, easing, z-index e fonte literais fora das baselines.
+- `--responsive-unit`, `$responsive-unit`, `--dynamic-*` e `$dynamic-*` não existem mais (sem alias). Consumidores quebram até migrar (guia com comandos bash e PowerShell).
+- Breaking visível: `$color-*` segue só para `select`/`snackbar`/páginas antigas até a F2.
+
+### Decisões e premissas (detalhes em `decisions.md`, ADR-F1-5)
+
+- Fontes em `styles/fonts/` (não `src/assets/fonts/`); baseline também para `check-hardcoded` (extensão da D-F1-1); breakpoints sm 600 / md 840 / lg 1200 / xl 1600 (ponto de partida); nenhum token de cor precisou mudar após `check-contrast`.
+- Licença: Inter removida por decisão do dono (ADR-F1-6); só JetBrains Mono (OFL 1.1).
+- Sem bump de versão, tag ou publish.
+
+### Mensagem de commit proposta
+
+```
+feat(ui): fundação de tokens, temas, unidades e fontes
+
+- tokens --shy-* (primitivo e semântico dark/light), motion, camadas z()
+- ru() em SCSS e TS, _breakpoints, mixins de estado e foco
+- ThemeService, provideShyTheme e <shy-theme-toggle>
+- fonte JetBrains Mono self-hosted (OFL)
+- scripts check:ds, testes com vitest e happy-dom
+- showcase com páginas /foundations e docs em docs/design-system
+- remove --responsive-unit, $responsive-unit e --dynamic-* sem alias
+
+BREAKING CHANGE: nomes sem prefixo shy removidos; ver migration-0.0-to-1.0.md
+```
+
+## F0: plano de verificações
+
+Nenhum código de feature nesta fase. Cada item vira uma linha do relatório com fato confirmado, inferência e fonte (com data).
+
+1. **Consumo de CSS:** como `angular.json` (`styles`, `stylePreprocessorOptions`) e os `@import`/`@use` do showcase chegam aos estilos da lib, e como um app consumidor faria o mesmo com `@shyland-dev/ui/styles`.
+2. **Fontes:** se um `@font-face` com `url()` relativo dentro da lib resolve no build do showcase e do consumidor (teste com um `woff2` temporário fora do commit).
+3. **Motion:** status de `animate.enter`/`animate.leave` no Angular 21 (angular.dev) e teste mínimo num `@if` do showcase.
+4. **Testes:** se há builder `@angular/build:unit-test` configurado; se não, qual devDependency mínima ele exige (proposta, sem instalar sem aprovação).
+5. **DOM de teste:** suporte a `<dialog>.showModal()` e Popover API no ambiente de teste escolhido; decidir se precisa de stubs.
+6. **Unidades:** `calc(var(--shy-responsive-unit) * N)` em `border-width`, `outline`, `box-shadow`, `font-size` e `translate()`, conferido no `getComputedStyle` do showcase.
+7. **Ambiente:** versão do Node vs `.nvmrc` (24.14.1) e se `npm run build` e `npm run build:showcase` passam no estado atual (linha de base).
+8. **Registro:** premissas P1 a P6 e exceções E1 a E4 em `docs/design-system/decisions.md`.
+
+Arquivos de teste temporários (fonte, página de verificação) são removidos ao fim da fase; só `decisions.md` e este arquivo entram no commit da F0.
+
+## F0: relatório do gate (2026-10-20)
+
+Nenhum código de feature. Arquivos de teste (fonte temporária, página `/f0-probe`, mudanças em `angular.json`, `ng-package.json`, `styles.scss`) foram criados, medidos e removidos; o working tree só tem `decisions.md` e este arquivo. Detalhes e evidências em `decisions.md` (ADR-F0-1 a 6).
+
+| #   | Verificação    | Resultado                                                                                                                                                                                             |
+| --- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Consumo de CSS | `angular.json > styles` com `index.css` funciona (showcase e consumidor). Sass `@use` de `.css` com `@import` aninhado falha; CSS `@import` do pacote falha sem `"./styles/*"` em `exports`. ADR-F0-1 |
+| 2   | Fontes         | `@font-face` com `url()` relativo resolve: `woff2` emitido em `media/` e URL reescrita, nos dois caminhos que funcionam. Fonte carregada (`document.fonts` = `loaded`)                                |
+| 3   | Motion         | `animate.enter`/`animate.leave` estáveis (`@publicApi 20.2` no core 21.2.10) e funcionando num `@if` com OnPush. ADR-F0-3                                                                             |
+| 4   | Testes         | `@angular/build:unit-test` disponível (runner padrão vitest), mas sem target `test` e sem `vitest`/DOM instalados. Proposta: `vitest` + `happy-dom`. ADR-F0-2                                         |
+| 5   | DOM de teste   | happy-dom tem `<dialog>`, `matchMedia`, `getAnimations`, `inert`; falta Popover API (stub). jsdom não tem nenhum dos quatro                                                                           |
+| 6   | Unidades       | `calc(var(--shy-responsive-unit) * N)` correto em todas as propriedades testadas; `border-width`/`outline-width` arredondam para pixel de dispositivo. ADR-F0-4                                       |
+| 7   | Ambiente       | Node 22.22.0 (≠ `.nvmrc` 24.14.1, mas suportado pelo Angular 21). `npm run build` e `npm run build:showcase` verdes                                                                                   |
+| 8   | Registro       | P1–P6, E1–E4 e ADRs em `decisions.md`                                                                                                                                                                 |
+
+Achado extra (ADR-F0-6): `html { font-family: monospace }` no showcase atual derruba o `rem` para 13 px no Chromium; a pilha da seção 5.4 resolve. Entra como regra na F1/F2.
+
+Não rodou: `npm run check:ds` (script ainda não existe; nasce na F1) e testes (sem target `test`; depende da ADR-F0-2). README não precisou mudar (nenhuma mudança de uso, API, script ou build).
+
+Mensagem de commit proposta:
+
+```
+docs: registrar verificações da F0 e decisões do design system
+
+Adiciona docs/design-system/decisions.md (premissas P1–P6, exceções E1–E4 e ADRs da F0)
+e o relatório do gate F0 em progress.md. Sem mudança de código.
+```
+
+## Log
+
+- 2026-10-20: plano copiado para `docs/`, `CLAUDE.md` e comando `/build` criados.
+- 2026-10-20: `/build` aprovou o plano da F0; verificações 1–8 executadas, `decisions.md` criado, estado `aguardando-gate`.
+- 2026-10-20: dono aprovou ADR-F0-1 (exports `./styles/*` + `_global.scss`) e ADR-F0-2 (`vitest` + `happy-dom`); push em `feat/design-system` autorizado; F0 commitada (3e647b9) e enviada.
+- 2026-10-20: refino do plano antes da F1: seção 7.5 (camadas de z-index, `z()`, promoção de overlays no top layer) e ADR-F0-7; showcase de design publicado no Claude (artifact "Shyland UI Showcase"), só para avaliação visual.
+- 2026-10-20: dono aprovou camadas de 100 em 100 e o custo da promoção; pediu mais refinamento e componentes. Showcase ampliado (loading/progresso e navegação/dados), plano com Spinner (8 variantes), Skeleton, ProgressCircular e `loadingPosition` (ADR-F0-8).
+- 2026-10-20: dono revisou os boards e pediu 5 ajustes visuais; aplicados no showcase e anotados na ADR-F0-9 e no plano (novos tokens `line`, `neutral-soft`, `scrim-panel`). Após esse ajuste, o dono considera o plano pronto para seguir.
+- 2026-10-20: `/build` no estado `aguardando-gate`: gate da F0 aprovado (commits só de documentação, já enviados). F1 passou para `planejar` → plano escrito acima, estado `aguardando-plano`,
+- 2026-10-20: dono respondeu D-F1-1 a D-F1-3 (a, a, b); registrado em ADR-F1-1 a 3 e na seção 6.5 do plano. Estado segue `aguardando-plano`: falta o `/build` que aprova o plano da F1.
+- 2026-10-20: dono decidiu **sem nenhum alias** (tudo com prefixo `shy`): D9 revogada, P1 revisada, plano rev. 5, `CLAUDE.md` atualizado, ADR-F1-4. Estado segue `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F1 e a executou (T1–T11). Gate em `aguardando-gate`; relatório acima.
+- 2026-10-20: dono aprovou o gate da F1 e pediu risco zero de licença: Inter removida (ADR-F1-6). Revalidado, commit e push em `feat/design-system`.
+- 2026-10-20: F1 commitada (0123029) e enviada para `feat/design-system`. F2 em `planejar` → plano escrito; estado `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F2 e a executou (T1–T7). Gate em `aguardando-gate`; relatório acima.
+- 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou (utilitários, `animateOut`, Button, IconButton, showcase, README). Gate em `aguardando-gate`; relatório na seção "F3-S1: relatório do gate".
+- 2026-10-20: dono liberou commit após os testes e o push; F3-S1 commitada (`39c815b`) e enviada para `feat/design-system`. F3-S2 em `aguardando-plano`.
+- 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou; verificações verdes; commit `53e2902` e push em `feat/design-system`. Estado `aguardando-gate`.
+- 2026-10-21: dono escolheu a opção B da ADR-F4-4; `/build` aprovou o plano da F4-S1 e a executou (overlay core, showcase, docs). Verificações verdes; commit `3ac709b`. Estado `aguardando-gate`.
+- 2026-10-21: `/build` aprovou o gate da F4-S1 (`3ac709b`, já enviado). **F4-S1 concluída.** F4-S2 (Dialog, Drawer) em `aguardando-plano`; plano escrito acima, sem decisão de alto impacto pendente.
+- 2026-10-21: `/build` aprovou o plano da F4-S2 e a executou (Dialog, Drawer, serviços, showcase, docs). Verificações verdes; commit `95e5ab3`. Estado `aguardando-gate`.
+- 2026-10-21: `/build` aprovou o gate da F4-S2 (`95e5ab3`, já enviado). **F4-S2 concluída.** F4-S3 (Popover, Tooltip, Menu) em `aguardando-plano`; plano escrito acima, sem decisão de alto impacto pendente.

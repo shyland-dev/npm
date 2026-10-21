@@ -1,0 +1,8 @@
+@if (icon()) {
+  <shy-icon class="icon" [name]="icon()" />
+}
+@if (heading()) {
+  <div class="title">{{ heading() }}</div>
+}
+<div class="description"><ng-content /></div>
+<div class="action"><ng-content select="[slot=action]" /></div>

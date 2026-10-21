@@ -1,0 +1,93 @@
+<div class="page">
+  <h1 class="page-title">Table</h1>
+  <p class="page-lead">Two ways to write it. <strong>Declarative</strong>: <code>&lt;shy-table [rows]&gt;</code> with <code>&lt;shy-column&gt;</code> children builds the native <code>&lt;table&gt;</code> and handles sorting, selection, pagination and the empty state. <strong>Native</strong>: without <code>[rows]</code> you write the <code>&lt;table&gt;</code> and <code>shy-table</code> only styles it. No virtualization: paginate large data.</p>
+
+  <section class="section">
+    <h2>Declarative: sorting, selection, pagination, custom cell, empty state</h2>
+    <div class="card shy-stack">
+      <label>
+        Filter by customer
+        <input shyInput type="search" [value]="filter()" (input)="filter.set($any($event.target).value)" />
+      </label>
+      <shy-table [rows]="invoices()" rowKey="id" label="Invoices" caption="Invoices" striped selectable [(selection)]="selection" [(sort)]="sort" [pageSize]="5" [(page)]="page" emptyHeading="No invoices found" emptyDescription="No customer matches this filter." emptyIcon="search">
+        <shy-column key="id" header="Invoice" rowHeader sortable />
+        <shy-column key="customer" header="Customer" sortable />
+        <shy-column key="status" header="Status">
+          <ng-template shyCell let-row>
+            <shy-badge [intent]="row.status === 'Paid' ? 'success' : 'warning'" size="sm">{{ row.status }}</shy-badge>
+          </ng-template>
+        </shy-column>
+        <shy-column key="total" header="Total" sortable numeric />
+      </shy-table>
+      <p>
+        Selected: <code>{{ selection().join(', ') || 'none' }}</code> · Sort: <code>{{ sort()?.key ?? 'none' }} {{ sort()?.direction }}</code> · Page: <code>{{ page() }}</code>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Dense and without pagination</h2>
+    <div class="card">
+      <shy-table dense [rows]="invoices().slice(0, 3)" rowKey="id" label="Dense example">
+        <shy-column key="id" header="Invoice" rowHeader />
+        <shy-column key="customer" header="Customer" />
+        <shy-column key="total" header="Total" numeric />
+      </shy-table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Native markup (escape hatch)</h2>
+    <p>For <code>colspan</code>, grouped rows or very custom cells. <code>th shySort</code>, <code>data-numeric</code>, <code>data-narrow</code> and <code>data-selected</code> are available.</p>
+    <div class="card">
+      <shy-table label="Team" striped>
+        <table>
+          <caption>
+            Team
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" shySort [(direction)]="nativeSort">Name</th>
+              <th scope="col">Role</th>
+              <th scope="col" data-numeric>Hours</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (person of team(); track person.name) {
+              <tr>
+                <th scope="row">{{ person.name }}</th>
+                <td>{{ person.role }}</td>
+                <td data-numeric>{{ person.hours }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </shy-table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Horizontal scroll</h2>
+    <p>The wrapper becomes a focusable named region; narrow the window to scroll it with the arrow keys.</p>
+    <div class="card">
+      <shy-table label="Wide table">
+        <table>
+          <thead>
+            <tr>
+              @for (n of [1, 2, 3, 4, 5, 6, 7, 8]; track n) {
+                <th scope="col">Column number {{ n }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              @for (n of [1, 2, 3, 4, 5, 6, 7, 8]; track n) {
+                <td>Value {{ n }}</td>
+              }
+            </tr>
+          </tbody>
+        </table>
+      </shy-table>
+    </div>
+  </section>
+</div>

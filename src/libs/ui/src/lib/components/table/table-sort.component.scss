@@ -1,0 +1,43 @@
+@use '../../styles' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--shy-space-2);
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin: 0;
+  padding-block: var(--shy-table-cell-pad-y, var(--shy-space-4));
+  padding-inline: var(--shy-table-cell-pad-x, var(--shy-space-6));
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include state-layer;
+
+  @include shy-state(focus) {
+    @include focus-ring(ru(-1));
+  }
+}
+
+:host-context([data-dense]) .button {
+  padding-block: var(--shy-table-cell-pad-y-dense, var(--shy-space-2));
+}
+
+.indicator {
+  --shy-icon-size: var(--shy-size-icon-md);
+
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+:host([data-sorted]) .indicator {
+  opacity: 1;
+}
+
+:host([data-numeric]) .button {
+  justify-content: flex-end;
+}

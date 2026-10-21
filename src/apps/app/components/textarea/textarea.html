@@ -1,0 +1,22 @@
+<div class="page">
+  <h1 class="page-title">Textarea</h1>
+  <p class="page-lead">The same directive on <code>&lt;textarea shyInput&gt;</code>: minimum height of 2.5 controls, vertical resize, <code>rows</code> and <code>maxlength</code> are native. <code>counter</code> on the field shows <code>n/maxlength</code>.</p>
+
+  <section class="section">
+    <h2>Variants</h2>
+    <div class="card shy-stack">
+      <shy-form-field label="Message" hint="Up to 120 characters" [counter]="true">
+        <textarea shyInput maxlength="120" placeholder="Write something"></textarea>
+      </shy-form-field>
+      <shy-form-field label="Notes" error="Notes are required" [invalid]="true" [required]="true">
+        <textarea shyInput rows="2"></textarea>
+      </shy-form-field>
+      <shy-form-field label="Disabled">
+        <textarea shyInput disabled>Not editable</textarea>
+      </shy-form-field>
+      <shy-form-field label="Read only">
+        <textarea shyInput readonly>Selectable, not editable</textarea>
+      </shy-form-field>
+    </div>
+  </section>
+</div>

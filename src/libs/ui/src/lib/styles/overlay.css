@@ -1,0 +1,94 @@
+/*
+ * Núcleo de overlay (plano 7.5, 9.4 e 11.2). O OverlayService cria `.shy-overlay-container` no body sob demanda e coloca
+ * nele um painel por overlay: `<dialog>` (modal/drawer) ou `[popover="manual"]` (resto). Só tokens e ru.
+ */
+html[data-shy-scroll-lock] {
+  overflow: hidden;
+  /* Reserva o espaço da barra para a página não "pular" ao travar o scroll. */
+  scrollbar-gutter: stable;
+}
+
+.shy-overlay-container {
+  position: fixed;
+  inset: 0;
+  z-index: var(--shy-z-modal);
+  pointer-events: none;
+}
+
+/* Fallback sem top layer: o fundo do modal é um elemento do container. */
+.shy-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--shy-color-scrim);
+  pointer-events: auto;
+}
+
+.shy-overlay-pane {
+  position: fixed;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--shy-color-text);
+  max-inline-size: 100%;
+  max-block-size: 100%;
+  overflow: visible;
+  pointer-events: auto;
+  transition:
+    opacity var(--shy-duration-base) var(--shy-ease-enter),
+    transform var(--shy-duration-base) var(--shy-ease-enter);
+}
+
+.shy-overlay-pane:focus {
+  outline: none;
+}
+
+/* Sem âncora: o painel modal fica centralizado; popover sem âncora vai para o canto de início. Especificidade 0 (`:where`) para o
+   Dialog, o Drawer e o app ajustarem a posição com uma classe só. */
+:where(.shy-overlay-pane[data-modal]:not([data-anchored])) {
+  inset: 0;
+  margin: auto;
+}
+
+:where(.shy-overlay-pane:not([data-modal]):not([data-anchored])) {
+  inset: 0 auto auto 0;
+  margin: 0;
+}
+
+.shy-overlay-pane[data-anchored] {
+  inset: auto;
+  margin: 0;
+}
+
+dialog.shy-overlay-pane::backdrop {
+  background: var(--shy-color-scrim);
+  transition: opacity var(--shy-duration-base) var(--shy-ease-enter);
+}
+
+/* Entrada: o navegador anima a partir deste estado quando o painel passa a ser exibido. */
+@starting-style {
+  .shy-overlay-pane:popover-open,
+  dialog.shy-overlay-pane[open] {
+    opacity: 0;
+    transform: translateY(var(--shy-motion-distance));
+  }
+
+  dialog.shy-overlay-pane[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+/* Saída: `animateOut` marca data-state="closing" e espera esta animação antes de fechar. */
+.shy-overlay-pane[data-state='closing'] {
+  transition: none;
+  animation: shy-fade-out var(--shy-duration-fast) var(--shy-ease-exit) forwards;
+}
+
+/* Promoção no top layer: reabrir sem animar. */
+.shy-overlay-pane[data-promoting],
+.shy-overlay-pane[data-promoting]::backdrop {
+  transition: none;
+  animation: none;
+}
+
+/* forced-colors: o painel não tem visual próprio (fundo transparente); borda, fundo e foco são do conteúdo (Dialog, Menu…). */

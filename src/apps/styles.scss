@@ -1,44 +1,126 @@
 @use '../libs/ui/src/lib/styles' as *;
 
-$header-height: calc(#{$responsive-unit} * 35);
-$footer-height: calc(#{$responsive-unit} * 25);
-$scrollbar-width: calc(#{$responsive-unit} * 5);
-$scrollbar-color-track: $color-dark;
-$scrollbar-color-thumb: $color-light;
-$scrollbar-color-thumb-hover: $color-medium;
-$default-content-height: calc(#{$dynamic-height} - #{$header-height} - #{$footer-height});
-
-::-webkit-scrollbar {
-  width: $scrollbar-width;
-}
-
-::-webkit-scrollbar-track {
-  background: $scrollbar-color-track;
-}
-
-::-webkit-scrollbar-thumb {
-  background: $scrollbar-color-thumb;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: $scrollbar-color-thumb-hover;
-}
-
+// Os tokens (cores, fontes, unidades) vêm de src/libs/ui/src/lib/styles/index.css, carregado em angular.json > styles.
 html,
 body,
 app-root {
   display: block;
-  height: $dynamic-height;
-  width: $dynamic-width;
-  border: 0;
   overscroll-behavior: none;
-  font-family: monospace;
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+app-root {
+  isolation: isolate;
+}
+
+// Layout compartilhado das páginas de fundamentos do showcase.
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: ru(8);
+  max-inline-size: ru(420);
+  margin-inline: auto;
+  padding: ru(8) ru(6);
+}
+
+.page-title {
+  font-size: var(--shy-text-3xl);
+  font-weight: var(--shy-weight-bold);
+  line-height: var(--shy-leading-tight);
+}
+
+.page-lead {
+  max-inline-size: var(--shy-measure);
+  color: var(--shy-color-text-muted);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: ru(4);
+
+  > h2 {
+    font-size: var(--shy-text-xl);
+    font-weight: var(--shy-weight-semibold);
+  }
+
+  > p {
+    max-inline-size: var(--shy-measure);
+    color: var(--shy-color-text-muted);
+  }
+}
+
+.card {
+  padding: ru(5);
+  border: var(--shy-border-width) solid var(--shy-color-border);
+  border-radius: var(--shy-radius-lg);
+  background: var(--shy-color-surface);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(ru(60), 1fr));
+  gap: ru(4);
+}
+
+.token-name {
+  font-family: var(--shy-font-family-mono);
+  font-size: var(--shy-text-xs);
+  color: var(--shy-color-text-subtle);
+  overflow-wrap: anywhere;
+}
+
+.swatch {
+  block-size: ru(14);
+  border: var(--shy-border-width) solid var(--shy-color-border-strong);
+  border-radius: var(--shy-radius-md);
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: var(--shy-border-width) solid var(--shy-color-border);
+  border-radius: var(--shy-radius-lg);
+}
+
+table.data {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--shy-text-sm);
+
+  th,
+  td {
+    padding: ru(2) ru(4);
+    border-block-end: var(--shy-border-width) solid var(--shy-color-border);
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: start;
+  }
+
+  thead th {
+    color: var(--shy-color-text-muted);
+    font-weight: var(--shy-weight-medium);
+  }
+
+  tbody tr:last-child td {
+    border-block-end: 0;
+  }
+}
+
+// Caixa de exemplo das páginas de layout (chip neutro: neutral-soft, plano 11.3).
+.demo-box {
+  padding: ru(2) ru(4);
+  border-radius: var(--shy-radius-sm);
+  background: var(--shy-color-neutral-soft);
+  color: var(--shy-color-on-neutral-soft);
+  font-size: var(--shy-text-sm);
+  text-align: center;
+}
+
+// Posição do toast da página de camadas (a lib deixa a posição do painel para quem o abre).
+.layers-toast {
+  inset-block: auto ru(4);
+  inset-inline: auto ru(4);
 }

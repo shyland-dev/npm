@@ -1,0 +1,60 @@
+<div class="page">
+  <h1 class="page-title">Icon</h1>
+  <p class="page-lead">Inline SVG from the built-in catalog. Decorative by default (<code>aria-hidden</code>); pass <code>label</code> to expose it as an image. Size comes from <code>--shy-icon-size</code>.</p>
+
+  <section class="section">
+    <h2>Sizes and color</h2>
+    <div class="card row">
+      @for (size of sizes; track size) {
+        <div class="cell">
+          <shy-icon [style.--shy-icon-size]="'calc(var(--shy-responsive-unit) * ' + size + ')'">heart-fill</shy-icon>
+          <span class="token-name">ru({{ size }})</span>
+        </div>
+      }
+      <div class="cell danger">
+        <shy-icon>heart-fill</shy-icon>
+        <span class="token-name">currentColor</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>States</h2>
+    <div class="card row">
+      <div class="cell">
+        <shy-icon>heart</shy-icon>
+        <span class="token-name">default</span>
+      </div>
+      <div class="cell">
+        <shy-icon [hoverFill]="true">heart</shy-icon>
+        <span class="token-name">hoverFill</span>
+      </div>
+      <div class="cell">
+        <shy-icon [hoverFill]="true" [hoverFillDelay]="300">heart</shy-icon>
+        <span class="token-name">hoverFill + 300 ms</span>
+      </div>
+      <div class="cell">
+        <shy-icon label="Favorite">heart</shy-icon>
+        <span class="token-name">label (role=img)</span>
+      </div>
+      <div class="cell">
+        <shy-icon name="star"></shy-icon>
+        <span class="token-name">name input</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Catalog</h2>
+    <p>{{ matches().length }} of {{ total }} icons; showing up to 240. Click to copy the tag.</p>
+    <input class="search" type="search" aria-label="Search icons" placeholder="Search icons..." [value]="term()" (input)="term.set($any($event.target).value)" />
+    <div class="grid-icons">
+      @for (name of shown(); track name) {
+        <button type="button" class="item" (click)="copy(name)">
+          <shy-icon>{{ name }}</shy-icon>
+          <span class="token-name">{{ name }}</span>
+        </button>
+      }
+    </div>
+  </section>
+</div>

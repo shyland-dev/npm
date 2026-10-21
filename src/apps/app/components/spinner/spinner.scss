@@ -1,0 +1,36 @@
+.matrix {
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--shy-space-4);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  thead th {
+    color: var(--shy-color-text-muted);
+    font-size: var(--shy-text-sm);
+    font-weight: var(--shy-weight-medium);
+  }
+}
+
+.tone {
+  display: inline-flex;
+}
+
+.primary {
+  color: var(--shy-color-primary-text);
+}
+
+.success {
+  color: var(--shy-color-success-text);
+}
+
+.danger {
+  color: var(--shy-color-danger-text);
+}
+
+.muted {
+  color: var(--shy-color-text-muted);
+}

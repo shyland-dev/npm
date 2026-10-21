@@ -1,0 +1,295 @@
+{
+  "_comment": "fg/bg são sufixos de --shy-color-*. min: 4.5 texto, 3 UI/foco/borda de controle. Roda nos dois temas.",
+  "pairs": [
+    {
+      "fg": "text",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "text",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "text",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "text",
+      "bg": "surface-sunken",
+      "min": 4.5
+    },
+    {
+      "fg": "text-muted",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "text-subtle",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "text-muted",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "text-subtle",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "text-muted",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "text-subtle",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "focus",
+      "bg": "bg",
+      "min": 3
+    },
+    {
+      "fg": "border-strong",
+      "bg": "bg",
+      "min": 3
+    },
+    {
+      "fg": "focus",
+      "bg": "surface",
+      "min": 3
+    },
+    {
+      "fg": "border-strong",
+      "bg": "surface",
+      "min": 3
+    },
+    {
+      "fg": "focus",
+      "bg": "surface-raised",
+      "min": 3
+    },
+    {
+      "fg": "border-strong",
+      "bg": "surface-raised",
+      "min": 3
+    },
+    {
+      "fg": "focus",
+      "bg": "surface-sunken",
+      "min": 3
+    },
+    {
+      "fg": "border-strong",
+      "bg": "surface-sunken",
+      "min": 3
+    },
+    {
+      "fg": "on-primary",
+      "bg": "primary",
+      "min": 4.5
+    },
+    {
+      "fg": "primary-text",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "primary-text",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "primary-text",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "on-primary-soft",
+      "bg": "primary-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "primary-text",
+      "bg": "primary-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "on-success",
+      "bg": "success",
+      "min": 4.5
+    },
+    {
+      "fg": "success-text",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "success-text",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "success-text",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "on-success-soft",
+      "bg": "success-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "success-text",
+      "bg": "success-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "on-warning",
+      "bg": "warning",
+      "min": 4.5
+    },
+    {
+      "fg": "warning-text",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "warning-text",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "warning-text",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "on-warning-soft",
+      "bg": "warning-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "warning-text",
+      "bg": "warning-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "on-danger",
+      "bg": "danger",
+      "min": 4.5
+    },
+    {
+      "fg": "danger-text",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "danger-text",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "danger-text",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "on-danger-soft",
+      "bg": "danger-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "danger-text",
+      "bg": "danger-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "on-info",
+      "bg": "info",
+      "min": 4.5
+    },
+    {
+      "fg": "info-text",
+      "bg": "bg",
+      "min": 4.5
+    },
+    {
+      "fg": "info-text",
+      "bg": "surface",
+      "min": 4.5
+    },
+    {
+      "fg": "info-text",
+      "bg": "surface-raised",
+      "min": 4.5
+    },
+    {
+      "fg": "on-info-soft",
+      "bg": "info-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "info-text",
+      "bg": "info-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "on-neutral-soft",
+      "bg": "neutral-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "text",
+      "bg": "neutral-soft",
+      "min": 4.5
+    },
+    {
+      "fg": "on-scrim",
+      "bg": "scrim-panel",
+      "min": 4.5
+    },
+    {
+      "fg": "bg",
+      "bg": "text",
+      "min": 4.5
+    },
+    {
+      "fg": "primary-text",
+      "bg": "track",
+      "min": 3
+    },
+    {
+      "fg": "text-muted",
+      "bg": "surface-sunken",
+      "min": 4.5
+    },
+    {
+      "fg": "text-subtle",
+      "bg": "surface-sunken",
+      "min": 4.5
+    },
+    {
+      "fg": "danger-text",
+      "bg": "surface-sunken",
+      "min": 4.5
+    },
+    {
+      "fg": "text-muted",
+      "bg": "track",
+      "min": 3
+    },
+    {
+      "fg": "primary-text",
+      "bg": "surface-sunken",
+      "min": 3
+    }
+  ]
+}

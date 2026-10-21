@@ -1,0 +1,4 @@
+<input #input class="slider__input" type="range" [id]="id()" [min]="min()" [max]="max()" [step]="step()" [value]="value()" [disabled]="isDisabled()" [attr.name]="name() ?? null" [attr.aria-label]="label() ?? null" [attr.aria-valuetext]="displayWith() ? text() : null" [attr.aria-required]="required() ? 'true' : null" [attr.aria-invalid]="showInvalid() ? 'true' : null" [attr.aria-describedby]="field?.describedBy() ?? null" [attr.aria-errormessage]="showInvalid() ? (field?.errorId() ?? null) : null" (input)="changed(input)" (blur)="touched()" />
+@if (showValue()) {
+  <span class="slider__value" aria-hidden="true">{{ text() }}</span>
+}

@@ -1,0 +1,163 @@
+@keyframes shy-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes shy-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes shy-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes shy-scale-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes shy-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--shy-motion-distance));
+  }
+}
+
+@keyframes shy-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--shy-motion-distance) * -1));
+  }
+}
+
+@keyframes shy-slide-inline-start {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--shy-motion-distance) * -1));
+  }
+}
+
+@keyframes shy-slide-inline-end {
+  from {
+    opacity: 0;
+    transform: translateX(var(--shy-motion-distance));
+  }
+}
+
+@keyframes shy-collapse {
+  from {
+    grid-template-rows: 1fr;
+  }
+
+  to {
+    grid-template-rows: 0fr;
+  }
+}
+
+@keyframes shy-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shy-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Spinner e ProgressCircular indeterminado; o círculo usa pathLength="100". */
+@keyframes shy-spinner-dash {
+  from {
+    stroke-dasharray: 1 100;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 70 100;
+    stroke-dashoffset: -15;
+  }
+
+  to {
+    stroke-dasharray: 70 100;
+    stroke-dashoffset: -99;
+  }
+}
+
+@keyframes shy-spinner-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.5);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shy-spinner-bar {
+  0%,
+  80%,
+  100% {
+    transform: scaleY(0.4);
+  }
+
+  40% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes shy-spinner-ping {
+  from {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@keyframes shy-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes shy-progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes shy-shake {
+  20%,
+  60% {
+    transform: translateX(calc(var(--shy-motion-distance) * -0.5));
+  }
+
+  40%,
+  80% {
+    transform: translateX(calc(var(--shy-motion-distance) * 0.5));
+  }
+}

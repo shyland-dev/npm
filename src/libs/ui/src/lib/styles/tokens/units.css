@@ -1,0 +1,24 @@
+/* Único lugar com unidade de comprimento literal (exceção E1 do plano, seção 6.4). */
+:root {
+  --shy-responsive-unit: calc(0.1rem + 0.1vmin);
+
+  --shy-dynamic-height: 100vh;
+  --shy-dynamic-width: 100vw;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --shy-dynamic-height: 100dvh;
+  }
+}
+
+@supports (width: 100dvw) {
+  :root {
+    --shy-dynamic-width: 100dvw;
+  }
+}
+
+:root {
+  --shy-dynamic-height-unit: calc(var(--shy-dynamic-height) / 100);
+  --shy-dynamic-width-unit: calc(var(--shy-dynamic-width) / 100);
+}

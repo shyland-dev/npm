@@ -1,0 +1,48 @@
+<div class="page">
+  <h1 class="page-title">Form field</h1>
+  <p class="page-lead"><code>&lt;shy-form-field&gt;</code> wires label (<code>for</code>/<code>id</code>), hint and error to the control through <code>aria-describedby</code>, <code>aria-invalid</code> and <code>aria-errormessage</code>. The error shows after the control is touched or the form is submitted, with an icon and text, in a polite live region.</p>
+
+  <section class="section">
+    <h2>Reactive form</h2>
+    <form class="card shy-stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <shy-form-field label="Name" hint="As on your ID" [error]="message('name')" [counter]="true">
+        <input shyInput formControlName="name" required maxlength="40" autocomplete="name" />
+      </shy-form-field>
+      <shy-form-field label="Email" [error]="message('email')">
+        <shy-icon slot="prefix" name="envelope" />
+        <input shyInput type="email" formControlName="email" required autocomplete="email" />
+      </shy-form-field>
+      <shy-form-field label="Bio" hint="Optional" [counter]="true">
+        <textarea shyInput formControlName="bio" maxlength="80"></textarea>
+      </shy-form-field>
+      <div class="shy-cluster">
+        <button shyButton type="submit">Send</button>
+        <button shyButton type="button" variant="ghost" (click)="form.reset(); sent.set(false)">Reset</button>
+        @if (sent()) {
+          <span role="status">Form is valid</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <section class="section">
+    <h2>Sizes</h2>
+    <div class="card shy-stack">
+      @for (size of sizes; track size) {
+        <shy-form-field [label]="'Size ' + size" [size]="size" hint="Hint text">
+          <shy-icon slot="prefix" name="search" />
+          <input shyInput placeholder="Placeholder" />
+        </shy-form-field>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Token override</h2>
+    <div class="card">
+      <shy-form-field label="Rounded" style="--shy-input-radius: var(--shy-radius-full); --shy-input-border-color: var(--shy-color-primary-text)">
+        <input shyInput placeholder="--shy-input-radius, --shy-input-border-color" />
+      </shy-form-field>
+    </div>
+  </section>
+</div>

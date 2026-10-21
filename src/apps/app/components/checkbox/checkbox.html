@@ -1,0 +1,61 @@
+<div class="page">
+  <h1 class="page-title">Checkbox</h1>
+  <p class="page-lead"><code>&lt;shy-checkbox&gt;</code> wraps a native <code>input type="checkbox"</code> (visually hidden, still focusable), so Space, focus and screen readers come from the browser. The checked glyph exists only when checked, so the state never depends on color alone. Use <code>[(checked)]</code>, <code>ngModel</code> or <code>formControl</code>.</p>
+
+  <section class="section">
+    <h2>States</h2>
+    <div class="card table-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">state</th>
+            <th scope="col">unchecked</th>
+            <th scope="col">checked</th>
+            <th scope="col">indeterminate</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (state of states; track state) {
+            <tr>
+              <th scope="row" class="token-name">{{ state }}</th>
+              <td><shy-checkbox [attr.data-shy-state]="state === 'rest' ? null : state">Label</shy-checkbox></td>
+              <td><shy-checkbox [attr.data-shy-state]="state === 'rest' ? null : state" [checked]="true">Label</shy-checkbox></td>
+              <td><shy-checkbox [attr.data-shy-state]="state === 'rest' ? null : state" [indeterminate]="true">Label</shy-checkbox></td>
+            </tr>
+          }
+          <tr>
+            <th scope="row" class="token-name">invalid</th>
+            <td><shy-checkbox [invalid]="true">Label</shy-checkbox></td>
+            <td><shy-checkbox [invalid]="true" [checked]="true">Label</shy-checkbox></td>
+            <td><shy-checkbox [invalid]="true" [indeterminate]="true">Label</shy-checkbox></td>
+          </tr>
+          <tr>
+            <th scope="row" class="token-name">disabled</th>
+            <td><shy-checkbox [disabled]="true">Label</shy-checkbox></td>
+            <td><shy-checkbox [disabled]="true" [checked]="true">Label</shy-checkbox></td>
+            <td><shy-checkbox [disabled]="true" [indeterminate]="true">Label</shy-checkbox></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Select all (indeterminate)</h2>
+    <div class="card shy-stack">
+      <shy-checkbox [checked]="checkedCount() === items().length" [indeterminate]="partial()" (checkedChange)="toggleAll($event)">All channels</shy-checkbox>
+      @for (item of items(); track item.name; let i = $index) {
+        <shy-checkbox class="child" [checked]="item.checked" (checkedChange)="toggleItem(i, $event)">{{ item.name }}</shy-checkbox>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>In a form field</h2>
+    <form class="card" [formGroup]="form" novalidate>
+      <shy-form-field hint="Required to continue" error="You must accept the terms">
+        <shy-checkbox formControlName="terms">I accept the terms</shy-checkbox>
+      </shy-form-field>
+    </form>
+  </section>
+</div>

@@ -1,0 +1,8 @@
+// Tokens do botão: no próprio shy-select. Os do painel (--shy-select-panel-*, --shy-select-option-*) valem em :root ou num
+// ancestral do <body>, porque o painel mora no contêiner de overlays, fora do elemento.
+shy-select.custom {
+  --shy-select-bg: var(--shy-color-primary-soft);
+  --shy-select-fg: var(--shy-color-on-primary-soft);
+  --shy-select-border: var(--shy-color-primary-text);
+  --shy-select-radius: var(--shy-radius-full);
+}

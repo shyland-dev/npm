@@ -1,0 +1,21 @@
+<div class="dropzone" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+  <input #picker class="dropzone__input" type="file" [id]="id()" [accept]="accept()" [multiple]="multiple()" [disabled]="isDisabled()" [attr.name]="name() ?? null" [attr.aria-label]="label() ?? null" [attr.aria-required]="required() ? 'true' : null" [attr.aria-invalid]="showInvalid() ? 'true' : null" [attr.aria-describedby]="field?.describedBy() ?? null" [attr.aria-errormessage]="showInvalid() ? (field?.errorId() ?? null) : null" (change)="onPick(picker)" (blur)="touched()" />
+  <shy-icon class="dropzone__icon" aria-hidden="true">upload</shy-icon>
+  <span class="dropzone__prompt"
+    ><ng-content>{{ prompt() }}</ng-content></span
+  >
+</div>
+
+@if (items().length) {
+  <ul class="files">
+    @for (item of items(); track item.file) {
+      <li class="files__item">
+        <span class="files__name">{{ item.file.name }}</span>
+        <span class="files__size">{{ item.size }}</span>
+        <button shyIconButton type="button" class="files__remove" size="sm" [label]="removeLabel() + ' ' + item.file.name" [disabled]="isDisabled()" (click)="remove(item.file)"><shy-icon>x-lg</shy-icon></button>
+      </li>
+    }
+  </ul>
+}
+
+<p class="status" role="status">{{ status() }}</p>

@@ -1,0 +1,16 @@
+// Tokens, fontes, animações e base em um único @use (consumo via Sass):
+//   @use '@shyland-dev/ui/styles/global';
+// Equivalente ao index.css; use um dos dois, não ambos.
+@use 'tokens/units.css';
+@use 'tokens/primitives.css';
+@use 'tokens/semantic-dark.css';
+@use 'tokens/semantic-light.css';
+@use 'tokens/motion.css';
+@use 'tokens/layers.css';
+@use 'fonts.css';
+@use 'animations.css';
+@use 'base.css';
+@use 'typography.css';
+@use 'layout.css';
+@use 'overlay.css';
+@use 'drawer.css';

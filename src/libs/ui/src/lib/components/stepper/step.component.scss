@@ -1,0 +1,151 @@
+@use '../../styles' as *;
+
+// Estado do passo → cores do marcador e do conector que sai dele.
+:host {
+  --_marker-bg: var(--shy-stepper-marker-bg, var(--shy-color-neutral-soft));
+  --_marker-fg: var(--shy-stepper-marker-fg, var(--shy-color-on-neutral-soft));
+  --_label-fg: var(--shy-stepper-label-fg, var(--shy-color-text-muted));
+  --_connector: var(--shy-stepper-connector-color, var(--shy-color-line));
+
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  min-inline-size: 0;
+  font-size: var(--shy-text-md);
+}
+
+:host([data-status='current']) {
+  --_marker-bg: var(--shy-stepper-marker-bg-current, var(--shy-color-primary));
+  --_marker-fg: var(--shy-stepper-marker-fg-current, var(--shy-color-on-primary));
+  --_label-fg: var(--shy-stepper-label-fg-current, var(--shy-color-text));
+}
+
+:host([data-status='complete']) {
+  --_marker-bg: var(--shy-stepper-marker-bg-complete, var(--shy-color-primary-soft));
+  --_marker-fg: var(--shy-stepper-marker-fg-complete, var(--shy-color-on-primary-soft));
+  --_label-fg: var(--shy-stepper-label-fg-complete, var(--shy-color-text));
+  --_connector: var(--shy-stepper-connector-color-done, var(--shy-color-primary));
+}
+
+:host([data-status='error']) {
+  --_marker-bg: var(--shy-stepper-marker-bg-error, var(--shy-color-danger));
+  --_marker-fg: var(--shy-stepper-marker-fg-error, var(--shy-color-on-danger));
+  --_label-fg: var(--shy-stepper-label-fg-error, var(--shy-color-danger-text));
+}
+
+// Conector até o próximo passo (o último não tem).
+:host(:not(:last-child))::after {
+  content: '';
+  flex: 1 1 auto;
+  min-inline-size: var(--shy-stepper-connector-min, var(--shy-space-8));
+  block-size: var(--shy-border-width-strong);
+  // Alinha o conector ao centro do marcador, mesmo quando o passo tem descrição (fica mais alto).
+  margin-block-start: calc(var(--shy-space-1) + (var(--shy-stepper-marker-size, var(--shy-size-control-sm)) - var(--shy-border-width-strong)) / 2);
+  margin-inline: var(--shy-stepper-gap, var(--shy-space-4));
+  background: var(--_connector);
+}
+
+:host-context(shy-stepper[data-orientation='vertical']) {
+  flex-direction: column;
+  align-items: flex-start;
+  flex: none;
+}
+
+:host-context(shy-stepper[data-orientation='vertical']):not(:last-child)::after {
+  flex: none;
+  inline-size: var(--shy-border-width-strong);
+  block-size: var(--shy-stepper-connector-min, var(--shy-space-8));
+  min-inline-size: 0;
+  margin-block: var(--shy-stepper-gap, var(--shy-space-4));
+  margin-inline: calc(var(--shy-space-1) + (var(--shy-stepper-marker-size, var(--shy-size-control-sm)) - var(--shy-border-width-strong)) / 2) 0;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--shy-stepper-gap, var(--shy-space-4));
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--shy-space-1);
+  border: 0;
+  border-radius: var(--shy-radius-md);
+  background: transparent;
+  color: var(--_label-fg);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include transition(color background-color);
+
+  @include shy-state(hover) {
+    background: var(--shy-stepper-bg-hover, var(--shy-color-neutral-soft));
+    color: var(--shy-color-on-neutral-soft);
+  }
+
+  @include shy-state(focus) {
+    @include focus-ring;
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: var(--shy-opacity-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.marker {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: var(--shy-stepper-marker-size, var(--shy-size-control-sm));
+  block-size: var(--shy-stepper-marker-size, var(--shy-size-control-sm));
+  border: var(--shy-border-width) solid var(--shy-stepper-marker-border-color, transparent);
+  border-radius: var(--shy-radius-full);
+  background: var(--_marker-bg);
+  color: var(--_marker-fg);
+  font-size: var(--shy-text-sm);
+  font-weight: var(--shy-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  @include transition(color background-color border-color);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.label {
+  font-weight: var(--shy-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.description {
+  color: var(--shy-stepper-description-fg, var(--shy-color-text-subtle));
+  font-size: var(--shy-text-sm);
+  overflow-wrap: anywhere;
+}
+
+.status-text {
+  @include visually-hidden;
+}
+
+@media (forced-colors: active) {
+  .marker {
+    border-color: ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  :host([data-status='current']) .marker {
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+  }
+
+  :host(:not(:last-child))::after {
+    background: ButtonText;
+  }
+}

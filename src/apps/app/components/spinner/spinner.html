@@ -1,0 +1,56 @@
+<div class="page">
+  <h1 class="page-title">Spinner</h1>
+  <p class="page-lead">Activity without known duration: <code>&lt;shy-spinner label="Loading orders" /&gt;</code>. Color comes from <code>currentColor</code>. With <code>label</code> it is a <code>role="status"</code> region; without it, it is decorative (<code>aria-hidden</code>). With reduced motion every variant stops moving and only fades (try the <em>Reduce motion</em> toggle).</p>
+
+  <section class="section">
+    <h2>Variants × sizes</h2>
+    <div class="card table-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">variant</th>
+            @for (size of sizes; track size) {
+              <th scope="col">{{ size }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (variant of variants; track variant) {
+            <tr>
+              <th scope="row" class="token-name">{{ variant }}</th>
+              @for (size of sizes; track size) {
+                <td><shy-spinner [variant]="variant" [size]="size" /></td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Color</h2>
+    <p>Inherits the text color; <code>--shy-spinner-color</code> overrides it.</p>
+    <div class="card shy-cluster">
+      <span class="tone primary"><shy-spinner label="Loading (primary)" /></span>
+      <span class="tone success"><shy-spinner variant="dots" label="Loading (success)" /></span>
+      <span class="tone danger"><shy-spinner variant="bars" label="Loading (danger)" /></span>
+      <span class="tone muted"><shy-spinner variant="orbit" label="Loading (muted)" /></span>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>In a button</h2>
+    <p>Button loading uses the <code>ring</code> spinner at the icon size; the button carries <code>aria-busy</code>, so the spinner stays decorative.</p>
+    <div class="card shy-cluster">
+      <button shyButton type="button" size="sm" loading>Small</button>
+      <button shyButton type="button" variant="soft" loading loadingPosition="start" loadingText="Saving…">Save</button>
+      <button shyButton type="button" variant="outline" size="lg" loading loadingPosition="end">Large</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Tokens</h2>
+    <p><code>--shy-spinner-size</code>, <code>--shy-spinner-color</code>. Durations: <code>--shy-duration-loop</code>, <code>--shy-duration-loop-slow</code>, <code>--shy-duration-breathe</code>.</p>
+  </section>
+</div>

@@ -1,18 +1,11 @@
 @use 'styles' as *;
-@use '../styles' as *;
 
 :host {
-  color: $color-dark;
-}
-
-main {
-  position: relative;
-  @include fixedHeight(100%);
-  @include fixedWidth(100%);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  scroll-behavior: smooth;
+  min-block-size: var(--shy-dynamic-height);
+  background: var(--shy-color-bg);
+  color: var(--shy-color-text);
 }
 
 router-outlet {
@@ -20,99 +13,114 @@ router-outlet {
 }
 
 header {
-  position: fixed;
-  top: 0;
+  @include shy-layer(sticky);
+  position: sticky;
+  inset-block-start: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background: $color-medium;
-  @include fixedWidth(100%);
-  @include fixedHeight($header-height);
+  gap: ru(3);
+  padding: ru(3) ru(6);
+  border-block-end: var(--shy-border-width) solid var(--shy-color-border);
+  background: var(--shy-color-surface);
 
-  > a {
-    flex: 1;
+  .bar {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    margin: 0;
-    font-size: calc(#{$responsive-unit} * 12);
-    font-family: sans-serif;
-    font-weight: bolder;
-    color: $color-dark;
-    text-decoration: none;
-    @include allVendors(transition, all 250ms ease-in-out);
+    justify-content: space-between;
+    gap: ru(4);
+  }
 
-    &:hover {
-      color: $color-white;
-    }
+  .brand {
+    font-size: var(--shy-text-lg);
+    font-weight: var(--shy-weight-bold);
+    color: var(--shy-color-text);
+    text-decoration: none;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: ru(3);
   }
 
   nav {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: calc(#{$responsive-unit} * 5);
-    padding: calc(#{$responsive-unit} * 3);
-    width: 100%;
-    background: $color-primary;
+    gap: ru(1) ru(5);
+
+    .group {
+      color: var(--shy-color-text-subtle);
+      font-size: var(--shy-text-xs);
+      letter-spacing: var(--shy-tracking-wide);
+      text-transform: uppercase;
+    }
 
     a {
-      font-size: calc(#{$responsive-unit} * 7);
-      font-family: sans-serif;
-      color: $color-white;
+      padding-block: ru(1);
+      color: var(--shy-color-text-muted);
+      font-size: var(--shy-text-sm);
       text-decoration: none;
-      @include allVendors(transition, all 250ms ease-in-out);
+      @include transition(color);
 
-      &:hover {
-        color: $color-success;
+      @include shy-state(hover) {
+        color: var(--shy-color-text);
       }
 
       &.active {
-        color: $color-warning;
+        color: var(--shy-color-primary-text);
+        font-weight: var(--shy-weight-semibold);
       }
 
-      &.active:hover {
-        color: $color-danger;
+      &:focus-visible {
+        @include focus-ring;
       }
     }
   }
 }
 
+.toggle {
+  min-block-size: var(--shy-size-control-sm);
+  padding-inline: var(--shy-space-4);
+  border: var(--shy-border-width) solid var(--shy-color-border-strong);
+  border-radius: var(--shy-radius-full);
+  background: transparent;
+  color: var(--shy-color-text);
+  font-size: var(--shy-text-sm);
+  cursor: pointer;
+  @include state-layer;
+  @include transition;
+
+  &[aria-pressed='true'] {
+    background: var(--shy-color-primary);
+    border-color: var(--shy-color-primary);
+    color: var(--shy-color-on-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
 #main-content {
-  @include fixedWidth(100%);
-  margin-top: $header-height;
-  margin-bottom: $footer-height;
-  min-height: $default-content-height;
-  background: $color-dark;
-  overflow: auto;
+  flex: 1;
+  min-inline-size: 0;
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: $color-medium;
-  @include fixedWidth(100%);
-  @include fixedHeight($footer-height);
+  padding: ru(6);
+  border-block-start: var(--shy-border-width) solid var(--shy-color-border);
+  color: var(--shy-color-text-muted);
+  font-size: var(--shy-text-sm);
+  text-align: center;
 
-  h2 {
-    font-size: calc(#{$responsive-unit} * 7);
-    text-align: center;
-    font-family: sans-serif;
+  #heart {
+    color: var(--shy-color-danger-text);
+  }
 
-    #heart {
-      color: $color-danger;
-    }
-
-    a {
-      color: $color-danger;
-      font-family: monospace;
-      @include allVendors(transition, all 250ms ease-in-out);
-
-      &:hover {
-        color: $color-tertiary;
-      }
-    }
+  a {
+    color: var(--shy-color-primary-text);
   }
 }

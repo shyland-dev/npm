@@ -1,0 +1,47 @@
+<div class="page">
+  <h1 class="page-title">Switch</h1>
+  <p class="page-lead"><code>&lt;shy-switch&gt;</code> is a native checkbox with <code>role="switch"</code>: Space toggles and screen readers announce on/off from the native state. The thumb position, not only the color, shows the state. Same API as the checkbox.</p>
+
+  <section class="section">
+    <h2>States</h2>
+    <div class="card table-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">state</th>
+            <th scope="col">off</th>
+            <th scope="col">on</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (state of states; track state) {
+            <tr>
+              <th scope="row" class="token-name">{{ state }}</th>
+              <td><shy-switch [attr.data-shy-state]="state === 'rest' ? null : state">Label</shy-switch></td>
+              <td><shy-switch [attr.data-shy-state]="state === 'rest' ? null : state" [checked]="true">Label</shy-switch></td>
+            </tr>
+          }
+          <tr>
+            <th scope="row" class="token-name">invalid</th>
+            <td><shy-switch [invalid]="true">Label</shy-switch></td>
+            <td><shy-switch [invalid]="true" [checked]="true">Label</shy-switch></td>
+          </tr>
+          <tr>
+            <th scope="row" class="token-name">disabled</th>
+            <td><shy-switch [disabled]="true">Label</shy-switch></td>
+            <td><shy-switch [disabled]="true" [checked]="true">Label</shy-switch></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Two-way</h2>
+    <div class="card shy-stack">
+      <shy-switch [(checked)]="live">Live updates</shy-switch>
+      <span class="token-name">checked = {{ live() }}</span>
+      <shy-switch label="Dark mode (no visible text)" />
+    </div>
+  </section>
+</div>

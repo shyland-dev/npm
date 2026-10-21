@@ -1,0 +1,46 @@
+<div class="page">
+  <h1 class="page-title">Popover</h1>
+  <p class="page-lead"><code>[shyPopover]</code> opens a non-modal panel anchored to the element (<code>aria-haspopup="dialog"</code>, <code>aria-expanded</code>, <code>aria-controls</code>). Focus goes to the first focusable inside; Esc, a click outside or the trigger again close it and return the focus. Tabbing out of the panel closes it and continues from the trigger. It flips and shifts to stay in the viewport.</p>
+
+  <section class="section">
+    <h2>Placements</h2>
+    <div class="shy-cluster">
+      @for (placement of placements; track placement) {
+        <button shyButton variant="outline" type="button" [shyPopover]="info" [shyPopoverPlacement]="placement">{{ placement }}</button>
+        <ng-template #info
+          ><shy-popover
+            >Anchored at <code>{{ placement }}</code
+            >.</shy-popover
+          ></ng-template
+        >
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>With a form</h2>
+    <div class="shy-cluster"><button shyButton type="button" [shyPopover]="form" #pop="shyPopover">Rename</button></div>
+    <ng-template #form>
+      <shy-popover>
+        <shy-form-field label="New name">
+          <input shyInput [value]="draft()" (input)="draft.set($any($event.target).value)" />
+        </shy-form-field>
+        <button shyButton type="button" (click)="saved.set(draft()); pop.close()">Save</button>
+      </shy-popover>
+    </ng-template>
+    <p class="token-name" aria-live="polite">saved: {{ saved() || 'nothing yet' }}</p>
+  </section>
+
+  <section class="section">
+    <h2>Near the edge</h2>
+    <div class="shy-cluster" style="justify-content: flex-end">
+      <button shyButton variant="outline" type="button" [shyPopover]="edge" shyPopoverPlacement="end">Flips to the start side</button>
+      <ng-template #edge><shy-popover>There is no room at the end, so I flipped.</shy-popover></ng-template>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Inside a dialog</h2>
+    <button shyButton variant="outline" type="button" (click)="openDialog()">Open dialog with popover, menu and tooltip</button>
+  </section>
+</div>

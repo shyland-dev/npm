@@ -1,0 +1,59 @@
+@use 'styles' as *;
+
+.play {
+  align-self: flex-start;
+  min-block-size: var(--shy-size-control-md);
+  padding-inline: var(--shy-space-6);
+  border: 0;
+  border-radius: var(--shy-radius-md);
+  background: var(--shy-color-primary);
+  color: var(--shy-color-on-primary);
+  font-size: var(--shy-text-md);
+  cursor: pointer;
+  @include state-layer;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.tracks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shy-space-4);
+}
+
+.track {
+  display: grid;
+  gap: var(--shy-space-1);
+}
+
+.lane {
+  position: relative;
+  block-size: var(--shy-space-6);
+  border-radius: var(--shy-radius-full);
+  background: var(--shy-color-surface-sunken);
+}
+
+.dot {
+  position: absolute;
+  inset-block: ru(1);
+  inset-inline-start: ru(1);
+  inline-size: ru(4);
+  border-radius: var(--shy-radius-full);
+  background: var(--shy-color-primary-text);
+  transition-property: inset-inline-start, transform;
+  transition-timing-function: var(--shy-ease-standard);
+  transition-duration: var(--shy-duration-base);
+
+  &.moved {
+    transform: translateX(ru(120));
+  }
+}
+
+.box {
+  block-size: var(--shy-space-12);
+  margin-block-end: var(--shy-space-2);
+  border-radius: var(--shy-radius-md);
+  background: var(--shy-color-primary);
+}

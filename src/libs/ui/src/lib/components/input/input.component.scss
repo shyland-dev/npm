@@ -1,0 +1,92 @@
+@use '../../styles' as *;
+@use 'input-theme' as theme;
+
+:host {
+  @include theme.size-vars(md);
+
+  box-sizing: border-box;
+  display: block;
+  inline-size: 100%;
+  min-block-size: var(--shy-input-height, var(--_height));
+  margin: 0;
+  padding-block: 0;
+  padding-inline-start: var(--_affix-start, var(--shy-input-pad-x, var(--_pad-x)));
+  padding-inline-end: var(--_affix-end, var(--shy-input-pad-x, var(--_pad-x)));
+  border: var(--shy-border-width) solid var(--shy-input-border-color, var(--shy-color-border-strong));
+  border-radius: var(--shy-input-radius, var(--shy-radius-md));
+  background: var(--shy-input-bg, var(--shy-color-surface-sunken));
+  color: var(--shy-input-fg, var(--shy-color-text));
+  font: inherit;
+  font-size: var(--shy-input-font-size, var(--_font-size));
+  line-height: var(--shy-leading-normal);
+  @include transition;
+}
+
+@each $size in (sm, lg) {
+  :host([data-size='#{$size}']) {
+    @include theme.size-vars($size);
+  }
+}
+
+:host(textarea) {
+  min-block-size: calc(var(--shy-input-height, var(--_height)) * 2.5);
+  padding-block: var(--shy-space-4);
+  resize: vertical;
+}
+
+:host::placeholder {
+  color: var(--shy-input-placeholder, var(--shy-color-text-subtle));
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  :host(:hover:not(:disabled, [readonly], [data-invalid])),
+  :host([data-shy-state='hover']) {
+    border-color: var(--shy-input-border-color-hover, var(--shy-color-text-muted));
+  }
+}
+
+:host([data-shy-state='focus']) {
+  border-color: var(--shy-color-focus);
+  @include focus-ring(0);
+}
+
+:host(:focus-visible) {
+  border-color: var(--shy-color-focus);
+  @include focus-ring(0);
+}
+
+:host([data-invalid]) {
+  border-color: var(--shy-input-border-color-invalid, var(--shy-color-danger-text));
+}
+
+:host([readonly]) {
+  background: transparent;
+}
+
+:host(:disabled) {
+  opacity: var(--shy-opacity-disabled);
+  cursor: not-allowed;
+}
+
+// Autofill do Chromium pinta o fundo por cima; devolve a cor do campo.
+:host(:-webkit-autofill) {
+  -webkit-text-fill-color: var(--shy-input-fg, var(--shy-color-text));
+  box-shadow: inset 0 0 0 ru(1000) var(--shy-input-bg, var(--shy-color-surface-sunken));
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: FieldText;
+  }
+
+  // Sem depender de cor: tracejado marca o inválido.
+  :host([data-invalid]) {
+    border-style: dashed;
+  }
+
+  :host(:disabled) {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}

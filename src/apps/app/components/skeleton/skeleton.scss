@@ -1,0 +1,51 @@
+@use 'styles' as *;
+
+.grid-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(#{ru(80)}, 1fr));
+  gap: var(--shy-space-8);
+  align-items: start;
+}
+
+.profile {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--shy-space-6);
+  max-inline-size: var(--shy-measure);
+}
+
+.avatar {
+  --shy-skeleton-size: var(--shy-size-control-lg);
+
+  flex-shrink: 0;
+}
+
+.initials {
+  display: grid;
+  place-items: center;
+  inline-size: var(--shy-size-control-lg);
+  block-size: var(--shy-size-control-lg);
+  border-radius: 50%;
+  background: var(--shy-color-primary-soft);
+  color: var(--shy-color-on-primary-soft);
+  font-weight: var(--shy-weight-semibold);
+}
+
+.body {
+  flex: 1;
+  min-inline-size: 0;
+
+  p {
+    margin: 0;
+    color: var(--shy-color-text-muted);
+  }
+}
+
+.title {
+  --shy-skeleton-width: 40%;
+  --shy-skeleton-line-height: var(--shy-text-lg);
+}
+
+.status {
+  color: var(--shy-color-text-muted);
+}

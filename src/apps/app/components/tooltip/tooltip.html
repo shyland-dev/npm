@@ -1,0 +1,29 @@
+<div class="page">
+  <h1 class="page-title">Tooltip</h1>
+  <p class="page-lead"><code>shyTooltip="text"</code> shows a short hint after <code>--shy-delay-tooltip</code> on mouse hover and right away on keyboard focus (not on touch). It complements the element's name, never replaces it: the text is added to <code>aria-describedby</code> only while open. Esc dismisses without moving focus, the pointer can move onto the tip, and a click closes it.</p>
+
+  <section class="section">
+    <h2>On icon buttons</h2>
+    <div class="shy-cluster">
+      <button shyIconButton type="button" label="Settings" shyTooltip="Settings"><shy-icon>gear</shy-icon></button>
+      <button shyIconButton type="button" label="Delete" shyTooltip="Delete the selected item" intent="danger"><shy-icon>trash</shy-icon></button>
+      <button shyIconButton type="button" label="Info" shyTooltip="A longer hint wraps inside the max width of the tooltip, which follows the responsive unit."><shy-icon>info-circle</shy-icon></button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Placements</h2>
+    <div class="shy-cluster">
+      @for (placement of placements; track placement) {
+        <button shyButton variant="outline" type="button" [shyTooltip]="'Placed ' + placement" [shyTooltipPlacement]="placement">{{ placement }}</button>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Disabled and edge</h2>
+    <div class="shy-cluster" style="justify-content: flex-end">
+      <button shyButton type="button" shyTooltip="Flips and shifts to fit the viewport">Edge</button>
+    </div>
+  </section>
+</div>

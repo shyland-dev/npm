@@ -1,0 +1,25 @@
+@use 'styles' as *;
+
+.row {
+  display: grid;
+  grid-template-columns: #{ru(60)} 1fr;
+  align-items: center;
+  gap: var(--shy-space-6);
+}
+
+.matrix {
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--shy-space-4);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  thead th {
+    color: var(--shy-color-text-muted);
+    font-size: var(--shy-text-sm);
+    font-weight: var(--shy-weight-medium);
+  }
+}

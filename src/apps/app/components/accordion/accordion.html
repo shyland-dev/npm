@@ -1,0 +1,23 @@
+<div class="page">
+  <h1 class="page-title">Accordion</h1>
+  <p class="page-lead"><code>&lt;shy-accordion&gt;</code> groups <code>&lt;shy-accordion-item&gt;</code>: each header is a <code>role="heading"</code> with a <code>button</code> (<code>aria-expanded</code>, <code>aria-controls</code>) and the panel is a <code>region</code>, <code>inert</code> while closed. Up/Down arrows, <code>Home</code> and <code>End</code> move between headers.</p>
+
+  <section class="section">
+    <h2>Single (default)</h2>
+    <shy-accordion>
+      <shy-accordion-item label="What is it?" [open]="true">A zero-dependency Angular design system.</shy-accordion-item>
+      <shy-accordion-item label="Is it accessible?">WCAG 2.2 AA is a requirement, not a goal.</shy-accordion-item>
+      <shy-accordion-item label="Disabled item" disabled>Never shown.</shy-accordion-item>
+      <shy-accordion-item label="Themes?">Dark by default; light and system are the user's choice.</shy-accordion-item>
+    </shy-accordion>
+  </section>
+
+  <section class="section">
+    <h2>Multiple</h2>
+    <shy-accordion multiple>
+      <shy-accordion-item label="First">Opens independently.</shy-accordion-item>
+      <shy-accordion-item label="Second">Opens independently.</shy-accordion-item>
+      <shy-accordion-item label="Third">Opens independently.</shy-accordion-item>
+    </shy-accordion>
+  </section>
+</div>

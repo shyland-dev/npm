@@ -1,0 +1,32 @@
+<div class="page">
+  <h1 class="page-title">File dropzone</h1>
+  <p class="page-lead">Area to choose or drop files. A native <code>&lt;input type="file"&gt;</code> covers the area (click, <kbd>Enter</kbd> and <kbd>Space</kbd> open the picker, and it takes the keyboard focus). It only selects and validates (<code>accept</code>, <code>maxSize</code>): <strong>it never uploads</strong>. Value is a <code>File[]</code>.</p>
+
+  <section class="section">
+    <h2>Multiple, with <code>accept</code> and <code>maxSize</code> (1 MB)</h2>
+    <div class="card">
+      <shy-form-field label="Attachments" hint="Images or PDF, up to 1 MB each.">
+        <shy-file-dropzone [formControl]="docs" accept="image/*,.pdf" [maxSize]="1048576" multiple (rejected)="rejections.set($event)" />
+      </shy-form-field>
+      <p class="token-name">files: {{ docs.value.length }}</p>
+      @for (r of rejections(); track r.file) {
+        <p class="token-name">rejected: {{ r.file.name }} ({{ r.reason }})</p>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Single file, custom prompt</h2>
+    <div class="card">
+      <shy-file-dropzone [(files)]="single" label="Avatar" accept="image/*">Drag your avatar here</shy-file-dropzone>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Disabled and invalid</h2>
+    <div class="card shy-stack">
+      <shy-file-dropzone disabled label="Disabled dropzone" />
+      <shy-file-dropzone invalid label="Invalid dropzone" />
+    </div>
+  </section>
+</div>

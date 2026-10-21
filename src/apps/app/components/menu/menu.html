@@ -1,0 +1,27 @@
+<div class="page">
+  <h1 class="page-title">Menu</h1>
+  <p class="page-lead"><code>[shyMenu]</code> on a button opens a menu (APG menu button). Enter, Space or click open on the first item, <kbd>↑</kbd> opens on the last. Arrows wrap, <kbd>Home</kbd>/<kbd>End</kbd> jump, typing a letter jumps to the matching item. Activating an item closes the menu; Esc and Tab close it too. Disabled items stay focusable (<code>aria-disabled</code>) but do nothing.</p>
+
+  <section class="section">
+    <h2>Actions menu</h2>
+    <div class="shy-cluster"><button shyButton variant="outline" type="button" [shyMenu]="actions">Actions</button></div>
+    <ng-template #actions>
+      <shy-menu>
+        <button shyMenuItem type="button" (click)="last.set('edit')"><shy-icon slot="start">pencil</shy-icon>Edit</button>
+        <button shyMenuItem type="button" (click)="last.set('copy')"><shy-icon slot="start">copy</shy-icon>Copy</button>
+        <a shyMenuItem href="#menu-link" (click)="last.set('link')">Open as link</a>
+        <shy-divider />
+        <button shyMenuItem type="button" disabled><shy-icon slot="start">archive</shy-icon>Archive (disabled)</button>
+        <button shyMenuItem type="button" (click)="last.set('delete')"><shy-icon slot="start">trash</shy-icon>Delete</button>
+      </shy-menu>
+    </ng-template>
+    <p class="token-name" aria-live="polite">last action: {{ last() }}</p>
+  </section>
+
+  <section class="section">
+    <h2>Placement and edge</h2>
+    <div class="shy-cluster" style="justify-content: flex-end">
+      <button shyButton type="button" [shyMenu]="actions" shyMenuPlacement="bottom-end">bottom-end</button>
+    </div>
+  </section>
+</div>

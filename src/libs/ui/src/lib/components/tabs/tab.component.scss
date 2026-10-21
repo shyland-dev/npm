@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  padding-block: var(--shy-tabs-panel-pad-y, var(--shy-space-6));
+  color: var(--shy-color-text);
+}
+
+:host([hidden]) {
+  display: none;
+}

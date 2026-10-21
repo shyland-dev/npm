@@ -1,0 +1,39 @@
+<div class="page">
+  <h1 class="page-title">Snackbar</h1>
+  <p class="page-lead"><code>SnackbarService.show(message, options)</code> shows a toast with no element in the template: the container is created on the first call, in the <code>toast</code> layer. Toasts queue (3 at a time), pause while hovered or focused (and when the tab is hidden), and <code>danger</code> uses <code>role="alert"</code>; the rest <code>role="status"</code>. An action is hidden while a modal is open.</p>
+
+  <section class="section">
+    <h2>Intents</h2>
+    <div class="shy-cluster">
+      @for (intent of intents; track intent) {
+        <button shyButton variant="outline" type="button" (click)="show(intent)">{{ intent }}</button>
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Position and alignment</h2>
+    <div class="shy-cluster">
+      @for (position of positions; track position) {
+        @for (align of aligns; track align) {
+          <button shyButton variant="outline" intent="neutral" type="button" (click)="show('info', position, align)">{{ position }} / {{ align }}</button>
+        }
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Action, queue and persistence</h2>
+    <div class="shy-cluster">
+      <button shyButton variant="outline" type="button" (click)="withAction()">With action (Undo)</button>
+      <button shyButton variant="outline" type="button" (click)="burst()">Burst of 6 (queue)</button>
+      <button shyButton variant="outline" type="button" (click)="persistent()">Until dismissed</button>
+    </div>
+    <p class="token-name" aria-live="polite">{{ last() }}</p>
+  </section>
+
+  <section class="section">
+    <h2>Over a modal</h2>
+    <div class="shy-cluster"><button shyButton variant="outline" type="button" (click)="openDialog()">Open dialog, then toast with action</button></div>
+  </section>
+</div>

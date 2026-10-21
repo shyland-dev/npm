@@ -1,0 +1,10 @@
+@use 'sass:math';
+@use 'sass:meta';
+
+/// Converte um multiplicador na unidade responsiva (plano, seção 6.4). Negativo: ru(-1).
+@function ru($n) {
+  @if meta.type-of($n) != 'number' or not math.is-unitless($n) {
+    @error 'ru() espera um número sem unidade, recebeu #{meta.inspect($n)}.';
+  }
+  @return calc(var(--shy-responsive-unit) * #{$n});
+}

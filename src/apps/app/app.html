@@ -1,23 +1,26 @@
-<main>
-  <header>
-    <a href="https://github.com/shyland-dev/npm" target="_blank">npm</a>
+<header>
+  <div class="bar">
+    <a class="brand" href="https://github.com/shyland-dev/npm" target="_blank" rel="noopener">&#64;shyland-dev/ui</a>
 
-    <nav>
-      @for (route of navRoutes; track $index) {
-        <a [routerLink]="route.path" routerLinkActive="active">{{ route.path }}</a>
-      }
-    </nav>
-  </header>
-
-  <div id="main-content">
-    <router-outlet />
+    <div class="controls">
+      <shy-theme-toggle />
+      <button type="button" class="toggle" [attr.aria-pressed]="reducedMotion()" (click)="toggleMotion()">Reduce motion</button>
+      <button type="button" class="toggle" [attr.aria-pressed]="sansFont()" (click)="toggleFont()">Font: {{ sansFont() ? 'System sans' : 'JetBrains Mono' }}</button>
+    </div>
   </div>
 
-  <footer>
-    <h2>
-      Made with <span id="heart">&#10084;</span>
-      <br />
-      by <a href="https://github.com/shyland-dev" target="_blank">shyland-dev</a>
-    </h2>
-  </footer>
+  <nav aria-label="Showcase">
+    @for (group of nav; track group.label) {
+      <span class="group">{{ group.label }}</span>
+      @for (item of group.items; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="active">{{ item.label }}</a>
+      }
+    }
+  </nav>
+</header>
+
+<main id="main-content">
+  <router-outlet />
 </main>
+
+<footer>Made with <span id="heart">&#10084;</span> by <a href="https://github.com/shyland-dev" target="_blank" rel="noopener">shyland-dev</a></footer>

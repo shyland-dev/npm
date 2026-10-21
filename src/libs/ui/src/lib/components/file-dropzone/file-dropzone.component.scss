@@ -1,0 +1,129 @@
+@use '../../styles' as *;
+
+// Tokens do componente (sobrescreva no elemento: shy-file-dropzone { --shy-file-dropzone-bg: ... }):
+//   --shy-file-dropzone-bg, -fg, -border-color, -border-color-active, -border-color-invalid, -radius, -pad, -gap, -icon-size, -file-bg
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shy-file-dropzone-gap, var(--shy-space-4));
+  color: var(--shy-file-dropzone-fg, var(--shy-color-text));
+  font-family: var(--shy-font-family-base);
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+}
+
+.dropzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--shy-space-3);
+  padding: var(--shy-file-dropzone-pad, var(--shy-space-8));
+  border: var(--shy-border-width-strong) dashed var(--shy-file-dropzone-border-color, var(--shy-color-border-strong));
+  border-radius: var(--shy-file-dropzone-radius, var(--shy-radius-lg));
+  background: var(--shy-file-dropzone-bg, var(--shy-color-surface-sunken));
+  text-align: center;
+  @include transition;
+
+  // O input nativo cobre a área: clique, Enter/Espaço e foco de teclado são dele.
+  &__input {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &__icon {
+    --shy-icon-size: var(--shy-file-dropzone-icon-size, var(--shy-size-icon-lg));
+    color: var(--shy-color-text-muted);
+  }
+}
+
+@media (hover: hover) {
+  :host(:not([data-disabled])) .dropzone:hover {
+    border-color: var(--shy-file-dropzone-border-color-active, var(--shy-color-primary-text));
+  }
+}
+
+:host([data-dragging]) .dropzone {
+  border-color: var(--shy-file-dropzone-border-color-active, var(--shy-color-primary-text));
+  background: var(--shy-color-primary-soft);
+  color: var(--shy-color-on-primary-soft);
+}
+
+// O foco está no input (invisível): o anel aparece na área.
+.dropzone:has(.dropzone__input:focus-visible) {
+  @include focus-ring(var(--shy-focus-ring-offset));
+}
+
+:host([data-invalid]) .dropzone {
+  border-color: var(--shy-file-dropzone-border-color-invalid, var(--shy-color-danger-text));
+}
+
+:host([data-disabled]) .dropzone {
+  opacity: var(--shy-opacity-disabled);
+  cursor: not-allowed;
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--shy-space-4);
+    padding: var(--shy-space-2) var(--shy-space-4);
+    border-radius: var(--shy-radius-md);
+    background: var(--shy-file-dropzone-file-bg, var(--shy-color-surface-raised));
+
+    & + & {
+      margin-block-start: var(--shy-space-2);
+    }
+  }
+
+  &__name {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__size {
+    flex-shrink: 0;
+    color: var(--shy-color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// Região viva: o texto aparece só para o leitor de tela.
+.status {
+  @include visually-hidden;
+}
+
+@media (forced-colors: active) {
+  :host([data-invalid]) .dropzone {
+    border-style: dotted;
+  }
+
+  :host([data-dragging]) .dropzone {
+    border-color: Highlight;
+  }
+
+  :host([data-disabled]) .dropzone {
+    border-color: GrayText;
+    color: GrayText;
+  }
+}

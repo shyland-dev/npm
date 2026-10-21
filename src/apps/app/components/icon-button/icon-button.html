@@ -1,0 +1,52 @@
+<div class="page">
+  <h1 class="page-title">IconButton</h1>
+  <p class="page-lead">Icon-only button: <code>&lt;button shyIconButton label="Close"&gt;</code>. <code>label</code> is required and becomes the <code>aria-label</code>. Square side is <code>--shy-size-control-*</code>, larger on coarse pointers (≥ 44 px on phones).</p>
+
+  <section class="section">
+    <h2>Variant × intent</h2>
+    <div class="card table-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">intent</th>
+            @for (variant of variants; track variant) {
+              <th scope="col">{{ variant }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (intent of intents; track intent) {
+            <tr>
+              <th scope="row" class="token-name">{{ intent }}</th>
+              @for (variant of variants; track variant) {
+                <td>
+                  <button shyIconButton type="button" [label]="'Favorite (' + intent + ', ' + variant + ')'" [variant]="variant" [intent]="intent"><shy-icon>heart-fill</shy-icon></button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Sizes</h2>
+    <div class="card shy-cluster">
+      <button shyIconButton type="button" label="Settings (small)" size="sm"><shy-icon>gear</shy-icon></button>
+      <button shyIconButton type="button" label="Settings (medium)"><shy-icon>gear</shy-icon></button>
+      <button shyIconButton type="button" label="Settings (large)" size="lg"><shy-icon>gear</shy-icon></button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>States</h2>
+    <div class="card shy-cluster">
+      <button shyIconButton type="button" label="Close" variant="outline"><shy-icon>x-lg</shy-icon></button>
+      @for (state of states; track state) {
+        <button shyIconButton type="button" [label]="'Close (' + state + ')'" variant="outline" [attr.data-shy-state]="state"><shy-icon>x-lg</shy-icon></button>
+      }
+      <button shyIconButton type="button" label="Close (disabled)" variant="outline" disabled><shy-icon>x-lg</shy-icon></button>
+    </div>
+  </section>
+</div>

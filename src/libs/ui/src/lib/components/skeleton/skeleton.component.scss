@@ -1,0 +1,64 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  inline-size: var(--shy-skeleton-width, 100%);
+}
+
+:host([data-shape='text']) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--shy-skeleton-gap, var(--shy-space-3));
+}
+
+:host([data-shape='circle']) {
+  inline-size: var(--shy-skeleton-size, var(--shy-size-control-md));
+  block-size: var(--shy-skeleton-size, var(--shy-size-control-md));
+}
+
+:host([data-shape='rect']) {
+  block-size: var(--shy-skeleton-height, #{ru(40)});
+}
+
+// Base no trilho (track) e brilho em neutral-soft: visíveis nos dois temas (plano 11.3: nada de surface-raised/border).
+.bone {
+  display: block;
+  block-size: 100%;
+  border-radius: var(--shy-skeleton-radius, var(--shy-radius-md));
+  background-color: var(--shy-skeleton-bg, var(--shy-color-track));
+  background-image: linear-gradient(90deg, transparent 0%, var(--shy-skeleton-highlight, var(--shy-color-neutral-soft)) 50%, transparent 100%);
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  animation: shy-shimmer var(--shy-duration-loop-slow) var(--shy-ease-linear) infinite;
+
+  // Reduced motion: o brilho não se desloca; só pulso de opacidade.
+  @include reduced-motion {
+    background-image: none;
+    animation: shy-pulse var(--shy-duration-breathe) var(--shy-ease-standard) infinite;
+  }
+}
+
+.line {
+  block-size: var(--shy-skeleton-line-height, var(--shy-text-md));
+  border-radius: var(--shy-skeleton-radius, var(--shy-radius-sm));
+
+  &:last-child:not(:first-child) {
+    inline-size: 60%;
+  }
+}
+
+:host([data-shape='circle']) .bone {
+  border-radius: 50%;
+}
+
+// Vem depois do bloco de reduced motion: "still" vence nos dois casos.
+:host([data-animation='still']) .bone {
+  background-image: none;
+  animation: none;
+}
+
+@media (forced-colors: active) {
+  .bone {
+    border: var(--shy-border-width) solid GrayText;
+  }
+}

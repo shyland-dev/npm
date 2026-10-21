@@ -1,0 +1,28 @@
+@use '../../styles' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-inline-size: var(--shy-menu-min-width, #{ru(80)});
+  max-inline-size: min(var(--shy-menu-max-width, #{ru(160)}), calc(var(--shy-dynamic-width) - var(--shy-space-8)));
+  max-block-size: calc(var(--shy-dynamic-height) - var(--shy-space-8));
+  padding: var(--shy-menu-padding, var(--shy-space-2));
+  border: var(--shy-border-width) solid var(--shy-menu-border-color, var(--shy-color-border-strong));
+  border-radius: var(--shy-menu-radius, var(--shy-radius-lg));
+  background: var(--shy-menu-bg, var(--shy-color-surface-raised));
+  box-shadow: var(--shy-menu-shadow, var(--shy-shadow-3));
+  color: var(--shy-menu-fg, var(--shy-color-text));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+:host ::ng-deep shy-divider {
+  margin-block: var(--shy-space-2);
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+}

@@ -1,0 +1,59 @@
+@use '../../styles' as *;
+
+:host {
+  --_size: #{ru(16)};
+  --_font-size: var(--shy-text-md);
+  --_icon: var(--shy-size-icon-lg);
+
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: var(--shy-avatar-size, var(--_size));
+  block-size: var(--shy-avatar-size, var(--_size));
+  overflow: hidden;
+  border-radius: var(--shy-avatar-radius, var(--shy-radius-full));
+  background: var(--shy-avatar-bg, var(--shy-color-primary-soft));
+  color: var(--shy-avatar-fg, var(--shy-color-on-primary-soft));
+  font-size: var(--shy-avatar-font-size, var(--_font-size));
+  font-weight: var(--shy-weight-semibold);
+  line-height: 1;
+  vertical-align: middle;
+  user-select: none;
+  --shy-icon-size: var(--_icon);
+}
+
+:host([data-size='sm']) {
+  --_size: #{ru(12)};
+  --_font-size: var(--shy-text-xs);
+  --_icon: var(--shy-size-icon-md);
+}
+
+:host([data-size='lg']) {
+  --_size: #{ru(24)};
+  --_font-size: var(--shy-text-xl);
+  --_icon: #{ru(12)};
+}
+
+:host([data-size='xl']) {
+  --_size: #{ru(32)};
+  --_font-size: var(--shy-text-2xl);
+  --_icon: #{ru(16)};
+}
+
+:host([data-shape='rounded']) {
+  border-radius: var(--shy-avatar-radius, var(--shy-radius-md));
+}
+
+.image {
+  grid-area: 1 / 1;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border: var(--shy-border-width) solid CanvasText;
+  }
+}

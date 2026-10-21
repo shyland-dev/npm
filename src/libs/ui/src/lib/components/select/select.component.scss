@@ -1,20 +1,24 @@
-@use 'sass:color';
 @use '../../styles' as *;
 
+// Tokens do componente (sobrescreva no elemento: shy-select { --shy-select-bg: ... }):
+//   --shy-select-height, -width, -radius, -bg, -fg, -border, -font-family, -font-size, -icon-size,
+//   -placeholder-fg, -border-color-invalid, -panel-max-height, -panel-bg, -panel-shadow, -selected-fg, -option-hover-bg, -option-hover-fg, -option-img-radius
 :host {
   position: relative;
   display: inline-flex;
   flex-direction: column;
-  min-height: var(--shySelectHeight, calc(#{$responsive-unit} * 20));
-  min-width: var(--shySelectWidth, calc(#{$responsive-unit} * 90));
-  border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
-  background: var(--shySelectBackground, #{$color-black});
-  color: var(--shySelectColor, #{$color-white});
-  font-family: var(--shySelectFontFamily, monospace);
-  font-size: var(--shySelectFontSize, calc(#{$responsive-unit} * 6));
+  min-block-size: var(--shy-select-height, var(--shy-size-control-lg));
+  min-inline-size: var(--shy-select-width, #{ru(90)});
+  border: var(--shy-border-width) solid var(--shy-select-border, var(--shy-color-border-strong));
+  border-radius: var(--shy-select-radius, var(--shy-radius-md));
+  background: var(--shy-select-bg, var(--shy-color-surface-sunken));
+  color: var(--shy-select-fg, var(--shy-color-text));
+  font-family: var(--shy-select-font-family, var(--shy-font-family-base));
+  font-size: var(--shy-select-font-size, var(--shy-text-md));
+  line-height: var(--shy-leading-normal);
 
   shy-icon {
-    --shyIconSize: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    --shy-icon-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
   }
 }
 
@@ -23,90 +27,123 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: calc(#{$responsive-unit} * 3);
-    padding: calc(#{$responsive-unit} * 5) calc(#{$responsive-unit} * 7);
+    gap: var(--shy-space-3);
+    inline-size: 100%;
+    min-block-size: inherit;
+    padding-inline: var(--shy-space-5);
+    border: 0;
+    border-radius: inherit;
     background: transparent;
-    border: none;
-    cursor: pointer;
     color: inherit;
     font: inherit;
-    width: 100%;
-    border-radius: inherit;
-    min-height: inherit;
+    cursor: pointer;
+    @include state-layer;
+
+    &:focus-visible {
+      @include focus-ring(calc(var(--shy-focus-ring-width) * -1));
+    }
   }
 
   &__label {
     flex: 1;
-    text-align: left;
+    text-align: start;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &[data-placeholder] {
+      color: var(--shy-select-placeholder-fg, var(--shy-color-text-muted));
+    }
+  }
+
+  &__img {
+    flex-shrink: 0;
+    display: flex;
+    inline-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
+    block-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
+
+    img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+      border-radius: var(--shy-select-option-img-radius, var(--shy-radius-full));
+    }
   }
 
   &__dropdown-icon {
-    flex-shrink: 0;
-    transition: transform 250ms ease-in-out;
+    @include transition(transform, base);
 
     &--open {
       transform: rotate(180deg);
     }
   }
 
+  // Painel dentro do OverlayService (fora do host): posição e camada vêm do painel; aqui só a superfície.
   &__dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    box-sizing: border-box;
+    margin: 0;
+    padding: var(--shy-space-2) 0;
+    max-block-size: min(var(--shy-select-panel-max-height, #{ru(100)}), calc(var(--shy-dynamic-height) - var(--shy-space-8)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
     list-style: none;
-    margin: calc(#{$responsive-unit} * 1) 0 0 0;
-    padding: calc(#{$responsive-unit} * 2) 0;
-    background: var(--shySelectDropdownBackground, #{$color-dark});
-    border-radius: var(--shySelectBorderRadius, calc(#{$responsive-unit} * 2));
-    box-shadow: var(--shySelectDropdownBoxShadow, 0 0 calc(#{$responsive-unit} * 1.5) calc(#{$responsive-unit} * 0.1) #{$color-white});
-    overflow: hidden;
+    border: var(--shy-border-width) solid var(--shy-color-border);
+    border-radius: var(--shy-select-radius, var(--shy-radius-md));
+    background: var(--shy-select-panel-bg, var(--shy-color-surface-raised));
+    box-shadow: var(--shy-select-panel-shadow, var(--shy-shadow-3));
+    font-family: var(--shy-select-font-family, var(--shy-font-family-base));
+    font-size: var(--shy-select-font-size, var(--shy-text-md));
+    line-height: var(--shy-leading-normal);
+    color: var(--shy-select-fg, var(--shy-color-text));
   }
 
   &__option {
     display: flex;
     align-items: center;
-    gap: calc(#{$responsive-unit} * 3);
-    padding: calc(#{$responsive-unit} * 4) calc(#{$responsive-unit} * 7);
+    gap: var(--shy-space-3);
+    padding: var(--shy-space-3) var(--shy-space-5);
     cursor: pointer;
+    @include transition(background-color color);
 
-    &:hover {
-      background: var(--shySelectOptionHoverBackground, #{color.adjust($color-dark, $lightness: 20%)});
-      color: var(--shySelectOptionHoverColor, #{$color-black});
+    @include shy-state(hover) {
+      background: var(--shy-select-option-hover-bg, var(--shy-color-primary-soft));
+      color: var(--shy-select-option-hover-fg, var(--shy-color-on-primary-soft));
+    }
+
+    // Opção ativa (aria-activedescendant): o foco real fica no botão.
+    &--active {
+      background: var(--shy-select-option-hover-bg, var(--shy-color-primary-soft));
+      color: var(--shy-select-option-hover-fg, var(--shy-color-on-primary-soft));
+      box-shadow: inset 0 0 0 var(--shy-focus-ring-width) var(--shy-color-focus);
+      outline: var(--shy-focus-ring-width) solid transparent; // vira visível em forced-colors
+      outline-offset: calc(var(--shy-focus-ring-width) * -1);
+    }
+
+    &[aria-disabled='true'] {
+      opacity: var(--shy-opacity-disabled);
+      cursor: not-allowed;
     }
 
     &--selected {
-      color: var(--shySelectSelectedColor, #{$color-primary});
+      color: var(--shy-select-selected-fg, var(--shy-color-primary-text));
     }
   }
 
-  &__option-icon {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
-    height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
-  }
-
+  &__option-icon,
   &__option-img {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
-    height: var(--shySelectIconSize, calc(#{$responsive-unit} * 8));
+    inline-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
+    block-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
+  }
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: var(--shySelectOptionImgBorderRadius, 50%);
-    }
+  &__option-img img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    border-radius: var(--shy-select-option-img-radius, var(--shy-radius-full));
   }
 
   &__option-label {
@@ -114,5 +151,35 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+}
+
+// `data-disabled` e `data-invalid` vêm do host (ControlBase).
+:host([data-disabled]) {
+  opacity: var(--shy-opacity-disabled);
+  cursor: not-allowed;
+
+  .select__trigger {
+    cursor: not-allowed;
+  }
+}
+
+:host([data-invalid]) {
+  border-color: var(--shy-select-border-color-invalid, var(--shy-color-danger-text));
+}
+
+@media (forced-colors: active) {
+  :host([data-invalid]) {
+    border-style: dashed;
+  }
+
+  :host([data-disabled]) {
+    border-color: GrayText;
+    color: GrayText;
+  }
+
+  .select__option--selected {
+    forced-color-adjust: none;
+    color: Highlight;
   }
 }

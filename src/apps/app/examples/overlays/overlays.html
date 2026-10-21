@@ -1,0 +1,24 @@
+<div class="page">
+  <h1 class="page-title">Overlays together</h1>
+  <p class="page-lead">Menu, Dialog, Select, Tooltip, Popover and Snackbar in one flow. Open the menu, create a project (the Select list and the Tooltip work inside the dialog), save (the toast over the modal shows no action), then delete a project (confirm dialog, then a toast with an action once the modal is gone). Esc closes one layer at a time and focus returns to where you were.</p>
+
+  <section class="section">
+    <h2>Project actions</h2>
+    <div class="shy-cluster">
+      <button shyButton type="button" [shyMenu]="menu">Project</button>
+      <button shyIconButton type="button" label="More info" shyTooltip="Opens a popover with details" [shyPopover]="info"><shy-icon>info-circle</shy-icon></button>
+    </div>
+    <ng-template #menu>
+      <shy-menu>
+        <button shyMenuItem type="button" (click)="newProject()">New project…</button>
+        <button shyMenuItem type="button" disabled>Import (unavailable)</button>
+        <shy-divider />
+        <button shyMenuItem type="button" (click)="remove()">Delete…</button>
+      </shy-menu>
+    </ng-template>
+    <ng-template #info>
+      <shy-popover>Layers are ordered by opening: the last one opened is on top, and Esc closes only that one.</shy-popover>
+    </ng-template>
+    <p class="token-name" aria-live="polite">last: {{ last() }}</p>
+  </section>
+</div>

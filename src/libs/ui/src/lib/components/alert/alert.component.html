@@ -1,0 +1,11 @@
+<shy-icon class="icon" [name]="iconName()" />
+<div class="content">
+  @if (heading()) {
+    <div class="title">{{ heading() }}</div>
+  }
+  <div class="message"><ng-content /></div>
+</div>
+<div class="action"><ng-content select="[slot=action]" /></div>
+@if (dismissible()) {
+  <button shyIconButton class="close" size="sm" [label]="dismissLabel()" (click)="dismiss()"><shy-icon name="x-lg" /></button>
+}

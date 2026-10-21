@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--shy-divider-gap, var(--shy-space-6));
+  color: var(--shy-divider-text-color, var(--shy-color-text-muted));
+  font-size: var(--shy-text-sm);
+}
+
+.line {
+  flex: 1;
+  block-size: var(--shy-border-width);
+  background: var(--shy-divider-color, var(--shy-color-line));
+}
+
+.text:empty,
+.text:empty ~ .line {
+  display: none;
+}
+
+:host([data-orientation='vertical']) {
+  flex-direction: column;
+  align-self: stretch;
+  inline-size: var(--shy-border-width);
+  min-block-size: var(--shy-space-8);
+}
+
+:host([data-orientation='vertical']) .line {
+  inline-size: var(--shy-border-width);
+  block-size: auto;
+}
+
+// Vertical não tem texto: só um traço.
+:host([data-orientation='vertical']) .text,
+:host([data-orientation='vertical']) .text ~ .line {
+  display: none;
+}
+
+@media (forced-colors: active) {
+  .line {
+    background: CanvasText;
+  }
+}

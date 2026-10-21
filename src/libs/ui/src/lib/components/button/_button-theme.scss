@@ -1,0 +1,119 @@
+// Cores e estados compartilhados por Button e IconButton (plano 8 e 11.4).
+// Variáveis privadas (--_*) com fallback no semântico; o app sobrescreve só as públicas --shy-button-*.
+@use '../../styles' as *;
+
+$status-intents: (primary, success, warning, danger, info);
+
+/// --_c (sólido), --_on (texto no sólido), --_text (texto/borda sobre surface), --_soft, --_on-soft, --_outline.
+@mixin intents {
+  @each $intent in $status-intents {
+    :host([data-intent='#{$intent}']) {
+      --_c: var(--shy-color-#{$intent});
+      --_on: var(--shy-color-on-#{$intent});
+      --_text: var(--shy-color-#{$intent}-text);
+      --_soft: var(--shy-color-#{$intent}-soft);
+      --_on-soft: var(--shy-color-on-#{$intent}-soft);
+      --_outline: var(--shy-color-#{$intent}-text);
+    }
+  }
+
+  // Neutro: sólido invertido (texto do tema como fundo); suave e borda pelos tokens neutros.
+  :host([data-intent='neutral']) {
+    --_c: var(--shy-color-text);
+    --_on: var(--shy-color-bg);
+    --_text: var(--shy-color-text);
+    --_soft: var(--shy-color-neutral-soft);
+    --_on-soft: var(--shy-color-on-neutral-soft);
+    --_outline: var(--shy-color-border-strong);
+  }
+}
+
+/// --_bg, --_fg e --_border por variante.
+@mixin variants {
+  :host([data-variant='solid']) {
+    --_bg: var(--_c);
+    --_fg: var(--_on);
+    --_border: transparent;
+  }
+
+  :host([data-variant='soft']) {
+    --_bg: var(--_soft);
+    --_fg: var(--_on-soft);
+    --_border: transparent;
+  }
+
+  :host([data-variant='outline']) {
+    --_bg: transparent;
+    --_fg: var(--_text);
+    --_border: var(--_outline);
+  }
+
+  :host([data-variant='ghost']),
+  :host([data-variant='link']) {
+    --_bg: transparent;
+    --_fg: var(--_text);
+    --_border: transparent;
+  }
+}
+
+/// Caixa, cor, estados (hover/active/focus/disabled) e forced-colors do host.
+@mixin control($prefix) {
+  :host {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin: 0;
+    border: var(--shy-border-width) solid var(--shy-#{$prefix}-border-color, var(--_border));
+    border-radius: var(--shy-#{$prefix}-radius, var(--shy-radius-md));
+    background: var(--shy-#{$prefix}-bg, var(--_bg));
+    color: var(--shy-#{$prefix}-fg, var(--_fg));
+    font: inherit;
+    font-weight: var(--shy-#{$prefix}-font-weight, var(--shy-weight-semibold));
+    line-height: var(--shy-leading-tight);
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    --shy-icon-size: var(--_icon);
+    @include state-layer;
+    @include transition;
+  }
+
+  :host(:focus-visible) {
+    @include focus-ring;
+  }
+
+  :host([data-shy-state='focus']) {
+    @include focus-ring;
+  }
+
+  :host(:disabled),
+  :host([aria-disabled='true']:not([aria-busy='true'])) {
+    opacity: var(--shy-opacity-disabled);
+    cursor: not-allowed;
+  }
+
+  :host([aria-busy='true']) {
+    cursor: progress;
+  }
+
+  @media (forced-colors: active) {
+    :host {
+      border-color: ButtonText;
+    }
+
+    :host::after {
+      display: none;
+    }
+
+    :host(:disabled),
+    :host([aria-disabled='true']) {
+      color: GrayText;
+      border-color: GrayText;
+    }
+  }
+}

@@ -1,0 +1,52 @@
+@use '../../styles' as *;
+@use '../toggle/toggle-theme' as toggle;
+
+@include toggle.base(checkbox);
+
+.mark {
+  inline-size: var(--shy-checkbox-size, var(--shy-size-icon-md));
+  block-size: var(--shy-checkbox-size, var(--shy-size-icon-md));
+  border-radius: var(--shy-checkbox-radius, var(--shy-radius-sm));
+}
+
+.glyph {
+  inline-size: 100%;
+  block-size: 100%;
+  opacity: 0;
+  transition: opacity var(--shy-duration-fast) var(--shy-ease-standard);
+}
+
+// O glifo (✓ ou –) só existe marcado: o estado não depende da cor (forced-colors e daltonismo).
+.dash,
+:host([data-indeterminate]) .check {
+  display: none;
+}
+
+:host([data-indeterminate]) .dash {
+  display: inline;
+}
+
+:host([data-checked]) .glyph,
+:host([data-indeterminate]) .glyph {
+  opacity: 1;
+}
+
+// Borda em primary-text: no tema escuro o fundo primary tem 2,6:1 sobre bg, e o contorno marcado precisa de 3:1 (WCAG 1.4.11).
+:host([data-checked]) .mark,
+:host([data-indeterminate]) .mark {
+  border-color: var(--shy-checkbox-checked-border, var(--shy-color-primary-text));
+  background: var(--shy-checkbox-checked-bg, var(--shy-color-primary));
+}
+
+:host([data-checked][data-invalid]) .mark,
+:host([data-indeterminate][data-invalid]) .mark {
+  border-color: var(--shy-color-danger-text);
+}
+
+@media (forced-colors: active) {
+  :host([data-checked]) .mark,
+  :host([data-indeterminate]) .mark {
+    border-color: ButtonText;
+    background: Canvas;
+  }
+}

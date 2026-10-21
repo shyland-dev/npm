@@ -1,0 +1,96 @@
+@use '../../styles' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  color: var(--shy-color-text);
+}
+
+:host([data-orientation='vertical']) {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--shy-tabs-gap, var(--shy-space-8));
+}
+
+.panels {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.list {
+  display: flex;
+  gap: var(--shy-tabs-list-gap, var(--shy-space-2));
+  border-block-end: var(--shy-border-width) solid var(--shy-tabs-line-color, var(--shy-color-line));
+  overflow-x: auto;
+}
+
+:host([data-orientation='vertical']) .list {
+  flex-direction: column;
+  border-block-end: 0;
+  border-inline-end: var(--shy-border-width) solid var(--shy-tabs-line-color, var(--shy-color-line));
+  overflow: visible;
+}
+
+// O indicador é uma borda (sobrevive ao forced-colors, ao contrário de box-shadow) que cobre a linha da lista.
+.tab {
+  --_indicator: transparent;
+
+  flex: none;
+  box-sizing: border-box;
+  min-block-size: var(--shy-tabs-height, var(--shy-size-control-md));
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--shy-tabs-pad-x, var(--shy-space-7));
+  border: 0;
+  border-block-end: var(--shy-border-width-strong) solid var(--_indicator);
+  margin-block-end: calc(-1 * var(--shy-border-width));
+  border-radius: 0;
+  background: transparent;
+  color: var(--shy-tabs-fg, var(--shy-color-text-muted));
+  font: inherit;
+  font-size: var(--shy-text-md);
+  font-weight: var(--shy-weight-medium);
+  text-align: start;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include transition(color background-color border-color);
+
+  @include shy-state(hover) {
+    color: var(--shy-tabs-fg-hover, var(--shy-color-on-neutral-soft));
+    background: var(--shy-tabs-bg-hover, var(--shy-color-neutral-soft));
+  }
+
+  @include shy-state(active) {
+    color: var(--shy-tabs-fg-hover, var(--shy-color-on-neutral-soft));
+    background: var(--shy-tabs-bg-active, var(--shy-color-neutral-soft));
+  }
+
+  @include shy-state(focus) {
+    @include focus-ring(ru(-1));
+  }
+
+  &[aria-selected='true'] {
+    --_indicator: var(--shy-tabs-indicator-color, var(--shy-color-primary));
+
+    color: var(--shy-tabs-fg-selected, var(--shy-color-text));
+  }
+
+  &:disabled {
+    opacity: var(--shy-opacity-disabled);
+    cursor: not-allowed;
+  }
+}
+
+:host([data-orientation='vertical']) .tab {
+  border-block-end: 0;
+  margin-block-end: 0;
+  border-inline-end: var(--shy-border-width-strong) solid var(--_indicator);
+  margin-inline-end: calc(-1 * var(--shy-border-width));
+}
+
+@media (forced-colors: active) {
+  .tab[aria-selected='true'] {
+    --_indicator: Highlight;
+  }
+}

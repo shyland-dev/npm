@@ -1,0 +1,44 @@
+@use '../../styles' as *;
+
+:host {
+  display: inline-flex;
+}
+
+.group {
+  display: inline-flex;
+  padding: ru(0.5);
+  gap: ru(0.5);
+  border: var(--shy-border-width) solid var(--shy-color-border-strong);
+  border-radius: var(--shy-radius-full);
+  background: var(--shy-color-surface-sunken);
+}
+
+.option {
+  min-block-size: var(--shy-size-control-sm);
+  padding-inline: var(--shy-space-4);
+  border: 0;
+  border-radius: var(--shy-radius-full);
+  background: transparent;
+  color: var(--shy-color-text-muted);
+  font-size: var(--shy-text-sm);
+  font-weight: var(--shy-weight-medium);
+  cursor: pointer;
+  @include state-layer;
+  @include transition;
+
+  &[aria-checked='true'] {
+    background: var(--shy-color-primary);
+    color: var(--shy-color-on-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+@media (forced-colors: active) {
+  .option[aria-checked='true'] {
+    background: Highlight;
+    color: HighlightText;
+  }
+}

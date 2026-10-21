@@ -1,0 +1,42 @@
+<div class="page">
+  <h1 class="page-title">Tabs</h1>
+  <p class="page-lead"><code>&lt;shy-tabs&gt;</code> follows the APG Tabs pattern: <code>tablist</code> with roving tabindex; arrows (mirrored in RTL), <code>Home</code> and <code>End</code> move, disabled tabs are skipped. Each <code>&lt;shy-tab&gt;</code> is a <code>tabpanel</code> and its <code>label</code> becomes the tab button.</p>
+
+  <section class="section">
+    <h2>Automatic activation (default)</h2>
+    <div class="card">
+      <shy-tabs label="Account" [(value)]="tab">
+        <shy-tab value="profile" label="Profile">Profile settings.</shy-tab>
+        <shy-tab value="password" label="Password" disabled>Never shown (disabled).</shy-tab>
+        <shy-tab value="plan" label="Plan">Plan and billing.</shy-tab>
+        <shy-tab value="invoices" label="Invoices">Invoice history.</shy-tab>
+      </shy-tabs>
+      <p>
+        Selected: <code>{{ tab() }}</code>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Manual activation</h2>
+    <p>Arrows only move focus; <code>Enter</code> or <code>Space</code> selects.</p>
+    <div class="card">
+      <shy-tabs label="Manual example" activation="manual">
+        <shy-tab value="a" label="First">First panel.</shy-tab>
+        <shy-tab value="b" label="Second">Second panel.</shy-tab>
+        <shy-tab value="c" label="Third">Third panel.</shy-tab>
+      </shy-tabs>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Vertical</h2>
+    <div class="card">
+      <shy-tabs label="Vertical example" orientation="vertical">
+        <shy-tab value="a" label="General">General panel.</shy-tab>
+        <shy-tab value="b" label="Security">Security panel.</shy-tab>
+        <shy-tab value="c" label="Notifications">Notifications panel.</shy-tab>
+      </shy-tabs>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,87 @@
+@use '../../styles' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  inline-size: min(var(--shy-dialog-width, #{ru(180)}), calc(var(--shy-dynamic-width) - var(--shy-space-8)));
+  max-block-size: calc(var(--shy-dynamic-height) - var(--shy-space-8));
+  border: var(--shy-border-width) solid var(--shy-dialog-border-color, var(--shy-color-border-strong));
+  border-radius: var(--shy-dialog-radius, var(--shy-radius-xl));
+  background: var(--shy-dialog-bg, var(--shy-color-surface-raised));
+  box-shadow: var(--shy-dialog-shadow, var(--shy-shadow-4));
+  color: var(--shy-dialog-fg, var(--shy-color-text));
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+}
+
+:host([data-size='sm']) {
+  inline-size: min(var(--shy-dialog-width, #{ru(120)}), calc(var(--shy-dynamic-width) - var(--shy-space-8)));
+}
+
+:host([data-size='lg']) {
+  inline-size: min(var(--shy-dialog-width, #{ru(260)}), calc(var(--shy-dynamic-width) - var(--shy-space-8)));
+}
+
+:host([data-size='full']) {
+  inline-size: var(--shy-dynamic-width);
+  block-size: var(--shy-dynamic-height);
+  max-block-size: none;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--shy-space-4);
+  padding: var(--shy-dialog-padding, var(--shy-space-8)) var(--shy-dialog-padding, var(--shy-space-8)) 0;
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--shy-text-xl);
+  font-weight: var(--shy-weight-semibold);
+  line-height: var(--shy-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+// Sem título, o botão de fechar fica no fim da linha.
+.close {
+  margin-inline-start: auto;
+  margin-block: calc(var(--shy-space-2) * -1);
+  margin-inline-end: calc(var(--shy-space-3) * -1);
+  flex: none;
+}
+
+.body {
+  flex: 1;
+  min-block-size: 0;
+  padding: var(--shy-space-6) var(--shy-dialog-padding, var(--shy-space-8));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--shy-space-4);
+  padding: 0 var(--shy-dialog-padding, var(--shy-space-8)) var(--shy-dialog-padding, var(--shy-space-8));
+}
+
+.header:not(:has(*)),
+.footer:empty {
+  display: none;
+}
+
+.header:not(:has(*)) + .body {
+  padding-block-start: var(--shy-dialog-padding, var(--shy-space-8));
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+}

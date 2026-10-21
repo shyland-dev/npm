@@ -1,0 +1,64 @@
+@use 'styles' as *;
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--shy-space-8);
+  align-items: flex-end;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--shy-space-2);
+}
+
+.danger {
+  color: var(--shy-color-danger-text);
+}
+
+.search {
+  inline-size: 100%;
+  max-inline-size: ru(160);
+  min-block-size: var(--shy-size-control-md);
+  padding-inline: var(--shy-space-4);
+  border: var(--shy-border-width) solid var(--shy-color-border-strong);
+  border-radius: var(--shy-radius-md);
+  background: var(--shy-color-surface-sunken);
+  color: var(--shy-color-text);
+  font: inherit;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+.grid-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(ru(50), 1fr));
+  gap: var(--shy-space-3);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--shy-space-2);
+  padding: var(--shy-space-4) var(--shy-space-2);
+  border: var(--shy-border-width) solid var(--shy-color-border);
+  border-radius: var(--shy-radius-md);
+  background: var(--shy-color-surface);
+  color: var(--shy-color-text);
+  cursor: pointer;
+  @include state-layer;
+  @include transition;
+
+  shy-icon {
+    --shy-icon-size: var(--shy-size-icon-lg);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}

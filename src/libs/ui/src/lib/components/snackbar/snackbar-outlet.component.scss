@@ -1,0 +1,148 @@
+@use '../../styles' as *;
+
+// Tokens (em :root ou num ancestral do <body>: o contêiner mora no overlay, fora do elemento que chamou show()):
+//   --shy-snackbar-bg, -fg, -border, -width, -radius, -offset, -gap, -font-family, -font-size, -icon-size
+:host {
+  display: block;
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  pointer-events: none;
+  font-family: var(--shy-snackbar-font-family, var(--shy-font-family-base));
+  font-size: var(--shy-snackbar-font-size, var(--shy-text-md));
+  line-height: var(--shy-leading-normal);
+}
+
+.region {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  flex-direction: column;
+  padding-inline: var(--shy-space-4);
+
+  &[data-position='top'] {
+    inset-block-start: var(--shy-snackbar-offset, #{ru(15)});
+  }
+
+  &[data-position='bottom'] {
+    inset-block-end: var(--shy-snackbar-offset, #{ru(15)});
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+@each $intent in (info, success, warning, danger) {
+  .toast[data-intent='#{$intent}'] {
+    --_bg: var(--shy-color-#{$intent}-soft);
+    --_fg: var(--shy-color-on-#{$intent}-soft);
+    --_border: var(--shy-color-#{$intent}-text);
+    --_icon: var(--shy-color-#{$intent}-text);
+  }
+}
+
+.toast {
+  --_bg: var(--shy-color-surface-raised);
+  --_fg: var(--shy-color-text);
+  --_border: var(--shy-color-border-strong);
+  --_icon: currentColor;
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--shy-space-4);
+  margin-block-start: var(--shy-snackbar-gap, var(--shy-space-3));
+  min-inline-size: min(var(--shy-snackbar-width, #{ru(110)}), 100%);
+  max-inline-size: 100%;
+  padding: var(--shy-space-4) var(--shy-space-5);
+  border: var(--shy-border-width) solid var(--shy-snackbar-border, var(--_border));
+  border-radius: var(--shy-snackbar-radius, var(--shy-radius-md));
+  background: var(--shy-snackbar-bg, var(--_bg));
+  color: var(--shy-snackbar-fg, var(--_fg));
+  box-shadow: var(--shy-shadow-4);
+  pointer-events: auto;
+  @include transition(opacity transform, base, enter);
+
+  &[data-align='start'] {
+    align-self: flex-start;
+  }
+
+  &[data-align='center'] {
+    align-self: center;
+  }
+
+  &[data-align='end'] {
+    align-self: flex-end;
+  }
+
+  &[data-state='closing'] {
+    opacity: 0;
+    transform: translateY(var(--shy-motion-distance));
+    pointer-events: none;
+  }
+
+  &[data-position='top'][data-state='closing'] {
+    transform: translateY(calc(var(--shy-motion-distance) * -1));
+  }
+
+  &__icon {
+    --shy-icon-size: var(--shy-snackbar-icon-size, var(--shy-size-icon-md));
+    flex-shrink: 0;
+    color: var(--_icon);
+  }
+
+  &__text {
+    flex: 1;
+    overflow-wrap: anywhere;
+  }
+
+  &__action,
+  &__dismiss {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-block-size: var(--shy-size-control-sm);
+    min-inline-size: var(--shy-size-control-sm);
+    border: 0;
+    border-radius: var(--shy-radius-sm);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    @include state-layer;
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__action {
+    padding-inline: var(--shy-space-3);
+    font-weight: var(--shy-weight-semibold);
+    text-decoration: underline;
+  }
+
+  &__dismiss shy-icon {
+    --shy-icon-size: var(--shy-snackbar-icon-size, var(--shy-size-icon-md));
+  }
+}
+
+@starting-style {
+  .toast {
+    opacity: 0;
+    transform: translateY(var(--shy-motion-distance));
+  }
+}
+
+@media (forced-colors: active) {
+  .toast {
+    border-color: CanvasText;
+  }
+
+  .toast__icon {
+    color: CanvasText;
+  }
+}

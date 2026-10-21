@@ -1,2 +1,5 @@
 export * from './select/select.interface';
 export * from './snackbar/snackbar.interface';
+export * from './overlay/overlay.interface';
+export * from './dialog/dialog.interface';
+export * from './file-dropzone/file-dropzone.interface';

@@ -1,0 +1,36 @@
+@use '../../styles' as *;
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  color: var(--shy-breadcrumb-fg, var(--shy-color-text-muted));
+
+  // O texto alternativo vazio (depois da barra) tira o separador dos leitores de tela.
+  &:not(:first-child)::before {
+    content: var(--shy-breadcrumb-separator, '/') / '';
+    padding-inline: var(--shy-breadcrumb-gap, var(--shy-space-3));
+    color: var(--shy-color-text-subtle);
+  }
+}
+
+:host([data-current]) {
+  color: var(--shy-breadcrumb-fg-current, var(--shy-color-text));
+  font-weight: var(--shy-weight-medium);
+}
+
+:host ::ng-deep a {
+  border-radius: var(--shy-radius-sm);
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: var(--shy-space-1);
+  @include transition(color);
+
+  @include shy-state(hover) {
+    color: var(--shy-color-text);
+    text-decoration: underline;
+  }
+
+  @include shy-state(focus) {
+    @include focus-ring;
+  }
+}

@@ -1,0 +1,50 @@
+@use '../../styles' as *;
+@use '../toggle/toggle-theme' as toggle;
+
+@include toggle.base(radio);
+
+.mark {
+  inline-size: var(--shy-radio-size, var(--shy-size-icon-md));
+  block-size: var(--shy-radio-size, var(--shy-size-icon-md));
+  border-radius: 50%;
+}
+
+.dot {
+  inline-size: 50%;
+  block-size: 50%;
+  border-radius: 50%;
+  background: currentColor;
+  scale: 0;
+  transition: scale var(--shy-duration-fast) var(--shy-ease-standard);
+}
+
+// Borda em primary-text: no tema escuro o fundo primary tem 2,6:1 sobre bg, e o contorno marcado precisa de 3:1 (WCAG 1.4.11).
+:host([data-checked]) .mark {
+  border-color: var(--shy-radio-checked-border, var(--shy-color-primary-text));
+  background: var(--shy-radio-checked-bg, var(--shy-color-primary));
+}
+
+:host([data-checked]) .dot {
+  scale: 1;
+}
+
+:host([data-checked][data-invalid]) .mark {
+  border-color: var(--shy-color-danger-text);
+}
+
+@media (forced-colors: active) {
+  :host([data-checked]) .mark {
+    border-color: ButtonText;
+    background: Canvas;
+  }
+
+  // Sem isso o forced-colors troca o fundo do ponto por Canvas e o radio marcado some.
+  .dot {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  :host([data-disabled]) .dot {
+    background: GrayText;
+  }
+}

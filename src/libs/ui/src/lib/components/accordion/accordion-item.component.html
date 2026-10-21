@@ -1,0 +1,11 @@
+<div class="heading" role="heading" [attr.aria-level]="level()">
+  <button type="button" class="trigger" [id]="triggerId" [disabled]="disabled()" [attr.aria-expanded]="open()" [attr.aria-controls]="panelId" (click)="toggle()">
+    <span class="label">{{ label() }}</span>
+    <shy-icon class="chevron">chevron-down</shy-icon>
+  </button>
+</div>
+<div class="panel" role="region" [id]="panelId" [attr.aria-labelledby]="triggerId" [attr.inert]="open() ? null : ''">
+  <div class="panel-clip">
+    <div class="content"><ng-content /></div>
+  </div>
+</div>

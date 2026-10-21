@@ -1,0 +1,73 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  color: var(--shy-color-text);
+}
+
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--shy-pagination-gap, var(--shy-space-2));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item,
+.gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-inline-size: var(--shy-pagination-size, var(--shy-size-control-md));
+  min-block-size: var(--shy-pagination-size, var(--shy-size-control-md));
+}
+
+.item {
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--shy-space-3);
+  border: var(--shy-border-width) solid transparent;
+  border-radius: var(--shy-pagination-radius, var(--shy-radius-md));
+  background: transparent;
+  color: var(--shy-pagination-fg, var(--shy-color-text));
+  font: inherit;
+  font-size: var(--shy-text-sm);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  @include state-layer;
+
+  @include shy-state(focus) {
+    @include focus-ring;
+  }
+
+  @include disabled-state;
+
+  &[aria-current='page'] {
+    background: var(--shy-pagination-bg-current, var(--shy-color-primary));
+    color: var(--shy-pagination-fg-current, var(--shy-color-on-primary));
+    font-weight: var(--shy-weight-semibold);
+  }
+}
+
+.gap {
+  color: var(--shy-color-text-muted);
+  user-select: none;
+}
+
+// Setas espelhadas em RTL.
+.arrow:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+@media (forced-colors: active) {
+  .item[aria-current='page'] {
+    border-color: Highlight;
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+}

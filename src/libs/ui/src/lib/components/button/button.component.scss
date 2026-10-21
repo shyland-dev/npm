@@ -1,0 +1,118 @@
+@use '../../styles' as *;
+@use 'button-theme' as theme;
+
+@include theme.intents;
+@include theme.variants;
+@include theme.control(button);
+
+:host {
+  --_height: var(--shy-size-control-md);
+  --_pad-x: var(--shy-space-7);
+  --_font-size: var(--shy-text-md);
+  --_icon: var(--shy-size-icon-md);
+
+  gap: var(--shy-button-gap, var(--shy-space-2));
+  min-block-size: var(--shy-button-height, var(--_height));
+  padding-block: 0;
+  padding-inline: var(--shy-button-pad-x, var(--_pad-x));
+  font-size: var(--shy-button-font-size, var(--_font-size));
+}
+
+// Respiro lateral mínimo de --shy-space-6 em todos os tamanhos (lição da revisão visual, plano 11.3).
+:host([data-size='sm']) {
+  --_height: var(--shy-size-control-sm);
+  --_pad-x: var(--shy-space-6);
+  --_font-size: var(--shy-text-sm);
+  --_icon: var(--shy-size-icon-sm);
+}
+
+:host([data-size='lg']) {
+  --_height: var(--shy-size-control-lg);
+  --_pad-x: var(--shy-space-8);
+  --_font-size: var(--shy-text-lg);
+  --_icon: var(--shy-size-icon-lg);
+}
+
+:host([data-block]) {
+  display: flex;
+  inline-size: 100%;
+}
+
+:host([data-variant='link']) {
+  min-block-size: 0;
+  padding-inline: 0;
+  border-width: 0;
+  border-radius: var(--shy-radius-sm);
+  text-decoration: underline;
+  text-underline-offset: var(--shy-space-1);
+  text-decoration-thickness: var(--shy-border-width);
+
+  &::after {
+    display: none;
+  }
+}
+
+@media (hover: hover) {
+  :host([data-variant='link']:hover:not(:disabled, [aria-disabled='true'])),
+  :host([data-variant='link'][data-shy-state='hover']) {
+    text-decoration-thickness: var(--shy-border-width-strong);
+  }
+}
+
+// Ícone/spinner das pontas: some quando vazio (sem gap sobrando).
+.start,
+.end {
+  display: inline-grid;
+  place-items: center;
+
+  &:empty {
+    display: none;
+  }
+
+  // ::ng-deep alcança o ícone projetado (escopo continua no :host); sem isso ele cai numa segunda linha do grid.
+  > ::ng-deep * {
+    grid-area: 1 / 1;
+  }
+}
+
+// Texto e loadingText empilhados: a largura é a do maior, então trocar um pelo outro não mexe no layout.
+.label {
+  display: inline-grid;
+  justify-items: center;
+
+  > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.is-hidden {
+  visibility: hidden;
+}
+
+// replace: conteúdo transparente (continua no layout e no nome acessível), spinner centralizado por cima.
+:host([data-loading='replace']) {
+  .start,
+  .label,
+  .end {
+    opacity: 0;
+  }
+}
+
+// Spinner do tamanho do ícone do botão.
+.spinner {
+  --shy-spinner-size: var(--_icon);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// O spinner ocupa o lugar do ícone projetado na mesma ponta (o ícone fica invisível, sem sair do layout).
+:host([data-loading='start']) .start > ::ng-deep :not(.spinner),
+:host([data-loading='end']) .end > ::ng-deep :not(.spinner) {
+  visibility: hidden;
+}

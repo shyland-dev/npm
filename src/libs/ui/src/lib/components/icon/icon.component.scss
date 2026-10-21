@@ -1,8 +1,10 @@
+@use '../../styles' as *;
+
 :host {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--shyIconSize, 1em);
+  flex-shrink: 0;
   color: inherit;
 }
 
@@ -13,19 +15,19 @@
 .icon-wrapper {
   position: relative;
   display: inline-flex;
-  width: 1em;
-  height: 1em;
+  inline-size: var(--shy-icon-size, var(--shy-size-icon-md));
+  block-size: var(--shy-icon-size, var(--shy-size-icon-md));
 }
 
 .icon-layer {
   position: absolute;
   inset: 0;
   display: flex;
-  transition: opacity var(--hover-delay, 0ms) ease-in-out;
+  transition: opacity var(--shy-icon-hover-delay, var(--shy-duration-instant)) var(--shy-ease-standard);
 
   ::ng-deep svg {
-    width: 1em;
-    height: 1em;
+    inline-size: 100%;
+    block-size: 100%;
     display: block;
     color: inherit;
   }

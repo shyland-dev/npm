@@ -1,0 +1,32 @@
+<div class="page">
+  <h1 class="page-title">Avatar</h1>
+  <p class="page-lead"><code>&lt;shy-avatar&gt;</code> shows <code>src</code>; if it is missing or fails to load, it falls back to the initials of <code>name</code> and then to an icon. <code>label</code> (default: <code>name</code>) is the accessible name; without both the avatar is decorative (<code>aria-hidden</code>).</p>
+
+  <section class="section">
+    <h2>Sizes</h2>
+    <div class="card row">
+      @for (size of sizes; track size) {
+        <shy-avatar name="Ana Souza" [size]="size" />
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Fallbacks</h2>
+    <p>Broken image (initials), name only, single word, and nothing (icon, decorative).</p>
+    <div class="card row">
+      <shy-avatar src="/does-not-exist.png" name="Bruno Lima" />
+      <shy-avatar name="Carla Dias Matos" />
+      <shy-avatar name="dudushy" />
+      <shy-avatar />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Shape</h2>
+    <div class="card row">
+      <shy-avatar name="Ana Souza" shape="rounded" size="lg" />
+      <shy-avatar name="Ana Souza" label="Ana Souza, administrator" size="lg" />
+    </div>
+  </section>
+</div>

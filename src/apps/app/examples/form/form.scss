@@ -1,0 +1,25 @@
+.form-card {
+  max-inline-size: calc(var(--shy-responsive-unit) * 320);
+}
+
+.form-header {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--shy-space-3);
+}
+
+.progress-row {
+  display: grid;
+  gap: var(--shy-space-2);
+}
+
+.group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.group legend {
+  padding: 0;
+  margin-block-end: var(--shy-space-2);
+}

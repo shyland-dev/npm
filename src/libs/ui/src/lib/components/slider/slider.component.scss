@@ -1,0 +1,160 @@
+@use '../../styles' as *;
+
+// Tokens do componente (sobrescreva no elemento: shy-slider { --shy-slider-fill: ... }):
+//   --shy-slider-width, -track-height, -track-bg, -fill, -thumb-size, -thumb-bg, -thumb-border, -radius, -gap, -value-fg, -value-width
+:host {
+  --_track: var(--shy-slider-track-height, #{ru(2)});
+  --_thumb: var(--shy-slider-thumb-size, #{ru(7)});
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--shy-slider-gap, var(--shy-space-4));
+  inline-size: var(--shy-slider-width, #{ru(100)});
+  max-inline-size: 100%;
+  min-block-size: var(--shy-size-control-md);
+}
+
+.slider {
+  &__input {
+    flex: 1;
+    min-inline-size: 0;
+    block-size: var(--_thumb);
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+    // O trilho preenchido usa a porcentagem calculada no host; em RTL o gradiente inverte.
+    --_fill: linear-gradient(to right, var(--shy-slider-fill, var(--shy-color-primary-text)) calc(var(--_pct) * 1%), var(--shy-slider-track-bg, var(--shy-color-track)) calc(var(--_pct) * 1%));
+
+    &:dir(rtl) {
+      --_fill: linear-gradient(to left, var(--shy-slider-fill, var(--shy-color-primary-text)) calc(var(--_pct) * 1%), var(--shy-slider-track-bg, var(--shy-color-track)) calc(var(--_pct) * 1%));
+    }
+
+    &::-webkit-slider-runnable-track {
+      block-size: var(--_track);
+      border-radius: var(--shy-slider-radius, var(--shy-radius-full));
+      background: var(--_fill);
+    }
+
+    &::-moz-range-track {
+      block-size: var(--_track);
+      border-radius: var(--shy-slider-radius, var(--shy-radius-full));
+      background: var(--_fill);
+    }
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      inline-size: var(--_thumb);
+      block-size: var(--_thumb);
+      margin-block-start: calc((var(--_track) - var(--_thumb)) / 2);
+      border: var(--shy-border-width-strong) solid var(--shy-slider-thumb-border, var(--shy-color-surface));
+      border-radius: 50%;
+      background: var(--shy-slider-thumb-bg, var(--shy-color-primary-text));
+      box-sizing: border-box;
+      @include transition(box-shadow transform);
+    }
+
+    &::-moz-range-thumb {
+      inline-size: var(--_thumb);
+      block-size: var(--_thumb);
+      border: var(--shy-border-width-strong) solid var(--shy-slider-thumb-border, var(--shy-color-surface));
+      border-radius: 50%;
+      background: var(--shy-slider-thumb-bg, var(--shy-color-primary-text));
+      box-sizing: border-box;
+      @include transition(box-shadow transform);
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    &:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 var(--shy-focus-ring-width) var(--shy-color-focus);
+    }
+
+    &:focus-visible::-moz-range-thumb {
+      box-shadow: 0 0 0 var(--shy-focus-ring-width) var(--shy-color-focus);
+    }
+
+    @media (hover: hover) {
+      &:hover:not(:disabled)::-webkit-slider-thumb {
+        transform: scale(1.1);
+      }
+
+      &:hover:not(:disabled)::-moz-range-thumb {
+        transform: scale(1.1);
+      }
+    }
+
+    @include reduced-motion {
+      &::-webkit-slider-thumb,
+      &::-moz-range-thumb {
+        transition: none;
+        transform: none;
+      }
+    }
+  }
+
+  &__value {
+    flex-shrink: 0;
+    min-inline-size: var(--shy-slider-value-width, #{ru(10)});
+    color: var(--shy-slider-value-fg, var(--shy-color-text-muted));
+    font-family: var(--shy-font-family-base);
+    font-size: var(--shy-text-md);
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+:host([data-disabled]) {
+  opacity: var(--shy-opacity-disabled);
+
+  .slider__input {
+    cursor: not-allowed;
+  }
+}
+
+:host([data-invalid]) .slider__input {
+  &::-webkit-slider-thumb {
+    background: var(--shy-color-danger-text);
+  }
+
+  &::-moz-range-thumb {
+    background: var(--shy-color-danger-text);
+  }
+}
+
+@media (forced-colors: active) {
+  .slider__input {
+    &::-webkit-slider-runnable-track {
+      forced-color-adjust: none;
+      background: linear-gradient(to right, Highlight calc(var(--_pct) * 1%), GrayText calc(var(--_pct) * 1%));
+    }
+
+    &::-moz-range-track {
+      forced-color-adjust: none;
+      background: linear-gradient(to right, Highlight calc(var(--_pct) * 1%), GrayText calc(var(--_pct) * 1%));
+    }
+
+    &::-webkit-slider-thumb {
+      forced-color-adjust: none;
+      background: ButtonText;
+    }
+
+    &::-moz-range-thumb {
+      forced-color-adjust: none;
+      background: ButtonText;
+    }
+  }
+
+  :host([data-disabled]) .slider__input {
+    &::-webkit-slider-thumb {
+      background: GrayText;
+    }
+
+    &::-moz-range-thumb {
+      background: GrayText;
+    }
+  }
+}

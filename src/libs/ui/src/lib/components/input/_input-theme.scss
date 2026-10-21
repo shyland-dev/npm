@@ -1,0 +1,14 @@
+@use 'sass:map';
+
+// Tamanhos compartilhados por Input e FormField (a caixa do campo e os slots de prefixo/sufixo seguem a mesma altura).
+@mixin size-vars($size) {
+  $pads: (
+    sm: 6,
+    md: 7,
+    lg: 8,
+  );
+  --_height: var(--shy-size-control-#{$size});
+  --_pad-x: var(--shy-space-#{map.get($pads, $size)});
+  --_font-size: var(--shy-text-#{$size});
+  --_icon: var(--shy-size-icon-#{$size});
+}

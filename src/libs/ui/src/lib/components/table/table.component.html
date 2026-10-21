@@ -1,0 +1,62 @@
+<ng-template #cell let-row let-column="column" let-index="index">
+  @if (column.cell(); as custom) {
+    <ng-container [ngTemplateOutlet]="custom.template" [ngTemplateOutletContext]="{ $implicit: row, value: cellValue(row, column.key()), index }" />
+  } @else {
+    {{ cellValue(row, column.key()) }}
+  }
+</ng-template>
+
+<div class="scroll" tabindex="0" [attr.role]="label() ? 'region' : null" [attr.aria-label]="label() || null">
+  @if (declarative()) {
+    <table>
+      @if (caption()) {
+        <caption>
+          {{
+            caption()
+          }}
+        </caption>
+      }
+      <thead>
+        <tr>
+          @if (selectable()) {
+            <th scope="col" data-narrow><shy-checkbox [label]="selectAllLabel()" [checked]="allSelected()" [indeterminate]="someSelected()" (checkedChange)="toggleAll($event)" /></th>
+          }
+          @for (column of columns(); track column) {
+            @if (column.sortable()) {
+              <th scope="col" shySort [attr.data-numeric]="column.numeric() ? '' : null" [direction]="directionOf(column.key())" (directionChange)="setSort(column.key(), $event)">{{ column.header() ?? column.key() }}</th>
+            } @else {
+              <th scope="col" [attr.data-numeric]="column.numeric() ? '' : null">{{ column.header() ?? column.key() }}</th>
+            }
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of visibleRows(); track keyOf(row); let index = $index) {
+          <tr [attr.data-selected]="isSelected(row) ? '' : null">
+            @if (selectable()) {
+              <td data-narrow><shy-checkbox [label]="selectRowLabel()" [checked]="isSelected(row)" (checkedChange)="toggleRow(row, $event)" /></td>
+            }
+            @for (column of columns(); track column) {
+              @if (column.rowHeader()) {
+                <th scope="row" [attr.data-numeric]="column.numeric() ? '' : null"><ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: row, column, index }" /></th>
+              } @else {
+                <td [attr.data-numeric]="column.numeric() ? '' : null"><ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: row, column, index }" /></td>
+              }
+            }
+          </tr>
+        } @empty {
+          <tr>
+            <td [attr.colspan]="colspan()">
+              <shy-empty-state [heading]="emptyHeading()" [icon]="emptyIcon()">{{ emptyDescription() }}</shy-empty-state>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <ng-content />
+  }
+</div>
+@if (declarative() && pageSize() > 0 && pageCount() > 1) {
+  <div class="footer"><shy-pagination [label]="paginationLabel()" [pageCount]="pageCount()" [page]="currentPage()" (pageChange)="page.set($event)" /></div>
+}
