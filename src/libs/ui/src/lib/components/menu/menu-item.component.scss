@@ -1,0 +1,61 @@
+@use '../../styles' as *;
+
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--shy-space-4);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-block-size: var(--shy-menu-item-height, var(--shy-size-control-md));
+  padding: var(--shy-space-2) var(--shy-menu-item-pad-x, var(--shy-space-5));
+  border: 0;
+  border-radius: var(--shy-menu-item-radius, var(--shy-radius-sm));
+  background: transparent;
+  color: var(--shy-menu-item-fg, var(--shy-color-text));
+  font: inherit;
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--shy-transition-colors);
+}
+
+.label {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+@media (hover: hover) {
+  :host(:hover:not([aria-disabled='true'])) {
+    background: var(--shy-menu-item-hover-bg, var(--shy-color-primary-soft));
+    color: var(--shy-menu-item-hover-fg, var(--shy-color-on-primary-soft));
+  }
+}
+
+// Foco por setas: o mesmo destaque do hover, mais o anel (nunca só a cor).
+:host(:focus-visible),
+:host(:focus) {
+  outline: var(--shy-focus-ring-width) solid var(--shy-color-focus);
+  outline-offset: calc(var(--shy-focus-ring-width) * -1);
+  background: var(--shy-menu-item-hover-bg, var(--shy-color-primary-soft));
+  color: var(--shy-menu-item-hover-fg, var(--shy-color-on-primary-soft));
+}
+
+:host(:active:not([aria-disabled='true'])) {
+  background: var(--shy-menu-item-active-bg, var(--shy-color-primary-soft));
+}
+
+:host([aria-disabled='true']) {
+  opacity: var(--shy-opacity-disabled);
+  cursor: not-allowed;
+}
+
+@media (forced-colors: active) {
+  :host(:focus-visible),
+  :host(:focus) {
+    outline-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
+  }
+}

@@ -1,0 +1,21 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-inline-size: min(var(--shy-tooltip-max-width, #{ru(90)}), calc(var(--shy-dynamic-width) - var(--shy-space-8)));
+  padding: var(--shy-tooltip-padding, var(--shy-space-2) var(--shy-space-3));
+  border: var(--shy-border-width) solid var(--shy-tooltip-border-color, var(--shy-color-scrim-panel-border));
+  border-radius: var(--shy-tooltip-radius, var(--shy-radius-md));
+  background: var(--shy-tooltip-bg, var(--shy-color-scrim-panel));
+  color: var(--shy-tooltip-fg, var(--shy-color-on-scrim));
+  font-size: var(--shy-text-sm);
+  line-height: var(--shy-leading-normal);
+  overflow-wrap: anywhere;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+}

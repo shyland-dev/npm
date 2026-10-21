@@ -10,6 +10,10 @@
   --shy-duration-loop-slow: 1600ms;
   --shy-duration-breathe: 2000ms;
 
+  /* Atrasos de intenção (não são movimento: reduced motion não os zera). */
+  --shy-delay-tooltip: 500ms;
+  --shy-delay-tooltip-hide: 100ms;
+
   --shy-ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --shy-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
   --shy-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);

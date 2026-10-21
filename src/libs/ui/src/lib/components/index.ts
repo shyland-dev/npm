@@ -22,6 +22,13 @@ export * from './icon/icons';
 
 export * from './icon-button/icon-button.component';
 
+export * from './menu/menu-item.component';
+export * from './menu/menu.component';
+export * from './menu/menu.directive';
+
+export * from './popover/popover.component';
+export * from './popover/popover.directive';
+
 export * from './progress/progress.component';
 export * from './progress-circular/progress-circular.component';
 
@@ -38,3 +45,4 @@ export * from './snackbar/snackbar.component';
 export * from './spinner/spinner.component';
 export * from './switch/switch.component';
 export * from './theme-toggle/theme-toggle.component';
+export * from './tooltip/tooltip.directive';

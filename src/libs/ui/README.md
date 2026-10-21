@@ -457,6 +457,46 @@ inject(DrawerService).open(FiltersPanel, { side: 'start' });
 - A popover or select panel opened with an `anchor` inside the dialog becomes a child of the `<dialog>` (stays clickable) and closes with it. Overlays opened before the dialog stay visible above it but inert until it closes.
 - The Drawer panel (position, size, surface, entry from its side) is styled by `.shy-drawer-pane` + `--start|--end|--top|--bottom` (added by `DrawerService`); `<shy-drawer>` only lays out title, body and footer.
 
+### `shyPopover`, `shyMenu`, `shyTooltip`
+
+Anchored overlays on the `OverlayService` (they flip and shift to stay in the viewport; inside a modal they stay clickable, see the Dialog notes).
+
+```html
+<!-- Popover: non-modal panel, aria-haspopup="dialog" -->
+<button shyButton [shyPopover]="info" shyPopoverPlacement="bottom-start" #pop="shyPopover">Rename</button>
+<ng-template #info
+    ><shy-popover><input shyInput /><button shyButton (click)="pop.close()">Save</button></shy-popover></ng-template
+>
+
+<!-- Menu button (APG): aria-haspopup="menu", named by the button -->
+<button shyButton [shyMenu]="actions">Actions</button>
+<ng-template #actions>
+    <shy-menu>
+        <button shyMenuItem (click)="edit()"><shy-icon slot="start">pencil</shy-icon>Edit</button>
+        <shy-divider />
+        <button shyMenuItem disabled>Archive</button>
+    </shy-menu>
+</ng-template>
+
+<!-- Tooltip: complements the name, never replaces it -->
+<button shyIconButton label="Delete" shyTooltip="Delete the selected item"><shy-icon>trash</shy-icon></button>
+```
+
+| Directive / component | Inputs and API                                                                                                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[shyPopover]`        | `shyPopover` (TemplateRef or component, required), `shyPopoverPlacement` (`bottom-start`), `shyPopoverData`; `exportAs: shyPopover` (`open()`, `close()`, `toggle()`, `expanded`) |
+| `[shyMenu]`           | `shyMenu` (TemplateRef or component, required), `shyMenuPlacement` (`bottom-start`), `shyMenuCloseOnSelect` (`true`); same `exportAs: shyMenu` API                                |
+| `shy-menu`            | `label` (accessible name when not labelled by the button). Arrows (wrap), Home/End, typeahead                                                                                     |
+| `[shyMenuItem]`       | On `button` or `a`; `disabled` keeps the item focusable (`aria-disabled`) and blocks click/Enter/Space; `slot="start"`/`"end"` for icons                                          |
+| `[shyTooltip]`        | `shyTooltip` (text; empty disables), `shyTooltipPlacement` (`top`); `exportAs: shyTooltip` (`hide()`)                                                                             |
+
+- Popover opens with focus on the first focusable. Esc, click outside or the trigger again close it and return focus to the trigger; Tab out of the first/last focusable closes it and continues from the trigger.
+- Menu: click, Enter, Space or ↓ open on the first item, ↑ on the last. Activating a non-disabled item closes the menu. Esc closes and returns focus; Tab closes and continues from the button. Submenus are not part of this version.
+- Tooltip opens after `--shy-delay-tooltip` (500 ms) on mouse hover and at once on `:focus-visible`; never on touch. The text is added to `aria-describedby` only while open. Esc dismisses without moving focus, the pointer can move onto the tip (`--shy-delay-tooltip-hide`, 100 ms), a click on the trigger closes it. Do not put essential information only in a tooltip.
+- Needs `styles/index.css` (z-layers `dropdown`, `popover`, `tooltip` come from the overlay core).
+
+---
+
 ---
 
 ## Styles
@@ -609,6 +649,17 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 | `--shy-drawer-bg`, `-fg`, `-border-color`, `-shadow`, `-radius` | `surface-raised`, `text`, `border-strong`, `shadow-5`, `radius-xl` | Drawer surface                           |
 | `--shy-drawer-padding`                                          | `--shy-space-8`                                                    | Padding of header, body and footer       |
 
+### Popover, Menu and Tooltip Tokens
+
+| Token                                                                           | Default                                                                                   | Description                                                      |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `--shy-popover-bg`, `-fg`, `-border-color`, `-shadow`, `-radius`                | `surface-raised`, `text`, `border-strong`, `shadow-3`, `radius-lg`                        | Popover surface                                                  |
+| `--shy-popover-padding`, `--shy-popover-max-width`                              | `--shy-space-6`, `ru(160)`                                                                | Padding and max width                                            |
+| `--shy-menu-*`                                                                  | surface tokens like the popover                                                           | Menu surface (`shy-menu`)                                        |
+| `--shy-menu-item-*`                                                             | see `menu-item.component.scss`                                                            | Item colors, padding, radius                                     |
+| `--shy-tooltip-bg`, `-fg`, `-border-color`, `-radius`, `-padding`, `-max-width` | `scrim-panel`, `on-scrim`, `scrim-panel-border`, `radius-md`, `space-2 space-3`, `ru(90)` | Tooltip surface                                                  |
+| `--shy-delay-tooltip`, `--shy-delay-tooltip-hide`                               | `500ms`, `100ms`                                                                          | Show/hide delays (intent, not motion: reduced motion keeps them) |
+
 ### Snackbar Tokens
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
@@ -662,6 +713,12 @@ export { CardComponent } from './lib/components/card/card.component';
 export { DialogComponent } from './lib/components/dialog/dialog.component';
 export { DividerComponent } from './lib/components/divider/divider.component';
 export { DrawerComponent } from './lib/components/drawer/drawer.component';
+export { MenuComponent } from './lib/components/menu/menu.component';
+export { MenuItemComponent } from './lib/components/menu/menu-item.component';
+export { MenuDirective } from './lib/components/menu/menu.directive';
+export { PopoverComponent } from './lib/components/popover/popover.component';
+export { PopoverDirective } from './lib/components/popover/popover.directive';
+export { TooltipDirective } from './lib/components/tooltip/tooltip.directive';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';

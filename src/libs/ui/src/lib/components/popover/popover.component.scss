@@ -1,0 +1,22 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  box-sizing: border-box;
+  max-inline-size: min(var(--shy-popover-max-width, #{ru(160)}), calc(var(--shy-dynamic-width) - var(--shy-space-8)));
+  padding: var(--shy-popover-padding, var(--shy-space-6));
+  border: var(--shy-border-width) solid var(--shy-popover-border-color, var(--shy-color-border-strong));
+  border-radius: var(--shy-popover-radius, var(--shy-radius-lg));
+  background: var(--shy-popover-bg, var(--shy-color-surface-raised));
+  box-shadow: var(--shy-popover-shadow, var(--shy-shadow-3));
+  color: var(--shy-popover-fg, var(--shy-color-text));
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+  overflow-wrap: anywhere;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+}
