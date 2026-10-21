@@ -7,7 +7,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - Fase: **F4 Onda 2**, sessão **F4-S4** (Select v2)
 - Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Plano em "F4-S4: plano da sessão" abaixo. **Decisão de alto impacto pendente (ADR-F4-2)**: o `/build` NÃO a aprova; só executa depois da resposta explícita do dono.
+- Plano em "F4-S4: plano da sessão" abaixo. Decisão ADR-F4-2 respondida pelo dono em 2026-10-21: **B (`@deprecated` com substituto)**. O próximo `/build` aprova o plano e executa a F4-S4.
 
 ## Fases
 
@@ -110,7 +110,7 @@ Reescrever o `shy-select` como listbox APG com `ControlValueAccessor` (`ngModel`
 5. Testes (CVA com `ngModel`, `formControl` e signals; teclado; ARIA; multiple), página do showcase refeita, README e ADR-F4-8.
 6. Gate: `check:ds`, testes, builds, auditoria Chromium (dark/light, 360/1366, RTL, dentro do Dialog).
 
-### Decisão pendente (ADR-F4-2): destino da API antiga
+### Decisão (ADR-F4-2, respondida em 2026-10-21: opção B)
 
 Consumidores usam `[selectOptions]`, `[selectedOption]` e `(onSelectionChange)`.
 
