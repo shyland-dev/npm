@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S1** (Núcleo de overlay)
-- Estado: `aguardando-plano` (ADR-F4-4 decidida pelo dono em 2026-10-21: opção **B**)
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Plano em "F4-S1: plano da sessão" abaixo. Não há decisão pendente: o próximo `/build` aprova o plano e executa a F4-S1 com a opção B.
+- Relatório em "F4-S1: relatório do gate" abaixo. Commit `3ac709b` (já criado; push junto deste registro). O próximo `/build` aprova o gate, faz push se faltar, marca a F4-S1 como concluída e avança para a F4-S2 (Dialog, Drawer) em `aguardando-plano`.
 
 ## Fases
 
@@ -30,7 +30,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
 | F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
-| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | plano     |         |
+| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | gate      | 3ac709b |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
 | F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
@@ -60,6 +60,48 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
 - 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
 - 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
+
+## F4-S1: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação                         | Resultado                                                                                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`                  | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                                                 |
+| `npm test`                          | 170 testes passando (56 novos: posição 13, foco 9, serviço 34)                                                                                           |
+| `npm run build`                     | ok (`ui` e `utils`); `overlay.css` sai em `dist/ui/styles`                                                                                               |
+| `npm run build:showcase`            | ok                                                                                                                                                       |
+| Chromium (Playwright, dark e light) | 3 ordens de abertura, Esc um por vez, Tab preso, backdrop, clique fora, container/scroll lock removidos, foco devolvido (detalhes em `accessibility.md`) |
+| Node                                | 22.22.0 neste ambiente (o projeto pede 24.14.1, `.nvmrc`); nada específico do Node 24 foi usado                                                          |
+
+Não rodado: leitor de tela, Safari/Firefox, RTL no navegador (só em teste de unidade), CSS Anchor Positioning (fora de escopo). O MDN está bloqueado na rede deste ambiente: o suporte foi confirmado em `web-features` 3.43.0 (ADR-F4-5), com a ressalva registrada lá.
+
+### Resumo (arquivos principais)
+
+- `lib/overlay/overlay.service.ts`: `OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef` (ADR-F4-4, opção B). Container sob demanda, `<dialog>` (modal/drawer) e `[popover="manual"]` (resto), promoção por ordem de abertura, Esc só no topo, clique fora, scroll lock, fallback sem top layer, `closeAll`.
+- `lib/overlay/overlay-ref.ts` (`ShyOverlayRef`, `SHY_OVERLAY_DATA`), `position.ts` (`computePosition`), `focus-scope.ts` (`FocusScopeDirective` + `focusInitial`, `trapTab`, `restoreFocus`), `layers.ts` (`shyLayer`, `layerRank`).
+- `styles/overlay.css` (container, painel, backdrop, `@starting-style`, saída por `data-state="closing"`, scroll lock), tipos e interfaces em `types/overlay` e `interfaces/overlay`.
+- Showcase `foundations/layers`: botões para abrir modal, popover e toast em 3 ordens, com a ordem de abertura ao vivo.
+- Docs: `src/libs/ui/README.md` e `README.md` (API e exports), ADR-F4-5, plano 7.5/11.2, `accessibility.md`.
+
+### Efeito prático
+
+O app (e os componentes da F4-S2 a S5) abre qualquer componente ou template em camada com uma chamada e recebe o resultado por `await ref.closed`. Toast e popover abertos antes de um modal continuam por cima dele; Esc fecha um por vez; foco e scroll são tratados pelo serviço.
+
+### Decisões e premissas (ADR-F4-5 em `decisions.md`)
+
+1. Painel ancorado dentro de um modal vira filho do `<dialog>` e fecha com ele. Motivo: `showModal()` deixa inerte tudo fora dele, inclusive popover do top layer (confirmado no Chromium). Sem isso, Select dentro de Dialog não recebe clique.
+2. **Limitação a decidir antes da F4-S5 (alto impacto, Snackbar):** toast/tooltip abertos antes de um modal ficam visíveis, mas inertes até ele fechar; um toast com ação sobre um modal não é clicável. Alternativas para o Snackbar v2: (a) ação só quando não há modal (recomendada: simples e previsível), (b) toast espera o modal fechar, (c) toast vira filho do dialog e some com ele. Entra na ADR-F4-3 na F4-S5; **não precisa de resposta agora**.
+3. `computePosition` em px, serviço converte de/para ru com sonda de `--shy-responsive-unit` (mantém a regra de unidades); `left`/`top` físicos porque vêm de `getBoundingClientRect`.
+4. Esc em fase de bolha (conteúdo pode consumir antes), `cancel` nativo sempre cancelado; clique fora só na camada do topo, âncora nunca conta como fora.
+5. Scroll lock via `data-shy-scroll-lock` (`overflow: hidden` + `scrollbar-gutter: stable`); em página sem barra de rolagem o `stable` reserva uma faixa em navegadores com barra clássica.
+6. Estilos de posição do painel com `:where()` (especificidade 0); o painel é transparente, e o visual (fundo, borda, foco, `forced-colors`) é do conteúdo.
+7. Sem dependência nova (nem dev). `happy-dom` já tinha `showModal`/`close`; os stubs de popover do `test-setup.ts` bastaram.
+8. README: atualizado (`README.md` e `src/libs/ui/README.md`). Sem bump de versão.
+
+### Mensagem de commit
+
+Já commitada (`3ac709b`): `feat(ui): núcleo de overlay (posicionamento, foco e camadas)`.
 
 ## F4-S1: plano da sessão (2026-10-21)
 
@@ -674,3 +716,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: `/build` aprovou o plano da F3-S1 e a executou (utilitários, `animateOut`, Button, IconButton, showcase, README). Gate em `aguardando-gate`; relatório na seção "F3-S1: relatório do gate".
 - 2026-10-20: dono liberou commit após os testes e o push; F3-S1 commitada (`39c815b`) e enviada para `feat/design-system`. F3-S2 em `aguardando-plano`.
 - 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou; verificações verdes; commit `53e2902` e push em `feat/design-system`. Estado `aguardando-gate`.
+- 2026-10-21: dono escolheu a opção B da ADR-F4-4; `/build` aprovou o plano da F4-S1 e a executou (overlay core, showcase, docs). Verificações verdes; commit `3ac709b`. Estado `aguardando-gate`.
