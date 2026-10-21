@@ -101,3 +101,10 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - **Teclado:** ↓/↑/Enter/Espaço abrem; ↓/↑/Home/End movem (pulando desabilitadas); Enter/Espaço escolhem; digitar salta para a opção; Esc fecha sem mover o foco; Tab fecha e segue.
 - **Formulários:** nome pelo `label` do `shy-form-field` (`for`/`id`) ou `label` (`aria-label`); `aria-describedby`, `aria-invalid`, `aria-errormessage`, `aria-required`. Inválido nunca só cor (`forced-colors`: borda tracejada).
 - **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`): foco permanece no botão, opção ativa, multiple, seleção dentro de um Dialog, sem erros de console. **Não verificado:** leitor de tela real (NVDA/VoiceOver), Safari/Firefox. Risco conhecido: `aria-activedescendant` apontando para um nó em outro contêiner do DOM (o painel) depende do leitor de tela; o padrão APG o usa, mas vale testar com leitor real.
+
+## Snackbar (F4-S5)
+
+- **Regiões vivas** fixas (existem antes do primeiro toast): `role="status"` (`aria-live="polite"`) e `role="alert"` (só `intent: 'danger'`). Cada toast tem ícone + texto (nunca só cor); alvos de ação e de fechar ≥ `control-sm`.
+- **WCAG 2.2.1 (tempo ajustável):** `duration` configurável (`0` = não fecha sozinho), padrão mais longo com ação, pausa com ponteiro/foco e aba oculta, botão de fechar. **2.4.11/2.1.1:** a ação e o X são botões focáveis; o contêiner não captura Esc.
+- **Com modal aberto** o toast fica `inert` (ADR-F4-5): a ação é ocultada (ADR-F4-3b) e o texto continua anunciado; o X não recebe clique até o modal fechar.
+- **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`): fila de 3, pausa em hover, `danger` na região `alert`, Esc fecha o Dialog por baixo, toast visível sobre o modal, sem erros de console. **Não verificado:** leitor de tela real (anúncio das regiões), Safari/Firefox, toque real.

@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S5** (Snackbar v2)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Plano em "F4-S5: plano da sessão" abaixo. Decisão **ADR-F4-3b respondida em 2026-10-21: A (ação só sem modal)**. **ADR-F4-3a respondida em 2026-10-21: B (`@deprecated` com substituto)**. Sem decisão pendente: o próximo `/build` aprova o plano e executa a F4-S5.
+- Relatório em "F4-S5: relatório do gate" abaixo. Sem decisão pendente (ADR-F4-3a e 3b respondidas). O próximo `/build` aprova o gate, marca a F4-S5 concluída e mostra o plano da F4-S6 (fechamento da Onda 2).
 
 ## Fases
 
@@ -34,7 +34,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
 | F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
-| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | plano     |         |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
 | F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
 | F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
 | F5-S2  | Lote 2                                                                             | pendente  |         |
@@ -90,6 +90,48 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S5: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                   |
+| `npm test`               | 227 testes passando (11 novos do `SnackbarService`: regiões vivas, intents, fila, pausa, ação, modal, Esc, config, legado) |
+| `npm run build`          | ok (`ui` e `utils`); `snackbar.css` sai em `dist/ui/styles`                                                                |
+| `npm run build:showcase` | ok                                                                                                                         |
+| Chromium (Playwright)    | dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`: fila, pausa, `alert`, toast sobre modal, Esc      |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                     |
+
+Não verificado: leitor de tela real (anúncio das regiões vivas), Safari/Firefox, toque real.
+
+### Resumo (arquivos principais)
+
+- `services/snackbar/snackbar.service.ts` (`show(message, options)` → `ShySnackbarRef`, fila, pausa, `dismissAll()`) e `snackbar.config.ts` (`provideShySnackbar`, `SHY_SNACKBAR_CONFIG`).
+- `components/snackbar/snackbar-outlet.component.*` (contêiner interno nas camadas `toast`: regiões `status`/`alert` por posição) e `styles/snackbar.css` (painel).
+- `overlay/overlay.service.ts`: opção `passive` (fora do Esc/clique fora) e signal `modalOpen`.
+- Tipos/interfaces novos (`ShySnackbarIntent|Align|CloseReason`, `ShySnackbarOptions|Config|Ref`); API antiga `@deprecated` (`<shy-snackbar>`, `show({ element })`, `SnackbarShowOptions`).
+- Showcase `components/snackbar` refeito (intents, posições, ação, fila, persistente, sobre modal, API antiga); página `icon` migrada para a API nova.
+- Docs: ADR-F4-9, ADR-F4-3, `accessibility.md`, `README.md` e `src/libs/ui/README.md` (com guia de migração).
+
+### Efeito prático
+
+`inject(SnackbarService).show('Salvo', { intent: 'success' })` em qualquer lugar, sem elemento no template. A API antiga continua funcionando, marcada `@deprecated`, até a 1.0.
+
+### Decisões e premissas (ADR-F4-3 e ADR-F4-9 em `decisions.md`)
+
+1. ADR-F4-3a (dono): opção B, API antiga `@deprecated`. ADR-F4-3b (dono): opção A, a ação some com modal aberto.
+2. Sem `<shy-snackbar-outlet>` público (divergência do plano): o contêiner abre sob demanda; só `provideShySnackbar(config)` é opcional.
+3. O contêiner é `passive` no overlay (senão bloquearia o Esc de um Dialog por baixo) e fica aberto, com regiões vivas fixas.
+4. Padrões 5000 ms (8000 com ação), 3 visíveis; tokens `--shy-snackbar-*` em `:root` (o contêiner mora no overlay).
+5. Sem dependência nova, sem par de contraste novo, sem bump de versão. README atualizado.
+
+### Mensagem de commit proposta
+
+`feat(ui)!: snackbar com fila, intent e ação sem elemento`
+
+Corpo: `SnackbarService.show(message, options)` com contêiner no overlay, regiões `status`/`alert`, pausa em hover/foco e fila; API antiga `@deprecated` até a 1.0 (ADR-F4-3).
 
 ## F4-S5: plano da sessão (2026-10-21)
 
