@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F4 Onda 2**, sessão **F4-S3** (Popover, Tooltip, Menu)
-- Estado: `aguardando-gate`
+- Fase: **F4 Onda 2**, sessão **F4-S4** (Select v2)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Relatório em "F4-S3: relatório do gate" abaixo. Sem decisão de alto impacto pendente. O próximo `/build` aprova o gate, marca a F4-S3 concluída e mostra o plano da F4-S4 (Select v2, com a decisão ADR-F4-2 a responder).
+- Plano em "F4-S4: plano da sessão" abaixo. **Decisão de alto impacto pendente (ADR-F4-2)**: o `/build` NÃO a aprova; só executa depois da resposta explícita do dono.
 
 ## Fases
 
@@ -32,8 +32,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
 | F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
 | F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
-| F4-S3  | Popover, Tooltip, Menu                                                             | gate      |         |
-| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
+| F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | plano     |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
 | F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
 | F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
@@ -90,6 +90,37 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S4: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Reescrever o `shy-select` como listbox APG com `ControlValueAccessor` (`ngModel`, `formControl`, signals), typeahead, `multiple`, `placeholder`, `invalid`/`disabled`, integração com `FormField` e painel pelo `OverlayService` (layer `dropdown`, `matchWidth`).
+
+### Estado atual (causa do problema)
+
+`select.component.ts`: sem CVA (`selectedOption` input + `onSelectionChange` output), lista inline com `@if (isOpen())` (sem top layer, cortada por `overflow`), fecha por `(document:click)`, sem typeahead, sem `multiple`/`invalid`/`disabled`, foco por item sem `aria-activedescendant`.
+
+### Tarefas
+
+1. Gatilho (`button`, `role="combobox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`) e painel `role="listbox"` aberto via `OverlayService` (`layer: 'dropdown'`, `matchWidth`, flip/shift), foco por `aria-activedescendant` no listbox (o foco fica no painel).
+2. CVA (`value`, `disabled`, `touched`), `multiple` (`aria-multiselectable`, valor em array), `placeholder`, `invalid` (`aria-invalid`), `disabled`; ligação com `FormField` (label/hint/erro).
+3. Teclado: ↑/↓/Home/End, typeahead, Enter/Espaço escolhem, Esc fecha e devolve o foco, Tab fecha; opção desabilitada (`aria-disabled`).
+4. Tokens `--shy-select-*` com fallback; estados do contrato; forced-colors; Dialog (ADR-F4-5).
+5. Testes (CVA com `ngModel`, `formControl` e signals; teclado; ARIA; multiple), página do showcase refeita, README e ADR-F4-8.
+6. Gate: `check:ds`, testes, builds, auditoria Chromium (dark/light, 360/1366, RTL, dentro do Dialog).
+
+### Decisão pendente (ADR-F4-2): destino da API antiga
+
+Consumidores usam `[selectOptions]`, `[selectedOption]` e `(onSelectionChange)`.
+
+| Opção                           | O que faz                                                                                | Custo                                           |
+| ------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| A. Quebra limpa                 | Remove a API antiga (0.x permite; sem shims)                                             | Você migra os consumidores; código mais simples |
+| B. `@deprecated` com substituto | Mantém `selectOptions`/`selectedOption`/`onSelectionChange` mapeados para a v2 até a 1.0 | Código a mais, dois caminhos para testar        |
+| C. Novo seletor                 | `shy-select` novo e o antigo vira `shy-select-legacy`                                    | Duas implementações                             |
+
+Recomendação: **B**. O plano mestre e as regras do projeto pedem `@deprecated` com substituto para APIs fora da regra 2; o custo é pequeno (adaptador de poucas linhas) e remove-se na 1.0.
 
 ## F4-S3: relatório do gate (2026-10-21)
 
