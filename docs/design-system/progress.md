@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S1** (Núcleo de overlay)
-- Estado: `aguardando-plano`, com **decisão de alto impacto pendente (ADR-F4-4: API pública do `OverlayService`)**
+- Estado: `aguardando-plano` (ADR-F4-4 decidida pelo dono em 2026-10-21: opção **B**)
 - Branch: `feat/design-system`
-- Plano em "F4-S1: plano da sessão" abaixo. O próximo `/build` aprova o plano, mas **não** a ADR-F4-4: ela espera resposta explícita do dono (opção A, B ou C). Sem resposta, o `/build` pergunta de novo e não executa.
+- Plano em "F4-S1: plano da sessão" abaixo. Não há decisão pendente: o próximo `/build` aprova o plano e executa a F4-S1 com a opção B.
 
 ## Fases
 
@@ -30,7 +30,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
 | F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
-| F4-S1  | Núcleo de overlay (ADR-F4-1 decidida; ADR-F4-4 pendente)                           | plano     |         |
+| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | plano     |         |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
 | F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
@@ -59,12 +59,13 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-21: `/build` aprovou o plano da F3-S6 e a executou (formulário completo, auditoria no Chromium, 3 correções de a11y, docs). Verificações verdes; gate da F3 em `aguardando-gate`.
 - 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
 - 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
+- 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
 
 ## F4-S1: plano da sessão (2026-10-21)
 
 Fonte: `sessions/F4-onda-2.md` (F4-S1), plano 7.5 (itens 1 a 3), 9.4, 11.2 e ADR-F0-7 com a emenda ADR-F4-1 (híbrido, já decidido).
 
-### Decisão pendente: ADR-F4-4, API pública do `OverlayService` (alto impacto)
+### ADR-F4-4, API pública do `OverlayService` (decidida: B, dono em 2026-10-21)
 
 | Opção                                    | O que exporta                                                                                                                                                          | Prós                                                                                                                                                  | Contras                                                                                                                          |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -96,7 +97,7 @@ const result = await ref.closed;
 
 Dentro do conteúdo: `inject(ShyOverlayRef)`. Sem RxJS na API (Promise + `signal` `isOpen`), para não amarrar o consumidor a Observable.
 
-### Tarefas (executadas só depois da ADR-F4-4)
+### Tarefas (opção B)
 
 1. **Confirmar suporte** de `<dialog>`/`showModal()`, Popover API (`popover="manual"`), `inert` e `@starting-style` no MDN, com data; registrar no relatório e em `decisions.md`.
 2. **`computePosition`** (`lib/overlay/position.ts`): TS puro sobre `DOMRect` (sem DOM de tamanho; guarda SSR), `placement` (12 posições, lógicas `start/end` com RTL), `offset` em ru (via `ru()`), `flip`, `shift`, `matchWidth`, viewport por `visualViewport`. Testes de unidade de flip/shift com rects falsos.
