@@ -1,0 +1,25 @@
+<div class="page">
+  <h1 class="page-title">Dialog</h1>
+  <p class="page-lead"><code>DialogService.open()</code> shows <code>&lt;shy-dialog&gt;</code> content in a native modal <code>&lt;dialog&gt;</code>: the page behind is inert, Tab stays inside, Esc closes only the top layer and focus returns to the button that opened it. The title names the dialog (<code>aria-labelledby</code>) and the body describes it. Sizes <code>sm</code>, <code>md</code>, <code>lg</code> and <code>full</code> shrink to the screen width.</p>
+
+  <section class="section">
+    <h2>Sizes</h2>
+    <div class="shy-cluster">
+      @for (size of sizes; track size) {
+        <button shyButton variant="outline" type="button" (click)="open(size)">{{ size }}</button>
+      }
+    </div>
+    <p>Inside the dialog: a form field, a scrolling body, a popover anchored in it and a second dialog on top.</p>
+  </section>
+
+  <section class="section">
+    <h2>Confirm and alert</h2>
+    <p><code>confirm()</code> and <code>alert()</code> use <code>role="alertdialog"</code>, put focus on the safe button (Cancel / OK) and ignore clicks on the backdrop.</p>
+    <div class="shy-cluster">
+      <button shyButton intent="danger" type="button" (click)="confirm()">Delete project</button>
+      <button shyButton variant="outline" type="button" (click)="alert()">Alert</button>
+    </div>
+  </section>
+
+  <p class="token-name" aria-live="polite">result: {{ result() }}</p>
+</div>

@@ -1,0 +1,100 @@
+/*
+ * Painel do Drawer (aberto por DrawerService.open). O `<dialog>` fica fora do componente, então a posição, o tamanho e a
+ * superfície vêm destas classes: `.shy-drawer-pane` + `--start | --end | --top | --bottom`. Só tokens e ru.
+ */
+dialog.shy-drawer-pane {
+  --_slide: calc(var(--shy-motion-distance) * 8);
+  --_x: 1;
+
+  inset: auto;
+  margin: 0;
+  border: var(--shy-border-width) solid var(--shy-drawer-border-color, var(--shy-color-border-strong));
+  background: var(--shy-drawer-bg, var(--shy-color-surface-raised));
+  box-shadow: var(--shy-drawer-shadow, var(--shy-shadow-5));
+}
+
+dialog.shy-drawer-pane:dir(rtl) {
+  --_x: -1;
+}
+
+dialog.shy-drawer-pane[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* O componente aberto fica entre o painel e o <shy-drawer>: ele precisa encolher com o painel para o corpo rolar. */
+dialog.shy-drawer-pane > * {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+dialog.shy-drawer-pane--start,
+dialog.shy-drawer-pane--end {
+  inset-block: 0;
+  inline-size: min(var(--shy-drawer-width, calc(var(--shy-responsive-unit) * 160)), 100%);
+  block-size: var(--shy-dynamic-height);
+  max-block-size: var(--shy-dynamic-height);
+}
+
+dialog.shy-drawer-pane--start {
+  inset-inline: 0 auto;
+  border-inline-start-width: 0;
+  border-start-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+  border-end-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+}
+
+dialog.shy-drawer-pane--end {
+  inset-inline: auto 0;
+  border-inline-end-width: 0;
+  border-start-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+  border-end-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+}
+
+dialog.shy-drawer-pane--top,
+dialog.shy-drawer-pane--bottom {
+  inset-inline: 0;
+  inline-size: var(--shy-dynamic-width);
+  max-inline-size: var(--shy-dynamic-width);
+  block-size: min(var(--shy-drawer-height, calc(var(--shy-responsive-unit) * 140)), 100%);
+}
+
+dialog.shy-drawer-pane--top {
+  inset-block: 0 auto;
+  border-block-start-width: 0;
+  border-end-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+  border-end-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+}
+
+dialog.shy-drawer-pane--bottom {
+  inset-block: auto 0;
+  border-block-end-width: 0;
+  border-start-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+  border-start-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
+}
+
+/* Entrada: desliza do próprio lado (em reduced motion o deslocamento é 0 e sobra o fade). */
+@starting-style {
+  dialog.shy-drawer-pane--start[open] {
+    transform: translateX(calc(var(--_slide) * var(--_x) * -1));
+  }
+
+  dialog.shy-drawer-pane--end[open] {
+    transform: translateX(calc(var(--_slide) * var(--_x)));
+  }
+
+  dialog.shy-drawer-pane--top[open] {
+    transform: translateY(calc(var(--_slide) * -1));
+  }
+
+  dialog.shy-drawer-pane--bottom[open] {
+    transform: translateY(var(--_slide));
+  }
+}
+
+@media (forced-colors: active) {
+  dialog.shy-drawer-pane {
+    border-color: CanvasText;
+  }
+}

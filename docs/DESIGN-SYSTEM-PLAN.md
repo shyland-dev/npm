@@ -734,8 +734,8 @@ Tokens: `--shy-state-hover: 0.08`, `--shy-state-pressed: 0.12`.
 | Componente               | Notas                                                                                                                                     |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- | --- | ------- |
 | Overlay core             | `computePosition`, `FocusScope`, `animateOut`, `OverlayService`                                                                           |
-| Dialog                   | `<dialog>` nativo; `DialogService.open()`; tamanhos; confirm/alert prontos                                                                |
-| Drawer / Sheet           | `<dialog>` com slide; lados `start                                                                                                        | end | bottom` |
+| Dialog                   | `<dialog>` nativo; `DialogService.open()`; tamanhos `sm`/`md`/`lg`/`full`; `confirm()`/`alert()` prontos (F4-S2)                           |
+| Drawer / Sheet           | `<dialog>` com slide; lados `start`, `end`, `top`, `bottom` (ADR-F4-6); clique no fundo fecha |  |  |
 | Popover                  | `[popover]` + posicionamento                                                                                                              |
 | Tooltip                  | `shyTooltip`; foco/hover; atraso; `aria-describedby`; Esc fecha                                                                           |
 | Menu                     | menu button APG; setas, typeahead, Home/End                                                                                               |

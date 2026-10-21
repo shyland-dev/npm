@@ -1,0 +1,11 @@
+<header class="header">
+  @if (heading()) {
+    <h2 class="title" [id]="titleId">{{ heading() }}</h2>
+  }
+  <ng-content select="[slot=header]" />
+  @if (dismissible()) {
+    <button shyIconButton class="close" size="sm" [label]="closeLabel()" (click)="dismiss()"><shy-icon name="x-lg" /></button>
+  }
+</header>
+<div class="body" [id]="bodyId"><ng-content /></div>
+<footer class="footer"><ng-content select="[slot=footer]" /></footer>

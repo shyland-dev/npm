@@ -1,0 +1,60 @@
+@use '../../styles' as *;
+
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-block-size: 0;
+  color: var(--shy-drawer-fg, var(--shy-color-text));
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--shy-space-4);
+  padding: var(--shy-drawer-padding, var(--shy-space-8)) var(--shy-drawer-padding, var(--shy-space-8)) 0;
+}
+
+.title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--shy-text-xl);
+  font-weight: var(--shy-weight-semibold);
+  line-height: var(--shy-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.close {
+  margin-inline-start: auto;
+  margin-block: calc(var(--shy-space-2) * -1);
+  margin-inline-end: calc(var(--shy-space-3) * -1);
+  flex: none;
+}
+
+.body {
+  flex: 1;
+  min-block-size: 0;
+  padding: var(--shy-space-6) var(--shy-drawer-padding, var(--shy-space-8));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--shy-space-4);
+  padding: 0 var(--shy-drawer-padding, var(--shy-space-8)) var(--shy-drawer-padding, var(--shy-space-8));
+}
+
+.header:not(:has(*)),
+.footer:empty {
+  display: none;
+}
+
+.header:not(:has(*)) + .body {
+  padding-block-start: var(--shy-drawer-padding, var(--shy-space-8));
+}

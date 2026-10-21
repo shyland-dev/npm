@@ -412,6 +412,53 @@ Helpers: `computePosition(anchorRect, floatingSize, viewportRect, options)` (pur
 
 ---
 
+### `<shy-dialog>`, `<shy-drawer>`, `DialogService`, `DrawerService`
+
+Modal dialogs and side panels built on the `OverlayService` (native `<dialog>`: page behind `inert`, Tab trap, Esc on the top layer only, scroll lock, focus back to the opener). Needs `styles/index.css` (it ships `overlay.css` and `drawer.css`).
+
+```ts
+const dialogs = inject(DialogService);
+
+// your own content: render <shy-dialog> inside the component you open
+const ref = dialogs.open<RenameDialog, { id: number }, string>(RenameDialog, { data: { id: 7 } });
+const name = await ref.closed; // string | undefined (undefined = Esc, X, backdrop)
+
+// ready-made, role="alertdialog", focus on the safe button, no close by backdrop
+if (await dialogs.confirm({ title: 'Delete project?', message: 'It cannot be undone.', confirmLabel: 'Delete', intent: 'danger' })) {
+    /* ... */
+}
+await dialogs.alert({ title: 'Saved', message: 'Your changes were saved.' });
+
+// drawer: side 'start' | 'end' (default) | 'top' | 'bottom'
+inject(DrawerService).open(FiltersPanel, { side: 'start' });
+```
+
+```html
+<!-- inside RenameDialog -->
+<shy-dialog heading="Rename project" size="sm" (dismissed)="ref.close()">
+    <shy-form-field label="Name"><input shyInput /></shy-form-field>
+    <div slot="footer">
+        <button shyButton variant="ghost" intent="neutral" (click)="ref.close()">Cancel</button>
+        <button shyButton (click)="ref.close(name)">Save</button>
+    </div>
+</shy-dialog>
+```
+
+| Input / output                   | Default         | Description                                                                                                   |
+| -------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------- |
+| `heading`                        | none            | Title; it is the accessible name of the dialog (`aria-labelledby`). Without it, pass `ariaLabel` when opening |
+| `size` (`shy-dialog`)            | `md`            | `sm`, `md`, `lg`, `full`; all shrink to the screen width                                                      |
+| `dismissible`, `closeLabel`      | `true`, "Close" | Shows the X button and its accessible name; `(dismissed)` fires and the overlay closes                        |
+| `slot="footer"`, `slot="header"` | none            | Actions (end-aligned, wrap) and extra header content                                                          |
+
+- `DialogService.open(content, config)` takes the `OverlayService` options minus `layer`, `modal`, `anchor` and `position`. Defaults: `closeOnOutsideClick: false`. `DrawerService.open` adds `side` and defaults `closeOnOutsideClick: true`.
+- `confirm()` resolves `true` on confirm and `false` on Cancel or Esc; `alert()` resolves when closed. Labels default to English ("Cancel", "Confirm", "OK") and are options: the lib does not translate.
+- The body scrolls on its own when the panel is taller than the screen. In a `TemplateRef`, use the `overlayRef` from the context (`let-ref="overlayRef"`) to close; the title is linked to the `<dialog>` anyway.
+- A popover or select panel opened with an `anchor` inside the dialog becomes a child of the `<dialog>` (stays clickable) and closes with it. Overlays opened before the dialog stay visible above it but inert until it closes.
+- The Drawer panel (position, size, surface, entry from its side) is styled by `.shy-drawer-pane` + `--start|--end|--top|--bottom` (added by `DrawerService`); `<shy-drawer>` only lays out title, body and footer.
+
+---
+
 ## Styles
 
 Tokens (colors, typography, spacing, motion, layers), self-hosted fonts (JetBrains Mono, SIL OFL), animations and a base reset ship as one CSS. Pick **one** way to load it:
@@ -551,6 +598,17 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 | `--shy-alert-pad`, `-gap`, `-radius`                                                 | `space-6 space-7`, `space-5`, `radius-md`                                       | Alert box                     |
 | `--shy-divider-color`, `-text-color`, `-gap`                                         | `--shy-color-line`, `text-muted`, `space-6`                                     | Divider                       |
 
+### Dialog and Drawer Tokens
+
+| Token                                                           | Default                                                            | Description                              |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------- |
+| `--shy-dialog-width`                                            | by `size`: `ru(120)`, `ru(180)`, `ru(260)`                         | Width (always capped to the screen)      |
+| `--shy-dialog-bg`, `-fg`, `-border-color`, `-shadow`, `-radius` | `surface-raised`, `text`, `border-strong`, `shadow-4`, `radius-xl` | Dialog surface                           |
+| `--shy-dialog-padding`                                          | `--shy-space-8`                                                    | Padding of header, body and footer       |
+| `--shy-drawer-width`, `--shy-drawer-height`                     | `ru(160)`, `ru(140)`                                               | Width (start/end) or height (top/bottom) |
+| `--shy-drawer-bg`, `-fg`, `-border-color`, `-shadow`, `-radius` | `surface-raised`, `text`, `border-strong`, `shadow-5`, `radius-xl` | Drawer surface                           |
+| `--shy-drawer-padding`                                          | `--shy-space-8`                                                    | Padding of header, body and footer       |
+
 ### Snackbar Tokens
 
 The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
@@ -601,7 +659,9 @@ export { AlertComponent } from './lib/components/alert/alert.component';
 export { BadgeComponent } from './lib/components/badge/badge.component';
 export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
 export { CardComponent } from './lib/components/card/card.component';
+export { DialogComponent } from './lib/components/dialog/dialog.component';
 export { DividerComponent } from './lib/components/divider/divider.component';
+export { DrawerComponent } from './lib/components/drawer/drawer.component';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';
@@ -619,6 +679,8 @@ export { SwitchComponent } from './lib/components/switch/switch.component';
 export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/theme-toggle/theme-toggle.component';
 
 // Services
+export { DialogService } from './lib/services/dialog/dialog.service';
+export { DrawerService } from './lib/services/drawer/drawer.service';
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
 export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResolvedTheme, ShyThemeConfig } from './lib/services/theme/theme.service';
 
@@ -635,6 +697,7 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
+export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
 export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
@@ -642,6 +705,7 @@ export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interfac
 export { ShyAlertIntent } from './lib/types/alert/alert.type';
 export { ShyBadgeVariant, ShyBadgeSize } from './lib/types/badge/badge.type';
 export { ShyCardElevation } from './lib/types/card/card.type';
+export { ShyDialogSize, ShyDrawerSide } from './lib/types/dialog/dialog.type';
 export { ShyDividerOrientation } from './lib/types/divider/divider.type';
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyInputSize } from './lib/types/input/input.type';

@@ -6,7 +6,11 @@ export * from './button/button.component';
 
 export * from './card/card.component';
 
+export * from './dialog/dialog.component';
+
 export * from './divider/divider.component';
+
+export * from './drawer/drawer.component';
 
 export * from './checkbox/checkbox.component';
 

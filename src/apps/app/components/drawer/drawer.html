@@ -1,0 +1,15 @@
+<div class="page">
+  <h1 class="page-title">Drawer</h1>
+  <p class="page-lead"><code>DrawerService.open()</code> slides a modal panel in from <code>start</code>, <code>end</code>, <code>top</code> or <code>bottom</code> (logical sides: <code>start</code> follows the text direction). It behaves like the dialog (inert page, focus trap, Esc) and, unlike it, a click on the backdrop closes it. The body scrolls inside the panel.</p>
+
+  <section class="section">
+    <h2>Sides</h2>
+    <div class="shy-cluster">
+      @for (side of sides; track side) {
+        <button shyButton variant="outline" type="button" (click)="open(side)">{{ side }}</button>
+      }
+    </div>
+  </section>
+
+  <p class="token-name" aria-live="polite">result: {{ result() }}</p>
+</div>
