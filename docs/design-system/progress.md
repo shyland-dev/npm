@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F4 Onda 2**, sessão **F4-S6** (fechamento da Onda 2)
-- Estado: `aguardando-gate`
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S1** (escolha da Onda 3 + lote 1)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Relatório em "F4-S6: relatório do gate" abaixo. O próximo `/build` aprova o gate, marca a Onda 2 (F4) como concluída e mostra o plano da F5-S1 (em `aguardando-plano`, com decisão do dono sobre quais componentes da Onda 3 priorizar).
+- F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono pendente:** quais componentes da Onda 3 os projetos usam e a ordem; o `/build` NÃO a aprova.
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
 
 ## Handoff por sessão (threads separadas)
@@ -69,7 +69,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 | F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
 | F2 Refactor dos existentes         | concluída (gate aprovado) | eb359ac                                                       |
 | F3 Onda 1                          | concluída (gate aprovado) | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | em andamento (6 sessões)  |                                                               |
+| F4 Onda 2                          | concluída (gate aprovado) | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
 | F5 Onda 3 + hardening              | pendente (4 sessões)      |                                                               |
 
 ## Sessões
@@ -88,7 +88,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
 | F4-S6  | Fechamento da Onda 2                                                               | gate      |         |
-| F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
+| F5-S1  | Escolha da Onda 3 + lote 1                                                         | plano     |         |
 | F5-S2  | Lote 2                                                                             | pendente  |         |
 | F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |         |
 | F5-S4  | Hardening e fechamento                                                             | pendente  |         |
@@ -142,6 +142,27 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S1: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Escolher com o dono quais componentes da Onda 3 (navegação e dados) entram e em que ordem, e implementar o primeiro lote com o contrato comum (CVA onde couber, tokens `--shy-<comp>-*`, estados, APG, testes, página no showcase, README).
+
+### Candidatos (plano 12, Onda 3)
+
+Tabs, Accordion, Breadcrumb, Pagination, Stepper, Avatar, Table, List, EmptyState, AppShell, Combobox, Slider, FileDropzone. Regra do plano: **construir sob demanda dos projetos reais; Onda 3 sem consumidor espera.**
+
+### Tarefas (depois da resposta do dono)
+
+1. Registrar a ordem escolhida em `progress.md` (lote 1 = F5-S1; lote 2 = F5-S2; lote 3 = F5-S3, sob demanda) e as dependências entre componentes (Tabs na base do `shy-theme-toggle`; Pagination usa Button/Select).
+2. Lote 1 (sugestão: **Tabs, Accordion, Breadcrumb, Pagination**): `.ts/.html/.scss`, tokens, estados (hover só com `(hover: hover)`, `focus-visible`, active, disabled), ARIA/teclado APG (Tabs: setas/Home/End, automático ou manual; Accordion: botões com `aria-expanded`/`aria-controls`; Breadcrumb: `nav` + `aria-current`; Pagination: `nav` + `aria-current="page"`), reduced-motion, forced-colors, light/dark, RTL.
+3. Testes, páginas no showcase, tabela de tokens no `src/libs/ui/README.md`, exports, ADR-F5-1.
+4. Gate: `check:ds`, testes, builds e auditoria Chromium.
+
+### Decisão pendente (do dono)
+
+Quais componentes os seus projetos usam de fato? Recomendação: lote 1 = Tabs, Accordion, Breadcrumb, Pagination (são os de menor risco e cobrem navegação e conteúdo); Table e List no lote 2 (F5-S2); Combobox, Slider, FileDropzone, Stepper e AppShell só se algum projeto precisar (F5-S3).
 
 ## F4-S6: relatório do gate (2026-10-21)
 
