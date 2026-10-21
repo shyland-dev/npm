@@ -58,6 +58,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-21: `/build` aprovou o gate da F3-S5 (`87644db`, já enviado). F3-S6 em `aguardando-plano`.
 - 2026-10-21: `/build` aprovou o plano da F3-S6 e a executou (formulário completo, auditoria no Chromium, 3 correções de a11y, docs). Verificações verdes; gate da F3 em `aguardando-gate`.
 - 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
+- 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
 
 ## F4-S1: plano da sessão (2026-10-21)
 
