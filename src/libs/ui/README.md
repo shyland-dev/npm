@@ -483,6 +483,7 @@ New foundation tokens: `--shy-color-track` (both themes), `--shy-opacity-track`,
 | `--shy-checkbox-size`, `--shy-radio-size`                                  | `--shy-size-icon-md`                            | Side of the mark                   |
 | `--shy-checkbox-radius`                                                    | `--shy-radius-sm`                               | Checkbox radius                    |
 | `--shy-{checkbox,radio,switch}-checked-bg`                                 | `--shy-color-primary`                           | Fill when checked                  |
+| `--shy-{checkbox,radio,switch}-checked-border`                             | `--shy-color-primary-text`                      | Border when checked (≥ 3:1)        |
 | `--shy-{checkbox,radio,switch}-bg`, `-border-color`, `-border-color-hover` | `surface-sunken`, `border-strong`, `text-muted` | Unchecked box (border ≥ 3:1)       |
 | `--shy-{checkbox,radio,switch}-gap`, `-fg`                                 | `--shy-space-4`, `--shy-color-text`             | Gap to the text; text color        |
 | `--shy-switch-width`, `-height`, `-thumb-size`                             | `ru(18)`, `ru(10)`, `ru(6)`                     | Track and thumb                    |

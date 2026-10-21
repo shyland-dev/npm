@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F3 Onda 1**, sessão **F3-S6** (Fechamento da Onda 1)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate` (gate da sessão **e** da fase F3)
 - Branch: `feat/design-system`
-- Gate da F3-S5 aprovado pelo `/build` de 2026-10-21 (commit `87644db`). O plano da F3-S6 está em `sessions/F3-onda-1.md`; o próximo `/build` o aprova e executa a sessão.
+- A F3-S6 foi executada e verificada (commit e push liberados após os testes, CLAUDE.md). Relatório em "F3-S6: relatório do gate e fechamento da F3". O próximo `/build` aprova o gate da F3 (ou um ajuste vira commit novo) e avança para a F4-S1 em `aguardando-plano`; a F4-S1 tem decisão de arquitetura própria (ADR-F4-1, já escolhida: híbrido).
 
 ## Fases
 
@@ -16,7 +16,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F0 Preparação                      | concluída (gate aprovado) | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
 | F1 Unidades, tokens, temas, fontes | concluída (gate aprovado) | 0123029                                                       |
 | F2 Refactor dos existentes         | concluída (gate aprovado) | eb359ac                                                       |
-| F3 Onda 1                          | em andamento (6 sessões)  |                                                               |
+| F3 Onda 1                          | gate (6 sessões)          |                                                               |
 | F4 Onda 2                          | pendente (6 sessões)      |                                                               |
 | F5 Onda 3 + hardening              | pendente (4 sessões)      |                                                               |
 
@@ -29,7 +29,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
-| F3-S6  | Fechamento da Onda 1                                                               | plano     |         |
+| F3-S6  | Fechamento da Onda 1                                                               | gate      |         |
 | F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
 | F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
@@ -56,6 +56,76 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-20: `/build` aprovou o gate da F3-S4 (`b410314`, já enviado). F3-S5 em `aguardando-plano`.
 - 2026-10-21: `/build` aprovou o plano da F3-S5 e a executou (Badge, Divider, Card, Alert, showcase, docs). Verificações verdes; gate em `aguardando-gate`.
 - 2026-10-21: `/build` aprovou o gate da F3-S5 (`87644db`, já enviado). F3-S6 em `aguardando-plano`.
+- 2026-10-21: `/build` aprovou o plano da F3-S6 e a executou (formulário completo, auditoria no Chromium, 3 correções de a11y, docs). Verificações verdes; gate da F3 em `aguardando-gate`.
+
+## F3-S6: relatório do gate e fechamento da F3 (2026-10-21)
+
+### Verificações
+
+| Verificação               | Resultado                                                                                                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`        | verde (6 verificações); aviso de 27 tokens não usados **sem órfão novo**: 26 primitivos/atalhos da F1 (escalas 100/300/500/900, `gradient-brand`, `transition-*`, `tracking-normal`, `dynamic-*-unit`) e o `--shy-button-radius` do exemplo de override do showcase |
+| `check-contrast`          | 56 pares × 2 temas; todos os pares usados pela Onda 1 estão cobertos (lista em `tokens.md`). Os de fora são decorativos (`border`, `line`, `track` contra a página)                                                                                                 |
+| `npm test`                | verde: 21 arquivos, 114 testes (sem teste novo: as correções são de CSS `:has()`/`forced-colors`, que o happy-dom não calcula; conferidas no Chromium)                                                                                                              |
+| `npm run build`           | verde (`ui` e `utils`)                                                                                                                                                                                                                                              |
+| `npm run build:showcase`  | verde                                                                                                                                                                                                                                                               |
+| Contraste em runtime      | Chromium 141 sobre o build: todo texto visível de 16 páginas (15 componentes + `examples/form`) × dark/light × 1366/360 px: nenhum par abaixo de 4,5:1 (3:1 texto grande); sem erro de console; sem scroll horizontal                                               |
+| Teclado (`examples/form`) | ordem de Tab = ordem visual (10 paradas), anel `solid` 2 px em todas nos dois temas; seta no radio seleciona; Espaço no checkbox e no switch; Enter envia                                                                                                           |
+| Envio inválido / válido   | alerta `status` "Fix 4 field(s)", `aria-invalid` nos 4 campos, foco no primeiro inválido (no radio group, o primeiro radio); válido: `aria-busy` com foco mantido, progress `aria-valuenow=4`, alerta de sucesso                                                    |
+| Foco nos demais           | remover do Badge, fechar do Alert, cartão-link, Button e IconButton: `solid` 2 px                                                                                                                                                                                   |
+| Reduced motion            | spinner do botão só pulsa (`shy-pulse`)                                                                                                                                                                                                                             |
+| forced-colors (emulação)  | formulário e 11 páginas capturados; radio marcado e ponto do badge agora visíveis                                                                                                                                                                                   |
+| Ambiente                  | Node 22.22.0 e npm 10.9.4 (repo pede 24.14.1 / 11.11.0); `npm ci` funcionou                                                                                                                                                                                         |
+
+Achados corrigidos nesta sessão (ADR-F3-6):
+
+1. **Contorno do controle marcado no tema escuro**: Checkbox, Radio e Switch marcados tinham a borda em `primary` (2,6:1 sobre `bg`, 2,1:1 sobre `surface-raised`), abaixo de 3:1 (WCAG 1.4.11). Agora a borda usa `--shy-*-checked-border` (padrão `primary-text`). No claro nada muda.
+2. **Campo inteiro apagado por uma opção desabilitada**: `.field:has(:disabled)` no `shy-form-field` pegava um `shy-radio` desabilitado dentro do grupo. Agora só o controle direto do campo conta.
+3. **Ponto invisível em `forced-colors`**: o radio marcado e o `dot` do badge usavam `background: currentColor`, que o alto contraste troca por `Canvas`.
+
+Não verificado: leitor de tela real; Windows em alto contraste real; RTL; zoom 200% (limite conhecido em `accessibility.md`); ponteiro grosso em dispositivo real.
+
+### Resumo da F3 (Onda 1)
+
+| Sessão | Entregou                                                                                      | Commit  |
+| ------ | --------------------------------------------------------------------------------------------- | ------- |
+| F3-S1  | tipografia, layout, `.shy-sr-only`, `animateOut`, Button, IconButton                          | 39c815b |
+| F3-S2  | Spinner (8 variantes), Skeleton, Progress, ProgressCircular                                   | 53e2902 |
+| F3-S3  | FormField, Input, Textarea                                                                    | e119878 |
+| F3-S4  | Checkbox, Radio/RadioGroup, Switch                                                            | b410314 |
+| F3-S5  | Badge, Divider, Card, Alert                                                                   | 87644db |
+| F3-S6  | `examples/form`, auditoria a11y, 3 correções, matriz da Onda 1, tokens de componente nos docs | (este)  |
+
+16 componentes novos na Onda 1, 114 testes, zero dependência de runtime nova, nenhuma devDependency nova. Sem bump, tag ou publish.
+
+### Arquivos principais (F3-S6)
+
+- Showcase: `src/apps/app/examples/form/` (novo), rota e grupo "Examples" no menu (`app.routes.ts`, `app.ts`).
+- Lib: `checkbox`, `radio`, `switch` (`.scss`: `checked-border`), `radio` e `badge` (`.scss`: `forced-colors`), `form-field` (`.scss`: seletor de desabilitado).
+- Docs: `tokens.md` (tokens de componente e pares da Onda 1; contagem 52 → 56 corrigida), `accessibility.md` (matriz da Onda 1 e resultado da auditoria), `decisions.md` (ADR-F3-6), `README.md` (exemplo de formulário), `src/libs/ui/README.md` (token `checked-border`).
+
+### Efeito prático
+
+- Controles marcados com contorno visível no escuro; formulário com radio desabilitado não parece desabilitado; radio e badge com ponto legíveis em alto contraste.
+- Tokens novos e opcionais: `--shy-{checkbox,radio,switch}-checked-border`. Nenhuma API removida ou renomeada.
+
+### Decisões e premissas
+
+- Mover o foco para o primeiro campo inválido fica no app (mostrado no exemplo), não no `shy-form-field`: depende do fluxo da página. Se quiser isso embutido na lib, é mudança de API para a F4/F5.
+- Tipo do commit: o arquivo da sessão propunha `docs:`, mas a sessão mudou CSS da lib que o consumidor vê; usei `fix(ui):` para o changelog refletir isso.
+- A sessão pedia "screenshot dos componentes nos dois temas": foram capturados (dark/light, forced-colors), mas não versionados no repo (binários sem uso na lib); ficam como evidência deste relatório.
+
+### Mensagem de commit
+
+```
+fix(ui): fechar onda 1 (formulário completo, a11y e tokens)
+
+- showcase: examples/form com todos os controles da Onda 1 no shy-form-field
+- fix: borda do checkbox/radio/switch marcados em primary-text (3:1 no tema escuro)
+- fix: shy-form-field só apaga rótulo/dica quando o próprio controle está desabilitado
+- fix: ponto do radio e do badge visível em forced-colors
+- docs: tokens de componente e pares da Onda 1, matriz de a11y, ADR-F3-6, README
+```
 
 ## F3-S5: relatório do gate (2026-10-21)
 

@@ -415,6 +415,26 @@ export class MeuComponent {}
 <button shyButton type="submit" [loading]="salvando()" loadingPosition="start" loadingText="Salvando…"><shy-icon slot="start">check-lg</shy-icon>Salvar</button> <button shyIconButton type="button" label="Fechar"><shy-icon>x-lg</shy-icon></button>
 ```
 
+Formulário com `shy-form-field` (o campo liga rótulo, dica, erro e `aria-*` ao controle; checkbox, switch e radio group são `ControlValueAccessor`; importe `ReactiveFormsModule`, `FormFieldComponent`, `InputComponent`, `RadioGroupComponent`, `RadioComponent`, `SwitchComponent` e `ButtonComponent`):
+
+```html
+<form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+    <shy-form-field label="Email" [error]="form.controls.email.hasError('email') ? 'Email inválido' : 'Obrigatório'">
+        <input shyInput type="email" formControlName="email" required autocomplete="email" />
+    </shy-form-field>
+    <shy-form-field label="Plano" error="Escolha um plano" [required]="true">
+        <shy-radio-group formControlName="plano" orientation="horizontal">
+            <shy-radio value="free">Free</shy-radio>
+            <shy-radio value="pro">Pro</shy-radio>
+        </shy-radio-group>
+    </shy-form-field>
+    <shy-switch formControlName="publico">Perfil público</shy-switch>
+    <button shyButton type="submit" [loading]="enviando()">Enviar</button>
+</form>
+```
+
+Exemplo completo, com todos os controles da Onda 1 e foco no primeiro campo inválido ao enviar: rota `examples/form` do showcase (`src/apps/app/examples/form`).
+
 Classes utilitárias (já carregadas pelo `index.css`): tipografia (`.shy-h1`…`.shy-h6`, `.shy-body`, `.shy-caption`, `.shy-code`, `.shy-sr-only` etc.) e layout (`.shy-stack`, `.shy-cluster`, `.shy-grid`, `.shy-container`, ajustáveis por `--shy-stack-gap`, `--shy-grid-min` etc.). API completa e tokens `--shy-button-*`: [`src/libs/ui/README.md`](src/libs/ui/README.md).
 
 ---

@@ -18,8 +18,9 @@
   transition: scale var(--shy-duration-fast) var(--shy-ease-standard);
 }
 
+// Borda em primary-text: no tema escuro o fundo primary tem 2,6:1 sobre bg, e o contorno marcado precisa de 3:1 (WCAG 1.4.11).
 :host([data-checked]) .mark {
-  border-color: var(--shy-radio-checked-bg, var(--shy-color-primary));
+  border-color: var(--shy-radio-checked-border, var(--shy-color-primary-text));
   background: var(--shy-radio-checked-bg, var(--shy-color-primary));
 }
 
@@ -35,5 +36,15 @@
   :host([data-checked]) .mark {
     border-color: ButtonText;
     background: Canvas;
+  }
+
+  // Sem isso o forced-colors troca o fundo do ponto por Canvas e o radio marcado some.
+  .dot {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  :host([data-disabled]) .dot {
+    background: GrayText;
   }
 }

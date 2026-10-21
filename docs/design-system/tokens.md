@@ -23,6 +23,30 @@ Hover e pressed não têm cor própria: usam a camada de estado (`--shy-state-ho
 
 `#4C00FF` sobre `#070811` tem só 2,6:1. No escuro, o fundo sólido é o 600 (com texto branco) e texto/borda/foco usam o 400 (`#818BFD`); no claro, texto e foco usam o 600.
 
+## Tokens de componente (Onda 1)
+
+Terceira camada: `--shy-<componente>-*`, **nunca definidos pela lib**. O componente lê `var(--shy-<comp>-x, var(--shy-color-…))`, então o padrão vem do semântico (e muda com o tema) e o app sobrescreve só o que precisar, em qualquer seletor (`:root`, uma classe, `style=""`). Padrões e descrição de cada um: tabelas "… Tokens" em [`src/libs/ui/README.md`](../../src/libs/ui/README.md).
+
+| Componente                | Tokens                                                                                                                                                                                                                                                                       |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Button                    | `--shy-button-{bg,fg,border-color,radius,height,pad-x,gap,font-size,font-weight}`                                                                                                                                                                                            |
+| IconButton                | `--shy-icon-button-size` (+ os do Button)                                                                                                                                                                                                                                    |
+| Spinner                   | `--shy-spinner-{size,color}`                                                                                                                                                                                                                                                 |
+| Skeleton                  | `--shy-skeleton-{bg,highlight,radius,width,height,size,line-height,gap}`                                                                                                                                                                                                     |
+| Progress / circular       | `--shy-progress-{bar,track,height,radius}`, `--shy-progress-circular-{bar,track,size}`                                                                                                                                                                                       |
+| Input / FormField         | `--shy-input-{bg,fg,border-color,border-color-hover,border-color-invalid,placeholder,radius,height,pad-x,font-size}`, `--shy-form-field-{gap,label-color,hint-color,error-color}`                                                                                            |
+| Checkbox / Radio / Switch | `--shy-{checkbox,radio,switch}-{bg,fg,gap,border-color,border-color-hover,mark-color,checked-bg,checked-border}`, `--shy-{checkbox,radio}-size`, `--shy-checkbox-radius`, `--shy-switch-{width,height,thumb,thumb-checked,thumb-size}`, `--shy-radio-group-{gap,gap-inline}` |
+| Badge                     | `--shy-badge-{bg,fg,border-color,height,pad-x,gap,font-size,radius,dot-size}`                                                                                                                                                                                                |
+| Divider                   | `--shy-divider-{color,text-color,gap}`                                                                                                                                                                                                                                       |
+| Card                      | `--shy-card-{bg,fg,border-color,border-color-hover,shadow,radius,pad-x,pad-y}`                                                                                                                                                                                               |
+| Alert                     | `--shy-alert-{bg,fg,border-color,icon-color,pad,gap,radius}`                                                                                                                                                                                                                 |
+
+Regras: cor de componente sempre cai num semântico que já está em `contrast-pairs.json` (ao sobrescrever, o app assume o contraste); medidas caem em `--shy-space-*`, `--shy-size-*`, `--shy-radius-*` ou `ru(N)`. Variáveis `--_x` dentro do SCSS são privadas e não fazem parte da API.
+
+### Pares de contraste da Onda 1
+
+Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json` (56 pares × 2 temas): texto sobre superfícies (`text*`/`surface*`), sólidos (`on-X`/`X`), suaves (`on-X-soft`/`X-soft`, `X-text`/`X-soft`), texto de intenção sobre superfícies (`X-text`), borda de controle e foco (`border-strong`, `focus`, ≥ 3:1), trilho (`primary-text`/`track`, `text-muted`/`track`). Ficam de fora, por serem decorativos (WCAG 1.4.11 não exige): `border`, `line` (divider, borda de card), `track` contra a página e o fundo do skeleton. O fundo `primary` sólido no tema escuro (2,6:1 sobre `bg`) só aparece com texto/glifo `on-primary` por cima; o contorno dos controles marcados usa `primary-text` (ADR-F3-6).
+
 ## Verificação
 
 `npm run check:ds` roda:
@@ -30,7 +54,7 @@ Hover e pressed não têm cor própria: usam a camada de estado (`--shy-state-ho
 | Script              | Garante                                                                                                        |
 | ------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `check-tokens`      | mesmos tokens semânticos nos dois temas; `var(--shy-x)` sem fallback sempre definido; `$layers` = `layers.css` |
-| `check-contrast`    | 52 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas  |
+| `check-contrast`    | 56 pares de `scripts/contrast-pairs.json` ≥ 4,5:1 (texto) ou 3:1 (UI, foco, borda de controle) nos dois temas  |
 | `check-calibration` | tamanhos em px nos viewports de referência                                                                     |
 | `check-hardcoded`   | sem cor, tempo, easing, `z-index` nem `font-family` literais em SCSS de componente                             |
 

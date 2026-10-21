@@ -24,6 +24,10 @@ export class App implements OnInit {
       items: ['alert', 'badge', 'button', 'card', 'checkbox', 'divider', 'form-field', 'icon', 'icon-button', 'input', 'progress', 'radio', 'select', 'skeleton', 'snackbar', 'spinner', 'switch', 'textarea'].map((name) => ({ path: `components/${name}`, label: name })),
     },
     {
+      label: 'Examples',
+      items: [{ path: 'examples/form', label: 'complete form' }],
+    },
+    {
       label: 'Foundations',
       items: ['colors', 'typography', 'units', 'spacing', 'motion', 'layers'].map((name) => ({ path: `foundations/${name}`, label: name })),
     },

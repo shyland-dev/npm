@@ -114,7 +114,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.field:has(:disabled) .label,
-.field:has(:disabled) .hint {
+// Só o controle do campo desabilitado apaga rótulo e dica; uma opção desabilitada dentro de um grupo de radio, não.
+.field:has(> .control > :is(:disabled, [data-disabled])) .label,
+.field:has(> .control > :is(:disabled, [data-disabled])) .hint {
   opacity: var(--shy-opacity-disabled);
 }

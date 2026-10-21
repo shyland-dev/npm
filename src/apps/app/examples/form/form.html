@@ -1,0 +1,66 @@
+<div class="page">
+  <h1 class="page-title">Complete form</h1>
+  <p class="page-lead">Every Wave 1 control inside <code>&lt;shy-form-field&gt;</code> in one reactive form: text inputs, textarea, radio group, checkboxes, switches, button loading, alert, badge, divider, card and progress. Errors show after a field is touched or after submit. Try it with the keyboard only, in both themes and with <em>Reduce motion</em>.</p>
+
+  <section class="section">
+    <shy-card class="form-card">
+      <span slot="header" class="form-header">Create account <shy-badge intent="info" variant="outline">Example</shy-badge></span>
+
+      <form class="shy-stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (submitted() && invalidFields().length) {
+          <shy-alert intent="danger" heading="Fix {{ invalidFields().length }} field(s) to continue">{{ invalidFields().join(', ') }}</shy-alert>
+        }
+        @if (sent()) {
+          <shy-alert intent="success" heading="Account created" [dismissible]="true" (dismissed)="sent.set(false)">We sent a confirmation link to {{ form.controls.email.value }}.</shy-alert>
+        }
+
+        <div class="progress-row">
+          <span id="form-progress-label" class="token-name">{{ done() }} of {{ total }} required fields</span>
+          <shy-progress [value]="done()" [max]="total" aria-labelledby="form-progress-label" size="sm" />
+        </div>
+
+        <shy-form-field label="Name" hint="As on your ID" [error]="message('name')" [counter]="true">
+          <input shyInput formControlName="name" required maxlength="40" autocomplete="name" />
+        </shy-form-field>
+
+        <shy-form-field label="Email" [error]="message('email')">
+          <shy-icon slot="prefix" name="envelope" />
+          <input shyInput type="email" formControlName="email" required autocomplete="email" />
+        </shy-form-field>
+
+        <shy-form-field label="Message" hint="Optional" [counter]="true">
+          <textarea shyInput formControlName="message" maxlength="200"></textarea>
+        </shy-form-field>
+
+        <shy-divider>Plan</shy-divider>
+
+        <shy-form-field label="Plan" hint="You can change it later" error="Choose a plan" [required]="true">
+          <shy-radio-group formControlName="plan" orientation="horizontal">
+            <shy-radio value="free">Free</shy-radio>
+            <shy-radio value="pro">Pro</shy-radio>
+            <shy-radio value="team" [disabled]="true">Team (soon)</shy-radio>
+          </shy-radio-group>
+        </shy-form-field>
+
+        <shy-divider>Preferences</shy-divider>
+
+        <fieldset class="shy-stack group">
+          <legend class="token-name">Notifications</legend>
+          <shy-checkbox formControlName="email_updates">Email updates</shy-checkbox>
+          <shy-checkbox formControlName="sms_updates">SMS updates</shy-checkbox>
+        </fieldset>
+
+        <shy-switch formControlName="public_profile">Public profile</shy-switch>
+
+        <shy-form-field error="You must accept the terms">
+          <shy-checkbox formControlName="terms">I accept the terms</shy-checkbox>
+        </shy-form-field>
+
+        <div class="shy-cluster">
+          <button shyButton type="submit" [loading]="sending()" loadingText="Sending">Create account</button>
+          <button shyButton type="button" variant="ghost" intent="neutral" [disabled]="sending()" (click)="reset()">Reset</button>
+        </div>
+      </form>
+    </shy-card>
+  </section>
+</div>

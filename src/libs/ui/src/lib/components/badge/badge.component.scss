@@ -87,4 +87,14 @@
     background: Highlight;
     color: HighlightText;
   }
+
+  // currentColor não é cor de sistema: o forced-colors trocaria o fundo do ponto por Canvas e ele sumiria.
+  .dot {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  :host([data-variant='solid']) .dot {
+    background: HighlightText;
+  }
 }

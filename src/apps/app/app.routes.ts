@@ -22,6 +22,8 @@ export const routes: Routes = [
   { path: 'components/switch', loadComponent: () => import('./components/switch/switch').then((m) => m.SwitchPage) },
   { path: 'components/textarea', loadComponent: () => import('./components/textarea/textarea').then((m) => m.TextareaPage) },
 
+  { path: 'examples/form', loadComponent: () => import('./examples/form/form').then((m) => m.FormExample) },
+
   { path: 'foundations', redirectTo: 'foundations/colors', pathMatch: 'full' },
   { path: 'foundations/colors', loadComponent: () => import('./foundations/colors/colors').then((m) => m.Colors) },
   { path: 'foundations/typography', loadComponent: () => import('./foundations/typography/typography').then((m) => m.Typography) },

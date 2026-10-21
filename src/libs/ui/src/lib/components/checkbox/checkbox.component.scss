@@ -31,9 +31,10 @@
   opacity: 1;
 }
 
+// Borda em primary-text: no tema escuro o fundo primary tem 2,6:1 sobre bg, e o contorno marcado precisa de 3:1 (WCAG 1.4.11).
 :host([data-checked]) .mark,
 :host([data-indeterminate]) .mark {
-  border-color: var(--shy-checkbox-checked-bg, var(--shy-color-primary));
+  border-color: var(--shy-checkbox-checked-border, var(--shy-color-primary-text));
   background: var(--shy-checkbox-checked-bg, var(--shy-color-primary));
 }
 
