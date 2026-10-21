@@ -94,3 +94,10 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - **Menu (APG menu button):** `role="menu"` nomeado pelo botão, `role="menuitem"`, roving focus, setas com volta, Home/End, typeahead; ↓ abre no primeiro item e ↑ no último; Esc/Tab fecham; itens desabilitados com `aria-disabled` e focáveis. Sem submenus.
 - **Tooltip (WCAG 1.4.13):** dispensável (Esc sem mover o foco), pairável (o ponteiro entra na dica) e persistente; só complementa o nome (`aria-describedby` enquanto aberta); não abre no toque. `forced-colors`: borda `CanvasText`/`Highlight`.
 - **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`): foco inicial e retorno, ↑/↓, tooltip no foco por teclado e no hover, flip/shift na borda, popover/menu/tooltip clicáveis dentro de um Dialog, sem erros de console. **Não verificado:** leitor de tela real, Safari/Firefox.
+
+## Select (F4-S4)
+
+- **Select-only combobox (APG):** botão `role="combobox"` com `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls` e `aria-activedescendant`; painel `role="listbox"` (`aria-multiselectable` em `multiple`), opções `role="option"` com `aria-selected` e `aria-disabled`. O foco fica no botão.
+- **Teclado:** ↓/↑/Enter/Espaço abrem; ↓/↑/Home/End movem (pulando desabilitadas); Enter/Espaço escolhem; digitar salta para a opção; Esc fecha sem mover o foco; Tab fecha e segue.
+- **Formulários:** nome pelo `label` do `shy-form-field` (`for`/`id`) ou `label` (`aria-label`); `aria-describedby`, `aria-invalid`, `aria-errormessage`, `aria-required`. Inválido nunca só cor (`forced-colors`: borda tracejada).
+- **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`): foco permanece no botão, opção ativa, multiple, seleção dentro de um Dialog, sem erros de console. **Não verificado:** leitor de tela real (NVDA/VoiceOver), Safari/Firefox. Risco conhecido: `aria-activedescendant` apontando para um nó em outro contêiner do DOM (o painel) depende do leitor de tela; o padrão APG o usa, mas vale testar com leitor real.

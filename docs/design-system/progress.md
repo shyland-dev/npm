@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S4** (Select v2)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Plano em "F4-S4: plano da sessão" abaixo. Decisão ADR-F4-2 respondida pelo dono em 2026-10-21: **B (`@deprecated` com substituto)**. O próximo `/build` aprova o plano e executa a F4-S4.
+- Relatório em "F4-S4: relatório do gate" abaixo. Sem decisão de alto impacto pendente (ADR-F4-2 respondida: B). O próximo `/build` aprova o gate, marca a F4-S4 concluída e mostra o plano da F4-S5 (Snackbar v2, com a decisão ADR-F4-3 a responder).
 
 ## Fases
 
@@ -33,7 +33,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
 | F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
 | F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
-| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | plano     |         |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
 | F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
 | F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
@@ -90,6 +90,46 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S4: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                             |
+| `npm test`               | 216 testes passando (10 novos de Select: CVA, signals, multiple, teclado, ARIA, API antiga)                          |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                  |
+| `npm run build:showcase` | ok                                                                                                                   |
+| Chromium (Playwright)    | dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`: foco no botão, opção ativa, multiple, select dentro de Dialog |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                               |
+
+Não verificado: leitor de tela real (o `aria-activedescendant` aponta para o painel, em outro contêiner do DOM), Safari/Firefox, toque real.
+
+### Resumo (arquivos principais)
+
+- `components/select/` reescrito: `shy-select` (combobox APG, `ControlBase` como CVA, `model` `value`, `multiple`, `placeholder`, `compareWith`, painel pelo `OverlayService`), template e estilos.
+- `interfaces/select/select.interface.ts`: `ShySelectOption`; `SelectOption` e `SelectionChangeEvent` `@deprecated`.
+- `utils/typeahead.ts` (interno), usado por Select e Menu.
+- Showcase `components/select` refeito (CVA, form field obrigatório, multiple, disabled/invalid, dentro de Dialog, API antiga).
+- Docs: ADR-F4-8, `accessibility.md`, `README.md` e `src/libs/ui/README.md` (com guia de migração).
+
+### Efeito prático
+
+`<shy-select [options]="..." [(ngModel)]="x" />` ou `[formControl]` ou `[(value)]`, com teclado e ARIA do APG, no Dialog e no form field. A API antiga continua funcionando, marcada `@deprecated`, até a 1.0.
+
+### Decisões e premissas (ADR-F4-2 e ADR-F4-8 em `decisions.md`)
+
+1. ADR-F4-2 (dono): opção B, API antiga `@deprecated` mapeada para a v2.
+2. Foco no botão com `aria-activedescendant` (sem foco por item); `mousedown` no painel cancelado; blur fecha e marca `touched`.
+3. Tokens do painel só em `:root`/ancestral do `<body>` (o painel mora no contêiner de overlays); documentado.
+4. Sem `<select>` nativo; sem dependência nova; sem par de contraste novo; sem bump de versão. README atualizado.
+
+### Mensagem de commit proposta
+
+`feat(ui): select com CVA, typeahead e overlay`
+
+Corpo: combobox APG sobre o `OverlayService`, `multiple`, `compareWith`, API antiga `@deprecated` até a 1.0 e `Typeahead` compartilhado com o Menu.
 
 ## F4-S4: plano da sessão (2026-10-21)
 

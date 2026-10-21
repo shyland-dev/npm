@@ -62,7 +62,7 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 | **Input**       | `input[shyInput]`, `textarea[shyInput]`     | Campo sobre o nativo (`ngModel`/`formControl`), tamanhos, `invalid` do `NgControl`                                 |
 | **FormField**   | `shy-form-field`                            | Label, dica, erro (ícone + texto) e contador; liga `for`/`id` e `aria-*`; slots `prefix`/`suffix`                  |
 | **Icon**        | `<shy-icon>`                                | Ícones SVG inline com suporte a hover fill e tamanho customizável                                                  |
-| **Select**      | `<shy-select>`                              | Dropdown customizável com suporte a ícones e imagens nas opções                                                    |
+| **Select**      | `<shy-select>`                              | Combobox (CVA): `ngModel`/`formControl`, `multiple`, typeahead, painel em overlay                                  |
 | **Snackbar**    | `<shy-snackbar>`                            | Notificação temporária no topo ou rodapé da página                                                                 |
 | **ThemeToggle** | `<shy-theme-toggle>`                        | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                                                |
 | **Menu**        | `[shyMenu]` + `shy-menu` + `shyMenuItem`    | Menu button (APG): setas, Home/End, typeahead; fecha ao ativar o item; sem submenus                                |
@@ -96,6 +96,47 @@ O nome do ícone é passado como conteúdo da tag (content projection):
 | `hoverFillDelay` | `number`  | `0`     | Duração da transição entre o estado normal e o fill (em ms)                                    |
 | `name`           | `string`  | —       | Nome do ícone; tem prioridade sobre o conteúdo projetado                                       |
 | `label`          | `string`  | —       | Nome acessível: vira `role="img"` + `aria-label`. Sem ele o ícone é decorativo (`aria-hidden`) |
+
+**Customização via CSS:**
+
+```scss
+shy-icon {
+    --shy-icon-size: var(--shy-size-icon-lg); /* tamanho (padrão: --shy-size-icon-md) */
+    color: red; /* cor via currentColor */
+}
+```
+
+Os ícones disponíveis são gerados a partir dos SVGs em `src/libs/ui/src/assets/svg/` (conjunto Bootstrap Icons). Variantes preenchidas usam o sufixo `-fill` (ex: `heart-fill`).
+
+Para adicionar ícones, coloque o `.svg` em `src/libs/ui/src/assets/svg/` e execute:
+
+```bash
+npm run generate:icons
+```
+
+---
+
+### SelectComponent
+
+Combobox somente-seleção (APG) sobre o `OverlayService`: o foco fica no botão e a opção ativa vai em `aria-activedescendant`; a lista abre na camada `dropdown`, vira para cima se faltar espaço e funciona dentro de um Dialog. API completa e teclado em [`src/libs/ui/README.md`](src/libs/ui/README.md#shy-select).
+
+```html
+<shy-form-field label="País" hint="Escolha um">
+    <shy-select [options]="paises" [formControl]="pais" placeholder="Escolha um país" />
+</shy-form-field>
+<shy-select [options]="tags" [(value)]="selecionadas" multiple label="Tópicos" />
+```
+
+```typescript
+paises: ShySelectOption[] = [
+  { value: 'br', label: 'Brasil', img: 'assets/flag-br.svg' },
+  { value: 'jp', label: 'Japão', disabled: true },
+];
+```
+
+- Valor por `ngModel`, `formControl`/`formControlName` ou `[(value)]` (array com `multiple`); `compareWith` para objetos; `disabled`, `invalid`, `required`, `placeholder`.
+- **Migração (API antiga `@deprecated` até a 1.0, ainda funciona):** `[selectOptions]` → `[options]` (sem `id`; `value` de qualquer tipo); `[selectedOption]` → `[(value)]`/`ngModel`/`formControl`; `(onSelectionChange)` → `(valueChange)`; `SelectOption`/`SelectionChangeEvent` → `ShySelectOption`.
+- Tokens do botão no próprio elemento; os do painel (`--shy-select-panel-*`, `--shy-select-option-*`) em `:root` (o painel mora no contêiner de overlays).
 
 **Customização via CSS:**
 
@@ -588,7 +629,7 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
-export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
+export { ShySelectOption, SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
