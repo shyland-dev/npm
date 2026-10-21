@@ -1,0 +1,25 @@
+<div class="page">
+  <h1 class="page-title">Empty state</h1>
+  <p class="page-lead"><code>&lt;shy-empty-state&gt;</code> explains why there is nothing to show. <code>heading</code> and <code>icon</code> are inputs, the content is the description and the action goes in <code>slot="action"</code>. It has no role of its own.</p>
+
+  <section class="section">
+    <h2>With icon and action</h2>
+    <div class="card">
+      <shy-empty-state heading="No projects yet" icon="inbox">Create your first project to start collaborating.<button shyButton slot="action">New project</button></shy-empty-state>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Search without results</h2>
+    <div class="card">
+      <shy-empty-state heading="No results for “xyz”" icon="search">Check the spelling or try a broader term.</shy-empty-state>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Text only</h2>
+    <div class="card">
+      <shy-empty-state>Nothing to display.</shy-empty-state>
+    </div>
+  </section>
+</div>

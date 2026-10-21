@@ -1,0 +1,16 @@
+<ng-template #row>
+  <span class="start"><ng-content select="[slot=start]" /></span>
+  <span class="main">
+    <span class="primary"><ng-content /></span>
+    <span class="secondary"><ng-content select="[slot=secondary]" /></span>
+  </span>
+  <span class="end"><ng-content select="[slot=end]" /></span>
+</ng-template>
+
+@if (href() && !disabled()) {
+  <a class="row" [href]="href()" [attr.aria-current]="selected() ? 'true' : null"><ng-container [ngTemplateOutlet]="row" /></a>
+} @else if (interactive()) {
+  <button class="row" type="button" [disabled]="disabled()" [attr.aria-current]="selected() ? 'true' : null" (click)="activated.emit()"><ng-container [ngTemplateOutlet]="row" /></button>
+} @else {
+  <div class="row" [attr.aria-current]="selected() ? 'true' : null"><ng-container [ngTemplateOutlet]="row" /></div>
+}

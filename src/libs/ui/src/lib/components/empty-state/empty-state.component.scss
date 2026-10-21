@@ -1,0 +1,39 @@
+@use '../../styles' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--shy-empty-state-gap, var(--shy-space-4));
+  box-sizing: border-box;
+  padding: var(--shy-empty-state-pad, var(--shy-space-12) var(--shy-space-8));
+  color: var(--shy-empty-state-fg, var(--shy-color-text-muted));
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-normal);
+  text-align: center;
+}
+
+.icon {
+  --shy-icon-size: #{ru(16)};
+
+  color: var(--shy-empty-state-icon-color, var(--shy-color-text-subtle));
+}
+
+.title {
+  color: var(--shy-empty-state-title-color, var(--shy-color-text));
+  font-size: var(--shy-text-lg);
+  font-weight: var(--shy-weight-semibold);
+}
+
+.description {
+  max-inline-size: var(--shy-empty-state-max-width, #{ru(120)});
+}
+
+.description:empty,
+.action:empty {
+  display: none;
+}
+
+.action {
+  margin-block-start: var(--shy-space-2);
+}

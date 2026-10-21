@@ -1,0 +1,18 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: var(--shy-border-width) solid var(--shy-list-border-color, var(--shy-color-border));
+  border-radius: var(--shy-list-radius, var(--shy-radius-lg));
+  background: var(--shy-list-bg, var(--shy-color-surface));
+  color: var(--shy-color-text);
+  overflow: hidden;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+}

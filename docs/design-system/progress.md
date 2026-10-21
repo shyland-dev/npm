@@ -4,8 +4,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F5 Onda 3 + hardening**, sessão **F5-S2** (lote 2: Avatar, EmptyState, List, Table)
-- Estado: `aguardando-plano` (F5-S1 concluída em `78774a0`; o próximo `/build` aprova o plano da F5-S2 abaixo e executa)
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S3** (lote 3 sob demanda: Combobox, Slider, FileDropzone, Stepper, AppShell)
+- Estado: `aguardando-plano` (F5-S2 concluída; **decisão do dono pendente**: se o lote 3 vale a pena e quais componentes; sem resposta, marcar F5-S3 como "pulada" e seguir para a F5-S4; o `/build` sozinho NÃO decide isso)
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -63,35 +63,35 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 
 ## Fases
 
-| Fase                               | Status                        | Commit                                                        |
-| ---------------------------------- | ----------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)     | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)     | 0123029                                                       |
-| F2 Refactor dos existentes         | concluída (gate aprovado)     | eb359ac                                                       |
-| F3 Onda 1                          | concluída (gate aprovado)     | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | concluída (gate aprovado)     | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
-| F5 Onda 3 + hardening              | em andamento (F5-S2 no plano) |                                                               |
+| Fase                               | Status                       | Commit                                                        |
+| ---------------------------------- | ---------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado)    | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)    | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado)    | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado)    | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado)    | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | em andamento (F5-S2 no gate) |                                                               |
 
 ## Sessões
 
-| Sessão | Escopo                                                                             | Status    | Commit  |
-| ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
-| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
-| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
-| F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
-| F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
-| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
-| F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
-| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
-| F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
-| F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
-| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
-| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
-| F4-S6  | Fechamento da Onda 2                                                               | gate      |         |
-| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0 |
-| F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | plano     |         |
-| F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |         |
-| F5-S4  | Hardening e fechamento                                                             | pendente  |         |
+| Sessão | Escopo                                                                             | Status    | Commit        |
+| ------ | ---------------------------------------------------------------------------------- | --------- | ------------- |
+| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b       |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902       |
+| F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878       |
+| F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314       |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db       |
+| F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496       |
+| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b       |
+| F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3       |
+| F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390       |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |               |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |               |
+| F4-S6  | Fechamento da Onda 2                                                               | gate      |               |
+| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0       |
+| F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | concluída | (este commit) |
+| F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |               |
+| F5-S4  | Hardening e fechamento                                                             | pendente  |               |
 
 ## Registro
 
@@ -113,6 +113,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 - 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
 - 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
 - 2026-10-21: `/build` aprovou o gate da F5-S1 (`78774a0`, já enviado). **F5-S1 concluída.** F5-S2 em `aguardando-plano` (plano acima).
+- 2026-10-21: `/build` (thread própria da F5-S2) aprovou o plano e o executou (Avatar, EmptyState, List, Table, showcase, docs, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
 
 ## F4-S3: plano da sessão (2026-10-21)
 
@@ -164,6 +165,41 @@ Implementar o lote 2 da Onda 3 (Avatar, EmptyState, List, Table) com o contrato 
 
 - Table recebe linhas por projeção de conteúdo (`<tr>` nativo) e só adiciona comportamento (ordenação/seleção) por diretivas/atributos; sem modelo de dados próprio nem `columns[]` (evita API pesada; pode ser revisto sob demanda).
 - Mensagem de commit proposta no gate: `feat(ui): avatar, empty-state, list e table`.
+
+## F5-S2: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                                                                                                                                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                                                                                                                                                                                        |
+| `npm test`               | 264 testes passando (244 + 20 novos: Avatar 4, EmptyState 2, List 4, Table 4 nativa + 6 declarativa)                                                                                                                                                                                            |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                                                                                                                                                                                             |
+| `npm run build:showcase` | ok (4 rotas novas)                                                                                                                                                                                                                                                                              |
+| Chromium (Playwright)    | 4 páginas × dark/light × 360/1366 px × LTR/RTL × normal/`forced-colors`/`reduced-motion` (96 cenários): sem scroll horizontal da página, sem erros de console. Interação: ordenação por Enter (`aria-sort`), seleção com `indeterminate` no cabeçalho, filtro → estado vazio (modo declarativo) |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                                                                                                                                                                                          |
+
+Não verificado: leitor de tela real (anúncio de `aria-sort` e da região rolável), Safari/Firefox, toque real (ver "Pendências herdadas da F4").
+
+### Resumo (arquivos principais)
+
+- `components/avatar/` (`shy-avatar`), `components/empty-state/` (`shy-empty-state`), `components/list/` (`shy-list`, `shy-list-item`), `components/table/` (`shy-table`, `shy-column`, `shyCell`, `th[shySort]`); tipos `ShyAvatarSize`/`ShyAvatarShape`/`ShySortDirection`; exports em `components/index.ts` e `types/index.ts`.
+- Showcase: páginas `components/{avatar,empty-state,list,table}`, rotas e menu (a da Table mostra o modo declarativo com ordenação, seleção, paginação, célula custom, filtro e vazio, e o modo nativo).
+- `scripts/contrast-pairs.json`: par novo `text`/`neutral-soft` (hover da linha).
+- Docs: ADR-F5-2 (`decisions.md`), `tokens.md`, `accessibility.md`, README da lib (uso, tokens, exports). `README.md` da raiz não precisou mudar (nenhum script/build alterado).
+- Sem dependência nova de runtime nem devDependency. Sem bump, tag ou publish.
+
+### Decisões e premissas
+
+- Table: após o gate inicial o dono pediu um HTML mais simples e escolheu (card, 2026-10-21) **colunas declarativas + modo nativo**: `<shy-table [rows]>` com `<shy-column>` (ordenação, seleção, paginação, vazio, `serverSide`); a `<table>` nativa continua como escape hatch. Sem cabeçalho fixo nem virtualização. Detalhes na ADR-F5-2.
+- Um bug achado nos testes e corrigido: `name` só com espaços virava nome acessível (agora `trim`).
+- Nada ambíguo de alto impacto: API segue o contrato comum e as convenções existentes.
+
+### Mensagem de commit proposta
+
+`feat(ui): avatar, empty-state, list e table`
+
+Corpo: quatro componentes da Onda 3 (lote 2) com semântica nativa/APG, tokens `--shy-<comp>-*`, testes, páginas no showcase e docs.
 
 ## F5-S1: relatório do gate (2026-10-21)
 

@@ -247,6 +247,11 @@
       "min": 4.5
     },
     {
+      "fg": "text",
+      "bg": "neutral-soft",
+      "min": 4.5
+    },
+    {
       "fg": "on-scrim",
       "bg": "scrim-panel",
       "min": 4.5

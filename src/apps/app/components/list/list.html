@@ -1,0 +1,48 @@
+<div class="page">
+  <h1 class="page-title">List</h1>
+  <p class="page-lead"><code>&lt;shy-list&gt;</code> and <code>&lt;shy-list-item&gt;</code> have list semantics. An item can be static, a native link (<code>href</code>) or a native button (<code>interactive</code>, emits <code>activated</code>). Slots: <code>start</code>, <code>secondary</code> and <code>end</code>.</p>
+
+  <section class="section">
+    <h2>Static, with slots</h2>
+    <div class="card">
+      <shy-list aria-label="Team">
+        @for (person of people; track person.id) {
+          <shy-list-item>
+            <shy-avatar slot="start" [name]="person.name" />
+            {{ person.name }}
+            <span slot="secondary">{{ person.mail }}</span>
+            <shy-badge slot="end" intent="success">Active</shy-badge>
+          </shy-list-item>
+        }
+      </shy-list>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Interactive (selected item)</h2>
+    <div class="card">
+      <shy-list aria-label="Pick a person">
+        @for (person of people; track person.id) {
+          <shy-list-item interactive [selected]="selected() === person.id" (activated)="selected.set(person.id)">
+            <shy-avatar slot="start" [name]="person.name" size="sm" />
+            {{ person.name }}
+          </shy-list-item>
+        }
+        <shy-list-item interactive disabled>Disabled item</shy-list-item>
+      </shy-list>
+      <p>
+        Selected: <code>{{ selected() }}</code>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Links</h2>
+    <div class="card">
+      <shy-list aria-label="Links">
+        <shy-list-item href="https://angular.dev">Angular docs<span slot="secondary">angular.dev</span></shy-list-item>
+        <shy-list-item href="https://www.w3.org/WAI/ARIA/apg/">ARIA Authoring Practices<span slot="secondary">w3.org</span></shy-list-item>
+      </shy-list>
+    </div>
+  </section>
+</div>

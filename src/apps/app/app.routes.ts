@@ -5,6 +5,7 @@ export const routes: Routes = [
 
   { path: 'components/accordion', loadComponent: () => import('./components/accordion/accordion').then((m) => m.AccordionPage) },
   { path: 'components/alert', loadComponent: () => import('./components/alert/alert').then((m) => m.AlertPage) },
+  { path: 'components/avatar', loadComponent: () => import('./components/avatar/avatar').then((m) => m.AvatarPage) },
   { path: 'components/badge', loadComponent: () => import('./components/badge/badge').then((m) => m.BadgePage) },
   { path: 'components/breadcrumb', loadComponent: () => import('./components/breadcrumb/breadcrumb').then((m) => m.BreadcrumbPage) },
   { path: 'components/button', loadComponent: () => import('./components/button/button').then((m) => m.ButtonPage) },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'components/checkbox', loadComponent: () => import('./components/checkbox/checkbox').then((m) => m.CheckboxPage) },
   { path: 'components/dialog', loadComponent: () => import('./components/dialog/dialog').then((m) => m.DialogPage) },
   { path: 'components/divider', loadComponent: () => import('./components/divider/divider').then((m) => m.DividerPage) },
+  { path: 'components/empty-state', loadComponent: () => import('./components/empty-state/empty-state').then((m) => m.EmptyStatePage) },
   { path: 'components/drawer', loadComponent: () => import('./components/drawer/drawer').then((m) => m.DrawerPage) },
   { path: 'components/menu', loadComponent: () => import('./components/menu/menu').then((m) => m.MenuPage) },
   { path: 'components/pagination', loadComponent: () => import('./components/pagination/pagination').then((m) => m.PaginationPage) },
@@ -21,6 +23,7 @@ export const routes: Routes = [
   { path: 'components/icon', loadComponent: () => import('./components/icon/icon').then((m) => m.IconPage) },
   { path: 'components/icon-button', loadComponent: () => import('./components/icon-button/icon-button').then((m) => m.IconButtonPage) },
   { path: 'components/input', loadComponent: () => import('./components/input/input').then((m) => m.InputPage) },
+  { path: 'components/list', loadComponent: () => import('./components/list/list').then((m) => m.ListPage) },
   { path: 'components/progress', loadComponent: () => import('./components/progress/progress').then((m) => m.ProgressPage) },
   { path: 'components/radio', loadComponent: () => import('./components/radio/radio').then((m) => m.RadioPage) },
   { path: 'components/select', loadComponent: () => import('./components/select/select').then((m) => m.SelectPage) },
@@ -28,6 +31,7 @@ export const routes: Routes = [
   { path: 'components/snackbar', loadComponent: () => import('./components/snackbar/snackbar').then((m) => m.SnackbarPage) },
   { path: 'components/spinner', loadComponent: () => import('./components/spinner/spinner').then((m) => m.SpinnerPage) },
   { path: 'components/switch', loadComponent: () => import('./components/switch/switch').then((m) => m.SwitchPage) },
+  { path: 'components/table', loadComponent: () => import('./components/table/table').then((m) => m.TablePage) },
   { path: 'components/tabs', loadComponent: () => import('./components/tabs/tabs').then((m) => m.TabsPage) },
   { path: 'components/textarea', loadComponent: () => import('./components/textarea/textarea').then((m) => m.TextareaPage) },
 

@@ -1,0 +1,7 @@
+@if (showImage()) {
+  <img class="image" [src]="src()" alt="" (error)="onError()" />
+} @else if (initials()) {
+  <span class="initials" aria-hidden="true">{{ initials() }}</span>
+} @else {
+  <shy-icon class="fallback" name="person-fill" />
+}

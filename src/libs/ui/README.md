@@ -528,6 +528,68 @@ APG Accordion. Each item: a `role="heading"` (`level`, default 3) with a button 
 
 A gap of a single page shows that page instead of "…". Arrows mirror in RTL.
 
+### `<shy-avatar>`
+
+Image with fallback: `src` → initials of `name` (up to 2 letters) → icon. `label` (default `name`) is the accessible name (`role="img"`); without `label` and `name` the avatar is decorative (`aria-hidden`).
+
+```html
+<shy-avatar src="/ana.jpg" name="Ana Souza" size="lg" /> <shy-avatar name="Bruno Lima" shape="rounded" />
+```
+
+| Input                  | Default  | Notes                             |
+| ---------------------- | -------- | --------------------------------- |
+| `src`, `name`, `label` | -        | Image, initials source, a11y name |
+| `size`                 | `md`     | `sm`, `md`, `lg`, `xl`            |
+| `shape`                | `circle` | `circle` or `rounded`             |
+
+### `<shy-empty-state>`
+
+Explains why there is nothing to show. Inputs `heading` and `icon` (decorative); the content is the description and `slot="action"` takes a button/link. No role of its own. Inside a table, put it in a `<td [attr.colspan]="n">`.
+
+```html
+<shy-empty-state heading="No projects yet" icon="inbox">Create your first project.<button shyButton slot="action">New project</button></shy-empty-state>
+```
+
+### `<shy-list>`, `<shy-list-item>`
+
+`role="list"`/`listitem` (name the list with `aria-label`). An item is static by default; `href` renders a native link and `interactive` a native button (emits `activated`); `selected` sets `aria-current="true"`; `disabled` applies to the button. Slots: `start`, `secondary`, `end`. Do not nest controls inside a clickable row; keep the row static and put the action in `slot="end"`.
+
+```html
+<shy-list aria-label="Team">
+    <shy-list-item interactive [selected]="id === 'ana'" (activated)="id = 'ana'"><shy-avatar slot="start" name="Ana Souza" size="sm" />Ana<span slot="secondary">ana@x.dev</span></shy-list-item>
+</shy-list>
+```
+
+### `<shy-table>`, `<shy-column>`, `th[shySort]`
+
+Two modes. **Declarative** (`[rows]`): describe the columns and the lib builds the native `<table>` with sorting, selection, pagination and the empty state.
+
+```html
+<shy-table [rows]="invoices()" rowKey="id" label="Invoices" caption="Invoices" striped selectable [(selection)]="selected" [(sort)]="sort" [pageSize]="10" [(page)]="page" emptyHeading="No invoices">
+    <shy-column key="id" header="Invoice" rowHeader sortable />
+    <shy-column key="customer" header="Customer" sortable />
+    <shy-column key="status" header="Status">
+        <ng-template shyCell let-row><shy-badge>{{ row.status }}</shy-badge></ng-template>
+    </shy-column>
+    <shy-column key="total" header="Total" sortable numeric />
+</shy-table>
+```
+
+| `shy-table` input                                     | Default                  | Notes                                                                                              |
+| ----------------------------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------- |
+| `rows`, `rowKey`                                      | -                        | `rowKey` = property name or function identifying a row (used by `selection`); default: the row     |
+| `[(selection)]`, `selectable`                         | `[]`, `false`            | Array of row keys; the header checkbox selects the rows of the current page (`indeterminate`)      |
+| `[(sort)]`                                            | `null`                   | `{ key, direction: 'asc' \| 'desc' }`; header click cycles asc → desc → none                       |
+| `pageSize`, `[(page)]`                                | `0`, `1`                 | `pageSize` `0` = no pagination; page is 1-based                                                    |
+| `serverSide`, `totalRows`                             | `false`                  | The lib neither sorts nor slices: react to `sortChange`/`pageChange`, pass only the page in `rows` |
+| `label`, `caption`, `striped`, `dense`                | -                        | `label` makes the scroll area a named, focusable region                                            |
+| `emptyHeading`, `emptyDescription`, `emptyIcon`       | `No results`, -, `inbox` | Empty state row                                                                                    |
+| `selectAllLabel`, `selectRowLabel`, `paginationLabel` | English                  | Accessible texts (translate them)                                                                  |
+
+`shy-column`: `key` (required), `header` (default `key`), `sortable`, `numeric` (end-aligned, tabular figures), `rowHeader` (cell becomes `th scope="row"`), `compare` (custom comparator; default is natural order, empty values last). Without `<ng-template shyCell>` the cell shows `row[key]`; the template receives `$implicit` (row), `value` and `index`. No virtualization: paginate large data.
+
+**Native** (no `[rows]`): you write the `<table>` (`caption`, `thead`/`tbody`, `th scope`) and `shy-table` only styles it and contains horizontal scroll. Use it for `colspan`, grouped rows or very custom cells. Helpers: `th shySort [(direction)]` (native button + `aria-sort`; you sort the data), `data-numeric`, `data-narrow`, `data-selected` on `tr`.
+
 ## Styles
 
 Tokens (colors, typography, spacing, motion, layers), self-hosted fonts (JetBrains Mono, SIL OFL), animations and a base reset ship as one CSS. Pick **one** way to load it:
@@ -700,6 +762,18 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 | `--shy-breadcrumb-fg`, `-fg-current`, `-separator`, `-gap`                                                 | `text-muted`, `text`, `'/'`, `space-3`                                                     | Colors, separator text and its spacing  |
 | `--shy-pagination-fg`, `-bg-current`, `-fg-current`, `-size`, `-radius`, `-gap`                            | `text`, `primary`, `on-primary`, `size-control-md`, `radius-md`, `space-2`                 | Page buttons                            |
 
+### Avatar, Empty State, List and Table Tokens
+
+| Token                                                                                         | Default                                                                       | Description                   |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------- |
+| `--shy-avatar-size`, `-bg`, `-fg`, `-radius`, `-font-size`                                    | by `size`, `primary-soft`, `on-primary-soft`, by `shape`                      | Avatar box and colors         |
+| `--shy-empty-state-fg`, `-title-color`, `-icon-color`, `-gap`, `-pad`, `-max-width`           | `text-muted`, `text`, `text-subtle`, `space-4`, `space-12 space-8`, `ru(120)` | Empty state                   |
+| `--shy-list-bg`, `-border-color`, `-divider-color`, `-radius`, `-bg-selected`, `-fg-selected` | `surface`, `border`, `line`, `radius-lg`, `primary-soft`, `on-primary-soft`   | List surface and selected row |
+| `--shy-list-item-height`, `-pad-x`, `-pad-y`, `-gap`                                          | `size-control-lg`, `space-7`, `space-4`, `space-6`                            | Row measures                  |
+| `--shy-table-bg`, `-border-color`, `-divider-color`, `-radius`, `-header-bg`, `-header-fg`    | `surface`, `border`, `line`, `radius-lg`, `surface-sunken`, `text-muted`      | Table surface and header      |
+| `--shy-table-stripe-bg`, `-row-bg-hover`, `-row-bg-selected`, `-row-fg-selected`              | `surface-sunken`, `neutral-soft`, `primary-soft`, `on-primary-soft`           | Row states                    |
+| `--shy-table-cell-pad-x`, `-cell-pad-y`, `-cell-pad-y-dense`                                  | `space-6`, `space-4`, `space-2`                                               | Cell padding                  |
+
 ### Snackbar Tokens
 
 The toasts can be customized via CSS custom properties on `:root` (the container lives in the overlay layer):
@@ -752,7 +826,14 @@ The `<shy-select>` component can be customized via CSS custom properties:
 export { ButtonComponent } from './lib/components/button/button.component';
 export { IconButtonComponent } from './lib/components/icon-button/icon-button.component';
 export { AlertComponent } from './lib/components/alert/alert.component';
+export { AvatarComponent } from './lib/components/avatar/avatar.component';
 export { BadgeComponent } from './lib/components/badge/badge.component';
+export { EmptyStateComponent } from './lib/components/empty-state/empty-state.component';
+export { ListComponent } from './lib/components/list/list.component';
+export { ListItemComponent } from './lib/components/list/list-item.component';
+export { TableComponent } from './lib/components/table/table.component';
+export { TableColumnComponent, TableCellDirective } from './lib/components/table/table-column.component';
+export { TableSortComponent } from './lib/components/table/table-sort.component';
 export { CheckboxComponent } from './lib/components/checkbox/checkbox.component';
 export { AccordionComponent } from './lib/components/accordion/accordion.component';
 export { AccordionItemComponent } from './lib/components/accordion/accordion-item.component';
@@ -815,6 +896,8 @@ export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef, SnackbarShowOpti
 
 // Types
 export { ShyAlertIntent } from './lib/types/alert/alert.type';
+export { ShyAvatarSize, ShyAvatarShape } from './lib/types/avatar/avatar.type';
+export { ShySortDirection, ShyTableSort, ShyTableCellContext } from './lib/types/table/table.type';
 export { ShyBadgeVariant, ShyBadgeSize } from './lib/types/badge/badge.type';
 export { ShyCardElevation } from './lib/types/card/card.type';
 export { ShyDialogSize, ShyDrawerSide } from './lib/types/dialog/dialog.type';

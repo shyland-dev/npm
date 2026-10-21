@@ -72,6 +72,19 @@ Mesma regra (nunca definidos pela lib; o componente lê com fallback no semânti
 
 Pares de contraste: nenhum par novo (`text`/`text-muted`/`text-subtle` sobre `bg`/`surface`, `on-neutral-soft` sobre `neutral-soft` no hover/active da aba, `on-primary` sobre `primary` na página atual e `focus` já estão em `contrast-pairs.json`).
 
+## Tokens de componente (Onda 3, lote 2)
+
+Mesma regra (nunca definidos pela lib; o componente lê com fallback no semântico).
+
+| Componente | Tokens                                                                                                                                                                 |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Avatar     | `--shy-avatar-{size,bg,fg,radius,font-size}`                                                                                                                           |
+| EmptyState | `--shy-empty-state-{fg,title-color,icon-color,gap,pad,max-width}`                                                                                                      |
+| List       | `--shy-list-{bg,border-color,divider-color,radius,bg-selected,fg-selected}`, `--shy-list-item-{height,pad-x,pad-y,gap}`                                                |
+| Table      | `--shy-table-{bg,border-color,divider-color,radius,header-bg,header-fg,stripe-bg,row-bg-hover,row-bg-selected,row-fg-selected,cell-pad-x,cell-pad-y,cell-pad-y-dense}` |
+
+Pares de contraste: um par novo, `text` sobre `neutral-soft` (hover da linha da Table), em `contrast-pairs.json`. O resto já estava coberto (`on-primary-soft`/`primary-soft` no avatar, linha selecionada e item selecionado; `text-muted` sobre `surface` e `surface-sunken` no cabeçalho e no texto de apoio).
+
 ### Pares de contraste da Onda 1
 
 Todos os pares que os componentes da Onda 1 usam estão em `contrast-pairs.json` (56 pares × 2 temas): texto sobre superfícies (`text*`/`surface*`), sólidos (`on-X`/`X`), suaves (`on-X-soft`/`X-soft`, `X-text`/`X-soft`), texto de intenção sobre superfícies (`X-text`), borda de controle e foco (`border-strong`, `focus`, ≥ 3:1), trilho (`primary-text`/`track`, `text-muted`/`track`). Ficam de fora, por serem decorativos (WCAG 1.4.11 não exige): `border`, `line` (divider, borda de card), `track` contra a página e o fundo do skeleton. O fundo `primary` sólido no tema escuro (2,6:1 sobre `bg`) só aparece com texto/glifo `on-primary` por cima; o contorno dos controles marcados usa `primary-text` (ADR-F3-6).

@@ -1,0 +1,110 @@
+@use '../../styles' as *;
+
+:host {
+  display: block;
+  border: var(--shy-border-width) solid var(--shy-table-border-color, var(--shy-color-border));
+  border-radius: var(--shy-table-radius, var(--shy-radius-lg));
+  background: var(--shy-table-bg, var(--shy-color-surface));
+  color: var(--shy-color-text);
+  overflow: hidden;
+}
+
+.scroll {
+  overflow-x: auto;
+
+  &:focus-visible {
+    @include focus-ring(ru(-1));
+  }
+}
+
+// A <table> é do consumidor (projeção): o estilo atravessa a encapsulação, sempre sob :host.
+:host ::ng-deep table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--shy-text-md);
+  line-height: var(--shy-leading-snug);
+}
+
+:host ::ng-deep caption {
+  padding: var(--shy-table-cell-pad-y, var(--shy-space-4)) var(--shy-table-cell-pad-x, var(--shy-space-6));
+  color: var(--shy-color-text-muted);
+  font-size: var(--shy-text-sm);
+  text-align: start;
+}
+
+:host ::ng-deep th,
+:host ::ng-deep td {
+  padding-block: var(--shy-table-cell-pad-y, var(--shy-space-4));
+  padding-inline: var(--shy-table-cell-pad-x, var(--shy-space-6));
+  border-block-end: var(--shy-border-width) solid var(--shy-table-divider-color, var(--shy-color-line));
+  text-align: start;
+  vertical-align: middle;
+}
+
+:host([data-dense]) ::ng-deep th,
+:host([data-dense]) ::ng-deep td {
+  padding-block: var(--shy-table-cell-pad-y-dense, var(--shy-space-2));
+}
+
+:host ::ng-deep th[shySort] {
+  padding: 0;
+}
+
+:host ::ng-deep thead th {
+  background: var(--shy-table-header-bg, var(--shy-color-surface-sunken));
+  color: var(--shy-table-header-fg, var(--shy-color-text-muted));
+  font-size: var(--shy-text-sm);
+  font-weight: var(--shy-weight-semibold);
+  white-space: nowrap;
+}
+
+:host ::ng-deep tbody th {
+  font-weight: var(--shy-weight-medium);
+}
+
+:host ::ng-deep tbody tr:last-child > * {
+  border-block-end: 0;
+}
+
+:host([data-striped]) ::ng-deep tbody tr:nth-child(even) {
+  background: var(--shy-table-stripe-bg, var(--shy-color-surface-sunken));
+}
+
+@media (hover: hover) {
+  :host ::ng-deep tbody tr:hover {
+    background: var(--shy-table-row-bg-hover, var(--shy-color-neutral-soft));
+  }
+}
+
+:host ::ng-deep tbody tr[data-selected] {
+  background: var(--shy-table-row-bg-selected, var(--shy-color-primary-soft));
+  color: var(--shy-table-row-fg-selected, var(--shy-color-on-primary-soft));
+}
+
+:host ::ng-deep [data-numeric] {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+:host ::ng-deep [data-narrow] {
+  inline-size: 1%;
+  white-space: nowrap;
+}
+
+@media (forced-colors: active) {
+  :host {
+    border-color: CanvasText;
+  }
+
+  :host ::ng-deep tbody tr[data-selected] {
+    outline: var(--shy-border-width-strong) solid Highlight;
+    outline-offset: ru(-1);
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  padding: var(--shy-space-4);
+  border-block-start: var(--shy-border-width) solid var(--shy-table-divider-color, var(--shy-color-line));
+}

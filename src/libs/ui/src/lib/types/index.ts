@@ -13,3 +13,5 @@ export * from './spinner/spinner.type';
 export * from './overlay/overlay.type';
 export * from './dialog/dialog.type';
 export * from './tabs/tabs.type';
+export * from './avatar/avatar.type';
+export * from './table/table.type';
