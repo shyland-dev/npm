@@ -5,7 +5,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F5 Onda 3 + hardening**, sessão **F5-S3** (lote 3 sob demanda: Combobox, Slider, FileDropzone, Stepper, AppShell)
-- Estado: `aguardando-plano` (F5-S2 concluída; **decisão do dono pendente**: se o lote 3 vale a pena e quais componentes; sem resposta, marcar F5-S3 como "pulada" e seguir para a F5-S4; o `/build` sozinho NÃO decide isso)
+- Estado: `aguardando-plano` (F5-S2 concluída). **Decisão do dono (2026-10-21, card):** fazer o lote 3 completo. Plano em "F5-S3: plano da sessão" abaixo; a API pública dos 5 componentes (premissas P1 a P5) espera confirmação explícita do dono antes de executar
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -144,6 +144,31 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S3: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Implementar o lote 3 completo da Onda 3 (Combobox, Slider, FileDropzone, Stepper, AppShell) com o contrato comum. Dividido em duas sessões para caber no contexto: **F5-S3a** = Combobox, Slider, FileDropzone (controles de formulário, CVA); **F5-S3b** = Stepper, AppShell (navegação/layout). Um gate e um commit por sessão.
+
+### Tarefas
+
+1. **Combobox** (`shy-combobox`): APG combobox com listbox popup; CVA; filtro por texto (padrão `contains`, sem acento/caixa; `filterFn` opcional); `OverlayService` com `matchWidth`; `aria-activedescendant`, `aria-expanded`, `aria-autocomplete="list"`; Esc limpa/fecha; estado vazio ("sem resultados", `aria-live`); mesma forma de opção do `shy-select` (`ShySelectOption`).
+2. **Slider** (`shy-slider`): CVA; `role="slider"` por thumb em `<input type="range">` nativo estilizado (teclado/AT de graça); `min/max/step`; valor único e faixa (dois thumbs) como fase opcional; `aria-valuetext` via `displayWith`; RTL.
+3. **FileDropzone** (`shy-file-dropzone`): CVA com `File[]`; `<input type="file">` nativo oculto + botão; arrastar-e-soltar; `accept`, `multiple`, `maxSize`; erros por arquivo em `output()`; região viva para status; sem upload (só seleciona).
+4. **Stepper** (`shy-stepper`, `shy-step`): indicador de progresso horizontal/vertical, `aria-current="step"`; estados concluído/atual/erro/desabilitado; `linear` opcional; `model()` para o passo atual; sem conteúdo de painel obrigatório.
+5. **AppShell** (`shy-app-shell`): grid header/sidebar/main/footer por slots de projeção; sidebar colapsa em `Drawer` abaixo de breakpoint; landmarks (`header`, `nav`, `main`, `footer`), skip link; sem router próprio.
+6. Tokens `--shy-<comp>-*`, estados, reduced-motion, forced-colors, light/dark, RTL; testes; páginas no showcase; README da lib; `tokens.md`; `accessibility.md`; exports; ADR-F5-3 (S3a) e ADR-F5-4 (S3b).
+7. Gate de cada sessão: `check:ds`, testes, builds, auditoria Chromium.
+
+### Premissas de API pública (alto impacto: aguardam confirmação)
+
+- P1: Combobox reaproveita `ShySelectOption` e `ControlBase`; sem criação livre de valor (`allowCustom`) na primeira versão.
+- P2: Slider usa `<input type="range">` nativo; faixa (dois thumbs) fica de fora se complicar (revisão no gate).
+- P3: FileDropzone só seleciona e valida; **nunca faz upload**.
+- P4: Stepper sem painéis de conteúdo; o consumidor controla o conteúdo pelo `model()` do passo.
+- P5: AppShell sem dependência de `@angular/router`; slots por projeção.
+- Commits propostos: `feat(ui): combobox, slider e file-dropzone` e `feat(ui): stepper e app-shell`.
 
 ## F5-S2: plano da sessão (2026-10-21)
 
