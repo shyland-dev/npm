@@ -4,8 +4,8 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F5 Onda 3 + hardening**, sessão **F5-S3b** (lote 3, parte 2: Stepper, AppShell); próxima: **F5-S4** (hardening e fechamento)
-- Estado: `aguardando-gate` (F5-S3b executada em 2026-10-21; relatório em "F5-S3b: relatório do gate"; o próximo `/build` aprova o gate e a mensagem de commit, commita, faz push em `feat/design-system` e avança para a F5-S4 em `aguardando-plano`)
+- Fase: **F5 Onda 3 + hardening**, sessão **F5-S4** (hardening e fechamento; F5-S3 inteira concluída)
+- Estado: `aguardando-plano` (F5-S3b concluída e commitada em `fe843f4`, 2026-10-21; plano em "F5-S4: plano da sessão"; **o `/build` aprova só a parte de baixo impacto** (auditoria, orçamento, docs); versão, remoção de `@deprecated` e publicação esperam resposta explícita do dono)
 - Branch: `feat/design-system`
 - F4 (Onda 2) concluída em 2026-10-21. Plano em "F5-S1: plano da sessão" abaixo. **Decisão do dono (2026-10-21, "ok"):** recomendação aceita. Lote 1 = Tabs, Accordion, Breadcrumb, Pagination (F5-S1); lote 2 = Avatar, EmptyState, List, Table (F5-S2); lote 3 = Combobox, Slider, FileDropzone, Stepper, AppShell só sob demanda (F5-S3). O `/build` executou o lote 1 (relatório do gate abaixo).
 - **Handoff para uma thread por sessão:** seção "Handoff por sessão (threads separadas)" abaixo.
@@ -63,36 +63,36 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 
 ## Fases
 
-| Fase                               | Status                        | Commit                                                        |
-| ---------------------------------- | ----------------------------- | ------------------------------------------------------------- |
-| F0 Preparação                      | concluída (gate aprovado)     | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
-| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)     | 0123029                                                       |
-| F2 Refactor dos existentes         | concluída (gate aprovado)     | eb359ac                                                       |
-| F3 Onda 1                          | concluída (gate aprovado)     | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
-| F4 Onda 2                          | concluída (gate aprovado)     | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
-| F5 Onda 3 + hardening              | em andamento (F5-S3b em gate) |                                                               |
+| Fase                               | Status                            | Commit                                                        |
+| ---------------------------------- | --------------------------------- | ------------------------------------------------------------- |
+| F0 Preparação                      | concluída (gate aprovado)         | 3e647b9, aa431bb, 65d080f, c25ef8d, 979bdf6 (só documentação) |
+| F1 Unidades, tokens, temas, fontes | concluída (gate aprovado)         | 0123029                                                       |
+| F2 Refactor dos existentes         | concluída (gate aprovado)         | eb359ac                                                       |
+| F3 Onda 1                          | concluída (gate aprovado)         | 39c815b, 53e2902, e119878, b410314, 87644db, 0db8496          |
+| F4 Onda 2                          | concluída (gate aprovado)         | 3ac709b, 95e5ab3, ba59390, 56b8162, 1b43599, 0347516, 5d3549d |
+| F5 Onda 3 + hardening              | em andamento (S1 a S3 concluídas) |                                                               |
 
 ## Sessões
 
-| Sessão | Escopo                                                                             | Status    | Commit        |
-| ------ | ---------------------------------------------------------------------------------- | --------- | ------------- |
-| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b       |
-| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902       |
-| F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878       |
-| F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314       |
-| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db       |
-| F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496       |
-| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b       |
-| F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3       |
-| F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390       |
-| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |               |
-| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |               |
-| F4-S6  | Fechamento da Onda 2                                                               | gate      |               |
-| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0       |
-| F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | concluída | (este commit) |
-| F5-S3a | Lote 3a (Combobox, Slider, FileDropzone)                                           | concluída | 1df194b       |
-| F5-S3b | Lote 3b (Stepper, AppShell)                                                        | gate      |               |
-| F5-S4  | Hardening e fechamento                                                             | pendente  |               |
+| Sessão | Escopo                                                                             | Status    | Commit  |
+| ------ | ---------------------------------------------------------------------------------- | --------- | ------- |
+| F3-S1  | Utilitários Onda 0 (tipografia, layout, sr-only, animateOut) + Button + IconButton | concluída | 39c815b |
+| F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
+| F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
+| F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
+| F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
+| F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
+| F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
+| F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
+| F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
+| F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
+| F4-S6  | Fechamento da Onda 2                                                               | gate      |         |
+| F5-S1  | Escolha da Onda 3 + lote 1 (Tabs, Accordion, Breadcrumb, Pagination)               | concluída | 78774a0 |
+| F5-S2  | Lote 2 (Avatar, EmptyState, List, Table)                                           | concluída | 772b8e2 |
+| F5-S3a | Lote 3a (Combobox, Slider, FileDropzone)                                           | concluída | 1df194b |
+| F5-S3b | Lote 3b (Stepper, AppShell)                                                        | concluída | fe843f4 |
+| F5-S4  | Hardening e fechamento                                                             | pendente  |         |
 
 ## Registro
 
@@ -116,6 +116,7 @@ git fetch origin feat/design-system && git checkout -B feat/design-system origin
 - 2026-10-21: `/build` aprovou o gate da F5-S1 (`78774a0`, já enviado). **F5-S1 concluída.** F5-S2 em `aguardando-plano` (plano acima).
 - 2026-10-21: `/build` (thread própria da F5-S2) aprovou o plano e o executou (Avatar, EmptyState, List, Table, showcase, docs, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
 - 2026-10-21: `/build` (thread própria da F5-S3b) aprovou o plano (premissas P4/P5) e executou Stepper e AppShell (showcase, docs, ADR-F5-4, auditoria no Chromium). Verificações verdes; gate em `aguardando-gate`, ainda sem commit (mensagem a confirmar).
+- 2026-10-21: `/build` aprovou o gate da F5-S3b (`fe843f4`, push feito). **F5-S3 concluída.** F5-S4 em `aguardando-plano` (plano abaixo, com 3 decisões de alto impacto em aberto).
 
 ## F4-S3: plano da sessão (2026-10-21)
 
@@ -146,6 +147,29 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F5-S4: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Fechar a F5: auditoria de acessibilidade WCAG 2.2 AA de todos os componentes, orçamento de tamanho, `check:ds` completo, `npm audit`, docs finais (CHANGELOG, guia de migração, README) e preparar o fechamento da versão. **Bump, tag, publish e remoção de APIs `@deprecated` não fazem parte do que o `/build` aprova.**
+
+### Tarefas (baixo impacto; o `/build` aprova)
+
+1. Auditoria a11y no Chromium de todas as páginas do showcase (teclado, foco visível, `forced-colors`, `reduced-motion`, dark/light, LTR/RTL, 360 e 1366 px) em script reaproveitável; consolidar o relatório em `accessibility.md`. Lacunas que o container não cobre (leitor de tela real, Safari/Firefox, toque) ficam listadas como verificação manual do dono.
+2. Orçamento de tamanho: medir o bundle da lib e o CSS; propor limites e (se fizer sentido) um script `check:size` em `check:ds`. Tratar os 28 tokens "definidos e não usados" do aviso do `check-tokens` (remover ou justificar).
+3. `npm audit` e `check-fonts`; confirmar que nada novo vem da lib.
+4. Docs: `CHANGELOG.md` (todas as fases, com a busca/substituição da regra 2), guia de migração `0.0 → 0.1` completo, README raiz e da lib, `docs/design-system/` coerente com o plano.
+5. Ler `.github/workflows/publish.yml` e `.github/scripts/publish-pkg.sh` e registrar como o publish funciona e o que o bump exige (sem alterar nada).
+6. Gate: `check:ds`, testes, builds. Commit proposto: `docs: auditoria de acessibilidade, changelog e fechamento do design system`.
+
+### Decisões de alto impacto (esperam resposta explícita; o `/build` NÃO aprova)
+
+| #   | Decisão             | Opções                                                                                                                                                                                                                                   | Recomendação                                                                                                   |
+| --- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| D1  | Versão a fechar     | `0.1.0` (semver 0.x, breaking permitido) ou `1.0.0`                                                                                                                                                                                      | `0.1.0`: os projetos consumidores ainda serão migrados por você; `1.0.0` só depois de eles rodarem sobre a lib |
+| D2  | APIs `@deprecated`  | Remover já (Select e Snackbar antigos: `selectOptions`, `selectedOption`, `onSelectionChange`, `SelectOption`, `SelectionChangeEvent`, `<shy-snackbar>`, `SnackbarService.show({ element })`, `SnackbarShowOptions`) ou manter até a 1.0 | Manter até a 1.0 (regra do projeto: `@deprecated` antes de remover; remoção só em major)                       |
+| D3  | Bump, tag e publish | Agora ou depois                                                                                                                                                                                                                          | Só quando você pedir; esta sessão apenas prepara o changelog e a lista do que o bump exige                     |
 
 ## F5-S3b: relatório do gate (2026-10-21)
 
