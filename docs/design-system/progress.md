@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S3** (Popover, Tooltip, Menu)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Plano em "F4-S3: plano da sessão" abaixo. Sem decisão de alto impacto pendente (nomes e comportamento seguem o catálogo do plano e a sessão; a API de abertura é a da ADR-F4-4). O próximo `/build` aprova o plano e executa a F4-S3.
+- Relatório em "F4-S3: relatório do gate" abaixo. Sem decisão de alto impacto pendente. O próximo `/build` aprova o gate, marca a F4-S3 concluída e mostra o plano da F4-S4 (Select v2, com a decisão ADR-F4-2 a responder).
 
 ## Fases
 
@@ -32,7 +32,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
 | F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
 | F4-S2  | Dialog, Drawer                                                                     | concluída | 95e5ab3 |
-| F4-S3  | Popover, Tooltip, Menu                                                             | plano     |         |
+| F4-S3  | Popover, Tooltip, Menu                                                             | gate      |         |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
 | F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
@@ -90,6 +90,48 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S3: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                                 |
+| `npm test`               | 206 testes passando (20 novos: Popover, Menu, Tooltip)                                                                   |
+| `npm run build`          | ok (`ui` e `utils`)                                                                                                      |
+| `npm run build:showcase` | ok                                                                                                                       |
+| Chromium (Playwright)    | dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`: foco, ↑/↓, flip na borda, tooltip no foco/hover, dentro de Dialog |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                                   |
+
+Não verificado: leitor de tela, Safari/Firefox, toque real (o Tooltip ignora `pointerType: touch`, testado só por evento sintético).
+
+### Resumo (arquivos principais)
+
+- `overlay/overlay-trigger.ts`: base interna `OverlayTrigger` (abrir/fechar, `aria-expanded`/`aria-controls`, Tab). Não exportada.
+- `components/popover/` (`[shyPopover]`, `shy-popover`), `components/menu/` (`[shyMenu]`, `shy-menu`, `shyMenuItem`), `components/tooltip/` (`[shyTooltip]` + conteúdo interno).
+- Tokens `--shy-popover-*`, `--shy-menu-*`, `--shy-menu-item-*`, `--shy-tooltip-*` (com fallback no componente) e `--shy-delay-tooltip`/`--shy-delay-tooltip-hide` em `motion.css`.
+- Showcase: `components/popover`, `components/menu`, `components/tooltip` (placements, borda, formulário, ícones, tudo dentro de um Dialog).
+- Docs: ADR-F4-7, `accessibility.md`, `README.md` e `src/libs/ui/README.md`.
+
+### Efeito prático
+
+O app abre painéis ancorados com `[shyPopover]`, menus com `[shyMenu]` e dicas com `shyTooltip="texto"`, com teclado, foco e ARIA do APG, e funcionam também dentro de um Dialog.
+
+### Decisões e premissas (ADR-F4-7 em `decisions.md`)
+
+1. Diretivas de gatilho sobre uma base interna comum; o painel é componente/`TemplateRef` no `OverlayService`.
+2. Tab que sai do painel fecha e segue a partir do gatilho (o painel fica no fim do `body`).
+3. Menu sem submenus; itens desabilitados focáveis (`aria-disabled`); o `disabled` estático é removido do elemento nativo (achado nos testes).
+4. Tooltip: sem toque, atrasos como tokens (não zerados por `reduced-motion`), só complementa o nome.
+5. Sem par de contraste novo, sem dependência nova, sem bump de versão. README atualizado.
+6. Divergência do plano: nenhuma além de "sem submenus" (já prevista no plano da sessão).
+
+### Mensagem de commit proposta
+
+`feat(ui): popover, tooltip e menu`
+
+Corpo: diretivas `[shyPopover]`, `[shyMenu]` e `[shyTooltip]` sobre o `OverlayService`, com foco, teclado e ARIA do APG; tokens de atraso do tooltip; páginas no showcase.
 
 ## F4-S2: relatório do gate (2026-10-21)
 

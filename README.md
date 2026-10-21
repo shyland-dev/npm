@@ -65,6 +65,9 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 | **Select**      | `<shy-select>`                              | Dropdown customizável com suporte a ícones e imagens nas opções                                                    |
 | **Snackbar**    | `<shy-snackbar>`                            | Notificação temporária no topo ou rodapé da página                                                                 |
 | **ThemeToggle** | `<shy-theme-toggle>`                        | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                                                |
+| **Menu**        | `[shyMenu]` + `shy-menu` + `shyMenuItem`    | Menu button (APG): setas, Home/End, typeahead; fecha ao ativar o item; sem submenus                                |
+| **Popover**     | `[shyPopover]` + `shy-popover`              | Painel não modal ancorado; foco, Esc, clique fora e Tab devolvem o foco ao gatilho                                 |
+| **Tooltip**     | `[shyTooltip]`                              | Dica no hover (mouse) e no foco por teclado; complementa o nome; Esc, pairável                                     |
 
 ---
 
@@ -285,6 +288,27 @@ inject(DrawerService).open(FiltrosPanel, { side: 'start' });
 
 - Esc fecha só o do topo; Dialog não fecha por clique no fundo (Drawer fecha); `confirm()`/`alert()` usam `role="alertdialog"` e focam o botão seguro.
 - O CSS da lib (`styles/index.css` ou `global`) precisa estar carregado: inclui `overlay.css` e `drawer.css`. Páginas no showcase: **components > dialog** e **drawer**.
+
+---
+
+### Popover, Menu e Tooltip
+
+Painéis ancorados sobre o `OverlayService`. API e tokens em [`src/libs/ui/README.md`](src/libs/ui/README.md#shypopover-shymenu-shytooltip).
+
+```html
+<button shyButton [shyPopover]="info">Detalhes</button>
+<ng-template #info><shy-popover>Conteúdo</shy-popover></ng-template>
+
+<button shyButton [shyMenu]="acoes">Ações</button>
+<ng-template #acoes
+    ><shy-menu><button shyMenuItem (click)="editar()">Editar</button></shy-menu></ng-template
+>
+
+<button shyIconButton label="Excluir" shyTooltip="Excluir o item"><shy-icon>trash</shy-icon></button>
+```
+
+- Popover e Menu viram `aria-expanded`/`aria-controls` no gatilho; Esc, clique fora e Tab fecham e devolvem o foco. Menu: setas, Home/End e digitação; sem submenus.
+- Tooltip só complementa o nome (aparece no hover do mouse e no foco por teclado, não no toque). Páginas no showcase: **components > popover**, **menu** e **tooltip**.
 
 ---
 
@@ -521,6 +545,12 @@ export { CardComponent } from './lib/components/card/card.component';
 export { DialogComponent } from './lib/components/dialog/dialog.component';
 export { DividerComponent } from './lib/components/divider/divider.component';
 export { DrawerComponent } from './lib/components/drawer/drawer.component';
+export { MenuComponent } from './lib/components/menu/menu.component';
+export { MenuItemComponent } from './lib/components/menu/menu-item.component';
+export { MenuDirective } from './lib/components/menu/menu.directive';
+export { PopoverComponent } from './lib/components/popover/popover.component';
+export { PopoverDirective } from './lib/components/popover/popover.directive';
+export { TooltipDirective } from './lib/components/tooltip/tooltip.directive';
 export { FormFieldComponent } from './lib/components/form-field/form-field.component';
 export { SHY_FORM_FIELD, ShyFieldControl, ShyFormFieldContext } from './lib/components/form-field/form-field.token';
 export { IconComponent } from './lib/components/icon/icon.component';

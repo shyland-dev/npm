@@ -87,3 +87,10 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - `<dialog>` modal nativo; nome acessível pelo `heading` (`aria-labelledby`) ou `ariaLabel`/`ariaLabelledBy` da abertura; descrição = corpo (`aria-describedby`). Confirmações e alertas usam `role="alertdialog"`, foco inicial no botão seguro (Cancelar/OK) e não fecham por clique fora.
 - Botão de fechar com nome (`closeLabel`, padrão "Close"); alvo ≥ `control-sm`. O corpo rola sozinho (`overscroll-behavior: contain`).
 - **Verificado no Chromium** (dark/light, 900×700 e 360×800, LTR e RTL): 4 tamanhos do Dialog sem scroll horizontal, nome e descrição ligados, popover ancorado dentro do dialog clicável, dialog sobre dialog com Esc um por vez, Tab preso, foco devolvido ao botão que abriu, backdrop não fecha Dialog e fecha Drawer, 4 lados do Drawer e corpo com rolagem, `reduced-motion` (fechamento imediato) e `forced-colors` (borda `CanvasText`, fundo `Canvas`). **Não verificado**: leitor de tela, Safari/Firefox, aparelho com notch (safe-area).
+
+## Popover, Menu e Tooltip (F4-S3)
+
+- **Popover:** gatilho com `aria-haspopup="dialog"`, `aria-expanded` e `aria-controls`; foco no primeiro focável; Esc, clique fora e novo clique fecham e devolvem o foco; Tab que sai do painel fecha e segue a partir do gatilho.
+- **Menu (APG menu button):** `role="menu"` nomeado pelo botão, `role="menuitem"`, roving focus, setas com volta, Home/End, typeahead; ↓ abre no primeiro item e ↑ no último; Esc/Tab fecham; itens desabilitados com `aria-disabled` e focáveis. Sem submenus.
+- **Tooltip (WCAG 1.4.13):** dispensável (Esc sem mover o foco), pairável (o ponteiro entra na dica) e persistente; só complementa o nome (`aria-describedby` enquanto aberta); não abre no toque. `forced-colors`: borda `CanvasText`/`Highlight`.
+- **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`): foco inicial e retorno, ↑/↓, tooltip no foco por teclado e no hover, flip/shift na borda, popover/menu/tooltip clicáveis dentro de um Dialog, sem erros de console. **Não verificado:** leitor de tela real, Safari/Firefox.
