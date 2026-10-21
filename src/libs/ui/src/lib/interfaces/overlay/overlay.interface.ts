@@ -54,6 +54,8 @@ export interface ShyOverlayConfig<D = unknown> {
   data?: D;
   /** Injector pai do conteúdo. Padrão: o do serviço (root). */
   injector?: Injector;
+  /** Painel que não participa do Esc nem do clique fora (a pilha de fechamento o ignora). Uso interno do Snackbar. */
+  passive?: boolean;
   /** Classe(s) extra(s) no painel, separadas por espaço. */
   paneClass?: string;
   /** Papel ARIA do painel (ex.: `alertdialog`). O `<dialog>` já é `dialog`. */

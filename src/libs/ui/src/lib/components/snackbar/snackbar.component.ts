@@ -2,6 +2,10 @@ import { ChangeDetectionStrategy, Component, OnDestroy, model, signal } from '@a
 import { IconComponent } from '../icon/icon.component';
 import { SnackbarPosition } from '../../types/snackbar/snackbar.type';
 
+/**
+ * @deprecated Use `SnackbarService.show(message, options)`: não precisa de elemento no template nem de `viewChild`.
+ * Continua funcionando (com `SnackbarService.show({ element, ... })`) até a 1.0.
+ */
 @Component({
   selector: 'shy-snackbar',
   imports: [IconComponent],

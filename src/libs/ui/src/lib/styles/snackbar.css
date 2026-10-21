@@ -1,0 +1,20 @@
+/*
+ * Painel do contêiner de toasts (aberto pelo SnackbarService na camada `toast`): cobre a viewport sem receber cliques;
+ * só os toasts (pointer-events: auto) respondem. Posição de cada toast: ver snackbar-outlet.component.scss.
+ */
+.shy-overlay-pane.shy-snackbar-pane {
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  pointer-events: none;
+  overflow: visible;
+  transition: none;
+}
+
+@starting-style {
+  .shy-overlay-pane.shy-snackbar-pane:popover-open {
+    opacity: 1;
+    transform: none;
+  }
+}

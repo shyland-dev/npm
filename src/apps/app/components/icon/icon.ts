@@ -1,16 +1,16 @@
-import { Component, computed, signal, viewChild } from '@angular/core';
-import { IconComponent, ICONS, SnackbarComponent, SnackbarService } from '@shyland-dev/ui';
+import { Component, computed, inject, signal } from '@angular/core';
+import { IconComponent, ICONS, SnackbarService } from '@shyland-dev/ui';
 
 const MAX_RESULTS = 240;
 
 @Component({
   selector: 'app-icon-page',
-  imports: [IconComponent, SnackbarComponent],
+  imports: [IconComponent],
   templateUrl: './icon.html',
   styleUrl: './icon.scss',
 })
 export class IconPage {
-  private readonly snackbar = viewChild.required(SnackbarComponent);
+  private readonly snackbar = inject(SnackbarService);
 
   private readonly allNames = Object.keys(ICONS);
   protected readonly term = signal('');
@@ -22,10 +22,8 @@ export class IconPage {
   protected readonly total = this.allNames.length;
   protected readonly sizes = [6, 8, 10, 17];
 
-  constructor(private snackbarService: SnackbarService) {}
-
   async copy(name: string): Promise<void> {
     await navigator.clipboard?.writeText(`<shy-icon>${name}</shy-icon>`);
-    this.snackbarService.show({ element: this.snackbar(), text: `Copied: <shy-icon>${name}</shy-icon>`, delay: 2500 });
+    this.snackbar.show(`Copied: <shy-icon>${name}</shy-icon>`, { intent: 'success', duration: 2500 });
   }
 }

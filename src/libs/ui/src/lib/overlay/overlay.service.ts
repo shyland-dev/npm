@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { ApplicationRef, createComponent, DestroyRef, EmbeddedViewRef, EnvironmentInjector, inject, Injectable, Injector, PLATFORM_ID, TemplateRef, Type } from '@angular/core';
+import { ApplicationRef, createComponent, DestroyRef, EmbeddedViewRef, EnvironmentInjector, inject, Injectable, Injector, PLATFORM_ID, signal, TemplateRef, Type } from '@angular/core';
 import { ShyOverlayConfig, ShyOverlayContext, ShyRect } from '../interfaces/overlay/overlay.interface';
 import { ShyOverlayLayer } from '../types/overlay/overlay.type';
 import { animateOut } from '../utils/animate-out';
@@ -62,6 +62,9 @@ export class OverlayService {
     inject(DestroyRef).onDestroy(() => this.closeAll(false));
   }
 
+  /** `true` enquanto há um modal (`<dialog>`/drawer) aberto: o resto da página, inclusive o toast, fica `inert`. */
+  readonly modalOpen = signal(false);
+
   /** Quantidade de overlays abertos (sem contar os que estão saindo). */
   get openCount(): number {
     return this.stack.length;
@@ -119,6 +122,7 @@ export class OverlayService {
     entry.destroyContent = this.render(content, pane, ref, config, (instance) => (ref.componentInstance = instance as C));
     this.show(entry);
     this.stack.push(entry);
+    this.modalOpen.set(this.stack.some((e) => e.modal));
     this.promote(entry);
     this.listen();
 
@@ -231,6 +235,7 @@ export class OverlayService {
 
     const index = this.stack.indexOf(entry);
     if (index >= 0) this.stack.splice(index, 1);
+    this.modalOpen.set(this.stack.some((e) => e.modal));
     if (!this.stack.length) this.unlisten();
 
     const { pane } = entry;
@@ -336,10 +341,16 @@ export class OverlayService {
     view?.removeEventListener('scroll', this.onViewport, true);
   }
 
+  /** Camada do topo para Esc e clique fora; os `passive` (ex.: o outlet do Snackbar) não participam. */
+  private topClosable(): Entry | undefined {
+    for (let i = this.stack.length - 1; i >= 0; i--) if (!this.stack[i].config.passive) return this.stack[i];
+    return undefined;
+  }
+
   /** Fase de bolha: se o conteúdo já tratou o Esc (`preventDefault`), a camada não fecha. */
   private readonly onKeydown = (event: KeyboardEvent): void => {
     if (event.key !== 'Escape' || event.defaultPrevented) return;
-    const top = this.stack[this.stack.length - 1];
+    const top = this.topClosable();
     if (!top || top.config.closeOnEscape === false) return;
     event.preventDefault();
     void top.ref.close();
@@ -349,7 +360,7 @@ export class OverlayService {
   private readonly onCancel = (event: Event): void => event.preventDefault();
 
   private readonly onPointerDown = (event: Event): void => {
-    const top = this.stack[this.stack.length - 1];
+    const top = this.topClosable();
     if (!top) return;
     const closes = top.config.closeOnOutsideClick ?? !top.modal;
     if (!closes) return;

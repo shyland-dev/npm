@@ -1,6 +1,6 @@
 # @shyland-dev/ui
 
-Angular component library by Shyland Dev — inline SVG icons, a notification snackbar, and a customizable select, ready to use.
+Angular component library by Shyland Dev — inline SVG icons, toast notifications, and a customizable select, ready to use.
 
 ## Requirements
 
@@ -269,58 +269,33 @@ npm run generate:icons
 
 ---
 
-### `<shy-snackbar>`
+### `SnackbarService` (toasts)
 
-A temporary notification displayed at the top or bottom of the screen.
-
-**Selector:** `shy-snackbar`
-
-| Input          | Type                | Default    | Description                                               |
-| -------------- | ------------------- | ---------- | --------------------------------------------------------- |
-| `position`     | `'top' \| 'bottom'` | `'bottom'` | Vertical position of the notification                     |
-| `dismissDelay` | `number`            | `3000`     | Time (ms) before auto-dismiss. Set to `0` for manual only |
-
-**Public methods:**
-
-| Method      | Parameters                                    | Description                    |
-| ----------- | --------------------------------------------- | ------------------------------ |
-| `show()`    | `{ position?, delay?, text? }` (all optional) | Shows the snackbar             |
-| `dismiss()` | —                                             | Immediately hides the snackbar |
-
-**Basic usage with static text (ng-content):**
-
-```html
-<shy-snackbar #snackbar position="top">Operation completed!</shy-snackbar> <button (click)="snackbar.show()">Show</button>
-```
-
-**Usage with `SnackbarService` (dynamic text):**
+Temporary notifications: no element in the template, no `viewChild`. The container is created on the first call in the `toast` layer of the `OverlayService`.
 
 ```typescript
-import { SnackbarService } from '@shyland-dev/ui';
-import { ViewChild } from '@angular/core';
+const snackbar = inject(SnackbarService);
 
-@Component({
-    /* ... */
-})
-export class AppComponent {
-    @ViewChild('snackbar') snackbar!: SnackbarComponent;
-
-    constructor(private snackbarService: SnackbarService) {}
-
-    notify() {
-        this.snackbarService.show({
-            element: this.snackbar,
-            text: 'Saved successfully!',
-            position: 'bottom',
-            delay: 4000,
-        });
-    }
-}
+snackbar.show('Saved');
+snackbar.show('Could not save', { intent: 'danger' });
+const ref = snackbar.show('Item deleted', { action: { label: 'Undo' }, position: 'bottom', align: 'start' });
+if ((await ref.closed) === 'action') restore();
 ```
 
-```html
-<shy-snackbar #snackbar></shy-snackbar>
-```
+| Option     | Type                                              | Default                   | Description                                                                             |
+| ---------- | ------------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------- |
+| `intent`   | `neutral \| info \| success \| warning \| danger` | `neutral`                 | Icon + color (never only color); `danger` uses `role="alert"`, the rest `role="status"` |
+| `action`   | `{ label: string }`                               | none                      | Action button; `ref.closed` resolves `'action'`. Hidden while a modal is open           |
+| `duration` | `number` (ms)                                     | 5000 (8000 with `action`) | `0` never closes by itself (only X or `dismiss()`)                                      |
+| `position` | `'top' \| 'bottom'`                               | `'bottom'`                |                                                                                         |
+| `align`    | `'start' \| 'center' \| 'end'`                    | `'center'`                | `start`/`end` follow the text direction (RTL)                                           |
+
+- Returns `ShySnackbarRef`: `dismiss()` and `closed: Promise<'timeout' \| 'dismiss' \| 'action'>`. `dismissAll()` closes every toast, queued ones included.
+- Queue: up to `maxVisible` (3) on screen, the rest wait. Defaults: `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel })` (optional, in `providers`).
+- The timer pauses while the pointer or focus is on the toast and while the tab is hidden, and resumes with what was left (WCAG 2.2.1).
+- A modal makes everything outside it `inert`, the toast included: with a modal open the action button is hidden (the text is still announced; the X is not clickable until the modal closes, the timer keeps running). Esc and outside clicks are not captured by the toast container.
+- **Deprecated until 1.0** (still working): `<shy-snackbar>` + `SnackbarService.show({ element, position, delay, text })`. Migration: remove `<shy-snackbar>` and the `viewChild`, call `show(text, { position, duration: delay })`.
+- Tokens (`--shy-snackbar-*`) go on `:root` or an ancestor of `<body>`: the container lives in the overlay layer. Needs `styles/index.css` (ships `snackbar.css`).
 
 ---
 
@@ -660,7 +635,9 @@ The touch target is at least `--shy-size-control-sm` tall (it grows with a coars
 
 ### Snackbar Tokens
 
-The `<shy-snackbar>` component can be customized via CSS custom properties on a parent element or `:root`:
+The toasts can be customized via CSS custom properties on `:root` (the container lives in the overlay layer):
+
+`--shy-snackbar-gap` (`--shy-space-3`) sets the space between toasts.
 
 | Token                        | Default                      | Description                      |
 | ---------------------------- | ---------------------------- | -------------------------------- |
@@ -740,6 +717,7 @@ export { ThemeToggleComponent, ShyThemeToggleLabels } from './lib/components/the
 export { DialogService } from './lib/services/dialog/dialog.service';
 export { DrawerService } from './lib/services/drawer/drawer.service';
 export { SnackbarService } from './lib/services/snackbar/snackbar.service';
+export { provideShySnackbar, SHY_SNACKBAR_CONFIG, SHY_SNACKBAR_DEFAULTS } from './lib/services/snackbar/snackbar.config';
 export { ThemeService, provideShyTheme, SHY_THEME_CONFIG, ShyThemeMode, ShyResolvedTheme, ShyThemeConfig } from './lib/services/theme/theme.service';
 
 // Overlay
@@ -757,7 +735,7 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
 export { ShySelectOption, SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
-export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
+export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef, SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
 export { ShyAlertIntent } from './lib/types/alert/alert.type';
@@ -773,7 +751,7 @@ export { ShyProgressSize } from './lib/types/progress/progress.type';
 export { ShyRadioOrientation } from './lib/types/radio/radio.type';
 export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';
 export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
-export { SnackbarPosition } from './lib/types/snackbar/snackbar.type';
+export { SnackbarPosition, ShySnackbarIntent, ShySnackbarAlign, ShySnackbarCloseReason } from './lib/types/snackbar/snackbar.type';
 
 // Icons
 export { ICONS } from './lib/components/icon/icons';

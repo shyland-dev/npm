@@ -1,0 +1,29 @@
+@for (position of positions; track position) {
+  <div class="region" [attr.data-position]="position">
+    <div class="list" role="status" aria-live="polite" aria-relevant="additions">
+      @for (toast of list(position, false); track toast.id) {
+        <ng-container *ngTemplateOutlet="item; context: { $implicit: toast }" />
+      }
+    </div>
+    <div class="list" role="alert">
+      @for (toast of list(position, true); track toast.id) {
+        <ng-container *ngTemplateOutlet="item; context: { $implicit: toast }" />
+      }
+    </div>
+  </div>
+}
+
+<ng-template #item let-toast>
+  <div class="toast" [attr.data-intent]="toast.intent" [attr.data-align]="toast.align" [attr.data-position]="toast.position" [attr.data-state]="toast.closing() ? 'closing' : null" (pointerenter)="data.hold(toast, 'pointer', true)" (pointerleave)="data.hold(toast, 'pointer', false)" (focusin)="data.hold(toast, 'focus', true)" (focusout)="data.hold(toast, 'focus', false)">
+    @if (icon(toast); as name) {
+      <shy-icon class="toast__icon" aria-hidden="true">{{ name }}</shy-icon>
+    }
+    <span class="toast__text">{{ toast.message }}</span>
+    @if (toast.action && actionAllowed()) {
+      <button class="toast__action" type="button" (click)="data.close(toast, 'action')">{{ toast.action }}</button>
+    }
+    <button class="toast__dismiss" type="button" [attr.aria-label]="dismissLabel()" (click)="data.close(toast, 'dismiss')">
+      <shy-icon>x</shy-icon>
+    </button>
+  </div>
+</ng-template>

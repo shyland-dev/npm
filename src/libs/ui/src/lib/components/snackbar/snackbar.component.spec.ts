@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { SnackbarService } from '../../services/snackbar/snackbar.service';
 import { SnackbarComponent } from './snackbar.component';
 
 function render() {
@@ -9,7 +8,7 @@ function render() {
   return { fixture, snackbar: fixture.componentInstance, box };
 }
 
-describe('SnackbarComponent', () => {
+describe('SnackbarComponent (@deprecated)', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
@@ -67,13 +66,5 @@ describe('SnackbarComponent', () => {
     vi.advanceTimersByTime(200);
     fixture.detectChanges();
     expect(box().classList.contains('snackbar--visible')).toBe(false);
-  });
-});
-
-describe('SnackbarService', () => {
-  it('delega show() para o elemento informado', () => {
-    const element = { show: vi.fn() } as unknown as SnackbarComponent;
-    TestBed.inject(SnackbarService).show({ element, position: 'top', delay: 10, text: 'x' });
-    expect(element.show).toHaveBeenCalledWith({ position: 'top', delay: 10, text: 'x' });
   });
 });

@@ -1,18 +1,45 @@
-import { Component, viewChild } from '@angular/core';
-import { SnackbarComponent, SnackbarPosition, SnackbarService } from '@shyland-dev/ui';
+import { Component, inject, signal } from '@angular/core';
+import { ButtonComponent, DialogService, ShySnackbarAlign, ShySnackbarIntent, SnackbarComponent, SnackbarPosition, SnackbarService } from '@shyland-dev/ui';
 
 @Component({
   selector: 'app-snackbar-page',
-  imports: [SnackbarComponent],
+  imports: [ButtonComponent, SnackbarComponent],
   templateUrl: './snackbar.html',
-  styleUrl: './snackbar.scss',
 })
 export class SnackbarPage {
-  private readonly snackbar = viewChild.required(SnackbarComponent);
+  private readonly snackbar = inject(SnackbarService);
+  private readonly dialogs = inject(DialogService);
 
-  constructor(private snackbarService: SnackbarService) {}
+  protected readonly intents: ShySnackbarIntent[] = ['neutral', 'info', 'success', 'warning', 'danger'];
+  protected readonly positions: SnackbarPosition[] = ['top', 'bottom'];
+  protected readonly aligns: ShySnackbarAlign[] = ['start', 'center', 'end'];
+  protected readonly last = signal('nothing yet');
 
-  show(position: SnackbarPosition, delay = 3000): void {
-    this.snackbarService.show({ element: this.snackbar(), position, delay, text: `Hello, I am a snackbar (${position})` });
+  protected show(intent: ShySnackbarIntent, position: SnackbarPosition = 'bottom', align: ShySnackbarAlign = 'center'): void {
+    this.snackbar.show(`This is a ${intent} message (${position}, ${align})`, { intent, position, align });
+  }
+
+  protected async withAction(): Promise<void> {
+    const ref = this.snackbar.show('Item deleted', { action: { label: 'Undo' } });
+    this.last.set(`closed by: ${await ref.closed}`);
+  }
+
+  protected burst(): void {
+    for (let i = 1; i <= 6; i++) this.snackbar.show(`Queued toast ${i} (3 at a time)`, { duration: 4000 });
+  }
+
+  protected persistent(): void {
+    this.snackbar.show('Stays until dismissed (the X button)', { duration: 0, intent: 'warning' });
+  }
+
+  protected async openDialog(): Promise<void> {
+    const ref = this.dialogs.alert({ title: 'Toast over a modal', message: 'A toast with an action opens while this dialog is open: the action button is hidden (the toast is inert behind the modal).' });
+    setTimeout(() => this.snackbar.show('Saved in the background', { action: { label: 'Undo' }, duration: 10000 }), 300);
+    await ref;
+  }
+
+  // API antiga (@deprecated): <shy-snackbar> + show({ element, ... })
+  protected legacy(element: SnackbarComponent): void {
+    this.snackbar.show({ element, position: 'bottom', delay: 3000, text: 'Deprecated API: still works until 1.0' });
   }
 }
