@@ -28,7 +28,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S2  | Spinner, Skeleton, ProgressCircular, Progress                                      | concluída | 53e2902 |
 | F3-S3  | FormField, Input, Textarea                                                         | concluída | e119878 |
 | F3-S4  | Checkbox, Radio, Switch                                                            | concluída | b410314 |
-| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | gate      |         |
+| F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | gate      | 87644db |
 | F3-S6  | Fechamento da Onda 1                                                               | pendente  |         |
 | F4-S1  | Núcleo de overlay (decisão ADR-F4-1)                                               | pendente  |         |
 | F4-S2  | Dialog, Drawer                                                                     | pendente  |         |
