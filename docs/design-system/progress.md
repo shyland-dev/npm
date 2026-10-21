@@ -4,10 +4,10 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 
 ## Estado atual
 
-- Fase: **F4 Onda 2**, sessão **F4-S5** (Snackbar v2)
-- Estado: `aguardando-gate`
+- Fase: **F4 Onda 2**, sessão **F4-S6** (fechamento da Onda 2)
+- Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Relatório em "F4-S5: relatório do gate" abaixo. Sem decisão pendente (ADR-F4-3a e 3b respondidas). O próximo `/build` aprova o gate, marca a F4-S5 concluída e mostra o plano da F4-S6 (fechamento da Onda 2).
+- Plano em "F4-S6: plano da sessão" abaixo. Sem decisão de alto impacto pendente (é fechamento: exemplo integrado, auditoria e docs). O próximo `/build` aprova o plano e executa a F4-S6.
 
 ## Fases
 
@@ -35,7 +35,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F4-S3  | Popover, Tooltip, Menu                                                             | concluída | ba59390 |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | gate      |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | gate      |         |
-| F4-S6  | Fechamento da Onda 2                                                               | pendente  |         |
+| F4-S6  | Fechamento da Onda 2                                                               | plano     |         |
 | F5-S1  | Escolha da Onda 3 + lote 1                                                         | pendente  |         |
 | F5-S2  | Lote 2                                                                             | pendente  |         |
 | F5-S3  | Lote 3 (sob demanda)                                                               | pendente  |         |
@@ -90,6 +90,24 @@ Fonte: `sessions/F4-onda-2.md` (F4-S3), plano 8, 9.2, 10 (APG) e 12 (Onda 2), AD
 - **Submenus ficam fora** (o catálogo diz "opcionais"): são o maior risco de a11y/teclado do Menu (setas laterais, hover intent, foco). Entram depois, se houver demanda, sem quebrar a API (um `shyMenuItem` com `[shyMenu]` aninhado).
 - Tooltip não abre em toque (sem hover/foco-visible); quem precisa de texto no toque usa `aria-label`/texto visível ou o Popover.
 - Textos padrão em inglês e configuráveis quando houver texto da lib (nenhum previsto nesta sessão).
+
+## F4-S6: plano da sessão (2026-10-21)
+
+### Pedido entendido como
+
+Fechar a Onda 2: um exemplo integrado que exercite os overlays juntos, auditoria de foco e camadas, docs consolidadas (incluindo migração de Select e Snackbar) e o relatório da F4. Sem componente novo.
+
+### Tarefas
+
+1. Exemplo no showcase (`examples/overlays`): Dialog com formulário e Select dentro, Tooltip em IconButton, Menu abrindo Dialog de confirmação, toast ao salvar (com e sem modal), Popover com ação.
+2. Auditoria de foco e camadas no Chromium (dark/light, 360/1366, RTL, reduced-motion): ordem de empilhamento em combinações (menu → dialog → select → toast), retorno de foco, Esc um por vez, scroll lock, sem vazamento de painéis (`document.querySelectorAll('.shy-overlay-pane')` vazio ao fechar tudo).
+3. Docs: `tokens.md` (tokens novos da F4: `--shy-dialog/drawer/popover/menu/tooltip/select/snackbar-*`, `--shy-delay-tooltip*`), `migration-0.0-to-0.1.md` (Select e Snackbar: busca/substituição e tabela de API antiga → nova), `accessibility.md` (resumo da Onda 2), `DESIGN-SYSTEM-PLAN.md` (marcar a Onda 2 concluída e listar as divergências das ADR-F4-5 a 9, por Python; sem prettier no plano).
+4. README (`README.md` e `src/libs/ui/README.md`): índice e exemplo integrado; conferir se os exports listados batem com `public-api`.
+5. Verificações completas e relatório consolidado da F4 em progress.md.
+
+### Fora do escopo
+
+Remoção da API `@deprecated` (fica para a 1.0), novos componentes (F5).
 
 ## F4-S5: relatório do gate (2026-10-21)
 
