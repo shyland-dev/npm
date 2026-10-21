@@ -5,9 +5,9 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 ## Estado atual
 
 - Fase: **F4 Onda 2**, sessão **F4-S2** (Dialog, Drawer)
-- Estado: `aguardando-plano`
+- Estado: `aguardando-gate`
 - Branch: `feat/design-system`
-- Plano em "F4-S2: plano da sessão" abaixo. Sem decisão de alto impacto pendente (a API de Dialog/Drawer segue a ADR-F4-4 e o catálogo do plano). O próximo `/build` aprova o plano e executa a F4-S2.
+- Relatório em "F4-S2: relatório do gate" abaixo. Commit `95e5ab3` (já criado e enviado). O próximo `/build` aprova o gate, marca a F4-S2 como concluída e avança para a F4-S3 (Popover, Tooltip, Menu) em `aguardando-plano`.
 
 ## Fases
 
@@ -31,7 +31,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 | F3-S5  | Badge/Tag, Divider, Card, Alert                                                    | concluída | 87644db |
 | F3-S6  | Fechamento da Onda 1                                                               | concluída | 0db8496 |
 | F4-S1  | Núcleo de overlay (ADR-F4-1 e ADR-F4-4 decididas)                                  | concluída | 3ac709b |
-| F4-S2  | Dialog, Drawer                                                                     | plano     |         |
+| F4-S2  | Dialog, Drawer                                                                     | gate      | 95e5ab3 |
 | F4-S3  | Popover, Tooltip, Menu                                                             | pendente  |         |
 | F4-S4  | Select v2 (decisão ADR-F4-2)                                                       | pendente  |         |
 | F4-S5  | Snackbar v2 (decisão ADR-F4-3)                                                     | pendente  |         |
@@ -60,6 +60,48 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - 2026-10-21: `/build` aprovou o gate da F3-S6 e da fase F3 (`0db8496`, já enviado). **F3 concluída.** F4-S1 em `aguardando-plano`, com a ADR-F4-4 (API pública do `OverlayService`) aguardando decisão explícita do dono.
 - 2026-10-21: `/build` recebido sem resposta à ADR-F4-4. Conforme a regra do `/build`, não aprova decisão de alto impacto: pergunta refeita ao dono (A, B ou C; recomendação B) e nada executado. Estado segue `aguardando-plano` da F4-S1.
 - 2026-10-21: dono escolheu a **opção B** da ADR-F4-4 (`OverlayService.open(componente | TemplateRef, config)` → `ShyOverlayRef<R>`). Registrada em `decisions.md` e `sessions/F4-onda-2.md`. Estado segue `aguardando-plano` da F4-S1, sem pendência: o próximo `/build` executa.
+
+## F4-S2: relatório do gate (2026-10-21)
+
+### Verificações
+
+| Verificação              | Resultado                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `npm run check:ds`       | ok (6 verificações; 1 aviso antigo de tokens não usados)                                                      |
+| `npm test`               | 186 testes passando (16 novos: Dialog, Drawer, serviços, confirm/alert, TemplateRef)                          |
+| `npm run build`          | ok (`ui` e `utils`); `drawer.css` sai em `dist/ui/styles`                                                     |
+| `npm run build:showcase` | ok                                                                                                            |
+| Chromium (Playwright)    | dark/light, 900×700 e 360×800, LTR e RTL, `reduced-motion` e `forced-colors` (detalhes em `accessibility.md`) |
+| Node                     | 22 neste ambiente (o projeto pede 24.14.1); nada específico do Node 24                                        |
+
+Não verificado: leitor de tela, Safari/Firefox, aparelho com notch (`safe-area`). Fontes web: nenhuma fonte externa nova nesta sessão (só a Baseline já registrada na ADR-F4-5).
+
+### Resumo (arquivos principais)
+
+- `components/dialog/` (`shy-dialog`, base interna `DialogSurface`, `PromptDialogComponent` interno) e `components/drawer/` (`shy-drawer`).
+- `services/dialog/dialog.service.ts` (`open`, `confirm`, `alert`) e `services/drawer/drawer.service.ts` (`open`, `side`).
+- `styles/drawer.css` (painel do Drawer por lado, entrada por `@starting-style`, RTL, `forced-colors`), importado em `index.css` e `_global.scss`.
+- Tipos e interfaces: `types/dialog`, `interfaces/dialog`. Tokens `--shy-dialog-*` e `--shy-drawer-*` (com fallback, no padrão do Alert).
+- Showcase: `components/dialog` (4 tamanhos, formulário, popover dentro do dialog, dialog sobre dialog, confirm, alert) e `components/drawer` (4 lados, corpo longo). Docs: `src/libs/ui/README.md`, `README.md`, ADR-F4-6, plano 12, `accessibility.md`.
+
+### Efeito prático
+
+O app abre diálogos com `DialogService.open(MeuComponente)` (ou `confirm()`/`alert()` em uma linha) e painéis laterais com `DrawerService.open`, recebendo o resultado por `await ref.closed`. Título, foco, Esc, scroll lock e devolução de foco vêm prontos; o popover ou select aberto dentro do dialog continua clicável.
+
+### Decisões e premissas (ADR-F4-6 em `decisions.md`)
+
+1. Dialog não fecha por clique no fundo (evita perder formulário); Drawer fecha. Ambos configuráveis. `confirm()`/`alert()` nunca fecham por clique fora.
+2. `aria-labelledby`/`aria-describedby` ligados achando o painel pelo DOM, o que cobre também `TemplateRef` (onde o `ShyOverlayRef` não é injetável); no template, fechar é por `(dismissed)="ref.close()"`.
+3. Sem `dialog.css` (o Dialog se dimensiona sozinho); só `drawer.css`. Divergência do plano, registrada.
+4. Drawer com 4 lados (o plano listava 3). Achado na auditoria: o componente do app entre o painel e o `<shy-drawer>` impedia a rolagem; corrigido com `dialog.shy-drawer-pane > *` em flex.
+5. Sem `env(safe-area-inset-*)` nem pares novos em `contrast-pairs.json` (os do painel já existiam). Reavaliar safe-area em aparelho real.
+6. Efeito do scroll lock (`scrollbar-gutter: stable`): o `full` fica alguns px mais estreito que a tela em navegador com barra de rolagem clássica.
+7. Sem dependência nova. README atualizado (`README.md` e `src/libs/ui/README.md`). Sem bump de versão.
+8. **Para a F4-S3/S4:** o Select dentro do Dialog depende da regra da ADR-F4-5 (painel com `anchor` dentro do modal vira filho dele); já testada aqui com um popover.
+
+### Mensagem de commit
+
+Já commitada (`95e5ab3`): `feat(ui): dialog e drawer`.
 
 ## F4-S2: plano da sessão (2026-10-21)
 
@@ -751,3 +793,4 @@ e o relatório do gate F0 em progress.md. Sem mudança de código.
 - 2026-10-20: `/build` aprovou o plano da F3-S2 e a executou; verificações verdes; commit `53e2902` e push em `feat/design-system`. Estado `aguardando-gate`.
 - 2026-10-21: dono escolheu a opção B da ADR-F4-4; `/build` aprovou o plano da F4-S1 e a executou (overlay core, showcase, docs). Verificações verdes; commit `3ac709b`. Estado `aguardando-gate`.
 - 2026-10-21: `/build` aprovou o gate da F4-S1 (`3ac709b`, já enviado). **F4-S1 concluída.** F4-S2 (Dialog, Drawer) em `aguardando-plano`; plano escrito acima, sem decisão de alto impacto pendente.
+- 2026-10-21: `/build` aprovou o plano da F4-S2 e a executou (Dialog, Drawer, serviços, showcase, docs). Verificações verdes; commit `95e5ab3`. Estado `aguardando-gate`.
