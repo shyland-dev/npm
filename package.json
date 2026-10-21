@@ -5,6 +5,7 @@
     "node": "24.14.1"
   },
   "scripts": {
+    "postinstall": "node ./scripts/prettier-hook.js",
     "ng": "ng",
     "start": "npm run serve:showcase",
     "build": "npm run build:ui && npm run build:utils",

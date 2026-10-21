@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Formata com o Prettier todos os arquivos staged e os adiciona novamente ao índice
+PRETTIER=./node_modules/.bin/prettier
+
+if [ ! -x "$PRETTIER" ]; then
+  echo "⚠️  Prettier não encontrado. Rode 'npm install'. Pulando formatação."
+  exit 0
+fi
+
+# Lista separada por NUL: seguro para nomes com espaços e caracteres especiais
+[ -z "$(git diff --cached --name-only --diff-filter=ACMR)" ] && exit 0
+
+git diff --cached --name-only --diff-filter=ACMR -z |
+  xargs -0 "$PRETTIER" --write --ignore-unknown --no-error-on-unmatched-pattern || exit 1
+
+git diff --cached --name-only --diff-filter=ACMR -z | xargs -0 git add
+
+exit 0
