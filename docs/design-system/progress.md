@@ -7,7 +7,7 @@ Arquivo de estado lido pelo comando `/build` (ver CLAUDE.md). Atualizado a cada 
 - Fase: **F4 Onda 2**, sessão **F4-S5** (Snackbar v2)
 - Estado: `aguardando-plano`
 - Branch: `feat/design-system`
-- Plano em "F4-S5: plano da sessão" abaixo. **Duas decisões de alto impacto pendentes (ADR-F4-3a e 3b)**: o `/build` NÃO as aprova; só executa depois da resposta explícita do dono.
+- Plano em "F4-S5: plano da sessão" abaixo. Decisão **ADR-F4-3b respondida em 2026-10-21: A (ação só sem modal)**. **Pendente: ADR-F4-3a** (API antiga): o `/build` NÃO a aprova; só executa depois da resposta explícita do dono.
 
 ## Fases
 
@@ -121,7 +121,7 @@ Reescrever o Snackbar: outlet global (sem `ViewChild`), fila, `SnackbarService.s
 
 Recomendação: **B** (mesma linha da ADR-F4-2 e da regra de depreciar antes de remover).
 
-### Decisão 3b (ADR-F4-3, limitação da ADR-F4-5): toast com ação sobre um modal aberto
+### Decisão 3b (ADR-F4-3, limitação da ADR-F4-5), respondida em 2026-10-21: opção A. Toast com ação sobre um modal aberto
 
 O modal deixa tudo fora dele `inert`; um toast aberto com um Dialog na tela fica visível mas sem clique (a ação não funciona).
 
