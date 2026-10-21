@@ -51,6 +51,8 @@ export class MenuDirective extends OverlayTrigger {
     const items = menuItems(ref.pane);
     (this.focusLast ? items[items.length - 1] : items[0])?.focus();
     this.focusLast = false;
+    // Captura: o foco volta ao botão antes do (click) do item, que pode abrir um Dialog (o foco anterior dele passa a ser o botão).
+    ref.pane.addEventListener('click', this.onItemCapture, true);
     ref.pane.addEventListener('click', this.onPaneClick);
   }
 
@@ -61,9 +63,17 @@ export class MenuDirective extends OverlayTrigger {
     this.open();
   }
 
+  private readonly onItemCapture = (event: Event): void => {
+    if (this.shyMenuCloseOnSelect() && this.activatedItem(event)) this.host.focus();
+  };
+
+  private activatedItem(event: Event): HTMLElement | null {
+    const item = (event.target as HTMLElement).closest<HTMLElement>('[role="menuitem"]');
+    return item && item.getAttribute('aria-disabled') !== 'true' ? item : null;
+  }
+
   private readonly onPaneClick = (event: Event): void => {
     if (!this.shyMenuCloseOnSelect()) return;
-    const item = (event.target as HTMLElement).closest<HTMLElement>('[role="menuitem"]');
-    if (item && item.getAttribute('aria-disabled') !== 'true') this.close();
+    if (this.activatedItem(event)) this.close();
   };
 }

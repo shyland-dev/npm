@@ -25,7 +25,10 @@ export class App implements OnInit {
     },
     {
       label: 'Examples',
-      items: [{ path: 'examples/form', label: 'complete form' }],
+      items: [
+        { path: 'examples/form', label: 'complete form' },
+        { path: 'examples/overlays', label: 'overlays together' },
+      ],
     },
     {
       label: 'Foundations',

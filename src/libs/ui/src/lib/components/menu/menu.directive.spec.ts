@@ -119,6 +119,15 @@ describe('MenuDirective / MenuComponent', () => {
     expect(active()).toBe('trigger');
   });
 
+  it('o foco já está no botão quando o (click) do item roda (um Dialog aberto ali lembra o botão, não o item)', () => {
+    trigger.click();
+    const copy = pane()!.querySelector<HTMLElement>('#copy')!;
+    let focused: string | undefined;
+    copy.addEventListener('click', () => (focused = active()));
+    copy.click();
+    expect(focused).toBe('trigger');
+  });
+
   it('Esc fecha e devolve o foco; Tab fecha e fica no botão para seguir a ordem da página', async () => {
     trigger.click();
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));

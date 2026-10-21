@@ -28,6 +28,7 @@ export const routes: Routes = [
   { path: 'components/textarea', loadComponent: () => import('./components/textarea/textarea').then((m) => m.TextareaPage) },
 
   { path: 'examples/form', loadComponent: () => import('./examples/form/form').then((m) => m.FormExample) },
+  { path: 'examples/overlays', loadComponent: () => import('./examples/overlays/overlays').then((m) => m.OverlaysExample) },
 
   { path: 'foundations', redirectTo: 'foundations/colors', pathMatch: 'full' },
   { path: 'foundations/colors', loadComponent: () => import('./foundations/colors/colors').then((m) => m.Colors) },
