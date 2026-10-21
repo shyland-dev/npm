@@ -1,7 +1,12 @@
-<button #trigger class="select__trigger" type="button" [id]="uid + '-trigger'" aria-haspopup="listbox" [attr.aria-expanded]="isOpen()" [attr.aria-controls]="isOpen() ? uid + '-list' : null" (click)="toggleDropdown()" (keydown)="onTriggerKeydown($event)">
-  <span class="select__label">
-    @if (currentOption(); as option) {
-      {{ option.label }}
+<button #trigger class="select__trigger" type="button" role="combobox" [id]="id()" [disabled]="isDisabled()" aria-haspopup="listbox" [attr.aria-expanded]="isOpen()" [attr.aria-controls]="isOpen() ? listId() : null" [attr.aria-activedescendant]="activeId()" [attr.aria-label]="label() ?? null" [attr.aria-required]="required() ? 'true' : null" [attr.aria-invalid]="showInvalid() ? 'true' : null" [attr.aria-describedby]="field?.describedBy() ?? null" [attr.aria-errormessage]="showInvalid() ? (field?.errorId() ?? null) : null" (click)="toggleOpen()" (keydown)="onKeydown($event)" (keyup)="onKeyup($event)" (blur)="onBlur()">
+  @if (firstImg(); as img) {
+    <span class="select__img"><img [src]="img" alt="" /></span>
+  }
+  <span class="select__label" [attr.data-placeholder]="display() ? null : ''">
+    @if (display()) {
+      {{ display() }}
+    } @else if (placeholder()) {
+      {{ placeholder() }}
     } @else {
       <ng-content />
     }
@@ -10,12 +15,13 @@
   <shy-icon class="select__dropdown-icon" [class.select__dropdown-icon--open]="isOpen()">{{ dropdownIcon() }}</shy-icon>
 </button>
 
-@if (isOpen()) {
-  <ul class="select__dropdown" role="listbox" [id]="uid + '-list'" [attr.aria-labelledby]="uid + '-trigger'" (keydown)="onListKeydown($event)">
-    @for (option of selectOptions(); track option.id) {
-      <li #optionEl class="select__option" role="option" tabindex="-1" [class.select__option--selected]="currentOption()?.id === option.id" [attr.aria-selected]="currentOption()?.id === option.id" (click)="selectOption(option)">
+<ng-template #panel>
+  <!-- O foco fica no botão: o mousedown não pode tirá-lo dele. -->
+  <ul class="select__dropdown" role="listbox" [id]="listId()" [attr.aria-multiselectable]="multiple() ? 'true' : null" [attr.aria-labelledby]="field?.labelId() ?? null" [attr.aria-label]="field?.labelId() ? null : (label() ?? null)" (mousedown)="$event.preventDefault()">
+    @for (option of items(); track $index) {
+      <li class="select__option" role="option" [id]="optionId($index)" [class.select__option--active]="activeIndex() === $index" [attr.aria-selected]="isSelectedValue(option.value)" [attr.aria-disabled]="option.disabled ? 'true' : null" (click)="choose($index)" (pointermove)="option.disabled || activeIndex() === $index ? null : activeIndex.set($index)">
         <span class="select__option-icon">
-          @if (currentOption()?.id === option.id) {
+          @if (isSelectedValue(option.value)) {
             <shy-icon>{{ selectIcon() }}</shy-icon>
           }
         </span>
@@ -30,4 +36,4 @@
       </li>
     }
   </ul>
-}
+</ng-template>

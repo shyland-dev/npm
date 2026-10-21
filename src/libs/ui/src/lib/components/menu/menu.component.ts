@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, input } from '@angular/core';
+import { Typeahead } from '../../utils/typeahead';
 import { menuItems } from './menu-item.component';
 
 /**
@@ -24,8 +25,7 @@ export class MenuComponent {
   readonly label = input<string>();
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-  private typed = '';
-  private typedAt = 0;
+  private readonly search = new Typeahead();
 
   protected onKeydown(event: KeyboardEvent): void {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
@@ -48,30 +48,15 @@ export class MenuComponent {
         next = items.length - 1;
         break;
       default:
-        if (event.key.length === 1 && event.key !== ' ') next = this.typeahead(event.key, items, current);
-        else return;
+        if (event.key.length === 1 && event.key !== ' ') {
+          next = this.search.find(
+            items.map((item) => item.textContent ?? ''),
+            current,
+            event.key,
+          );
+        } else return;
     }
     event.preventDefault();
     if (next >= 0) items[next].focus();
-  }
-
-  /** Letras seguidas dentro de 500 ms formam um prefixo; a mesma letra repetida percorre os itens que começam com ela. */
-  private typeahead(char: string, items: HTMLElement[], current: number): number {
-    const now = Date.now();
-    this.typed = now - this.typedAt > 500 ? char.toLowerCase() : this.typed + char.toLowerCase();
-    this.typedAt = now;
-
-    const starts = (item: HTMLElement) => (item.textContent ?? '').trim().toLowerCase().startsWith(this.typed);
-    const repeated = this.typed.length > 1 && [...this.typed].every((c) => c === this.typed[0]);
-    const prefix = repeated ? this.typed[0] : this.typed;
-    const matches = (item: HTMLElement) => (item.textContent ?? '').trim().toLowerCase().startsWith(prefix);
-
-    // Começa depois do item atual quando a busca é de uma letra só (ou repetida), para percorrer os iguais.
-    const from = this.typed.length === 1 || repeated ? current + 1 : Math.max(current, 0);
-    for (let i = 0; i < items.length; i++) {
-      const index = (from + i) % items.length;
-      if (matches(items[index]) && (repeated || starts(items[index]) || this.typed.length === 1)) return index;
-    }
-    return -1;
   }
 }

@@ -1,32 +1,59 @@
 <div class="page">
   <h1 class="page-title">Select</h1>
-  <p class="page-lead">Phase A of the refactor: tokens, states and basic keyboard support (arrows, Home/End, Enter/Space, Esc) with listbox ARIA. The full rewrite (combobox, typeahead, overlay) is phase F4.</p>
+  <p class="page-lead">Select-only combobox (APG): focus stays on the button and the active option is announced with <code>aria-activedescendant</code>. The list opens in the overlay layer, flips when there is no room and works inside a dialog. Value through <code>ngModel</code>, <code>formControl</code> or <code>[(value)]</code>. Keys: <kbd>↓</kbd> <kbd>↑</kbd> <kbd>Enter</kbd> <kbd>Space</kbd> open, arrows/<kbd>Home</kbd>/<kbd>End</kbd> move, typing jumps to a match, <kbd>Esc</kbd> closes.</p>
 
   <section class="section">
-    <h2>Default</h2>
+    <h2>Default with <code>[(value)]</code></h2>
     <div class="card">
-      <shy-select [selectOptions]="options" [selectedOption]="selected()" (onSelectionChange)="change($event)">Select an option</shy-select>
-      <p class="token-name">last change: {{ last() }}</p>
+      <shy-select [options]="countries" [(value)]="selected" placeholder="Choose a country" label="Country" />
+      <p class="token-name">value: {{ selected() }}</p>
     </div>
   </section>
 
   <section class="section">
-    <h2>Preselected</h2>
+    <h2>In a form field, required</h2>
     <div class="card">
-      <shy-select [selectOptions]="options" selectedOption="test2">Select an option</shy-select>
+      <shy-form-field label="Country" hint="Required: blur or submit shows the error.">
+        <shy-select [options]="countries" [formControl]="required" placeholder="Choose a country" required />
+      </shy-form-field>
+      <p class="token-name">value: "{{ required.value }}", {{ required.valid ? 'valid' : 'invalid' }}</p>
     </div>
+  </section>
+
+  <section class="section">
+    <h2>Multiple</h2>
+    <div class="card">
+      <shy-select [options]="tags" [value]="['angular', 'css']" multiple placeholder="Pick topics" label="Topics" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Disabled and invalid</h2>
+    <div class="card shy-cluster">
+      <shy-select [options]="countries" disabled placeholder="Disabled" label="Disabled select" />
+      <shy-select [options]="countries" invalid placeholder="Invalid" label="Invalid select" />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Inside a dialog</h2>
+    <div class="shy-cluster"><button shyButton variant="outline" type="button" (click)="openDialog()">Open dialog with a select</button></div>
   </section>
 
   <section class="section">
     <h2>Token override</h2>
-    <p>Component tokens are set on the element: <code>--shy-select-bg</code>, <code>--shy-select-radius</code>, <code>--shy-select-option-hover-bg</code>.</p>
+    <p>Button tokens go on the element: <code>--shy-select-bg</code>, <code>--shy-select-radius</code>. Panel tokens (<code>--shy-select-panel-bg</code>, <code>--shy-select-option-hover-bg</code>) go on <code>:root</code>, because the panel lives in the overlay container.</p>
     <div class="card">
-      <shy-select class="custom" [selectOptions]="options">Custom tokens</shy-select>
+      <shy-select class="custom" [options]="countries" placeholder="Custom tokens" label="Custom" />
     </div>
   </section>
 
   <section class="section">
-    <h2>States</h2>
-    <p>Hover (fine pointer only), focus-visible (Tab) and open are live: interact with the selects above. Both themes use the toggle in the header.</p>
+    <h2>Deprecated API (until 1.0)</h2>
+    <p><code>selectOptions</code>, <code>selectedOption</code> and <code>(onSelectionChange)</code> still work. Use <code>options</code> and <code>[(value)]</code>/<code>ngModel</code>/<code>formControl</code> instead.</p>
+    <div class="card">
+      <shy-select [selectOptions]="legacyOptions" [selectedOption]="legacySelected()" (onSelectionChange)="legacyChange($event)">Select an option</shy-select>
+      <p class="token-name">last change: {{ last() }}</p>
+    </div>
   </section>
 </div>

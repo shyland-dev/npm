@@ -326,42 +326,40 @@ export class AppComponent {
 
 ### `<shy-select>`
 
-A fully customizable dropdown select component with icon support.
+Select-only combobox (APG) on the `OverlayService`: focus stays on the button (`role="combobox"`) and the active option is announced with `aria-activedescendant`; the list (`role="listbox"`) opens in the `dropdown` layer with the button's width, flips when there is no room and works inside a Dialog.
 
-**Selector:** `shy-select`
-
-| Input            | Type             | Default          | Description                                           |
-| ---------------- | ---------------- | ---------------- | ----------------------------------------------------- |
-| `selectOptions`  | `SelectOption[]` | `[]`             | Array of options to display in the dropdown           |
-| `selectedOption` | `string \| null` | `null`           | Value of the pre-selected option (synced via `value`) |
-| `selectIcon`     | `string`         | `'check'`        | Icon shown next to the selected option                |
-| `dropdownIcon`   | `string`         | `'chevron-down'` | Icon shown in the trigger button                      |
-
-| Output              | Payload                | Description                           |
-| ------------------- | ---------------------- | ------------------------------------- |
-| `onSelectionChange` | `SelectionChangeEvent` | Emitted when the user picks an option |
-
-**Basic usage:**
+**Selector:** `shy-select` (`exportAs: shySelect`)
 
 ```html
-<shy-select [selectOptions]="array" (onSelectionChange)="updateSelection($event)" [selectIcon]="'check'" [dropdownIcon]="'chevron-down'"></shy-select>
+<!-- ngModel, formControl/formControlName or [(value)] -->
+<shy-form-field label="Country" hint="Pick one">
+    <shy-select [options]="countries" [formControl]="country" placeholder="Choose a country" />
+</shy-form-field>
+<shy-select [options]="tags" [(value)]="selectedTags" multiple label="Topics" />
 ```
 
 ```typescript
-import { SelectOption, SelectionChangeEvent } from '@shyland-dev/ui';
-
-selectedOption = null;
-
-array: SelectOption[] = [
-  { id: 0, value: 'test1', label: 'Test' },
-  { id: 1, value: 'test2', label: 'This is awesome' },
-  { id: 2, value: 'test3', label: 'Testing the select' },
+countries: ShySelectOption[] = [
+  { value: 'br', label: 'Brazil', img: 'assets/flag-br.svg' },
+  { value: 'jp', label: 'Japan', disabled: true },
 ];
-
-updateSelection(event: SelectionChangeEvent) {
-  this.selectedOption = event.selectedOption.value;
-}
 ```
+
+| Input                                           | Type                  | Default                 | Description                                                                      |
+| ----------------------------------------------- | --------------------- | ----------------------- | -------------------------------------------------------------------------------- |
+| `options`                                       | `ShySelectOption[]`   | `[]`                    | `{ value, label, disabled?, img? }`; `value` can be any type                     |
+| `value` (`model`)                               | `unknown`             | `null`                  | Chosen value (an array with `multiple`); also written by `ngModel`/`formControl` |
+| `multiple`                                      | `boolean`             | `false`                 | Toggles options, keeps the list open, value is an array                          |
+| `placeholder`                                   | `string`              | none                    | Text without a choice (the projected content works too)                          |
+| `compareWith`                                   | `(a, b) => boolean`   | `===`                   | Compare object values                                                            |
+| `disabled`, `invalid`, `required`, `name`, `id` | as the other controls | —                       | `invalid` forces the state; otherwise it comes from the control (touched/dirty)  |
+| `label`                                         | `string`              | none                    | `aria-label` when there is no `shy-form-field` label                             |
+| `selectIcon`, `dropdownIcon`                    | `string`              | `check`, `chevron-down` | Icons                                                                            |
+
+- Keys: ↓/↑/Enter/Space open; ↓/↑/Home/End move the active option (disabled ones are skipped); Enter/Space choose; typing jumps to the option that starts with the letters; Esc closes (focus stays on the button); Tab closes and moves on.
+- Inside `shy-form-field` the button gets the label's `for`/`id`, `aria-describedby`, `aria-invalid` and `aria-errormessage`.
+- **Deprecated until 1.0** (still working, mapped to the new API): `selectOptions` (`SelectOption[]`) → `options`; `selectedOption` (string) → `[(value)]`/`ngModel`/`formControl`; `(onSelectionChange)` → `(valueChange)`. Interfaces `SelectOption` and `SelectionChangeEvent` are `@deprecated` too.
+- The panel lives in the overlay container: panel tokens (`--shy-select-panel-*`, `--shy-select-option-*`) go on `:root` or an ancestor of `<body>`; button tokens go on the element.
 
 ---
 
@@ -680,23 +678,26 @@ The `<shy-snackbar>` component can be customized via CSS custom properties on a 
 
 The `<shy-select>` component can be customized via CSS custom properties:
 
-| Token                            | Default                       | Description                        |
-| -------------------------------- | ----------------------------- | ---------------------------------- |
-| `--shy-select-height`            | `--shy-size-control-lg`       | Minimum height of the trigger      |
-| `--shy-select-width`             | `ru(90)`                      | Minimum width                      |
-| `--shy-select-radius`            | `--shy-radius-md`             | Border radius of trigger and panel |
-| `--shy-select-bg`                | `--shy-color-surface-sunken`  | Trigger background                 |
-| `--shy-select-fg`                | `--shy-color-text`            | Text and icon color                |
-| `--shy-select-border`            | `--shy-color-border-strong`   | Trigger border color               |
-| `--shy-select-font-family`       | `--shy-font-family-base`      | Font family                        |
-| `--shy-select-font-size`         | `--shy-text-md`               | Font size                          |
-| `--shy-select-icon-size`         | `--shy-size-icon-md`          | Size of the internal icons         |
-| `--shy-select-panel-bg`          | `--shy-color-surface-raised`  | Panel background                   |
-| `--shy-select-panel-shadow`      | `--shy-shadow-3`              | Panel shadow                       |
-| `--shy-select-selected-fg`       | `--shy-color-primary-text`    | Selected option color              |
-| `--shy-select-option-hover-bg`   | `--shy-color-primary-soft`    | Option background on hover/focus   |
-| `--shy-select-option-hover-fg`   | `--shy-color-on-primary-soft` | Option text on hover/focus         |
-| `--shy-select-option-img-radius` | `--shy-radius-full`           | Option image radius                |
+| Token                               | Default                       | Description                        |
+| ----------------------------------- | ----------------------------- | ---------------------------------- |
+| `--shy-select-height`               | `--shy-size-control-lg`       | Minimum height of the trigger      |
+| `--shy-select-width`                | `ru(90)`                      | Minimum width                      |
+| `--shy-select-radius`               | `--shy-radius-md`             | Border radius of trigger and panel |
+| `--shy-select-bg`                   | `--shy-color-surface-sunken`  | Trigger background                 |
+| `--shy-select-placeholder-fg`       | `--shy-color-text-muted`      | Placeholder color                  |
+| `--shy-select-border-color-invalid` | `--shy-color-danger-text`     | Border when invalid                |
+| `--shy-select-panel-max-height`     | `ru(100)`                     | Max height of the list (scrolls)   |
+| `--shy-select-fg`                   | `--shy-color-text`            | Text and icon color                |
+| `--shy-select-border`               | `--shy-color-border-strong`   | Trigger border color               |
+| `--shy-select-font-family`          | `--shy-font-family-base`      | Font family                        |
+| `--shy-select-font-size`            | `--shy-text-md`               | Font size                          |
+| `--shy-select-icon-size`            | `--shy-size-icon-md`          | Size of the internal icons         |
+| `--shy-select-panel-bg`             | `--shy-color-surface-raised`  | Panel background                   |
+| `--shy-select-panel-shadow`         | `--shy-shadow-3`              | Panel shadow                       |
+| `--shy-select-selected-fg`          | `--shy-color-primary-text`    | Selected option color              |
+| `--shy-select-option-hover-bg`      | `--shy-color-primary-soft`    | Option background on hover/focus   |
+| `--shy-select-option-hover-fg`      | `--shy-color-on-primary-soft` | Option text on hover/focus         |
+| `--shy-select-option-img-radius`    | `--shy-radius-full`           | Option image radius                |
 
 ---
 
@@ -755,7 +756,7 @@ export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
 export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
-export { SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
+export { ShySelectOption, SelectOption, SelectionChangeEvent } from './lib/interfaces/select/select.interface';
 export { SnackbarShowOptions } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types

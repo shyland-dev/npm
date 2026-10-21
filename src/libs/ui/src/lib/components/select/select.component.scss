@@ -2,7 +2,7 @@
 
 // Tokens do componente (sobrescreva no elemento: shy-select { --shy-select-bg: ... }):
 //   --shy-select-height, -width, -radius, -bg, -fg, -border, -font-family, -font-size, -icon-size,
-//   -panel-bg, -panel-shadow, -selected-fg, -option-hover-bg, -option-hover-fg, -option-img-radius
+//   -placeholder-fg, -border-color-invalid, -panel-max-height, -panel-bg, -panel-shadow, -selected-fg, -option-hover-bg, -option-hover-fg, -option-img-radius
 :host {
   position: relative;
   display: inline-flex;
@@ -50,6 +50,24 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &[data-placeholder] {
+      color: var(--shy-select-placeholder-fg, var(--shy-color-text-muted));
+    }
+  }
+
+  &__img {
+    flex-shrink: 0;
+    display: flex;
+    inline-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
+    block-size: var(--shy-select-icon-size, var(--shy-size-icon-md));
+
+    img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+      border-radius: var(--shy-select-option-img-radius, var(--shy-radius-full));
+    }
   }
 
   &__dropdown-icon {
@@ -60,20 +78,23 @@
     }
   }
 
+  // Painel dentro do OverlayService (fora do host): posição e camada vêm do painel; aqui só a superfície.
   &__dropdown {
-    @include shy-layer(dropdown);
-    position: absolute;
-    inset-block-start: 100%;
-    inset-inline: 0;
-    margin: var(--shy-space-1) 0 0;
+    box-sizing: border-box;
+    margin: 0;
     padding: var(--shy-space-2) 0;
+    max-block-size: min(var(--shy-select-panel-max-height, #{ru(100)}), calc(var(--shy-dynamic-height) - var(--shy-space-8)));
+    overflow-y: auto;
+    overscroll-behavior: contain;
     list-style: none;
     border: var(--shy-border-width) solid var(--shy-color-border);
     border-radius: var(--shy-select-radius, var(--shy-radius-md));
     background: var(--shy-select-panel-bg, var(--shy-color-surface-raised));
     box-shadow: var(--shy-select-panel-shadow, var(--shy-shadow-3));
-    overflow: hidden;
-    animation: shy-fade-in var(--shy-duration-fast) var(--shy-ease-enter);
+    font-family: var(--shy-select-font-family, var(--shy-font-family-base));
+    font-size: var(--shy-select-font-size, var(--shy-text-md));
+    line-height: var(--shy-leading-normal);
+    color: var(--shy-select-fg, var(--shy-color-text));
   }
 
   &__option {
@@ -89,12 +110,18 @@
       color: var(--shy-select-option-hover-fg, var(--shy-color-on-primary-soft));
     }
 
-    &:focus-visible {
-      outline: var(--shy-focus-ring-width) solid transparent; // vira visível em forced-colors
-      outline-offset: calc(var(--shy-focus-ring-width) * -1);
+    // Opção ativa (aria-activedescendant): o foco real fica no botão.
+    &--active {
       background: var(--shy-select-option-hover-bg, var(--shy-color-primary-soft));
       color: var(--shy-select-option-hover-fg, var(--shy-color-on-primary-soft));
       box-shadow: inset 0 0 0 var(--shy-focus-ring-width) var(--shy-color-focus);
+      outline: var(--shy-focus-ring-width) solid transparent; // vira visível em forced-colors
+      outline-offset: calc(var(--shy-focus-ring-width) * -1);
+    }
+
+    &[aria-disabled='true'] {
+      opacity: var(--shy-opacity-disabled);
+      cursor: not-allowed;
     }
 
     &--selected {
@@ -127,7 +154,30 @@
   }
 }
 
+// `data-disabled` e `data-invalid` vêm do host (ControlBase).
+:host([data-disabled]) {
+  opacity: var(--shy-opacity-disabled);
+  cursor: not-allowed;
+
+  .select__trigger {
+    cursor: not-allowed;
+  }
+}
+
+:host([data-invalid]) {
+  border-color: var(--shy-select-border-color-invalid, var(--shy-color-danger-text));
+}
+
 @media (forced-colors: active) {
+  :host([data-invalid]) {
+    border-style: dashed;
+  }
+
+  :host([data-disabled]) {
+    border-color: GrayText;
+    color: GrayText;
+  }
+
   .select__option--selected {
     forced-color-adjust: none;
     color: Highlight;
