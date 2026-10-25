@@ -1,7 +1,7 @@
 @use '../../styles' as *;
 
 :host {
-  // Lido pelo componente (getComputedStyle): o breakpoint existe só aqui, em _breakpoints.scss.
+  // Lido pelo componente (getComputedStyle): compacto em portrait; a lib não usa breakpoint de largura.
   --_compact: 0;
 
   position: relative;
@@ -16,7 +16,7 @@
   background: var(--shy-color-bg);
   color: var(--shy-color-text);
 
-  @include down(md) {
+  @include portrait {
     --_compact: 1;
   }
 }

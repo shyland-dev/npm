@@ -8,6 +8,7 @@ $breakpoints: (
   'xl': 1600px,
 );
 
+// A lib não usa breakpoints de largura (só `portrait`/`landscape` em _mixins.scss); up/down ficam para projetos consumidores.
 @mixin up($name) {
   @if not map.has-key($breakpoints, $name) {
     @error 'Breakpoint desconhecido: #{$name}. Use: #{map.keys($breakpoints)}.';
