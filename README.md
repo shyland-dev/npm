@@ -375,7 +375,7 @@ Motion reduzido: `prefers-reduced-motion` já zera as durações; o app pode for
     background: var(--shy-color-surface);
     color: var(--shy-color-text);
     @include shy-layer(sticky); // z-index: var(--shy-z-sticky)
-    @include up(md) {
+    @include landscape {
         padding: ru(8);
     }
 }
@@ -389,19 +389,19 @@ ru(4); // 'calc(var(--shy-responsive-unit) * 4)'
 
 **Funções e mixins** (`@use '@shyland-dev/ui/styles'`):
 
-| Item                                                                                                                   | Descrição                                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ru($n)`                                                                                                               | `calc(var(--shy-responsive-unit) * $n)`; aceita decimais e negativos                                                                                       |
-| `z($layer, $offset: 0)`                                                                                                | `z-index` de uma camada nomeada (`base`, `raised`, `dropdown`, `sticky`, `fixed`, `drawer`, `modal`, `popover`, `tooltip`, `toast`); `$offset` de -50 a 50 |
-| `@include shy-layer($layer, $offset)`                                                                                  | `z-index: z($layer, $offset)`                                                                                                                              |
-| `@include up($bp)` / `down($bp)`                                                                                       | Media query de largura (`sm` 600, `md` 840, `lg` 1200, `xl` 1600); único lugar com px                                                                      |
-| `@include focus-ring`                                                                                                  | Anel de foco do contrato de estados                                                                                                                        |
-| `@include shy-state(hover\|focus\|active)`                                                                             | Gera o seletor real (`hover` só com `@media (hover: hover)`) e `[data-shy-state]` para a matriz do showcase                                                |
-| `@include state-layer`                                                                                                 | Camada de hover/pressed sem cor própria por variante                                                                                                       |
-| `@include disabled-state`                                                                                              | `opacity` e `cursor` de desabilitado                                                                                                                       |
-| `@include transition($props, $duration, $ease)`                                                                        | `transition` com os tokens de motion                                                                                                                       |
-| `@include visually-hidden`                                                                                             | Esconde só visualmente (em ru, sem `1px`)                                                                                                                  |
-| `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode` | Mixins antigos, mantidos por enquanto                                                                                                                      |
+| Item                                                                                                                   | Descrição                                                                                                                                                     |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ru($n)`                                                                                                               | `calc(var(--shy-responsive-unit) * $n)`; aceita decimais e negativos                                                                                          |
+| `z($layer, $offset: 0)`                                                                                                | `z-index` de uma camada nomeada (`base`, `raised`, `dropdown`, `sticky`, `fixed`, `drawer`, `modal`, `popover`, `tooltip`, `toast`); `$offset` de -50 a 50    |
+| `@include shy-layer($layer, $offset)`                                                                                  | `z-index: z($layer, $offset)`                                                                                                                                 |
+| `@include up($bp)` / `down($bp)`                                                                                       | Media query de largura (`sm` 600, `md` 840, `lg` 1200, `xl` 1600); único lugar com px. A lib não usa mais: prefira `landscape`/`portrait` e layout intrínseco |
+| `@include focus-ring`                                                                                                  | Anel de foco do contrato de estados                                                                                                                           |
+| `@include shy-state(hover\|focus\|active)`                                                                             | Gera o seletor real (`hover` só com `@media (hover: hover)`) e `[data-shy-state]` para a matriz do showcase                                                   |
+| `@include state-layer`                                                                                                 | Camada de hover/pressed sem cor própria por variante                                                                                                          |
+| `@include disabled-state`                                                                                              | `opacity` e `cursor` de desabilitado                                                                                                                          |
+| `@include transition($props, $duration, $ease)`                                                                        | `transition` com os tokens de motion                                                                                                                          |
+| `@include visually-hidden`                                                                                             | Esconde só visualmente (em ru, sem `1px`)                                                                                                                     |
+| `fixedHeight`, `fixedWidth`, `fixedSquare`, `square`, `allVendors`, `landscape`, `portrait`, `dark-mode`, `light-mode` | Mixins antigos, mantidos por enquanto                                                                                                                         |
 
 ---
 

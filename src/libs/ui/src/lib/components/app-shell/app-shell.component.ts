@@ -14,8 +14,8 @@ let nextId = 0;
  * Casca de página: `header`, `sidebar`, conteúdo (`main`) e `footer` por projeção, sem router próprio.
  * `<shy-app-shell><div slot="header">…</div><nav slot="sidebar">…</nav>conteúdo<div slot="footer">…</div></shy-app-shell>`.
  * Os landmarks (`banner`, `navigation`, `main`, `contentinfo`) e o link "pular para o conteúdo" são da casca; as regiões
- * sem conteúdo não aparecem (sem `slot="sidebar"` não há coluna nem botão de menu). Abaixo do breakpoint `md` a sidebar vira um Drawer aberto por um botão no cabeçalho
- * (fecha ao navegar por um link dentro dela). O breakpoint vive só no CSS (`_breakpoints.scss`); o componente lê o
+ * sem conteúdo não aparecem (sem `slot="sidebar"` não há coluna nem botão de menu). Em `orientation: portrait` a sidebar vira um Drawer aberto por um botão no cabeçalho
+ * (fecha ao navegar por um link dentro dela). A query vive só no CSS; o componente lê o
  * resultado da custom property `--_compact`.
  */
 @Component({
