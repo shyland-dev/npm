@@ -3,6 +3,18 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (sem mudanças nesta versão). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
 
+## [1.1.1] - 2026-10-25
+
+### Corrigido
+
+- **Bundle**: `provideShyIcons(iconX)` com `import { iconX } from '@shyland-dev/ui/icons'` (o uso recomendado) ainda trazia o catálogo inteiro (~2.079 ícones, chunk de 2,5 MB) para o bundle inicial. Duas causas, medidas num app Angular 21 com `@angular/build:application` e o pacote buildado: (1) o `import()` do `IconRegistry` apontava para o mesmo módulo que o app importa estaticamente, e o bundler não separa um módulo em dois chunks; (2) `ICONS` era um objeto com `iconX.svg` (acesso a propriedade), que o esbuild não considera livre de efeito colateral e por isso não removia. Agora o `import()` usa o entry interno `@shyland-dev/ui/icons/catalog` (cópia independente de `ICONS`) e `ICONS` em `/icons` é `/* @__PURE__ */`. Num app com `provideShyIcons(iconCameraVideo)`: bundle inicial de 2,6 MB (256 kB transferidos) para ~143 kB (~43 kB transferidos); o catálogo segue como chunk lazy.
+- API pública inalterada: `provideShyIcons`, `iconX`, `ICONS` (em `@shyland-dev/ui/icons`), `<shy-icon>`, fallback `question-circle` e variantes `-fill`.
+
+### Alterado
+
+- `check-icon-bundle` agora builda o cenário recomendado (`provideShyIcons` + import estático de `/icons`), que era o caso não coberto.
+- O pacote ganha o entry point `@shyland-dev/ui/icons/catalog` (uso interno, não faça import dele no app); o tarball cresce ~2,4 MB descompactado por causa da cópia do catálogo.
+
 ## [1.1.0] - 2026-10-25
 
 ### Corrigido

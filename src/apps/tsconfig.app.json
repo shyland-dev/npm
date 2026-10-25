@@ -7,6 +7,7 @@
     "paths": {
       "@shyland-dev/ui": ["../libs/ui/src/public-api.ts"],
       "@shyland-dev/ui/icons": ["../libs/ui/icons/src/public-api.ts"],
+      "@shyland-dev/ui/icons/catalog": ["../libs/ui/icons/catalog/src/public-api.ts"],
       "@shyland-dev/ui/*": ["../libs/ui/src/*"],
       "@shyland-dev/utils": ["../libs/utils/src/public-api.ts"],
       "@shyland-dev/utils/*": ["../libs/utils/src/*"]

@@ -6,6 +6,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 const SVG_DIR = join(__dirname, '../src/libs/ui/src/assets/svg');
 const CATALOG = join(__dirname, '../src/libs/ui/icons/src/icons.ts');
+const CATALOG_MAP = join(__dirname, '../src/libs/ui/icons/catalog/src/icons-catalog.ts');
 const INTERNAL = join(__dirname, '../src/libs/ui/src/lib/components/icon/internal-icons.ts');
 
 // Ícones usados pelos próprios componentes (e o fallback): sempre registrados, sem precisar de provideShyIcons.
@@ -35,6 +36,7 @@ for (const name of INTERNAL_NAMES) if (!icons.some((i) => i.name === name)) thro
 const entry = (i) => `export const ${i.id}: ShyIcon = { name: '${i.name}', svg: \`${i.svg}\` };`;
 
 mkdirSync(join(CATALOG, '..'), { recursive: true });
+mkdirSync(join(CATALOG_MAP, '..'), { recursive: true });
 writeFileSync(
   CATALOG,
   `${HEADER}
@@ -43,8 +45,27 @@ import type { ShyIcon } from './icon.interface';
 ${icons.map(entry).join('\n')}
 
 /** Catálogo completo (nome -> SVG). Importar isto traz todos os ícones; para tree-shaking use os exports \`icon*\`. */
+export const ICONS: Record<string, string> = /* @__PURE__ */ toCatalog([
+${icons.map((i) => `  ${i.id},`).join('\n')}
+]);
+
+function toCatalog(list: ShyIcon[]): Record<string, string> {
+  return Object.fromEntries(list.map((icon) => [icon.name, icon.svg]));
+}
+`,
+  'utf-8',
+);
+
+// Cópia do catálogo para o \`import()\` do IconRegistry, num entry point próprio e sem importar nada de /icons. Se o
+// import() apontasse para o mesmo módulo que o app importa estaticamente (\`iconX\`), o bundler manteria todos os ícones
+// no bundle inicial (medido na 1.1.0: 2,5 MB ao registrar um único ícone).
+writeFileSync(
+  CATALOG_MAP,
+  `${HEADER}
+
+/** Catálogo completo (nome -> SVG). Importar isto traz todos os ícones; para tree-shaking use os exports \`icon*\`. */
 export const ICONS: Record<string, string> = {
-${icons.map((i) => `  '${i.name}': ${i.id}.svg,`).join('\n')}
+${icons.map((i) => `  '${i.name}': \`${i.svg}\`,`).join('\n')}
 };
 `,
   'utf-8',

@@ -1,5 +1,5 @@
-// Regressão de tamanho dos ícones: builda um app mínimo (shy-icon + shy-empty-state, sem registrar ícones) e falha se o
-// bundle inicial passar do limite. O catálogo completo (~2,5 MB) só pode existir como chunk lazy.
+// Regressão de tamanho dos ícones: builda um app mínimo (provideShyIcons com 1 ícone importado de /icons + shy-icon +
+// shy-empty-state) e falha se o bundle inicial passar do limite. O catálogo completo (~2,5 MB) só pode existir como chunk lazy.
 import { spawnSync } from 'node:child_process';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
