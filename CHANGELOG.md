@@ -1,7 +1,13 @@
 # Changelog
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
-Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (sem mudanças nesta versão). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
+Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (ver a seção `utils` abaixo). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
+
+## utils 0.0.7 - 2026-10-25
+
+### Corrigido
+
+- `@shyland-dev/utils` foi republicado como 0.0.7, sem mudanças de código. A 0.0.6 saiu do registry do npm em 2026-10-21 e a versão não pode ser reutilizada.
 
 ## [1.2.0] - 2026-10-25
 
