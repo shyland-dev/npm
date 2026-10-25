@@ -20,8 +20,20 @@ fi
 if [[ "$PKG_VERSION" == *"-"* ]]; then
   PRE_TAG=$(echo "$PKG_VERSION" | sed 's/.*-\([^.]*\).*/\1/')
   echo "Publicando $PKG_NAME@$PKG_VERSION como pre-release com tag: $PRE_TAG"
-  npm publish "$PKG_DIR" --tag "$PRE_TAG" --access public
+  PUBLISH_ARGS=(--tag "$PRE_TAG" --access public)
 else
   echo "Publicando $PKG_NAME@$PKG_VERSION como latest"
-  npm publish "$PKG_DIR" --access public
+  PUBLISH_ARGS=(--access public)
 fi
+
+# O "npm show" acima pode falhar mesmo com a versão já publicada (cache/packument incomum).
+# O registry então responde "Cannot publish over previously published version"; tratamos como skip.
+if ! PUBLISH_OUTPUT=$(npm publish "$PKG_DIR" "${PUBLISH_ARGS[@]}" 2>&1); then
+  echo "$PUBLISH_OUTPUT"
+  if [[ "$PUBLISH_OUTPUT" == *"previously published version"* ]]; then
+    echo "Versão $PKG_VERSION de $PKG_NAME já publicada, pulando."
+    exit 0
+  fi
+  exit 1
+fi
+echo "$PUBLISH_OUTPUT"
