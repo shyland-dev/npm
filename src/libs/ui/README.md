@@ -723,7 +723,7 @@ Page shell with `header`, `sidebar`, content and `footer` by projection. No rout
 | `skipLabel`    | `'Skip to content'` | Text of the skip link                                                              |
 
 - Landmarks: `<header>` (banner), `<nav aria-label>`, `<main tabindex="-1">` and `<footer>` (contentinfo). Empty regions are hidden. The skip link is the first focusable element and moves focus to `main` without touching the URL (safe with `<base href>`).
-- In Drawer mode a menu button appears in the header (`aria-haspopup="dialog"`); a click on a link inside the Drawer closes it, and going back to inline closes it too. `openSidebar()` is public (via `exportAs: shyAppShell`). With no `slot="sidebar"` content in Drawer mode use `sidebarMode="inline"` to avoid an empty menu.
+- In Drawer mode a menu button appears in the header (`aria-haspopup="dialog"`); a click on a link inside the Drawer closes it, and going back to inline closes it too. `openSidebar()` is public (via `exportAs: shyAppShell`). With no `slot="sidebar"` content the shell adapts by itself in every mode: no sidebar column is reserved (`data-no-sidebar` on the host) and the menu button is not rendered, so no workaround such as `--shy-app-shell-sidebar-width: 0` or `sidebarMode="inline"` is needed.
 - The breakpoint lives only in `_breakpoints.scss` (`md`): the component reads the CSS custom property `--_compact` through `getComputedStyle`, so there is no pixel value in TypeScript.
 
 ## Styles

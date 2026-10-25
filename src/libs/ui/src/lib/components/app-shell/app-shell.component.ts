@@ -1,5 +1,5 @@
 import { NgTemplateOutlet, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, PLATFORM_ID, TemplateRef, afterNextRender, computed, effect, inject, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, PLATFORM_ID, TemplateRef, afterEveryRender, afterNextRender, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { ShyAppShellSidebarMode } from '../../types/app-shell/app-shell.type';
 import { ShyOverlayContext } from '../../interfaces/overlay/overlay.interface';
 import { ShyOverlayRef } from '../../overlay/overlay-ref';
@@ -14,7 +14,7 @@ let nextId = 0;
  * Casca de página: `header`, `sidebar`, conteúdo (`main`) e `footer` por projeção, sem router próprio.
  * `<shy-app-shell><div slot="header">…</div><nav slot="sidebar">…</nav>conteúdo<div slot="footer">…</div></shy-app-shell>`.
  * Os landmarks (`banner`, `navigation`, `main`, `contentinfo`) e o link "pular para o conteúdo" são da casca; as regiões
- * sem conteúdo não aparecem. Abaixo do breakpoint `md` a sidebar vira um Drawer aberto por um botão no cabeçalho
+ * sem conteúdo não aparecem (sem `slot="sidebar"` não há coluna nem botão de menu). Abaixo do breakpoint `md` a sidebar vira um Drawer aberto por um botão no cabeçalho
  * (fecha ao navegar por um link dentro dela). O breakpoint vive só no CSS (`_breakpoints.scss`); o componente lê o
  * resultado da custom property `--_compact`.
  */
@@ -27,6 +27,7 @@ let nextId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.data-compact]': 'compact() ? "" : null',
+    '[attr.data-no-sidebar]': 'hasSidebar() ? null : ""',
   },
 })
 export class AppShellComponent {
@@ -45,8 +46,15 @@ export class AppShellComponent {
   private readonly measured = signal(false);
   protected readonly compact = computed(() => (this.sidebarMode() === 'auto' ? this.measured() : this.sidebarMode() === 'drawer'));
 
+  /** Há conteúdo em `slot="sidebar"`? Sem ele não há coluna nem botão de menu. */
+  protected readonly hasSidebar = signal(true);
+  private readonly inner = viewChild<ElementRef<HTMLElement>>('inner');
+  private readonly probe = viewChild<ElementRef<HTMLElement>>('probe');
+
   private readonly drawerTpl = viewChild.required<TemplateRef<ShyOverlayContext>>('drawerTpl');
   private drawerRef?: ShyOverlayRef;
+  /** Depois do primeiro Drawer a sonda fica vazia (o conteúdo foi para o painel): a leitura anterior continua valendo. */
+  private drawerUsed = false;
 
   constructor() {
     afterNextRender(() => {
@@ -57,15 +65,27 @@ export class AppShellComponent {
       read();
       this.destroyRef.onDestroy(() => observer.disconnect());
     });
+    // O conteúdo projetado só existe no DOM onde o template é instanciado: na grade (`.sidebar-inner`) ou, no modo
+    // compacto, numa sonda oculta. Com o Drawer aberto o conteúdo está lá, então a última leitura vale.
+    afterEveryRender(() => {
+      const holder = this.inner() ?? this.probe();
+      if (!holder || (!this.inner() && this.drawerUsed)) return;
+      const filled = Array.from(holder.nativeElement.childNodes).some((n) => n.nodeType === 1 || (n.nodeType === 3 && !!n.textContent?.trim()));
+      this.hasSidebar.set(filled);
+    });
     // Voltar para a tela larga com o Drawer aberto: a sidebar volta para a grade.
     effect(() => {
-      if (!this.compact()) void this.drawerRef?.close();
+      if (!this.compact()) {
+        this.drawerUsed = false;
+        void this.drawerRef?.close();
+      }
     });
   }
 
-  /** Abre o Drawer da sidebar (só faz sentido no modo compacto). */
+  /** Abre o Drawer da sidebar (só faz sentido no modo compacto; sem conteúdo de sidebar não faz nada). */
   openSidebar(): void {
-    if (this.drawerRef) return;
+    if (this.drawerRef || !this.hasSidebar()) return;
+    this.drawerUsed = true;
     const ref = this.drawer.open(this.drawerTpl(), { side: 'start' });
     this.drawerRef = ref;
     void ref.closed.then(() => (this.drawerRef = undefined));

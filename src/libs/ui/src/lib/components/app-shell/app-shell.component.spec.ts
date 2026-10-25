@@ -23,6 +23,17 @@ class Host {
 @Component({ imports: [AppShellComponent], template: `<shy-app-shell><p>só conteúdo</p></shy-app-shell>` })
 class Bare {}
 
+@Component({
+  imports: [AppShellComponent],
+  template: `<shy-app-shell [sidebarMode]="mode()"
+    ><div slot="header">Logo</div>
+    <p>só conteúdo</p></shy-app-shell
+  >`,
+})
+class NoSidebar {
+  readonly mode = signal<ShyAppShellSidebarMode>('inline');
+}
+
 function setup(mode: ShyAppShellSidebarMode = 'inline') {
   const fixture = TestBed.createComponent(Host);
   fixture.componentInstance.mode.set(mode);
@@ -105,5 +116,35 @@ describe('AppShellComponent', () => {
     expect(root.querySelector('footer')?.childNodes.length).toBe(0);
     expect(root.querySelector('.header-content')?.childNodes.length).toBe(0);
     expect(root.querySelector('main')?.textContent).toContain('só conteúdo');
+  });
+
+  describe('sem conteúdo em slot="sidebar"', () => {
+    for (const mode of ['inline', 'auto', 'drawer'] as const) {
+      it(`${mode}: sem coluna reservada e sem botão de menu`, async () => {
+        const fixture = TestBed.createComponent(NoSidebar);
+        fixture.componentInstance.mode.set(mode);
+        await flush(fixture);
+        const root = fixture.nativeElement as HTMLElement;
+        const shell = root.querySelector('shy-app-shell')!;
+        expect(shell.hasAttribute('data-no-sidebar')).toBe(true);
+        expect(root.querySelector('.menu')).toBeNull();
+        expect(root.querySelector('main')?.textContent).toContain('só conteúdo');
+      });
+    }
+  });
+
+  it('com sidebar o comportamento é o de antes: sem data-no-sidebar e com botão no modo drawer', async () => {
+    const { fixture, root } = setup('drawer');
+    await flush(fixture);
+    expect(root.querySelector('shy-app-shell')!.hasAttribute('data-no-sidebar')).toBe(false);
+    expect(root.querySelector('.menu')).not.toBeNull();
+    root.querySelector<HTMLButtonElement>('.menu')!.click();
+    await flush(fixture);
+    document.querySelector<HTMLElement>('dialog.shy-drawer-pane--start .close')?.click();
+    await flush(fixture);
+    await new Promise((r) => setTimeout(r, 400));
+    await flush(fixture);
+    expect(root.querySelector('.menu')).not.toBeNull();
+    expect(root.querySelector('shy-app-shell')!.hasAttribute('data-no-sidebar')).toBe(false);
   });
 });
