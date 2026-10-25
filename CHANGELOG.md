@@ -3,6 +3,13 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (sem mudanças nesta versão). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
 
+## [1.2.0] - 2026-10-25
+
+### Alterado
+
+- **`<shy-app-shell>`**: a sidebar agora vira Drawer por `@media (orientation: portrait)` (antes, por `max-width` abaixo do breakpoint `md`, 840 px). Em landscape fica inline em qualquer largura. A lib não usa mais media query de largura. Trade-off aceito: em zoom 400% (WCAG 1.4.10 Reflow) e em celular landscape a sidebar fica inline.
+- `up()` / `down()` continuam exportados em `@shyland-dev/ui/styles`, mas a lib não os usa; prefira `landscape` / `portrait` e layouts intrínsecos.
+
 ## [1.1.1] - 2026-10-25
 
 ### Corrigido
