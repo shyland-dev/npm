@@ -20,16 +20,16 @@ npm run build   # Compila as libs para dist/
 
 ## Scripts
 
-| Comando                  | Descrição                                                                                          |
-| ------------------------ | -------------------------------------------------------------------------------------------------- |
-| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                                |
-| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                  |
-| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                              |
-| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                           |
-| `npm run build:showcase` | Build do showcase                                                                                  |
-| `npm run generate:icons` | Gera `icons.ts` a partir dos SVGs em `src/libs/ui/src/assets/svg/`                                 |
-| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho) |
-| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)       |
+| Comando                  | Descrição                                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                                                  |
+| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                                    |
+| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                                                |
+| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                                             |
+| `npm run build:showcase` | Build do showcase                                                                                                    |
+| `npm run generate:icons` | Gera o catálogo (`icons/src/icons.ts`) e os ícones internos a partir dos SVGs em `assets/svg/`                       |
+| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho, bundle de ícones) |
+| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                         |
 
 ## Design System (em desenvolvimento)
 
@@ -107,6 +107,8 @@ shy-icon {
 ```
 
 Os ícones disponíveis são gerados a partir dos SVGs em `src/libs/ui/src/assets/svg/` (conjunto Bootstrap Icons). Variantes preenchidas usam o sufixo `-fill` (ex: `heart-fill`).
+
+No app consumidor, registre só os ícones usados com `provideShyIcons(iconHouse, ...)` (import de `@shyland-dev/ui/icons`); nomes não registrados baixam o catálogo sob demanda (chunk lazy). Detalhes em `src/libs/ui/README.md` (`<shy-icon>`).
 
 Para adicionar ícones, coloque o `.svg` em `src/libs/ui/src/assets/svg/` e execute:
 
@@ -557,7 +559,8 @@ export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.t
 export { SnackbarPosition, ShySnackbarIntent, ShySnackbarAlign, ShySnackbarCloseReason } from './lib/types/snackbar/snackbar.type';
 
 // Ícones
-export { ICONS } from './lib/components/icon/icons';
+export { provideShyIcons, IconRegistry } from './lib/components/icon/icon-registry';
+// Catálogo completo e um export por ícone: `@shyland-dev/ui/icons` (ICONS, iconHouse, ...)
 ```
 
 ---
@@ -591,7 +594,7 @@ npm/
 │   ├── DESIGN-SYSTEM-PLAN.md       # Plano mestre do Design System
 │   └── design-system/              # Decisões e progresso das fases
 ├── scripts/
-│   ├── generate-icons.mjs          # Gera icons.ts a partir dos SVGs
+│   ├── generate-icons.mjs          # Gera o catálogo de ícones e os internos a partir dos SVGs
 │   └── check-*.mjs                 # npm run check:ds (unidades, tokens, contraste, fontes...)
 ├── CLAUDE.md                       # Regras do repo e comando /build
 └── angular.json

@@ -238,7 +238,7 @@ Highlighted message in the page (not a toast): an icon that changes per intent, 
 
 ### `<shy-icon>`
 
-Renders an inline SVG icon from the built-in catalog. Supports a _-fill_ variant with a hover transition.
+Renders an inline SVG icon. The ~2000-icon catalog is **not** in your initial bundle: the icons used by the library's own components are always available, the rest you register with `provideShyIcons` (or they are downloaded on demand, see below). Supports a _-fill_ variant with a hover transition.
 
 **Selector:** `shy-icon`
 
@@ -261,7 +261,24 @@ Renders an inline SVG icon from the built-in catalog. Supports a _-fill_ variant
 <shy-icon [hoverFill]="true" [hoverFillDelay]="200">heart</shy-icon>
 ```
 
-To add new icons, place `.svg` files in `src/libs/ui/src/assets/svg/` and run:
+**Registering icons (recommended, smallest bundle).** Import the icons you use from the `@shyland-dev/ui/icons` subpath and register them in the root providers; only those enter the bundle (each export is tree-shakeable, ~1 kB). Register the `-fill` variant too when you use `hoverFill`:
+
+```ts
+import { provideShyIcons } from '@shyland-dev/ui';
+import { iconHouse, iconHouseFill, iconCameraVideo } from '@shyland-dev/ui/icons';
+
+bootstrapApplication(App, { providers: [provideShyIcons(iconHouse, iconHouseFill, iconCameraVideo)] });
+```
+
+Export names are `icon` + the PascalCase icon name (`camera-video` → `iconCameraVideo`, `0-circle` → `icon0Circle`).
+
+**Names that are not registered** (including dynamic names coming from data) keep working: the first one triggers a lazy `import()` of the full catalog (a separate chunk of ~2.5 MB raw / ~230 kB transferred, fetched once), the icon area stays empty with its size reserved until it arrives, and SSR waits for it (`PendingTasks`). In dev mode a `console.warn` names the unregistered icon.
+
+Always available without registering (used by the components and as fallback): `x`, `x-lg`, `list`, `check`, `check-lg`, `check-circle`, `chevron-down`, `chevron-left`, `chevron-right`, `exclamation-circle`, `exclamation-lg`, `exclamation-triangle`, `info-circle`, `person-fill`, `question-circle`, `upload`, `arrow-up-short`, `arrow-down-short`, `arrow-down-up`.
+
+`ICONS` (name → SVG, whole catalog) now lives in `@shyland-dev/ui/icons`: `import { ICONS } from '@shyland-dev/ui/icons'`. Importing it statically brings the whole catalog into your bundle.
+
+To add new icons to the library, place `.svg` files in `src/libs/ui/src/assets/svg/` and run:
 
 ```bash
 npm run generate:icons
@@ -1081,8 +1098,11 @@ export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/ske
 export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
 export { SnackbarPosition, ShySnackbarIntent, ShySnackbarAlign, ShySnackbarCloseReason } from './lib/types/snackbar/snackbar.type';
 
-// Icons
-export { ICONS } from './lib/components/icon/icons';
+// Icons (root entry point)
+export { provideShyIcons, IconRegistry } from './lib/components/icon/icon-registry';
+
+// @shyland-dev/ui/icons (secondary entry point)
+export { ShyIcon, ICONS, iconHouse, iconHouseFill /* ...one export per icon */ } from '@shyland-dev/ui/icons';
 ```
 
 ---

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, afterNextRender, inject, input, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, afterNextRender, effect, inject, input, signal, viewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ICONS } from './icons';
+import { IconRegistry } from './icon-registry';
 
 /** Mostrado quando o nome não existe no catálogo (o antigo 'help' nunca existiu). */
 const FALLBACK = 'question-circle';
@@ -23,6 +23,7 @@ const FALLBACK = 'question-circle';
   },
 })
 export class IconComponent {
+  private readonly registry = inject(IconRegistry);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly destroyRef = inject(DestroyRef);
   private readonly projected = viewChild.required<ElementRef<HTMLElement>>('projected');
@@ -40,13 +41,19 @@ export class IconComponent {
   private readonly projectedName = signal('');
 
   private readonly resolvedName = computed(() => this.name() ?? this.projectedName());
-  protected readonly svg = computed(() => this.trust(ICONS[this.resolvedName()] ?? ICONS[FALLBACK]));
+  // Nome ainda não disponível (catálogo a caminho): vazio, com o tamanho reservado pelo CSS (sem layout shift).
+  protected readonly svg = computed(() => {
+    const name = this.resolvedName();
+    const svg = this.registry.get(name) ?? (this.registry.missing(name) ? this.registry.get(FALLBACK) : undefined);
+    return svg ? this.trust(svg) : null;
+  });
   protected readonly svgFill = computed(() => {
-    const fill = this.hoverFill() ? ICONS[`${this.resolvedName()}-fill`] : undefined;
+    const fill = this.hoverFill() ? this.registry.get(`${this.resolvedName()}-fill`) : undefined;
     return fill ? this.trust(fill) : null;
   });
 
   constructor() {
+    effect(() => this.registry.ensure(this.resolvedName()));
     afterNextRender(() => {
       const el = this.projected().nativeElement;
       const read = () => this.projectedName.set(el.textContent?.trim() ?? '');

@@ -25,7 +25,7 @@ export * from './form-field/form-field.component';
 export * from './form-field/form-field.token';
 
 export * from './icon/icon.component';
-export * from './icon/icons';
+export * from './icon/icon-registry';
 
 export * from './icon-button/icon-button.component';
 
