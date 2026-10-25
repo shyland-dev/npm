@@ -6,7 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "@shyland-dev/ui": ["../../src/libs/ui/src/public-api.ts"],
-      "@shyland-dev/ui/icons": ["../../src/libs/ui/icons/src/public-api.ts"]
+      "@shyland-dev/ui/icons": ["../../src/libs/ui/icons/src/public-api.ts"],
+      "@shyland-dev/ui/icons/catalog": ["../../src/libs/ui/icons/catalog/src/public-api.ts"]
     }
   },
   "files": ["main.ts"]

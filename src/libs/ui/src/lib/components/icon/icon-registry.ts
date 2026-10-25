@@ -50,7 +50,8 @@ export class IconRegistry {
       console.warn(`[shy-icon] "${name}" não está registrado: o catálogo completo será baixado sob demanda. Use provideShyIcons(...) para evitar o download.`);
     }
     void this.pending.run(async () => {
-      const { ICONS } = await import('@shyland-dev/ui/icons');
+      // Entry próprio (cópia de ICONS, sem importar /icons): import() do mesmo módulo que o app importa estaticamente arrasta o catálogo para o bundle inicial.
+      const { ICONS } = await import('@shyland-dev/ui/icons/catalog');
       this.catalog.set(ICONS);
     });
   }

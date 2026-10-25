@@ -11,6 +11,7 @@ const ALLOWED_FILES = new Set([
   rel(join(STYLES, 'tokens/units.css')), // E1
   rel(join(STYLES, '_breakpoints.scss')), // E2
   'src/libs/ui/icons/src/icons.ts', // E4: strings de SVG (gerado)
+  'src/libs/ui/icons/catalog/src/icons-catalog.ts', // E4: idem
   'src/libs/ui/src/lib/components/icon/internal-icons.ts', // E4: idem
 ]);
 const ALLOWED_DIRS = ['src/libs/ui/src/assets/']; // fontes dos ícones (Bootstrap Icons); não vão para o pacote

@@ -276,7 +276,7 @@ Export names are `icon` + the PascalCase icon name (`camera-video` → `iconCame
 
 Always available without registering (used by the components and as fallback): `x`, `x-lg`, `list`, `check`, `check-lg`, `check-circle`, `chevron-down`, `chevron-left`, `chevron-right`, `exclamation-circle`, `exclamation-lg`, `exclamation-triangle`, `info-circle`, `person-fill`, `question-circle`, `upload`, `arrow-up-short`, `arrow-down-short`, `arrow-down-up`.
 
-`ICONS` (name → SVG, whole catalog) now lives in `@shyland-dev/ui/icons`: `import { ICONS } from '@shyland-dev/ui/icons'`. Importing it statically brings the whole catalog into your bundle.
+`ICONS` (name → SVG, whole catalog) now lives in `@shyland-dev/ui/icons`: `import { ICONS } from '@shyland-dev/ui/icons'`. Importing it statically brings the whole catalog into your bundle. (`@shyland-dev/ui/icons/catalog` is an internal entry point used for the lazy load; don't import it.)
 
 To add new icons to the library, place `.svg` files in `src/libs/ui/src/assets/svg/` and run:
 
