@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/size-app",
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "@shyland-dev/ui": ["../../src/libs/ui/src/public-api.ts"],
+      "@shyland-dev/ui/icons": ["../../src/libs/ui/icons/src/public-api.ts"]
+    }
+  },
+  "files": ["main.ts"]
+}

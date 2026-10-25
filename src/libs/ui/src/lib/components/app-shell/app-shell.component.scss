@@ -21,7 +21,16 @@
   }
 }
 
-:host([data-compact]) {
+:host([data-compact]),
+:host([data-no-sidebar]) {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'header'
+    'main'
+    'footer';
+}
+
+:host(:has(.sidebar-inner:empty)) {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'header'

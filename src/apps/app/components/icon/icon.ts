@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { IconComponent, ICONS, SnackbarService } from '@shyland-dev/ui';
+import { IconComponent, SnackbarService } from '@shyland-dev/ui';
+import { ICONS } from '@shyland-dev/ui/icons';
 
 const MAX_RESULTS = 240;
 

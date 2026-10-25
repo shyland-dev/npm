@@ -3,6 +3,24 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (sem mudanças nesta versão). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
 
+## [Não publicado] - versão sugerida: 1.1.0
+
+### Corrigido
+
+- **Bundle**: o catálogo de ~2000 ícones (≈2,5 MB bruto) entrava no bundle inicial de qualquer app que usasse `<shy-icon>` (inclusive via app-shell, alert, empty-state...). Num app mínimo o bundle inicial passou de 2,54 MB (248 kB transferidos) para ~142 kB (~43 kB transferidos).
+- `<shy-app-shell>` sem conteúdo em `slot="sidebar"` não reserva mais a coluna da sidebar (o `main` ficava espremido) e não mostra mais o botão de menu que abria um Drawer vazio, em `auto`, `drawer` e `inline`. Dispensa o contorno `--shy-app-shell-sidebar-width: 0` e o `sidebarMode="inline"` só para esconder o menu.
+
+### Adicionado
+
+- Subpath `@shyland-dev/ui/icons`: um export tree-shakeable por ícone (`iconHouse`, `iconCameraVideo`, `icon0Circle`...), o tipo `ShyIcon` e o catálogo completo `ICONS`.
+- `provideShyIcons(...icons)` e `IconRegistry`: registro explícito de ícones. Os 19 ícones usados pelos componentes da lib (e o fallback `question-circle`) já vêm registrados.
+- Nome não registrado (inclusive dinâmico) continua funcionando: carrega o catálogo sob demanda num chunk lazy (com `PendingTasks` para SSR) e avisa no console em dev. A API de `<shy-icon>` não mudou.
+- `npm run check:ds` ganhou `check-icon-bundle`: builda um app mínimo e falha se o bundle inicial passar de 200 kB ou se o catálogo voltar para ele.
+
+### Alterado
+
+- **`ICONS` saiu da raiz**: use `import { ICONS } from '@shyland-dev/ui/icons'` (erro de compilação, não silencioso). Ele continua sendo o catálogo inteiro: importá-lo estaticamente traz tudo para o bundle. Estritamente é uma remoção de export (semver major); se preferir não tratar assim, é a única quebra desta versão.
+
 ## [1.0.0] - 2026-10-21
 
 Reformulação completa do Design System. **Breaking**: sem alias e sem API `@deprecated`.

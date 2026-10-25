@@ -6,15 +6,12 @@
     "baseUrl": ".",
     "paths": {
       "@shyland-dev/ui": ["../libs/ui/src/public-api.ts"],
+      "@shyland-dev/ui/icons": ["../libs/ui/icons/src/public-api.ts"],
       "@shyland-dev/ui/*": ["../libs/ui/src/*"],
       "@shyland-dev/utils": ["../libs/utils/src/public-api.ts"],
       "@shyland-dev/utils/*": ["../libs/utils/src/*"]
     }
   },
-  "files": [
-    "main.ts"
-  ],
-  "include": [
-    "**/*.ts"
-  ]
+  "files": ["main.ts"],
+  "include": ["**/*.ts"]
 }
