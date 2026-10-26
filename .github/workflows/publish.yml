@@ -29,6 +29,10 @@ jobs:
       - name: Build das libs
         run: npm run build
 
+      - name: Validar pacotes (publint e attw)
+        run: npm run check:pkg
+        continue-on-error: true # informativo: uma falha de rede do npx não deve bloquear o publish
+
       - name: Permitir execução do script
         run: chmod +x .github/scripts/publish-pkg.sh
 

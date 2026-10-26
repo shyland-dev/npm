@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/utils-app",
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "@shyland-dev/utils": ["../../src/libs/utils/src/public-api.ts"]
+    }
+  },
+  "files": ["main.ts"]
+}
