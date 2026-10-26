@@ -12,6 +12,7 @@
   inline-size: var(--shy-icon-button-size, var(--_side));
   block-size: var(--shy-icon-button-size, var(--_side));
   padding: 0;
+  @include touch-target;
 }
 
 :host([data-size='sm']) {

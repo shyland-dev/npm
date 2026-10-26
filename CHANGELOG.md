@@ -5,7 +5,7 @@ Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (ver a seçã
 
 ## [1.3.0] - 2026-10-26
 
-Só adições retrocompatíveis (minor): nenhuma API existente mudou de assinatura nem de comportamento padrão, exceto o swipe do toast, que passa a existir por padrão em toque e caneta (desligue com `swipeToDismiss: false`).
+Só adições retrocompatíveis (minor), todas opt-in exceto o swipe: nenhuma API existente mudou de assinatura nem de comportamento padrão, exceto o swipe do toast, que passa a existir por padrão em toque e caneta (desligue com `swipeToDismiss: false`).
 
 ### Adicionado
 
@@ -19,9 +19,10 @@ Só adições retrocompatíveis (minor): nenhuma API existente mudou de assinatu
 - **Dialog como folha**: `DialogService.open(c, { presentation: 'center' | 'sheet' | 'auto' })`. `auto` vira folha na base em `@media (orientation: portrait)`. Novo tipo `ShyDialogPresentation` e tipo `ShyDialogBaseConfig` (o `ShyDialogConfig` agora é essa base mais `presentation`).
 - Showcase: demos de swipe, undo, `promise()`, drag do Drawer e folha do Dialog.
 
-### Não incluído (decisão do dono)
-
-- Haptics (`navigator.vibrate`): sem suporte no Safari iOS.
+- **Haptics (opt-in)**: `provideShySnackbar({ haptics: true })` vibra 10 ms quando a pessoa fecha um toast (swipe, X ou ação; não no fechamento por tempo) e `DrawerService.open(c, { haptics: true })` vibra quando o arrasto fecha o painel. Usa a Vibration API: sem efeito no Safari/iOS e no desktop, e não vibra com reduced motion nem antes da primeira interação. Desligado por padrão.
+- **Área de toque de 44 px** em ponteiro grosso (`pointer: coarse`) para o `IconButton`, o X e a ação do toast e o handle do Drawer: token `--shy-size-touch-target` e mixin SCSS `touch-target` (um `::after` invisível; o layout não muda).
+- **`delayedFlag(source, { delay, minDuration })`** (exportado de `@shyland-dev/ui`): signal de loading sem flicker (liga após 200 ms e fica ligado ao menos 400 ms); use no `shy-skeleton` e no `aria-busy`.
+- Showcase: cookbook de **feedback otimista** com `undo()` e demo do `delayedFlag` na página do skeleton.
 
 ### Verificação
 

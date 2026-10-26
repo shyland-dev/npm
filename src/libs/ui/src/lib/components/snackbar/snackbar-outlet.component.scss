@@ -127,6 +127,7 @@
     color: inherit;
     font: inherit;
     cursor: pointer;
+    @include touch-target;
     @include state-layer;
 
     &:focus-visible {

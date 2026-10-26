@@ -315,8 +315,9 @@ if ((await ref.closed) === 'action') restore();
 - `undo(message, { label, duration })` resolves `'undo'` (the action was pressed) or `'commit'` (timeout, X or `dismissAll()`). Use it for reversible actions instead of `confirm()`: do the action now and let the toast offer the way back. The action is hidden while a modal is open, so only use it where reverting is safe.
 - `promise(promise, { loading, success, error })` shows one persistent loading toast that becomes `success` or `danger` (the messages can be functions of the value or the error) and returns the original promise, so errors still reach the caller.
 - **Swipe to dismiss** (`swipeToDismiss`, default `true`): on touch and pen, dragging a toast sideways past 40% of its width, or with a quick flick, closes it (`closed` resolves `'dismiss'`, any direction, so RTL needs nothing). The mouse does not drag (it would fight text selection). The timer pauses while dragging. The X button stays as the alternative without a gesture (WCAG 2.5.1 and 2.5.7), and the vertical scroll keeps working (`touch-action: pan-y`).
+- `haptics` (default `false`): a 10 ms vibration (Vibration API) when the person closes a toast by swipe, X or action (not on timeout). No effect on Safari/iOS or desktop, and it never vibrates with reduced motion or before the first interaction.
 - `focusHotkey` (e.g. `'Alt+T'`, off by default): a global shortcut that moves focus to the latest toast's action (or X), so keyboard users can reach it before it closes; `Esc` on a toast closes it and returns focus to where it was.
-- Queue: up to `maxVisible` (3) on screen, the rest wait. Defaults: `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel, swipeToDismiss, undoLabel, focusHotkey })` (optional, in `providers`).
+- Queue: up to `maxVisible` (3) on screen, the rest wait. Defaults: `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel, swipeToDismiss, undoLabel, focusHotkey, haptics })` (optional, in `providers`).
 - The timer pauses while the pointer or focus is on the toast, while it is being dragged and while the tab is hidden, and resumes with what was left (WCAG 2.2.1).
 - The toast container respects the safe area (`--shy-safe-area-*`): see [Safe areas](#safe-areas-notch-and-home-indicator).
 - A modal makes everything outside it `inert`, the toast included: with a modal open the action button is hidden (the text is still announced; the X is not clickable until the modal closes, the timer keeps running). Esc and outside clicks are not captured by the toast container.
@@ -491,6 +492,12 @@ Helpers: `computePosition(anchorRect, floatingSize, viewportRect, options)` (pur
 
 ---
 
+### Touch targets, loading without flicker and optimistic updates
+
+- With `pointer: coarse`, `IconButton`, the toast X and action, and the Drawer handle get a ~44 px hit area (`--shy-size-touch-target`, WCAG 2.5.5 AAA) through an invisible `::after`; layout does not change. SCSS: `@include touch-target` on your own small controls.
+- `delayedFlag(source, { delay = 200, minDuration = 400 })` returns a signal that follows a boolean signal without blinking: a load shorter than `delay` shows nothing, and once on it stays on for `minDuration`. Needs an injection context (or `injector`). Pair it with `<shy-skeleton>` and `[attr.aria-busy]` on the container.
+- Optimistic update: change the screen first and let `SnackbarService.undo()` decide: `'undo'` restores the state (the request was never sent), `'commit'` sends it. Example in the showcase (**components > snackbar**).
+
 ### Safe areas (notch and home indicator)
 
 `--shy-safe-area-top`, `-end`, `-bottom` and `-start` are `env(safe-area-inset-*)` with a `0` fallback (logical sides: `start`/`end` swap in RTL). The toast container, the Drawer panels, the Dialog sheet and the AppShell header and footer add them to their paddings. They only have a value when the page opts in with `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`; without it they are `0` and nothing changes. Use them in your own fixed bars: `padding-block-end: calc(var(--shy-space-4) + var(--shy-safe-area-bottom))`. Not verified on a real device with a notch yet.
@@ -539,7 +546,7 @@ inject(DrawerService).open(FiltersPanel, { side: 'start' });
 - The body scrolls on its own when the panel is taller than the screen. In a `TemplateRef`, use the `overlayRef` from the context (`let-ref="overlayRef"`) to close; the title is linked to the `<dialog>` anyway.
 - A popover or select panel opened with an `anchor` inside the dialog becomes a child of the `<dialog>` (stays clickable) and closes with it. Overlays opened before the dialog stay visible above it but inert until it closes.
 - **Dialog as a sheet:** `DialogService.open(content, { presentation })`: `'center'` (default), `'sheet'` (stuck to the bottom edge at full width, top corners rounded, safe area respected) or `'auto'` (sheet in `@media (orientation: portrait)`, centered in landscape; note that a tall desktop window is also portrait). `size="full"` keeps filling the screen.
-- **Drag to close the Drawer:** `DrawerService.open(content, { side, dragToClose, showHandle })`. With `dragToClose`, touch and pen users drag the header (or the handle) towards the edge: past 40% of the panel, or a quick flick, closes it; otherwise it springs back. The body is not a drag zone (it scrolls). `showHandle` (effective on `bottom`) adds a grabber that is a real `<button>` named by `closeLabel`, so a tap closes. The X, Esc and the backdrop remain the alternatives without dragging. Both default to `false`.
+- **Drag to close the Drawer:** `DrawerService.open(content, { side, dragToClose, showHandle })`. With `dragToClose`, touch and pen users drag the header (or the handle) towards the edge: past 40% of the panel, or a quick flick, closes it; otherwise it springs back. The body is not a drag zone (it scrolls). `showHandle` (effective on `bottom`) adds a grabber that is a real `<button>` named by `closeLabel`, so a tap closes. The X, Esc and the backdrop remain the alternatives without dragging. `haptics: true` vibrates when the drag closes the panel (same rules as the toast). All three default to `false`.
 - The Drawer panel (position, size, surface, entry from its side) is styled by `.shy-drawer-pane` + `--start|--end|--top|--bottom` (added by `DrawerService`); `<shy-drawer>` only lays out title, body and footer.
 
 ### `shyPopover`, `shyMenu`, `shyTooltip`
@@ -1085,6 +1092,7 @@ export { shyLayer, layerRank } from './lib/overlay/layers';
 // Utilities
 export { ru } from './lib/utils/ru';
 export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
+export { delayedFlag, DelayedFlagOptions } from './lib/utils/delayed-flag';
 
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';

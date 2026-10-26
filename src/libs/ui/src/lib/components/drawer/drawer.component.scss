@@ -26,6 +26,7 @@
   background: transparent;
   color: var(--shy-color-border-strong);
   cursor: pointer;
+  @include touch-target;
   @include state-layer;
 
   &:focus-visible {

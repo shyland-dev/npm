@@ -51,6 +51,25 @@
   </section>
 
   <section class="section">
+    <h2>No flicker: delayedFlag()</h2>
+    <p>
+      <code>delayedFlag(source, {{ '{' }} delay: 200, minDuration: 400 {{ '}' }})</code> returns a signal that turns on only after the load has lasted <code>delay</code> ms and, once on, stays on for at least <code>minDuration</code> ms. A fast load shows no skeleton at all; a slow one never blinks it. Bind it to the skeleton and to <code>aria-busy</code>.
+    </p>
+    <div class="shy-cluster">
+      <button shyButton variant="outline" type="button" (click)="fetch(120)">Fast load (120 ms)</button>
+      <button shyButton variant="outline" type="button" (click)="fetch(250)">Borderline (250 ms)</button>
+      <button shyButton variant="outline" type="button" (click)="fetch(1500)">Slow load (1.5 s)</button>
+    </div>
+    <div class="card" [attr.aria-busy]="showSkeleton()">
+      @if (showSkeleton()) {
+        <shy-skeleton lines="2" />
+      } @else {
+        <p>Content area ({{ fetchLog() }}).</p>
+      }
+    </div>
+  </section>
+
+  <section class="section">
     <h2>Tokens</h2>
     <p><code>--shy-skeleton-bg</code>, <code>-highlight</code>, <code>-radius</code>, <code>-width</code>, <code>-height</code> (rect), <code>-size</code> (circle), <code>-line-height</code>, <code>-gap</code> (text).</p>
   </section>

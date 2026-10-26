@@ -205,10 +205,11 @@ if ((await ref.closed) === 'action') restaurar();
 ```
 
 - `intent` (`neutral|info|success|warning|danger`; `danger` usa `role="alert"`), `action`, `duration` (`0` = só fecha por X/`dismiss()`), `position` (`top|bottom`), `align` (`start|center|end`), `id`, `loading`, `swipeToDismiss`. Fila de até 3 visíveis; pausa com ponteiro/foco, durante o arrasto e com aba oculta. Padrões em `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel, swipeToDismiss, undoLabel, focusHotkey })`.
-- **1.3.0:** `ref.update({ message, intent, action, loading, duration })`; `undo(msg)` resolve `'undo' | 'commit'` (ação reversível sem `confirm()`); `promise(p, { loading, success, error })` (um toast que vira sucesso ou erro); mesmo `id` atualiza o toast aberto; **swipe para fechar** em toque e caneta (o X continua como alternativa sem gesto); `focusHotkey` (ex.: `'Alt+T'`) foca o toast mais recente pelo teclado.
+- **1.3.0:** `ref.update({ message, intent, action, loading, duration })`; `undo(msg)` resolve `'undo' | 'commit'` (ação reversível sem `confirm()`); `promise(p, { loading, success, error })` (um toast que vira sucesso ou erro); mesmo `id` atualiza o toast aberto; **swipe para fechar** em toque e caneta (o X continua como alternativa sem gesto); `focusHotkey` (ex.: `'Alt+T'`) foca o toast mais recente pelo teclado; `haptics` (opt-in) vibra 10 ms ao fechar por swipe/X/ação (Vibration API: sem efeito no iOS e com reduced motion).
 - Com um modal aberto o toast fica `inert` (limitação do modal): a ação some até o modal fechar.
 - **Migração da `0.0.x`:** o `<shy-snackbar>` e `show({ element, ... })` foram removidos na 1.0: remova o elemento e o `viewChild` e troque por `show(text, { duration: delay, position })`.
 - Tokens `--shy-snackbar-*` em `:root` (o contêiner mora no overlay). Página no showcase: **components > snackbar**.
+- **Também na 1.3.0:** área de toque de ~44 px em `pointer: coarse` (`--shy-size-touch-target`, mixin `touch-target`); `delayedFlag(sinal, { delay, minDuration })` para loading sem flicker (skeleton + `aria-busy`); `haptics` opt-in no Snackbar e no Drawer; cookbook de feedback otimista com `undo()` no showcase.
 - **Safe areas (1.3.0):** `--shy-safe-area-{top,end,bottom,start}` (`env(safe-area-inset-*)`, fallback `0`) entram no offset dos toasts, nos Drawers, na folha do Dialog e no header/footer do AppShell. Só têm valor com `viewport-fit=cover` no meta viewport; sem ele nada muda. Ainda não verificado em aparelho com notch.
 
 ---
@@ -539,6 +540,7 @@ export { shyLayer, layerRank } from './lib/overlay/layers';
 // Utilitários
 export { ru } from './lib/utils/ru';
 export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
+export { delayedFlag, DelayedFlagOptions } from './lib/utils/delayed-flag';
 
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';

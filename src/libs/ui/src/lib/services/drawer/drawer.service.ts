@@ -4,6 +4,7 @@ import { ShyOverlayContext } from '../../interfaces/overlay/overlay.interface';
 import { ShyOverlayRef } from '../../overlay/overlay-ref';
 import { OverlayService } from '../../overlay/overlay.service';
 import { devicePx, trackDrag } from '../../utils/drag';
+import { haptic } from '../../utils/haptics';
 import { ShyDrawerSide } from '../../types';
 
 /**
@@ -17,7 +18,7 @@ export class DrawerService {
   private readonly overlay = inject(OverlayService);
 
   open<C = unknown, D = unknown, R = unknown>(content: Type<C> | TemplateRef<ShyOverlayContext<D>>, config: ShyDrawerConfig<D> = {}): ShyOverlayRef<R, C> {
-    const { side = 'end', paneClass, dragToClose = false, showHandle = false, ...rest } = config;
+    const { side = 'end', paneClass, dragToClose = false, showHandle = false, haptics = false, ...rest } = config;
     const ref = this.overlay.open<C, D, R>(content, {
       closeOnOutsideClick: true,
       ...rest,
@@ -26,7 +27,7 @@ export class DrawerService {
       paneClass: ['shy-drawer-pane', `shy-drawer-pane--${side}`, dragToClose && 'shy-drawer-pane--draggable', paneClass].filter(Boolean).join(' '),
     });
     if (showHandle) ref.pane.setAttribute('data-shy-handle', '');
-    if (dragToClose) dragToClosePane(ref, side);
+    if (dragToClose) dragToClosePane(ref, side, haptics);
     return ref;
   }
 }
@@ -37,7 +38,7 @@ const DISTANCE = 0.4;
 const FLICK = 0.5;
 
 /** O arrasto só começa em `[data-shy-drag-handle]` (cabeçalho e handle): o corpo rola, então não disputa o gesto. */
-function dragToClosePane(ref: ShyOverlayRef<any, any>, side: ShyDrawerSide): void {
+function dragToClosePane(ref: ShyOverlayRef<any, any>, side: ShyDrawerSide, haptics: boolean): void {
   const pane = ref.pane;
   const axis = side === 'top' || side === 'bottom' ? 'y' : 'x';
   const rtl = pane.ownerDocument.defaultView?.getComputedStyle(pane).direction === 'rtl';
@@ -52,8 +53,10 @@ function dragToClosePane(ref: ShyOverlayRef<any, any>, side: ShyDrawerSide): voi
     onMove: (offset) => pane.style.setProperty(`--_drag-${axis}`, devicePx(offset)),
     onEnd: ({ offset, size, velocity, cancelled }) => {
       pane.removeAttribute('data-dragging');
-      if (!cancelled && (Math.abs(offset) > size * DISTANCE || velocity > FLICK)) void ref.close();
-      else pane.style.removeProperty(`--_drag-${axis}`);
+      if (!cancelled && (Math.abs(offset) > size * DISTANCE || velocity > FLICK)) {
+        if (haptics) haptic(pane.ownerDocument);
+        void ref.close();
+      } else pane.style.removeProperty(`--_drag-${axis}`);
     },
   });
 }

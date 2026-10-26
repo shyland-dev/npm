@@ -57,6 +57,8 @@ export interface ShySnackbarConfig {
   dismissLabel: string;
   /** Arrastar o toast para o lado o fecha, em toque e caneta. Padrão: `true`. */
   swipeToDismiss?: boolean;
+  /** Vibração curta (Vibration API) quando a pessoa fecha um toast (swipe, X ou ação). Sem efeito sem suporte (iOS) ou com reduced motion. Padrão: `false`. */
+  haptics?: boolean;
   /** Rótulo da ação de `undo()`. Padrão: "Undo". */
   undoLabel?: string;
   /**

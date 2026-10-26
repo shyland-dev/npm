@@ -41,6 +41,23 @@
   }
 }
 
+/// Amplia a área de toque até `--shy-size-touch-target` com ponteiro grosso (toque), sem mudar o layout: a área extra é um
+/// `::after` invisível centrado no controle. Controles maiores que isso não mudam.
+@mixin touch-target {
+  @media (pointer: coarse) {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 50% auto auto 50%;
+      inline-size: max(100%, var(--shy-size-touch-target));
+      block-size: max(100%, var(--shy-size-touch-target));
+      translate: -50% -50%;
+    }
+  }
+}
+
 @mixin dark-mode {
   @media (prefers-color-scheme: dark) {
     @content;

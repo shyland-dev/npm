@@ -30,6 +30,20 @@ export class SnackbarPage {
     this.last.set(result === 'undo' ? 'undone: item restored' : 'committed: item stays deleted');
   }
 
+  protected readonly items = signal(['Invoice 101', 'Invoice 102', 'Invoice 103']);
+
+  /** Feedback otimista: o item some na hora; `undo()` o devolve; só no `commit` a "API" é chamada. */
+  protected async removeOptimistic(item: string): Promise<void> {
+    const before = this.items();
+    this.items.set(before.filter((i) => i !== item));
+    if ((await this.snackbar.undo(`${item} deleted`)) === 'undo') {
+      this.items.set(before);
+      this.last.set(`${item}: restored, API never called`);
+    } else {
+      this.last.set(`${item}: committed, API called now`);
+    }
+  }
+
   protected async promise(fail: boolean): Promise<void> {
     const work = new Promise<number>((resolve, reject) => setTimeout(() => (fail ? reject(new Error('offline')) : resolve(3)), 1800));
     try {

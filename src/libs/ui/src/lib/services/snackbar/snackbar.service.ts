@@ -6,6 +6,7 @@ import { ShySnackbarOptions, ShySnackbarPromiseMessages, ShySnackbarRef, ShySnac
 import { ShyOverlayRef } from '../../overlay/overlay-ref';
 import { OverlayService } from '../../overlay/overlay.service';
 import { ShySnackbarCloseReason, ShySnackbarIntent, ShySnackbarUndoResult } from '../../types';
+import { haptic } from '../../utils/haptics';
 import { SHY_SNACKBAR_CONFIG } from './snackbar.config';
 
 let nextId = 0;
@@ -76,7 +77,11 @@ export class SnackbarService {
     modalOpen: this.overlay.modalOpen,
     dismissLabel: this.dismissLabel,
     hold: (toast, reason, on) => this.hold(toast as Toast, reason, on),
-    close: (toast, reason) => this.close(toast as Toast, reason),
+    close: (toast, reason) => {
+      // Vibra só quando a pessoa agiu (swipe, X ou ação), não no fechamento por tempo.
+      if (this.config.haptics) haptic(this.doc);
+      this.close(toast as Toast, reason);
+    },
     escape: (toast) => this.escape(toast as Toast),
   };
 

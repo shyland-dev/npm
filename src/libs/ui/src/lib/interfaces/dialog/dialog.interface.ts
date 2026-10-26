@@ -20,6 +20,8 @@ export interface ShyDrawerConfig<D = unknown> extends ShyDialogBaseConfig<D> {
   dragToClose?: boolean;
   /** Mostra um handle (botão com o nome de `closeLabel`) na borda do painel `bottom`; ele também inicia o arrasto. Padrão: `false`. */
   showHandle?: boolean;
+  /** Vibração curta (Vibration API) quando o arrasto fecha o painel. Sem efeito sem suporte (iOS) ou com reduced motion. Padrão: `false`. */
+  haptics?: boolean;
 }
 
 export interface ShyAlertDialogOptions {

@@ -116,6 +116,9 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - O toast pausa o timer durante o arrasto (2.2.1). `focusHotkey` (opcional) dá ao teclado um caminho até a ação do toast antes de ele fechar; `Esc` fecha e devolve o foco.
 - Movimento: o elemento acompanha o dedo (manipulação direta, sem animação); a volta ao repouso usa `--shy-duration-base`, que é zerada em reduced motion.
 - `update()` troca o texto do toast dentro de uma região viva já existente; mudar para ou de `danger` move o toast entre `status` e `alert`. **Não verificado:** se leitores de tela anunciam a troca de texto (precisa de teste real).
+- **Alvos (2.5.8/2.5.5):** com `pointer: coarse` os controles pequenos ganham ~44 px de área de toque por um `::after` invisível (token `--shy-size-touch-target`).
+- **Haptics:** opt-in, só reforço (nada depende de vibração); respeita reduced motion e some sem suporte.
+- **Loading:** `delayedFlag` evita o skeleton piscando; o contêiner leva `aria-busy`.
 - **Não verificado:** toque em aparelho real, VoiceOver/TalkBack, safe area com notch.
 
 ## Onda 2: resumo de fechamento (F4-S6)
