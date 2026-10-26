@@ -25,9 +25,9 @@ Minor (0.x): API nova, sem remoção; `DebugService` fica `@deprecated` e contin
 
 - README da utils: requisitos (Angular 21.2+, não 17+) e exemplo de uso (o service é `root`, não precisa de `providers`).
 
-### Decisão: log em produção
+### Alterado: código de dev fora do bundle de produção
 
-Nada foi adicionado para logar em produção; o guard continua `isDevMode()`. Medição de 2026-10-26 (`ng build -c production`): com `isDevMode()` o código do log permanece no bundle (inerte, retorna cedo); com guard literal de `ngDevMode` ele sai do bundle. Se quiser essa remoção depois, é trocar `isDevMode()` por `typeof ngDevMode === 'undefined' || ngDevMode` nas funções de `logger/` e `dev/`.
+Autorizado pelo dono em 2026-10-26. As funções de `logger/` e `dev/` usam guard literal de `ngDevMode` (`typeof ngDevMode === 'undefined' || ngDevMode`) em vez de `isDevMode()`. Medido com `ng build showcase -c production`: o logger (strings `[shy:`, `%c[`, filtro `shyLog`) não aparece mais no bundle; em produção `createShyLogger` devolve um logger vazio. Comportamento em dev inalterado. Continua sem nenhum recurso para logar em produção. O `DebugService` (depreciado) mantém `isDevMode()`. Como `ngDevMode` não é API pública documentada, o novo `check-utils-bundle` (parte do `npm run check:ds`) builda um app mínimo em produção e em desenvolvimento e falha se algum marcador de dev sobrar no bundle de produção ou faltar no de desenvolvimento.
 
 ## utils 0.0.7 - 2026-10-25
 

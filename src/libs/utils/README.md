@@ -13,7 +13,7 @@ npm install @shyland-dev/utils
 
 ## Logger (só em desenvolvimento)
 
-Todos os métodos só escrevem quando `isDevMode()` é `true` (durante o `ng serve`). Em produção retornam sem fazer nada.
+Só escreve em modo de desenvolvimento (durante o `ng serve`). Em produção o logger é vazio.
 
 ```typescript
 import { createShyLogger, injectShyLogger, provideShyLogger } from '@shyland-dev/utils';
@@ -53,7 +53,7 @@ bootstrapApplication(App, { providers: [provideShyLogger({ level: 'info', namesp
 
 **Sink** (destino): troque o `console` por `ShyLogSink` (`{ write(entry) }`), útil em testes (ver `/testing`).
 
-> Fora do escopo por decisão do dono (2026-10-26): nenhum recurso para logar ou habilitar log em produção. Quem quiser que o código do log saia do bundle de produção pode trocar `isDevMode()` por um guard literal de `ngDevMode` (medido em 2026-10-26: remove o log do bundle; ver o CHANGELOG).
+> **Produção:** os métodos de log, `shyInvariant`, `shyDeprecated` etc. usam um guard literal de `ngDevMode` (definido como `false` pelo build de produção do Angular). Em produção `createShyLogger` devolve um logger vazio e o código do logger sai do bundle (medido em 2026-10-26). Não há recurso para logar em produção. Para o guard funcionar, use o builder do Angular (`@angular/build:application`); em outros bundlers, defina `ngDevMode=false` no build de produção.
 
 ### `DebugService` (depreciado)
 

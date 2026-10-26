@@ -130,6 +130,33 @@
           }
         }
       }
+    },
+    "utils-check": {
+      "projectType": "application",
+      "root": "scripts/utils-app",
+      "sourceRoot": "scripts/utils-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "index": "scripts/utils-app/index.html",
+            "browser": "scripts/utils-app/main.ts",
+            "tsConfig": "scripts/utils-app/tsconfig.json",
+            "outputHashing": "none"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputPath": "dist/utils-check/prod"
+            },
+            "development": {
+              "optimization": false,
+              "outputPath": "dist/utils-check/dev"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
     }
   }
 }

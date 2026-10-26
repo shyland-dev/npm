@@ -73,6 +73,28 @@ describe('createShyLogger', () => {
   });
 });
 
+describe('createShyLogger fora de dev', () => {
+  const g = globalThis as { ngDevMode?: unknown };
+  let original: unknown;
+  beforeEach(() => {
+    original = g.ngDevMode;
+    g.ngDevMode = false;
+  });
+  afterEach(() => (g.ngDevMode = original));
+
+  it('devolve um logger vazio que não escreve em lugar nenhum', () => {
+    const sink = createShyMemorySink();
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const log = createShyLogger('Prod', { sink });
+    log.error('x');
+    log.group('g');
+    expect(sink.entries).toHaveLength(0);
+    expect(spy).not.toHaveBeenCalled();
+    expect(log.namespace).toBe('Prod');
+    spy.mockRestore();
+  });
+});
+
 describe('DI do logger', () => {
   it('injectShyLogger usa a config provida', () => {
     const sink = createShyMemorySink();

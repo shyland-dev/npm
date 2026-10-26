@@ -1,4 +1,7 @@
-import { EnvironmentProviders, InjectionToken, inject, isDevMode, makeEnvironmentProviders } from '@angular/core';
+import { EnvironmentProviders, InjectionToken, inject, makeEnvironmentProviders } from '@angular/core';
+
+// Definido pelo build de produção do Angular (false). O guard literal permite ao bundler remover o código.
+declare const ngDevMode: boolean | undefined;
 
 export type ShyLogLevel = 'debug' | 'info' | 'warn' | 'error';
 
@@ -105,14 +108,19 @@ export function shyMatchNamespace(namespace: string, filter: string): boolean {
 }
 
 /**
- * Logger com namespace, níveis e filtro. Só escreve em modo de desenvolvimento (`isDevMode()`),
- * ou seja, durante o `ng serve`; em produção todos os métodos retornam sem fazer nada.
+ * Logger com namespace, níveis e filtro. Só escreve em modo de desenvolvimento (`ng serve`).
+ * Em produção devolve um logger vazio e o código do logger sai do bundle (guard literal de `ngDevMode`).
  */
 export function createShyLogger(namespace: string, config: ShyLoggerConfig = {}): ShyLogger {
+  // A condição precisa ser constante em produção para o bundler descartar `buildLogger` e seus helpers.
+  return typeof ngDevMode === 'undefined' || ngDevMode ? buildLogger(namespace, config) : noopLogger(namespace);
+}
+
+function buildLogger(namespace: string, config: ShyLoggerConfig): ShyLogger {
   const sink = config.sink ?? consoleSink;
   const minLevel = LEVELS[config.level ?? 'debug'];
 
-  const enabled = (level: ShyLogLevel): boolean => isDevMode() && LEVELS[level] >= minLevel && shyMatchNamespace(namespace, config.namespaces ?? storedFilter());
+  const enabled = (level: ShyLogLevel): boolean => LEVELS[level] >= minLevel && shyMatchNamespace(namespace, config.namespaces ?? storedFilter());
   const emit = (level: ShyLogLevel, args: unknown[]): void => {
     if (enabled(level)) sink.write({ level, namespace, args });
   };
@@ -132,4 +140,9 @@ export function createShyLogger(namespace: string, config: ShyLoggerConfig = {})
     assert: (condition, ...args) => enabled('error') && console.assert(!!condition, tag, ...args),
     trace: (...args) => enabled('debug') && console.trace(tag, ...args),
   };
+}
+
+function noopLogger(namespace: string): ShyLogger {
+  const noop = (): void => undefined;
+  return { namespace, debug: noop, info: noop, warn: noop, error: noop, group: noop, groupEnd: noop, time: noop, timeEnd: noop, table: noop, assert: noop, trace: noop };
 }
