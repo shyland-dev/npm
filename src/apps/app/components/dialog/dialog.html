@@ -13,6 +13,16 @@
   </section>
 
   <section class="section">
+    <h2>Presentation</h2>
+    <p><code>presentation: 'sheet'</code> sticks the dialog to the bottom edge at full width (respecting the safe area); <code>'auto'</code> does it only in <code>portrait</code> and keeps it centered in <code>landscape</code>.</p>
+    <div class="shy-cluster">
+      @for (presentation of presentations; track presentation) {
+        <button shyButton variant="outline" type="button" (click)="open('md', presentation)">{{ presentation }}</button>
+      }
+    </div>
+  </section>
+
+  <section class="section">
     <h2>Confirm and alert</h2>
     <p><code>confirm()</code> and <code>alert()</code> use <code>role="alertdialog"</code>, put focus on the safe button (Cancel / OK) and ignore clicks on the backdrop.</p>
     <div class="shy-cluster">

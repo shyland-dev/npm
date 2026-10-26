@@ -14,13 +14,17 @@
 }
 
 <ng-template #item let-toast>
-  <div class="toast" [attr.data-intent]="toast.intent" [attr.data-align]="toast.align" [attr.data-position]="toast.position" [attr.data-state]="toast.closing() ? 'closing' : null" (pointerenter)="data.hold(toast, 'pointer', true)" (pointerleave)="data.hold(toast, 'pointer', false)" (focusin)="data.hold(toast, 'focus', true)" (focusout)="data.hold(toast, 'focus', false)">
-    @if (icon(toast); as name) {
+  <div class="toast" [attr.data-toast-id]="toast.id" [shySwipeDismiss]="toast.swipe" (dragging)="data.hold(toast, 'drag', $event)" (swiped)="data.close(toast, 'dismiss')" (keydown.escape)="data.escape(toast)" [attr.data-intent]="toast.intent()" [attr.data-align]="toast.align" [attr.data-position]="toast.position" [attr.data-state]="toast.closing() ? 'closing' : null" (pointerenter)="data.hold(toast, 'pointer', true)" (pointerleave)="data.hold(toast, 'pointer', false)" (focusin)="data.hold(toast, 'focus', true)" (focusout)="data.hold(toast, 'focus', false)">
+    @if (toast.loading()) {
+      <shy-spinner class="toast__icon" size="sm" />
+    } @else if (icon(toast); as name) {
       <shy-icon class="toast__icon" aria-hidden="true">{{ name }}</shy-icon>
     }
-    <span class="toast__text">{{ toast.message }}</span>
-    @if (toast.action && actionAllowed()) {
-      <button class="toast__action" type="button" (click)="data.close(toast, 'action')">{{ toast.action }}</button>
+    <span class="toast__text">{{ toast.message() }}</span>
+    @if (toast.action(); as action) {
+      @if (actionAllowed()) {
+        <button class="toast__action" type="button" (click)="data.close(toast, 'action')">{{ action }}</button>
+      }
     }
     <button class="toast__dismiss" type="button" [attr.aria-label]="dismissLabel()" (click)="data.close(toast, 'dismiss')">
       <shy-icon>x</shy-icon>

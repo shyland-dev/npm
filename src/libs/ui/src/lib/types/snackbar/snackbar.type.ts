@@ -8,3 +8,6 @@ export type ShySnackbarAlign = 'start' | 'center' | 'end';
 
 /** Por que o toast fechou: `timeout`, `dismiss` (botão X ou `ref.dismiss()`) ou `action`. */
 export type ShySnackbarCloseReason = 'timeout' | 'dismiss' | 'action';
+
+/** Resultado de `SnackbarService.undo()`: `undo` se a pessoa tocou na ação; `commit` se o toast fechou por tempo, X ou `dismissAll()`. */
+export type ShySnackbarUndoResult = 'undo' | 'commit';

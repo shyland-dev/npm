@@ -1,7 +1,7 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
 import { ShySnackbarConfig } from '../../interfaces/snackbar/snackbar.interface';
 
-export const SHY_SNACKBAR_DEFAULTS: ShySnackbarConfig = { maxVisible: 3, duration: 5000, durationWithAction: 8000, dismissLabel: 'Dismiss' };
+export const SHY_SNACKBAR_DEFAULTS: ShySnackbarConfig = { maxVisible: 3, duration: 5000, durationWithAction: 8000, dismissLabel: 'Dismiss', swipeToDismiss: true, undoLabel: 'Undo' };
 
 export const SHY_SNACKBAR_CONFIG = new InjectionToken<ShySnackbarConfig>('SHY_SNACKBAR_CONFIG', { factory: () => SHY_SNACKBAR_DEFAULTS });
 

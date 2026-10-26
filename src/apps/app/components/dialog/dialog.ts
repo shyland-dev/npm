@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { ButtonComponent, DialogService, ShyDialogSize } from '@shyland-dev/ui';
+import { ButtonComponent, DialogService, ShyDialogPresentation, ShyDialogSize } from '@shyland-dev/ui';
 import { DemoDialog } from './dialog-demo';
 
 @Component({
@@ -13,8 +13,10 @@ export class DialogPage {
   protected readonly sizes: ShyDialogSize[] = ['sm', 'md', 'lg', 'full'];
   protected readonly result = signal('nothing yet');
 
-  protected async open(size: ShyDialogSize): Promise<void> {
-    const ref = this.dialogs.open<DemoDialog, { size: ShyDialogSize }, string>(DemoDialog, { data: { size } });
+  protected readonly presentations: ShyDialogPresentation[] = ['center', 'sheet', 'auto'];
+
+  protected async open(size: ShyDialogSize, presentation: ShyDialogPresentation = 'center'): Promise<void> {
+    const ref = this.dialogs.open<DemoDialog, { size: ShyDialogSize }, string>(DemoDialog, { data: { size }, presentation });
     const name = await ref.closed;
     this.result.set(name === undefined ? 'closed without saving' : `saved "${name}"`);
   }

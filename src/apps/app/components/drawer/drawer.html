@@ -11,5 +11,15 @@
     </div>
   </section>
 
+  <section class="section">
+    <h2>Drag to close</h2>
+    <p><code>dragToClose</code> lets touch and pen users drag the header (or the handle, with <code>showHandle</code>, on <code>bottom</code>) towards the edge to close; the X button, Esc and the backdrop remain the alternatives without dragging. The body keeps scrolling.</p>
+    <div class="shy-cluster">
+      @for (side of sides; track side) {
+        <button shyButton variant="outline" type="button" (click)="open(side, true)">{{ side }} (drag)</button>
+      }
+    </div>
+  </section>
+
   <p class="token-name" aria-live="polite">result: {{ result() }}</p>
 </div>

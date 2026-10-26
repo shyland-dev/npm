@@ -18,14 +18,14 @@
   inset-inline: 0;
   display: flex;
   flex-direction: column;
-  padding-inline: var(--shy-space-4);
+  padding-inline: calc(var(--shy-space-4) + var(--shy-safe-area-start)) calc(var(--shy-space-4) + var(--shy-safe-area-end));
 
   &[data-position='top'] {
-    inset-block-start: var(--shy-snackbar-offset, #{ru(15)});
+    inset-block-start: calc(var(--shy-snackbar-offset, #{ru(15)}) + var(--shy-safe-area-top));
   }
 
   &[data-position='bottom'] {
-    inset-block-end: var(--shy-snackbar-offset, #{ru(15)});
+    inset-block-end: calc(var(--shy-snackbar-offset, #{ru(15)}) + var(--shy-safe-area-bottom));
   }
 }
 
@@ -63,7 +63,22 @@
   color: var(--shy-snackbar-fg, var(--_fg));
   box-shadow: var(--shy-shadow-4);
   pointer-events: auto;
-  @include transition(opacity transform, base, enter);
+  // `translate` (e não `transform`) para o arrasto não brigar com a entrada e a saída, que usam `transform`.
+  translate: var(--_swipe-x, 0) 0;
+  opacity: calc(1 - var(--_swipe-p, 0) * 0.6);
+  @include transition(opacity transform translate, base, enter);
+
+  &[data-swipe] {
+    touch-action: pan-y;
+  }
+
+  &[data-swiping] {
+    transition: none;
+  }
+
+  &[data-swiped][data-state='closing'] {
+    transform: none;
+  }
 
   &[data-align='start'] {
     align-self: flex-start;

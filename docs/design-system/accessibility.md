@@ -109,6 +109,15 @@ Teclado completo sem armadilha, ordem de foco lógica, nome acessível em todo c
 - **Com modal aberto** o toast fica `inert` (ADR-F4-5): a ação é ocultada (ADR-F4-3b) e o texto continua anunciado; o X não recebe clique até o modal fechar.
 - **Verificado no Chromium** (dark/light, 360 e 1366 px, LTR e RTL, `forced-colors`, `reduced-motion`): fila de 3, pausa em hover, `danger` na região `alert`, Esc fecha o Dialog por baixo, toast visível sobre o modal, sem erros de console. **Não verificado:** leitor de tela real (anúncio das regiões), Safari/Firefox, toque real.
 
+## Gestos e arrasto (1.3.0)
+
+- **WCAG 2.5.1 (gesto de caminho, A) e 2.5.7 (arrasto, AA):** nenhuma função existe só por gesto. Swipe do toast e arrasto do Drawer só atalham o que o X, a ação, o `Esc` e o clique no fundo já fazem. O handle do Drawer é um `<button>` com nome (`closeLabel`).
+- Só toque e caneta arrastam (o mouse brigaria com a seleção de texto). O gesto começa depois de 8 px e só no eixo principal; o outro eixo fica com o navegador (`touch-action: pan-y` no toast, `pan-x`/`pan-y` no cabeçalho do Drawer), então o scroll não é roubado. `pointercancel` devolve ao repouso. O toque que termina um arrasto não vira clique.
+- O toast pausa o timer durante o arrasto (2.2.1). `focusHotkey` (opcional) dá ao teclado um caminho até a ação do toast antes de ele fechar; `Esc` fecha e devolve o foco.
+- Movimento: o elemento acompanha o dedo (manipulação direta, sem animação); a volta ao repouso usa `--shy-duration-base`, que é zerada em reduced motion.
+- `update()` troca o texto do toast dentro de uma região viva já existente; mudar para ou de `danger` move o toast entre `status` e `alert`. **Não verificado:** se leitores de tela anunciam a troca de texto (precisa de teste real).
+- **Não verificado:** toque em aparelho real, VoiceOver/TalkBack, safe area com notch.
+
 ## Onda 2: resumo de fechamento (F4-S6)
 
 - **Camadas:** ordem de abertura decide o empilhamento; Esc fecha só o topo (o contêiner de toasts é `passive` e não captura Esc nem clique fora); modal deixa o resto `inert`; painel ancorado dentro de um modal vira filho do `<dialog>`; scroll lock e `inert` são removidos ao fechar tudo.

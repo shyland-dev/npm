@@ -15,6 +15,28 @@ const flush = async () => {
   TestBed.tick();
 };
 
+function pointer(type: string, init: { x: number; y?: number; time: number; pointerType?: string }): Event {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.defineProperties(event, {
+    pointerId: { value: 1 },
+    isPrimary: { value: true },
+    pointerType: { value: init.pointerType ?? 'touch' },
+    clientX: { value: init.x },
+    clientY: { value: init.y ?? 0 },
+    timeStamp: { value: init.time },
+  });
+  return event;
+}
+
+/** Toque que arrasta na horizontal de `from` até `to` em `ms`. */
+function swipe(el: HTMLElement, from: number, to: number, ms = 400, pointerType = 'touch'): void {
+  Object.defineProperty(el, 'offsetWidth', { value: 300, configurable: true });
+  el.dispatchEvent(pointer('pointerdown', { x: from, time: 0, pointerType }));
+  const steps = 5;
+  for (let i = 1; i <= steps; i++) el.dispatchEvent(pointer('pointermove', { x: from + ((to - from) * i) / steps, time: (ms * i) / steps, pointerType }));
+  el.dispatchEvent(pointer('pointerup', { x: to, time: ms, pointerType }));
+}
+
 describe('SnackbarService', () => {
   let snackbar: SnackbarService;
 
@@ -166,6 +188,207 @@ describe('SnackbarService', () => {
     expect(toasts()[0].dataset['position']).toBe('top');
     expect(toasts()[0].dataset['align']).toBe('end');
     expect(toasts()[0].closest('.region')!.getAttribute('data-position')).toBe('top');
+  });
+});
+
+describe('SnackbarService: swipe', () => {
+  let snackbar: SnackbarService;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    snackbar = TestBed.inject(SnackbarService);
+  });
+
+  afterEach(async () => {
+    snackbar.dismissAll();
+    await vi.runAllTimersAsync();
+    await TestBed.inject(OverlayService).closeAll(false);
+    vi.useRealTimers();
+  });
+
+  it('arrastar além de 40% da largura fecha com "dismiss" (qualquer sentido) e pausa o tempo no arrasto', async () => {
+    const ref = snackbar.show('Arraste', { duration: 1000 });
+    await flush();
+    const toast = toasts()[0];
+    expect(toast.hasAttribute('data-swipe')).toBe(true);
+
+    Object.defineProperty(toast, 'offsetWidth', { value: 300, configurable: true });
+    toast.dispatchEvent(pointer('pointerdown', { x: 200, time: 0 }));
+    toast.dispatchEvent(pointer('pointermove', { x: 150, time: 100 }));
+    expect(toast.hasAttribute('data-swiping')).toBe(true);
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(texts()).toEqual(['Arraste']); // o arrasto segura o timer
+    toast.dispatchEvent(pointer('pointermove', { x: 20, time: 600 }));
+    toast.dispatchEvent(pointer('pointerup', { x: 20, time: 700 }));
+
+    expect(await ref.closed).toBe('dismiss');
+    expect(toast.hasAttribute('data-swiped')).toBe(true);
+  });
+
+  it('um flick rápido fecha mesmo com pouca distância; arrasto curto e lento volta ao repouso', async () => {
+    const quick = snackbar.show('Rápido', { duration: 0 });
+    await flush();
+    swipe(toasts()[0], 100, 160, 60);
+    expect(await quick.closed).toBe('dismiss');
+    await vi.runAllTimersAsync();
+    TestBed.tick();
+
+    const slow = snackbar.show('Lento', { duration: 0 });
+    await flush();
+    const toast = toasts()[0];
+    swipe(toast, 100, 160, 1200);
+    TestBed.tick();
+    expect(texts()).toEqual(['Lento']);
+    expect(toast.hasAttribute('data-swiped')).toBe(false);
+    expect(toast.style.getPropertyValue('--_swipe-x')).toBe('');
+    slow.dismiss();
+  });
+
+  it('mouse não arrasta; swipeToDismiss: false desliga o gesto', async () => {
+    snackbar.show('Mouse', { duration: 0 });
+    snackbar.show('Sem swipe', { duration: 0, swipeToDismiss: false });
+    await flush();
+    const [mouse, off] = toasts();
+
+    swipe(mouse, 200, 0, 100, 'mouse');
+    swipe(off, 200, 0, 100);
+    TestBed.tick();
+    expect(texts()).toEqual(['Mouse', 'Sem swipe']);
+    expect(off.hasAttribute('data-swipe')).toBe(false);
+  });
+});
+
+describe('SnackbarService: update, id, promise e undo', () => {
+  let snackbar: SnackbarService;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    snackbar = TestBed.inject(SnackbarService);
+  });
+
+  afterEach(async () => {
+    snackbar.dismissAll();
+    await vi.runAllTimersAsync();
+    await TestBed.inject(OverlayService).closeAll(false);
+    vi.useRealTimers();
+  });
+
+  it('update troca mensagem, intenção e ação e reinicia o tempo; danger muda para a região alert', async () => {
+    const ref = snackbar.show('Antes', { duration: 1000 });
+    await flush();
+    await vi.advanceTimersByTimeAsync(900);
+
+    ref.update({ message: 'Depois', intent: 'danger', action: { label: 'Tentar' } });
+    await flush();
+    expect(texts()).toEqual(['Depois']);
+    expect(toasts()[0].closest('[role="alert"]')).not.toBeNull();
+    expect(toasts()[0].querySelector('.toast__action')!.textContent).toContain('Tentar');
+
+    await vi.advanceTimersByTimeAsync(7000); // o padrão com ação (8000) recomeçou
+    expect(texts()).toEqual(['Depois']);
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(await ref.closed).toBe('timeout');
+
+    ref.update({ message: 'Fechado' }); // depois de fechado não faz nada
+  });
+
+  it('o mesmo id atualiza o toast aberto em vez de empilhar outro', async () => {
+    const a = snackbar.show('Salvando 1', { id: 'save', duration: 0 });
+    const b = snackbar.show('Salvando 2', { id: 'save', duration: 0 });
+    await flush();
+    expect(texts()).toEqual(['Salvando 2']);
+
+    b.dismiss();
+    expect(await a.closed).toBe('dismiss');
+    snackbar.show('Novo', { id: 'save', duration: 0 });
+    await flush();
+    expect(texts()).toEqual(['Novo']); // depois de fechado o id é livre de novo
+  });
+
+  it('update num toast da fila só começa o tempo quando ele aparece', async () => {
+    for (const n of ['1', '2', '3']) snackbar.show(`T${n}`, { duration: 0 });
+    const queued = snackbar.show('Fila', { duration: 100 });
+    await flush();
+    queued.update({ message: 'Fila 2' });
+    await vi.advanceTimersByTimeAsync(60_000);
+    queued.dismiss();
+    expect(await queued.closed).toBe('dismiss');
+  });
+
+  it('promise: loading (spinner, sem fechar) vira success; erro vira danger e é relançado', async () => {
+    let resolve!: (v: number) => void;
+    const done = snackbar.promise(new Promise<number>((r) => (resolve = r)), { loading: 'Salvando', success: (n) => `Salvo ${n}`, error: 'Falhou' });
+    await flush();
+    expect(texts()).toEqual(['Salvando']);
+    expect(toasts()[0].querySelector('shy-spinner')).not.toBeNull();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(texts()).toEqual(['Salvando']);
+
+    resolve(7);
+    expect(await done).toBe(7);
+    await flush();
+    expect(texts()).toEqual(['Salvo 7']);
+    expect(toasts()[0].dataset['intent']).toBe('success');
+    expect(toasts()[0].querySelector('shy-spinner')).toBeNull();
+
+    snackbar.dismissAll();
+    await vi.runAllTimersAsync();
+    const failing = snackbar.promise(Promise.reject(new Error('x')), { loading: 'Enviando', success: 'ok', error: (e) => `Erro: ${(e as Error).message}` });
+    await expect(failing).rejects.toThrow('x');
+    await flush();
+    expect(texts()).toEqual(['Erro: x']);
+    expect(toasts()[0].closest('[role="alert"]')).not.toBeNull();
+  });
+
+  it('undo resolve "undo" no clique da ação e "commit" por tempo, X ou dismissAll', async () => {
+    const first = snackbar.undo('Item removido');
+    await flush();
+    const action = toasts()[0].querySelector<HTMLButtonElement>('.toast__action')!;
+    expect(action.textContent).toContain('Undo');
+    action.click();
+    expect(await first).toBe('undo');
+    await vi.runAllTimersAsync();
+
+    const second = snackbar.undo('Outro', { label: 'Desfazer', duration: 500 });
+    await flush();
+    expect(toasts()[0].querySelector('.toast__action')!.textContent).toContain('Desfazer');
+    await vi.advanceTimersByTimeAsync(500);
+    expect(await second).toBe('commit');
+    await vi.runAllTimersAsync();
+
+    const third = snackbar.undo('Mais um');
+    await flush();
+    snackbar.dismissAll();
+    expect(await third).toBe('commit');
+  });
+});
+
+describe('SnackbarService: focusHotkey', () => {
+  it('Alt+T leva o foco ao toast mais recente e pausa; Esc fecha e devolve o foco', async () => {
+    vi.useFakeTimers();
+    TestBed.configureTestingModule({ providers: [provideShySnackbar({ focusHotkey: 'Alt+T' })] });
+    const snackbar = TestBed.inject(SnackbarService);
+    const origin = document.createElement('button');
+    document.body.append(origin);
+    origin.focus();
+
+    const ref = snackbar.show('Com ação', { action: { label: 'Desfazer' }, duration: 1000 });
+    await flush();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'T', code: 'KeyT', altKey: true, bubbles: true }));
+    expect((document.activeElement as HTMLElement).className).toContain('toast__action');
+
+    toasts()[0].dispatchEvent(new Event('focusin', { bubbles: true }));
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(texts()).toEqual(['Com ação']);
+
+    toasts()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(await ref.closed).toBe('dismiss');
+    expect(document.activeElement).toBe(origin);
+
+    origin.remove();
+    await vi.runAllTimersAsync();
+    await TestBed.inject(OverlayService).closeAll(false);
+    vi.useRealTimers();
   });
 });
 

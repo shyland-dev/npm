@@ -22,3 +22,19 @@
   --shy-dynamic-height-unit: calc(var(--shy-dynamic-height) / 100);
   --shy-dynamic-width-unit: calc(var(--shy-dynamic-width) / 100);
 }
+
+/*
+ * Safe areas (notch, barra home, cantos arredondados). `env()` só tem valor com `viewport-fit=cover` no meta viewport;
+ * sem isso vale o fallback 0. Fica aqui porque o fallback precisa de unidade de comprimento (calc não soma 0 sem unidade).
+ */
+:root {
+  --shy-safe-area-top: env(safe-area-inset-top, 0px);
+  --shy-safe-area-end: env(safe-area-inset-right, 0px);
+  --shy-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --shy-safe-area-start: env(safe-area-inset-left, 0px);
+}
+
+:root:dir(rtl) {
+  --shy-safe-area-end: env(safe-area-inset-left, 0px);
+  --shy-safe-area-start: env(safe-area-inset-right, 0px);
+}

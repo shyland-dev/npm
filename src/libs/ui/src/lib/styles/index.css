@@ -10,5 +10,6 @@
 @import './typography.css';
 @import './layout.css';
 @import './overlay.css';
+@import './dialog.css';
 @import './drawer.css';
 @import './snackbar.css';
