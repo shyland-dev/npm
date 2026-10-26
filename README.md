@@ -28,8 +28,9 @@ npm run build   # Compila as libs para dist/
 | `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                                                                                                |
 | `npm run build:showcase` | Build do showcase                                                                                                                                                       |
 | `npm run generate:icons` | Gera o catálogo (`icons/src/icons.ts`) e os ícones internos a partir dos SVGs em `assets/svg/`                                                                          |
+| `npm run check:pkg`      | Valida os pacotes buildados (`ui` e `utils`) com publint e are-the-types-wrong via `npx` sob demanda (precisa de `npm run build` antes e de rede)                       |
 | `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho, bundle de ícones, código de dev da utils fora do bundle de produção) |
-| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                                                                            |
+| `npm test`               | Testes da `ui` e da `utils` (`ng test ... --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                                                              |
 
 ## Design System (em desenvolvimento)
 

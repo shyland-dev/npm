@@ -15,7 +15,8 @@ Minor (0.x): API nova, sem remoção; `DebugService` fica `@deprecated` e contin
 - **Signals/storage**: `shyStorage` (JSON, local/session, validate, sync entre abas, SSR-safe), `injectShyMediaQuery`, `shyDebounced`.
 - **Guards**: `shyIsDefined`, `shyIsString`, `shyIsRecord`, `shyAssertNever`.
 - **Entry point `@shyland-dev/utils/testing`**: `createShyMemorySink`, `provideShyPlatform`.
-- Testes com vitest (33) e `npm test` agora roda `ui` e `utils`.
+- `npm run check:pkg`: valida `ui` e `utils` buildados com publint (`--strict`) e are-the-types-wrong (perfil esm-only) via `npx` com versões fixas, sem virar dependência. Roda no workflow de publish antes de publicar; os dois pacotes passam.
+- Testes com vitest (34) e `npm test` agora roda `ui` e `utils`.
 
 ### Depreciado
 

@@ -15,7 +15,8 @@
     "serve:showcase": "ng serve showcase --port 4201",
     "build:showcase": "ng build showcase",
     "check:ds": "node scripts/check-ds.mjs",
-    "test": "ng test ui --watch=false && ng test utils --watch=false"
+    "test": "ng test ui --watch=false && ng test utils --watch=false",
+    "check:pkg": "node scripts/check-pkg.mjs"
   },
   "private": true,
   "workspaces": [
