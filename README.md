@@ -20,16 +20,17 @@ npm run build   # Compila as libs para dist/
 
 ## Scripts
 
-| Comando                  | Descrição                                                                                                            |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                                                  |
-| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                                    |
-| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                                                |
-| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                                             |
-| `npm run build:showcase` | Build do showcase                                                                                                    |
-| `npm run generate:icons` | Gera o catálogo (`icons/src/icons.ts`) e os ícones internos a partir dos SVGs em `assets/svg/`                       |
-| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho, bundle de ícones) |
-| `npm test`               | Testes da `ui` (`ng test ui --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                         |
+| Comando                  | Descrição                                                                                                                                                               |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                                                                                                     |
+| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                                                                                       |
+| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                                                                                                   |
+| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                                                                                                |
+| `npm run build:showcase` | Build do showcase                                                                                                                                                       |
+| `npm run generate:icons` | Gera o catálogo (`icons/src/icons.ts`) e os ícones internos a partir dos SVGs em `assets/svg/`                                                                          |
+| `npm run check:pkg`      | Valida os pacotes buildados (`ui` e `utils`) com publint e are-the-types-wrong via `npx` sob demanda (precisa de `npm run build` antes e de rede)                       |
+| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho, bundle de ícones, código de dev da utils fora do bundle de produção) |
+| `npm test`               | Testes da `ui` e da `utils` (`ng test ... --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                                                              |
 
 ## Design System (em desenvolvimento)
 
@@ -270,23 +271,27 @@ Painéis ancorados sobre o `OverlayService`. API e tokens em [`src/libs/ui/READM
 
 ## Utilitários (`@shyland-dev/utils`)
 
-| Export         | Descrição                                                       |
-| -------------- | --------------------------------------------------------------- |
-| `DebugService` | Logs de componente com nome e método, ativos apenas em dev mode |
-
-### Uso do DebugService
+| Export                                                           | Descrição                                                                  |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `createShyLogger`, `injectShyLogger`, `provideShyLogger`         | Logger com namespace, níveis e filtro; só escreve em dev mode (`ng serve`) |
+| `shyInvariant`, `shyDevOnly`, `shyDeprecated`, `shyMeasure`      | Asserts, avisos e medição, só em dev                                       |
+| `assertShyInjectionContext`, `onShyDestroy`, `injectShyPlatform` | Helpers de injeção e plataforma                                            |
+| `shyStorage`, `injectShyMediaQuery`, `shyDebounced`              | Signals: storage tipado (SSR-safe), media query, debounce                  |
+| `shyIsDefined`, `shyIsString`, `shyIsRecord`, `shyAssertNever`   | Type guards                                                                |
+| `@shyland-dev/utils/testing`                                     | `createShyMemorySink`, `provideShyPlatform`                                |
+| `DebugService`                                                   | `@deprecated`: use `createShyLogger`                                       |
 
 ```typescript
-import { DebugService } from '@shyland-dev/utils';
+import { createShyLogger } from '@shyland-dev/utils';
 
-constructor(private debugService: DebugService) {
-  this.debugService.log(this); // [debug] @MeuComponent#constructor
-}
+private readonly log = createShyLogger('MeuComponente');
 
 ngOnInit(): void {
-  this.debugService.log(this); // [debug] @MeuComponent#ngOnInit
+  this.log.debug('init'); // [shy:MeuComponente] init (só em dev)
 }
 ```
+
+Referência completa: [`src/libs/utils/README.md`](src/libs/utils/README.md).
 
 ---
 
@@ -594,8 +599,8 @@ npm/
 │       │           ├── utils/          # ru()
 │       │           └── types/          # SnackbarPosition
 │       └── utils/                  # @shyland-dev/utils — utilitários
-│           └── src/lib/services/
-│               └── debug.service.ts
+│           └── src/lib/             # logger/, dev/, di/, storage/, signals/, guards/, services/ (DebugService deprecated)
+│           └── testing/             # @shyland-dev/utils/testing
 ├── docs/
 │   ├── DESIGN-SYSTEM-PLAN.md       # Plano mestre do Design System
 │   └── design-system/              # Decisões e progresso das fases

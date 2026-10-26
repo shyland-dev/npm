@@ -24,6 +24,14 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "src/libs/utils/tsconfig.spec.json",
+            "buildTarget": "::development",
+            "runner": "vitest"
+          }
         }
       }
     },
@@ -120,6 +128,33 @@
             "optimization": true,
             "outputHashing": "none"
           }
+        }
+      }
+    },
+    "utils-check": {
+      "projectType": "application",
+      "root": "scripts/utils-app",
+      "sourceRoot": "scripts/utils-app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "index": "scripts/utils-app/index.html",
+            "browser": "scripts/utils-app/main.ts",
+            "tsConfig": "scripts/utils-app/tsconfig.json",
+            "outputHashing": "none"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "outputPath": "dist/utils-check/prod"
+            },
+            "development": {
+              "optimization": false,
+              "outputPath": "dist/utils-check/dev"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

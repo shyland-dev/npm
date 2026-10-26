@@ -1,5 +1,9 @@
 import { Injectable, isDevMode } from '@angular/core';
 
+/**
+ * @deprecated Use `createShyLogger('Namespace')` (ou `injectShyLogger`). Será removido numa próxima minor.
+ * Migração: `this.debug.log(this, x)` -> `const log = createShyLogger('MeuComponente'); log.debug(x)`.
+ */
 @Injectable({ providedIn: 'root' })
 export class DebugService {
   log(component: object, ...values: unknown[]): void {

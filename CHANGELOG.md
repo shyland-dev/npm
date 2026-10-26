@@ -28,6 +28,33 @@ Só adições retrocompatíveis (minor), todas opt-in exceto o swipe: nenhuma AP
 
 - Verificado no Chromium com toque emulado (390×844): swipe curto volta, longo fecha o toast; arrasto do cabeçalho do Drawer `bottom` fecha; `presentation: 'auto'` em portrait cola o Dialog na base. **Não verificado:** aparelho real (iOS Safari, Android Chrome), safe area com notch, leitor de tela.
 
+## utils 0.1.0 - 2026-10-26
+
+Minor (0.x): API nova, sem remoção; `DebugService` fica `@deprecated` e continua funcionando.
+
+### Adicionado
+
+- **Logger**: `createShyLogger(namespace, config?)`, `injectShyLogger`, `provideShyLogger`, `SHY_LOGGER_CONFIG`. Níveis `debug/info/warn/error`, `group`, `time`, `table`, `assert`, `trace`, cor por namespace, filtro por namespace (config ou `localStorage.shyLog`, com `*` e `-`) e sink trocável. Só escreve em dev mode.
+- **Dev**: `shyInvariant`, `shyDevOnly`, `shyDeprecated` (uma vez por nome), `shyMeasure`, `resetShyDeprecations`.
+- **Injeção/plataforma**: `assertShyInjectionContext`, `onShyDestroy`, `injectShyPlatform`.
+- **Signals/storage**: `shyStorage` (JSON, local/session, validate, sync entre abas, SSR-safe), `injectShyMediaQuery`, `shyDebounced`.
+- **Guards**: `shyIsDefined`, `shyIsString`, `shyIsRecord`, `shyAssertNever`.
+- **Entry point `@shyland-dev/utils/testing`**: `createShyMemorySink`, `provideShyPlatform`.
+- `npm run check:pkg`: valida `ui` e `utils` buildados com publint (`--strict`) e are-the-types-wrong (perfil esm-only) via `npx` com versões fixas, sem virar dependência. Roda no workflow de publish antes de publicar; os dois pacotes passam.
+- Testes com vitest (34) e `npm test` agora roda `ui` e `utils`.
+
+### Depreciado
+
+- `DebugService`: use `createShyLogger('MeuComponente')`. Busca/substituição: `this.debug.log(this, x)` por `this.log.debug(x)` com `private readonly log = createShyLogger('MeuComponente')`. Formato novo: `[shy:MeuComponente] ...` (antes `[debug] @Componente#metodo`).
+
+### Corrigido
+
+- README da utils: requisitos (Angular 21.2+, não 17+) e exemplo de uso (o service é `root`, não precisa de `providers`).
+
+### Alterado: código de dev fora do bundle de produção
+
+Autorizado pelo dono em 2026-10-26. As funções de `logger/` e `dev/` usam guard literal de `ngDevMode` (`typeof ngDevMode === 'undefined' || ngDevMode`) em vez de `isDevMode()`. Medido com `ng build showcase -c production`: o logger (strings `[shy:`, `%c[`, filtro `shyLog`) não aparece mais no bundle; em produção `createShyLogger` devolve um logger vazio. Comportamento em dev inalterado. Continua sem nenhum recurso para logar em produção. O `DebugService` (depreciado) mantém `isDevMode()`. Como `ngDevMode` não é API pública documentada, o novo `check-utils-bundle` (parte do `npm run check:ds`) builda um app mínimo em produção e em desenvolvimento e falha se algum marcador de dev sobrar no bundle de produção ou faltar no de desenvolvimento.
+
 ## utils 0.0.7 - 2026-10-25
 
 ### Corrigido
