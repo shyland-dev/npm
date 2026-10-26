@@ -24,6 +24,14 @@
             }
           },
           "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "src/libs/utils/tsconfig.spec.json",
+            "buildTarget": "::development",
+            "runner": "vitest"
+          }
         }
       }
     },

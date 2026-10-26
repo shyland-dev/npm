@@ -265,23 +265,27 @@ Painéis ancorados sobre o `OverlayService`. API e tokens em [`src/libs/ui/READM
 
 ## Utilitários (`@shyland-dev/utils`)
 
-| Export         | Descrição                                                       |
-| -------------- | --------------------------------------------------------------- |
-| `DebugService` | Logs de componente com nome e método, ativos apenas em dev mode |
-
-### Uso do DebugService
+| Export                                                           | Descrição                                                                  |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `createShyLogger`, `injectShyLogger`, `provideShyLogger`         | Logger com namespace, níveis e filtro; só escreve em dev mode (`ng serve`) |
+| `shyInvariant`, `shyDevOnly`, `shyDeprecated`, `shyMeasure`      | Asserts, avisos e medição, só em dev                                       |
+| `assertShyInjectionContext`, `onShyDestroy`, `injectShyPlatform` | Helpers de injeção e plataforma                                            |
+| `shyStorage`, `injectShyMediaQuery`, `shyDebounced`              | Signals: storage tipado (SSR-safe), media query, debounce                  |
+| `shyIsDefined`, `shyIsString`, `shyIsRecord`, `shyAssertNever`   | Type guards                                                                |
+| `@shyland-dev/utils/testing`                                     | `createShyMemorySink`, `provideShyPlatform`                                |
+| `DebugService`                                                   | `@deprecated`: use `createShyLogger`                                       |
 
 ```typescript
-import { DebugService } from '@shyland-dev/utils';
+import { createShyLogger } from '@shyland-dev/utils';
 
-constructor(private debugService: DebugService) {
-  this.debugService.log(this); // [debug] @MeuComponent#constructor
-}
+private readonly log = createShyLogger('MeuComponente');
 
 ngOnInit(): void {
-  this.debugService.log(this); // [debug] @MeuComponent#ngOnInit
+  this.log.debug('init'); // [shy:MeuComponente] init (só em dev)
 }
 ```
+
+Referência completa: [`src/libs/utils/README.md`](src/libs/utils/README.md).
 
 ---
 
@@ -588,8 +592,8 @@ npm/
 │       │           ├── utils/          # ru()
 │       │           └── types/          # SnackbarPosition
 │       └── utils/                  # @shyland-dev/utils — utilitários
-│           └── src/lib/services/
-│               └── debug.service.ts
+│           └── src/lib/             # logger/, dev/, di/, storage/, signals/, guards/, services/ (DebugService deprecated)
+│           └── testing/             # @shyland-dev/utils/testing
 ├── docs/
 │   ├── DESIGN-SYSTEM-PLAN.md       # Plano mestre do Design System
 │   └── design-system/              # Decisões e progresso das fases

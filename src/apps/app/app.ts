@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { DebugService } from '@shyland-dev/utils';
+import { createShyLogger } from '@shyland-dev/utils';
 import { ThemeToggleComponent } from '@shyland-dev/ui';
 
 interface NavGroup {
@@ -39,12 +39,14 @@ export class App implements OnInit {
   readonly reducedMotion = signal(false);
   readonly sansFont = signal(false);
 
-  constructor(private debugService: DebugService) {
-    this.debugService.log(this);
+  private readonly log = createShyLogger('App');
+
+  constructor() {
+    this.log.debug('constructor');
   }
 
   ngOnInit(): void {
-    this.debugService.log(this);
+    this.log.debug('ngOnInit');
   }
 
   toggleMotion(): void {

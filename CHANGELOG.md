@@ -3,6 +3,32 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (ver a seção `utils` abaixo). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
 
+## utils 0.1.0 - 2026-10-26
+
+Minor (0.x): API nova, sem remoção; `DebugService` fica `@deprecated` e continua funcionando.
+
+### Adicionado
+
+- **Logger**: `createShyLogger(namespace, config?)`, `injectShyLogger`, `provideShyLogger`, `SHY_LOGGER_CONFIG`. Níveis `debug/info/warn/error`, `group`, `time`, `table`, `assert`, `trace`, cor por namespace, filtro por namespace (config ou `localStorage.shyLog`, com `*` e `-`) e sink trocável. Só escreve em dev mode.
+- **Dev**: `shyInvariant`, `shyDevOnly`, `shyDeprecated` (uma vez por nome), `shyMeasure`, `resetShyDeprecations`.
+- **Injeção/plataforma**: `assertShyInjectionContext`, `onShyDestroy`, `injectShyPlatform`.
+- **Signals/storage**: `shyStorage` (JSON, local/session, validate, sync entre abas, SSR-safe), `injectShyMediaQuery`, `shyDebounced`.
+- **Guards**: `shyIsDefined`, `shyIsString`, `shyIsRecord`, `shyAssertNever`.
+- **Entry point `@shyland-dev/utils/testing`**: `createShyMemorySink`, `provideShyPlatform`.
+- Testes com vitest (33) e `npm test` agora roda `ui` e `utils`.
+
+### Depreciado
+
+- `DebugService`: use `createShyLogger('MeuComponente')`. Busca/substituição: `this.debug.log(this, x)` por `this.log.debug(x)` com `private readonly log = createShyLogger('MeuComponente')`. Formato novo: `[shy:MeuComponente] ...` (antes `[debug] @Componente#metodo`).
+
+### Corrigido
+
+- README da utils: requisitos (Angular 21.2+, não 17+) e exemplo de uso (o service é `root`, não precisa de `providers`).
+
+### Decisão: log em produção
+
+Nada foi adicionado para logar em produção; o guard continua `isDevMode()`. Medição de 2026-10-26 (`ng build -c production`): com `isDevMode()` o código do log permanece no bundle (inerte, retorna cedo); com guard literal de `ngDevMode` ele sai do bundle. Se quiser essa remoção depois, é trocar `isDevMode()` por `typeof ngDevMode === 'undefined' || ngDevMode` nas funções de `logger/` e `dev/`.
+
 ## utils 0.0.7 - 2026-10-25
 
 ### Corrigido
