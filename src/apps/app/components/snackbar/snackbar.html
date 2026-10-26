@@ -33,6 +33,33 @@
   </section>
 
   <section class="section">
+    <h2>Swipe to dismiss, undo and progress</h2>
+    <p>
+      On touch and pen, drag a toast sideways to dismiss it (past 40% of its width, or a quick flick); the X button is the alternative without a gesture. <code>undo()</code> resolves <code>'undo'</code> or <code>'commit'</code>; <code>promise()</code> turns one toast from loading into success or error; the same <code>id</code> updates the open toast. <code>provideShySnackbar({{ '{' }} focusHotkey: 'Alt+T' {{ '}' }})</code> adds a keyboard shortcut that focuses the latest toast.
+    </p>
+    <div class="shy-cluster">
+      <button shyButton variant="outline" type="button" (click)="undo()">Delete with undo()</button>
+      <button shyButton variant="outline" type="button" (click)="promise(false)">promise(): success</button>
+      <button shyButton variant="outline" type="button" (click)="promise(true)">promise(): error</button>
+      <button shyButton variant="outline" type="button" (click)="updateById()">Same id (update)</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Optimistic update with undo</h2>
+    <p>Update the screen first, send to the server later: the item disappears at once and the toast offers <code>undo()</code>. Only on <code>'commit'</code> (timeout, X or <code>dismissAll()</code>) the real request goes out; on <code>'undo'</code> nothing was sent, so there is nothing to roll back. Use it for reversible actions instead of <code>confirm()</code>.</p>
+    <ul class="shy-cluster">
+      @for (item of items(); track item) {
+        <li>
+          <button shyButton variant="outline" type="button" (click)="removeOptimistic(item)">Delete {{ item }}</button>
+        </li>
+      } @empty {
+        <li>No items left. Reload the page to restore the list.</li>
+      }
+    </ul>
+  </section>
+
+  <section class="section">
     <h2>Over a modal</h2>
     <div class="shy-cluster"><button shyButton variant="outline" type="button" (click)="openDialog()">Open dialog, then toast with action</button></div>
   </section>

@@ -11,6 +11,36 @@
   line-height: var(--shy-leading-normal);
 }
 
+.handle {
+  display: flex;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-inline-size: var(--shy-size-control-lg);
+  min-block-size: var(--shy-size-control-sm);
+  margin-block-start: var(--shy-space-2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--shy-radius-md);
+  background: transparent;
+  color: var(--shy-color-border-strong);
+  cursor: pointer;
+  @include touch-target;
+  @include state-layer;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &__bar {
+    inline-size: ru(10);
+    block-size: ru(1.2);
+    border-radius: var(--shy-radius-full);
+    background: currentColor;
+  }
+}
+
 .header {
   display: flex;
   align-items: flex-start;

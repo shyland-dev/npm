@@ -25,3 +25,7 @@ Tokens em `tokens/motion.css`; keyframes em `animations.css`.
 ## Enter/leave (confirmado na F0)
 
 `animate.enter` / `animate.leave` do Angular 21 são estáveis e funcionam em zoneless; usar em elementos de `@if`. Para `<dialog>` e `[popover]` (top layer): `@starting-style` + `transition-behavior: allow-discrete` na entrada e `data-state="closing"` aguardando `transitionend` (com timeout) antes de `close()`/`hidePopover()` na saída (F4). Sem `@angular/animations`.
+
+## Arrasto (1.3.0)
+
+Swipe do toast e arrasto do Drawer usam a propriedade `translate` (a entrada e a saída usam `transform`, então não brigam). Durante o gesto `transition: none` (`[data-swiping]`/`[data-dragging]`); ao soltar, a volta usa `--shy-duration-base`. O deslocamento vem de `--_swipe-x`, `--_drag-x` e `--_drag-y`, escritos pelo código com a medida do ponteiro.

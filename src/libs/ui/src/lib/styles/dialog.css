@@ -1,0 +1,55 @@
+/*
+ * Dialog como folha (`DialogService.open(..., { presentation })`): `shy-dialog-pane--sheet` cola o diálogo na base, em largura
+ * total; `shy-dialog-pane--auto` faz o mesmo só em `portrait` (em `landscape` fica centralizado). A mesma regra aparece duas
+ * vezes porque `@media` não entra num seletor. Só tokens e ru.
+ */
+dialog.shy-dialog-pane--sheet {
+  inset: auto 0 0 0;
+  inline-size: var(--shy-dynamic-width);
+  max-inline-size: var(--shy-dynamic-width);
+  margin: 0;
+  padding-block-end: var(--shy-safe-area-bottom);
+  padding-inline: var(--shy-safe-area-start) var(--shy-safe-area-end);
+  border-start-start-radius: var(--shy-dialog-radius, var(--shy-radius-xl));
+  border-start-end-radius: var(--shy-dialog-radius, var(--shy-radius-xl));
+  background: var(--shy-dialog-bg, var(--shy-color-surface-raised));
+}
+
+dialog.shy-dialog-pane--sheet shy-dialog:not([data-size='full']) {
+  inline-size: 100%;
+  max-inline-size: none;
+  max-block-size: calc(var(--shy-dynamic-height) * 0.9);
+  border-width: var(--shy-border-width) 0 0;
+  border-radius: var(--shy-dialog-radius, var(--shy-radius-xl)) var(--shy-dialog-radius, var(--shy-radius-xl)) 0 0;
+  box-shadow: none;
+}
+
+@media (orientation: portrait) {
+  dialog.shy-dialog-pane--auto {
+    inset: auto 0 0 0;
+    inline-size: var(--shy-dynamic-width);
+    max-inline-size: var(--shy-dynamic-width);
+    margin: 0;
+    padding-block-end: var(--shy-safe-area-bottom);
+    padding-inline: var(--shy-safe-area-start) var(--shy-safe-area-end);
+    border-start-start-radius: var(--shy-dialog-radius, var(--shy-radius-xl));
+    border-start-end-radius: var(--shy-dialog-radius, var(--shy-radius-xl));
+    background: var(--shy-dialog-bg, var(--shy-color-surface-raised));
+  }
+
+  dialog.shy-dialog-pane--auto shy-dialog:not([data-size='full']) {
+    inline-size: 100%;
+    max-inline-size: none;
+    max-block-size: calc(var(--shy-dynamic-height) * 0.9);
+    border-width: var(--shy-border-width) 0 0;
+    border-radius: var(--shy-dialog-radius, var(--shy-radius-xl)) var(--shy-dialog-radius, var(--shy-radius-xl)) 0 0;
+    box-shadow: none;
+  }
+}
+
+@media (forced-colors: active) {
+  dialog.shy-dialog-pane--sheet,
+  dialog.shy-dialog-pane--auto {
+    border-color: CanvasText;
+  }
+}

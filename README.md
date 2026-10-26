@@ -53,7 +53,7 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 | **Progress**    | `shy-progress`, `shy-progress-circular`     | `role="progressbar"`, `value`/`max`, indeterminado sem `value`                                                     |
 | **Badge**       | `shy-badge`                                 | Etiqueta `soft`/`solid`/`outline`, `count`, `dot`, `removable`; o texto diz o estado                               |
 | **Dialog**      | `shy-dialog` + `DialogService`              | Modal nativo (`<dialog>`): `open()`, `confirm()`, `alert()`; título liga `aria-labelledby`; tamanhos `sm` a `full` |
-| **Drawer**      | `shy-drawer` + `DrawerService`              | Painel lateral modal (`start`/`end`/`top`/`bottom`); clique no fundo fecha                                         |
+| **Drawer**      | `shy-drawer` + `DrawerService`              | Painel lateral modal (`start`/`end`/`top`/`bottom`); clique no fundo fecha; `dragToClose` e `showHandle` (1.3.0)   |
 | **Divider**     | `shy-divider`                               | `role="separator"`, horizontal ou vertical, texto opcional                                                         |
 | **Card**        | `shy-card`, `a[shyCard]`, `button[shyCard]` | Slots header/body/footer, `elevation` 0 a 3; interativo pelo elemento nativo                                       |
 | **Alert**       | `shy-alert`                                 | Ícone por intenção + título; `role="status"` (ou `alert` com `urgent` em warning/danger), `dismissible`            |
@@ -64,7 +64,7 @@ Para avançar com o Claude (CLI ou thread do projeto), mande só `/build`: ele l
 | **FormField**   | `shy-form-field`                            | Label, dica, erro (ícone + texto) e contador; liga `for`/`id` e `aria-*`; slots `prefix`/`suffix`                  |
 | **Icon**        | `<shy-icon>`                                | Ícones SVG inline com suporte a hover fill e tamanho customizável                                                  |
 | **Select**      | `<shy-select>`                              | Combobox (CVA): `ngModel`/`formControl`, `multiple`, typeahead, painel em overlay                                  |
-| **Snackbar**    | `SnackbarService.show()`                    | Toasts com fila, intent, ação e pausa                                                                              |
+| **Snackbar**    | `SnackbarService.show()`                    | Toasts com fila, intent, ação, pausa, swipe, `undo()` e `promise()`                                                |
 | **ThemeToggle** | `<shy-theme-toggle>`                        | Controle segmentado claro / sistema / escuro (usa o `ThemeService`)                                                |
 | **Menu**        | `[shyMenu]` + `shy-menu` + `shyMenuItem`    | Menu button (APG): setas, Home/End, typeahead; fecha ao ativar o item; sem submenus                                |
 | **Popover**     | `[shyPopover]` + `shy-popover`              | Painel não modal ancorado; foco, Esc, clique fora e Tab devolvem o foco ao gatilho                                 |
@@ -205,10 +205,13 @@ const ref = snackbar.show('Item excluído', { action: { label: 'Desfazer' } });
 if ((await ref.closed) === 'action') restaurar();
 ```
 
-- `intent` (`neutral|info|success|warning|danger`; `danger` usa `role="alert"`), `action`, `duration` (`0` = só fecha por X/`dismiss()`), `position` (`top|bottom`), `align` (`start|center|end`). Fila de até 3 visíveis; pausa com ponteiro/foco e aba oculta. Padrões em `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel })`.
+- `intent` (`neutral|info|success|warning|danger`; `danger` usa `role="alert"`), `action`, `duration` (`0` = só fecha por X/`dismiss()`), `position` (`top|bottom`), `align` (`start|center|end`), `id`, `loading`, `swipeToDismiss`. Fila de até 3 visíveis; pausa com ponteiro/foco, durante o arrasto e com aba oculta. Padrões em `provideShySnackbar({ maxVisible, duration, durationWithAction, dismissLabel, swipeToDismiss, undoLabel, focusHotkey })`.
+- **1.3.0:** `ref.update({ message, intent, action, loading, duration })`; `undo(msg)` resolve `'undo' | 'commit'` (ação reversível sem `confirm()`); `promise(p, { loading, success, error })` (um toast que vira sucesso ou erro); mesmo `id` atualiza o toast aberto; **swipe para fechar** em toque e caneta (o X continua como alternativa sem gesto); `focusHotkey` (ex.: `'Alt+T'`) foca o toast mais recente pelo teclado; `haptics` (opt-in) vibra 10 ms ao fechar por swipe/X/ação (Vibration API: sem efeito no iOS e com reduced motion).
 - Com um modal aberto o toast fica `inert` (limitação do modal): a ação some até o modal fechar.
 - **Migração da `0.0.x`:** o `<shy-snackbar>` e `show({ element, ... })` foram removidos na 1.0: remova o elemento e o `viewChild` e troque por `show(text, { duration: delay, position })`.
 - Tokens `--shy-snackbar-*` em `:root` (o contêiner mora no overlay). Página no showcase: **components > snackbar**.
+- **Também na 1.3.0:** área de toque de ~44 px em `pointer: coarse` (`--shy-size-touch-target`, mixin `touch-target`); `delayedFlag(sinal, { delay, minDuration })` para loading sem flicker (skeleton + `aria-busy`); `haptics` opt-in no Snackbar e no Drawer; cookbook de feedback otimista com `undo()` no showcase.
+- **Safe areas (1.3.0):** `--shy-safe-area-{top,end,bottom,start}` (`env(safe-area-inset-*)`, fallback `0`) entram no offset dos toasts, nos Drawers, na folha do Dialog e no header/footer do AppShell. Só têm valor com `viewport-fit=cover` no meta viewport; sem ele nada muda. Ainda não verificado em aparelho com notch.
 
 ---
 
@@ -236,6 +239,8 @@ const ok = await inject(DialogService).confirm({ title: 'Excluir projeto?', mess
 const ref = inject(DialogService).open(RenomearDialog, { data: { id: 7 } }); // conteúdo com <shy-dialog heading="…">
 const resultado = await ref.closed;
 inject(DrawerService).open(FiltrosPanel, { side: 'start' });
+inject(DrawerService).open(FiltrosPanel, { side: 'bottom', dragToClose: true, showHandle: true }); // 1.3.0: arrastar o cabeçalho ou o handle fecha
+inject(DialogService).open(RenomearDialog, { presentation: 'auto' }); // 1.3.0: folha na base em portrait, centralizado em landscape
 ```
 
 - Esc fecha só o do topo; Dialog não fecha por clique no fundo (Drawer fecha); `confirm()`/`alert()` usam `role="alertdialog"` e focam o botão seguro.
@@ -540,18 +545,19 @@ export { shyLayer, layerRank } from './lib/overlay/layers';
 // Utilitários
 export { ru } from './lib/utils/ru';
 export { animateOut, AnimateOutOptions } from './lib/utils/animate-out';
+export { delayedFlag, DelayedFlagOptions } from './lib/utils/delayed-flag';
 
 // Interfaces
 export { ShyOverlayConfig, ShyOverlayContext, ShyPositionOptions, ShyPositionResult, ShyRect } from './lib/interfaces/overlay/overlay.interface';
-export { ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
+export { ShyDialogBaseConfig, ShyDialogConfig, ShyDrawerConfig, ShyConfirmDialogOptions, ShyAlertDialogOptions } from './lib/interfaces/dialog/dialog.interface';
 export { ShySelectOption } from './lib/interfaces/select/select.interface';
-export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef } from './lib/interfaces/snackbar/snackbar.interface';
+export { ShySnackbarOptions, ShySnackbarConfig, ShySnackbarRef, ShySnackbarUpdate, ShySnackbarUndoOptions, ShySnackbarPromiseMessages } from './lib/interfaces/snackbar/snackbar.interface';
 
 // Types
 export { ShyAlertIntent } from './lib/types/alert/alert.type';
 export { ShyBadgeVariant, ShyBadgeSize } from './lib/types/badge/badge.type';
 export { ShyCardElevation } from './lib/types/card/card.type';
-export { ShyDialogSize, ShyDrawerSide } from './lib/types/dialog/dialog.type';
+export { ShyDialogSize, ShyDrawerSide, ShyDialogPresentation } from './lib/types/dialog/dialog.type';
 export { ShyDividerOrientation } from './lib/types/divider/divider.type';
 export { ShyButtonVariant, ShyButtonSize, ShyButtonLoadingPosition, ShyIconButtonVariant } from './lib/types/button/button.type';
 export { ShyInputSize } from './lib/types/input/input.type';
@@ -561,7 +567,7 @@ export { ShyProgressSize } from './lib/types/progress/progress.type';
 export { ShyRadioOrientation } from './lib/types/radio/radio.type';
 export { ShySkeletonShape, ShySkeletonAnimation } from './lib/types/skeleton/skeleton.type';
 export { ShySpinnerVariant, ShySpinnerSize } from './lib/types/spinner/spinner.type';
-export { SnackbarPosition, ShySnackbarIntent, ShySnackbarAlign, ShySnackbarCloseReason } from './lib/types/snackbar/snackbar.type';
+export { SnackbarPosition, ShySnackbarIntent, ShySnackbarAlign, ShySnackbarCloseReason, ShySnackbarUndoResult } from './lib/types/snackbar/snackbar.type';
 
 // Ícones
 export { provideShyIcons, IconRegistry } from './lib/components/icon/icon-registry';

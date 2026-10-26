@@ -13,6 +13,33 @@ dialog.shy-drawer-pane {
   box-shadow: var(--shy-drawer-shadow, var(--shy-shadow-5));
 }
 
+/* Arrasto para fechar (`dragToClose`): `translate` (e não `transform`) para não brigar com a entrada e a saída. */
+dialog.shy-drawer-pane {
+  translate: var(--_drag-x, 0) var(--_drag-y, 0);
+}
+
+dialog.shy-drawer-pane--draggable {
+  transition:
+    opacity var(--shy-duration-base) var(--shy-ease-enter),
+    transform var(--shy-duration-base) var(--shy-ease-enter),
+    translate var(--shy-duration-base) var(--shy-ease-standard);
+}
+
+dialog.shy-drawer-pane--draggable[data-dragging] {
+  transition: none;
+}
+
+/* O navegador segue com o scroll do outro eixo; o do eixo do arrasto é do gesto. */
+dialog.shy-drawer-pane--draggable.shy-drawer-pane--top [data-shy-drag-handle],
+dialog.shy-drawer-pane--draggable.shy-drawer-pane--bottom [data-shy-drag-handle] {
+  touch-action: pan-x;
+}
+
+dialog.shy-drawer-pane--draggable.shy-drawer-pane--start [data-shy-drag-handle],
+dialog.shy-drawer-pane--draggable.shy-drawer-pane--end [data-shy-drag-handle] {
+  touch-action: pan-y;
+}
+
 dialog.shy-drawer-pane:dir(rtl) {
   --_x: -1;
 }
@@ -40,6 +67,8 @@ dialog.shy-drawer-pane--end {
 
 dialog.shy-drawer-pane--start {
   inset-inline: 0 auto;
+  padding-block: var(--shy-safe-area-top) var(--shy-safe-area-bottom);
+  padding-inline-start: var(--shy-safe-area-start);
   border-inline-start-width: 0;
   border-start-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
   border-end-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
@@ -47,6 +76,8 @@ dialog.shy-drawer-pane--start {
 
 dialog.shy-drawer-pane--end {
   inset-inline: auto 0;
+  padding-block: var(--shy-safe-area-top) var(--shy-safe-area-bottom);
+  padding-inline-end: var(--shy-safe-area-end);
   border-inline-end-width: 0;
   border-start-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
   border-end-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
@@ -62,6 +93,8 @@ dialog.shy-drawer-pane--bottom {
 
 dialog.shy-drawer-pane--top {
   inset-block: 0 auto;
+  padding-block-start: var(--shy-safe-area-top);
+  padding-inline: var(--shy-safe-area-start) var(--shy-safe-area-end);
   border-block-start-width: 0;
   border-end-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
   border-end-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
@@ -69,6 +102,8 @@ dialog.shy-drawer-pane--top {
 
 dialog.shy-drawer-pane--bottom {
   inset-block: auto 0;
+  padding-block-end: var(--shy-safe-area-bottom);
+  padding-inline: var(--shy-safe-area-start) var(--shy-safe-area-end);
   border-block-end-width: 0;
   border-start-start-radius: var(--shy-drawer-radius, var(--shy-radius-xl));
   border-start-end-radius: var(--shy-drawer-radius, var(--shy-radius-xl));

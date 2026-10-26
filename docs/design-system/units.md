@@ -45,6 +45,10 @@ Com `rem` = 16 px, **1 ru = 1,6 px + (menor lado da janela) / 1000**. Também vi
 
 A tabela completa é a página `/foundations/units` do showcase; `node scripts/check-calibration.mjs --table` imprime os tokens por viewport.
 
+## Medidas do ponteiro (exceção de código)
+
+O arrasto (swipe do toast, drag do Drawer) escreve `--_swipe-x`/`--_drag-x|y` com o deslocamento real do dedo, em pixels do evento. Isso é uma medida de entrada, não um tamanho de design, e não existe em `ru`. O helper `devicePx(n)` (`utils/drag.ts`, interno) concentra essa conversão: nenhum SCSS/CSS de componente tem `px` literal. Os tokens `--shy-safe-area-*` (`env()`, fallback `0px`) ficam em `tokens/units.css` (E1), como as demais unidades literais.
+
 ## Consequências conhecidas
 
 1. A escala é calibrada para o pior caso (360×800); `check-calibration` falha se texto < 12 px, corpo < 14 px ou controle < 24 px nele, ou se o crescimento 4K/celular passar de 2,1×.

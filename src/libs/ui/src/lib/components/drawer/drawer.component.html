@@ -1,4 +1,7 @@
-<header class="header">
+@if (handle()) {
+  <button type="button" class="handle" data-shy-drag-handle [attr.aria-label]="closeLabel()" (click)="dismiss()"><span class="handle__bar"></span></button>
+}
+<header class="header" data-shy-drag-handle>
   @if (heading()) {
     <h2 class="title" [id]="titleId">{{ heading() }}</h2>
   }

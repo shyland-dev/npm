@@ -13,8 +13,8 @@ export class DrawerPage {
   protected readonly sides: ShyDrawerSide[] = ['start', 'end', 'top', 'bottom'];
   protected readonly result = signal('nothing yet');
 
-  protected async open(side: ShyDrawerSide): Promise<void> {
-    const ref = this.drawers.open<DemoDrawer, ShyDrawerSide, boolean>(DemoDrawer, { side, data: side });
+  protected async open(side: ShyDrawerSide, touch = false): Promise<void> {
+    const ref = this.drawers.open<DemoDrawer, ShyDrawerSide, boolean>(DemoDrawer, { side, data: side, dragToClose: touch, showHandle: touch && side === 'bottom' });
     this.result.set((await ref.closed) ? `applied (${side})` : `dismissed (${side})`);
   }
 }

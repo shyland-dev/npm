@@ -66,8 +66,9 @@
   align-items: center;
   gap: var(--shy-space-4);
   box-sizing: border-box;
-  min-block-size: var(--shy-app-shell-header-height, var(--shy-size-control-lg));
-  padding-inline: var(--shy-app-shell-pad, var(--shy-space-8));
+  min-block-size: calc(var(--shy-app-shell-header-height, var(--shy-size-control-lg)) + var(--shy-safe-area-top));
+  padding-block-start: var(--shy-safe-area-top);
+  padding-inline: calc(var(--shy-app-shell-pad, var(--shy-space-8)) + var(--shy-safe-area-start)) calc(var(--shy-app-shell-pad, var(--shy-space-8)) + var(--shy-safe-area-end));
   border-block-end: var(--shy-border-width) solid var(--shy-app-shell-border-color, var(--shy-color-line));
   background: var(--shy-app-shell-header-bg, var(--shy-color-surface));
 }
@@ -120,6 +121,7 @@
 .footer {
   grid-area: footer;
   padding: var(--shy-space-6) var(--shy-app-shell-pad, var(--shy-space-8));
+  padding-block-end: calc(var(--shy-space-6) + var(--shy-safe-area-bottom));
   border-block-start: var(--shy-border-width) solid var(--shy-app-shell-border-color, var(--shy-color-line));
   background: var(--shy-app-shell-footer-bg, transparent);
   color: var(--shy-color-text-muted);

@@ -15,7 +15,13 @@ export class DialogService {
   private readonly overlay = inject(OverlayService);
 
   open<C = unknown, D = unknown, R = unknown>(content: Type<C> | TemplateRef<ShyOverlayContext<D>>, config: ShyDialogConfig<D> = {}): ShyOverlayRef<R, C> {
-    return this.overlay.open<C, D, R>(content, { ...config, layer: 'modal', modal: true });
+    const { presentation = 'center', paneClass, ...rest } = config;
+    return this.overlay.open<C, D, R>(content, {
+      ...rest,
+      layer: 'modal',
+      modal: true,
+      paneClass: [paneClass, presentation !== 'center' && `shy-dialog-pane--${presentation}`].filter(Boolean).join(' ') || undefined,
+    });
   }
 
   /** Resolve `true` ao confirmar; `false` ao cancelar ou fechar com Esc. */

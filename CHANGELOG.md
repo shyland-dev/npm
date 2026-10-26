@@ -3,6 +3,31 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (ver a seção `utils` abaixo). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
 
+## [1.3.0] - 2026-10-26
+
+Só adições retrocompatíveis (minor), todas opt-in exceto o swipe: nenhuma API existente mudou de assinatura nem de comportamento padrão, exceto o swipe do toast, que passa a existir por padrão em toque e caneta (desligue com `swipeToDismiss: false`).
+
+### Adicionado
+
+- **Swipe para fechar toast** (`swipeToDismiss`, padrão `true`; opção por toast e em `provideShySnackbar`): em toque e caneta, arrastar o toast para o lado além de 40% da largura (ou num flick) fecha com `'dismiss'`. O mouse não arrasta. O timer pausa durante o arrasto, o X continua como alternativa sem gesto (WCAG 2.5.1 e 2.5.7) e o scroll vertical segue nativo (`touch-action: pan-y`). Com reduced motion não há animação de volta.
+- **Safe areas**: tokens `--shy-safe-area-top|end|bottom|start` (`env(safe-area-inset-*)`, fallback 0), aplicados em toasts, Drawer, folha do Dialog e header/footer do `<shy-app-shell>`. Exigem `viewport-fit=cover` no meta viewport; sem ele o visual é idêntico ao da 1.2.
+- **`SnackbarService.undo(message, { label, duration })`**: resolve `'undo' | 'commit'`. Novo tipo `ShySnackbarUndoResult` e `undoLabel` (padrão "Undo") em `provideShySnackbar`.
+- **`ShySnackbarRef.update({ message, intent, action, loading, duration })`**, opção `id` (um `show()` com o mesmo `id` atualiza o toast aberto) e `loading` (spinner no lugar do ícone).
+- **`SnackbarService.promise(p, { loading, success, error })`**: um toast que vira sucesso ou erro e devolve a própria `Promise`.
+- **`focusHotkey`** em `provideShySnackbar` (ex.: `'Alt+T'`, desligado por padrão): foca a ação (ou o X) do toast mais recente; `Esc` fecha o toast e devolve o foco.
+- **Drawer**: `DrawerService.open(c, { dragToClose, showHandle })`. Arrastar o cabeçalho (ou o handle, um `<button>` com o nome de `closeLabel`) em direção à borda fecha o painel em toque e caneta; o X, o Esc e o clique no fundo seguem como alternativa. Ambos `false` por padrão.
+- **Dialog como folha**: `DialogService.open(c, { presentation: 'center' | 'sheet' | 'auto' })`. `auto` vira folha na base em `@media (orientation: portrait)`. Novo tipo `ShyDialogPresentation` e tipo `ShyDialogBaseConfig` (o `ShyDialogConfig` agora é essa base mais `presentation`).
+- Showcase: demos de swipe, undo, `promise()`, drag do Drawer e folha do Dialog.
+
+- **Haptics (opt-in)**: `provideShySnackbar({ haptics: true })` vibra 10 ms quando a pessoa fecha um toast (swipe, X ou ação; não no fechamento por tempo) e `DrawerService.open(c, { haptics: true })` vibra quando o arrasto fecha o painel. Usa a Vibration API: sem efeito no Safari/iOS e no desktop, e não vibra com reduced motion nem antes da primeira interação. Desligado por padrão.
+- **Área de toque de 44 px** em ponteiro grosso (`pointer: coarse`) para o `IconButton`, o X e a ação do toast e o handle do Drawer: token `--shy-size-touch-target` e mixin SCSS `touch-target` (um `::after` invisível; o layout não muda).
+- **`delayedFlag(source, { delay, minDuration })`** (exportado de `@shyland-dev/ui`): signal de loading sem flicker (liga após 200 ms e fica ligado ao menos 400 ms); use no `shy-skeleton` e no `aria-busy`.
+- Showcase: cookbook de **feedback otimista** com `undo()` e demo do `delayedFlag` na página do skeleton.
+
+### Verificação
+
+- Verificado no Chromium com toque emulado (390×844): swipe curto volta, longo fecha o toast; arrasto do cabeçalho do Drawer `bottom` fecha; `presentation: 'auto'` em portrait cola o Dialog na base. **Não verificado:** aparelho real (iOS Safari, Android Chrome), safe area com notch, leitor de tela.
+
 ## utils 0.1.0 - 2026-10-26
 
 Minor (0.x): API nova, sem remoção; `DebugService` fica `@deprecated` e continua funcionando.

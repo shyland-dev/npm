@@ -133,6 +133,8 @@
 
   /* Tamanhos */
   --shy-size-control-sm: calc(var(--shy-responsive-unit) * 14);
+  /* Área de toque de ~44 px em 360×800 (WCAG 2.5.5, AAA); só é aplicada com `pointer: coarse` (mixin `touch-target`). */
+  --shy-size-touch-target: calc(var(--shy-responsive-unit) * 22.5);
   --shy-size-control-md: calc(var(--shy-responsive-unit) * 18);
   --shy-size-control-lg: calc(var(--shy-responsive-unit) * 22);
   --shy-size-icon-sm: calc(var(--shy-responsive-unit) * 6);
