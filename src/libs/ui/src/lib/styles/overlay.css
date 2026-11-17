@@ -43,11 +43,19 @@ html[data-shy-scroll-lock] {
   outline: none;
 }
 
-/* Sem âncora: o painel modal fica centralizado; popover sem âncora vai para o canto de início. Especificidade 0 (`:where`) para o
-   Dialog, o Drawer e o app ajustarem a posição com uma classe só. */
-:where(.shy-overlay-pane[data-modal]:not([data-anchored])) {
+/* Sem âncora: o painel modal fica centralizado (`position: fixed; inset: 0; margin: auto` + tamanho fit-content, limitado à
+   viewport). Especificidade (0,1,0): `:where` zera só as condições, então a classe da lib vence um reset global do app
+   (`* { margin: 0 }`, `dialog { margin: 0 }`) mesmo que ele venha depois no CSS, e ainda perde para as classes de modo
+   (`dialog.shy-drawer-pane`, `dialog.shy-dialog-pane--sheet`, `--auto`, snackbar, `paneClass` do app), que são (0,1,1) ou mais.
+   Sem `!important`. Popover sem âncora vai para o canto de início. */
+.shy-overlay-pane:where([data-modal]:not([data-anchored])) {
+  position: fixed;
   inset: 0;
   margin: auto;
+  inline-size: fit-content;
+  block-size: fit-content;
+  max-inline-size: var(--shy-dynamic-width);
+  max-block-size: var(--shy-dynamic-height);
 }
 
 :where(.shy-overlay-pane:not([data-modal]):not([data-anchored])) {

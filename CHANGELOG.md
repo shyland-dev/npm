@@ -3,6 +3,19 @@
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 Pacotes: `@shyland-dev/ui` (este changelog) e `@shyland-dev/utils` (ver a seção `utils` abaixo). O passo a passo de migração, com busca e substituição, está em [docs/design-system/migration-0.0-to-1.0.md](docs/design-system/migration-0.0-to-1.0.md).
 
+## [1.3.1] - 2026-11-17
+
+Correção (patch), sem mudança de API.
+
+### Corrigido
+
+- **Dialog modal fora do centro com reset global do app**: um reset `* { margin: 0 }` (ou `dialog { margin: 0 }`) carregado depois do CSS da lib anulava o `margin: auto` que centraliza o `<dialog>` modal, e o diálogo ia para o canto superior esquerdo. Causa: em `styles/overlay.css` a regra `:where(.shy-overlay-pane[data-modal]:not([data-anchored]))` tinha especificidade 0, igual à do reset, e quem vem depois vence. Agora a regra é `.shy-overlay-pane:where([data-modal]:not([data-anchored]))` (especificidade 0,1,0, sem `!important`) e declara `position: fixed; inset: 0; margin: auto; inline-size/block-size: fit-content` com `max-inline-size`/`max-block-size` limitados à viewport (`--shy-dynamic-width/height`). Os modos sheet, `auto` em portrait, Drawer e painéis ancorados seguem como antes (suas regras têm especificidade maior ou não casam).
+- **Migração**: nada a fazer. Se o app tinha um contorno local (`dialog { margin: auto }` no `styles.scss`), pode remover.
+
+### Verificação
+
+- Novo `npm run test:dialog-layout` (`scripts/test-dialog-centering.mjs`, Chromium): injeta `* { margin: 0; padding: 0 }` depois do CSS da lib e confere o centro em x e y em 360×640 e 1366×768 (Dialog sm/md/lg/center/auto), além de sheet e Drawer não centralizados. Sem a correção, os casos com reset falham (diálogo em 0,0).
+
 ## [1.3.0] - 2026-10-26
 
 Só adições retrocompatíveis (minor), todas opt-in exceto o swipe: nenhuma API existente mudou de assinatura nem de comportamento padrão, exceto o swipe do toast, que passa a existir por padrão em toque e caneta (desligue com `swipeToDismiss: false`).

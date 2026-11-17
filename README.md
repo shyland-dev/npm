@@ -20,17 +20,18 @@ npm run build   # Compila as libs para dist/
 
 ## Scripts
 
-| Comando                  | Descrição                                                                                                                                                               |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm start`              | Inicia o showcase (`ng serve showcase --port 4201`)                                                                                                                     |
-| `npm run build`          | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                                                                                       |
-| `npm run build:ui`       | Build da biblioteca `@shyland-dev/ui`                                                                                                                                   |
-| `npm run build:utils`    | Build da biblioteca `@shyland-dev/utils`                                                                                                                                |
-| `npm run build:showcase` | Build do showcase                                                                                                                                                       |
-| `npm run generate:icons` | Gera o catálogo (`icons/src/icons.ts`) e os ícones internos a partir dos SVGs em `assets/svg/`                                                                          |
-| `npm run check:pkg`      | Valida os pacotes buildados (`ui` e `utils`) com publint e are-the-types-wrong via `npx` sob demanda (precisa de `npm run build` antes e de rede)                       |
-| `npm run check:ds`       | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho, bundle de ícones, código de dev da utils fora do bundle de produção) |
-| `npm test`               | Testes da `ui` e da `utils` (`ng test ... --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                                                              |
+| Comando                      | Descrição                                                                                                                                                                                                                                                      |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm start`                  | Inicia o showcase (`ng serve showcase --port 4201`)                                                                                                                                                                                                            |
+| `npm run build`              | Build de `@shyland-dev/ui` e `@shyland-dev/utils`                                                                                                                                                                                                              |
+| `npm run build:ui`           | Build da biblioteca `@shyland-dev/ui`                                                                                                                                                                                                                          |
+| `npm run build:utils`        | Build da biblioteca `@shyland-dev/utils`                                                                                                                                                                                                                       |
+| `npm run build:showcase`     | Build do showcase                                                                                                                                                                                                                                              |
+| `npm run generate:icons`     | Gera o catálogo (`icons/src/icons.ts`) e os ícones internos a partir dos SVGs em `assets/svg/`                                                                                                                                                                 |
+| `npm run check:pkg`          | Valida os pacotes buildados (`ui` e `utils`) com publint e are-the-types-wrong via `npx` sob demanda (precisa de `npm run build` antes e de rede)                                                                                                              |
+| `npm run check:ds`           | Verificações do Design System (unidades, calibração, tokens, contraste, literais, fontes, tamanho, bundle de ícones, código de dev da utils fora do bundle de produção)                                                                                        |
+| `npm run test:dialog-layout` | Teste de layout no Chromium: o `<dialog>` modal continua centralizado com um reset global `* { margin: 0 }` depois do CSS da lib (precisa de `npm run build:showcase` antes, de `playwright-core` em `PLAYWRIGHT_CORE` e do Chromium em `PLAYWRIGHT_CHROMIUM`) |
+| `npm test`                   | Testes da `ui` e da `utils` (`ng test ... --watch=false`: `@angular/build:unit-test` + vitest + happy-dom)                                                                                                                                                     |
 
 ## Design System (em desenvolvimento)
 
