@@ -482,6 +482,7 @@ save() { this.ref.close(true); }
 How it behaves:
 
 - Panels live in `.shy-overlay-container` (in `body`), created with the first overlay and removed with the last. Modals use `<dialog>`; everything else uses `[popover="manual"]`. Both are in the top layer, where the **opening order** decides who is on top, so opening a modal promotes any open popover/tooltip/toast of a higher layer above it (reopened without animation). Without the APIs (old browsers) the panel falls back to `position: fixed` with `--shy-z-*`.
+- The modal pane is centered with `position: fixed; inset: 0; margin: auto` at specificity (0,1,0), so a global reset such as `* { margin: 0 }` loaded after the library CSS does not move it (fixed in 1.3.1; drop any local `margin: auto` workaround). Sheet, Drawer and anchored panes are not centered.
 - A modal makes everything outside of it `inert`. A panel with an `anchor` inside an open modal (a Select inside a Dialog) becomes a child of that modal so it stays interactive, and closes with it. Overlays opened **before** a modal (a toast, for example) stay visible above it but are inert until it closes.
 - The panel is unstyled (transparent, no padding): the component you open draws its own surface, border and focus ring (including `forced-colors`). Entry uses `@starting-style`; exit uses `animateOut` (`data-state="closing"`), instant with reduced motion.
 - Position the panel with a class (`paneClass`): defaults have zero specificity. Anchored panels get `left`/`top` in `ru` calculated from the measured responsive unit.
